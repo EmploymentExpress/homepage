@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://employmentexpress.com/sitemap.xml
+Sitemap: https://employmentexpress.github.io/homepage/sitemap.xml
