@@ -157,7 +157,7 @@
             <div class="flex items-center space-x-2">
                 <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[10px] tracking-wider uppercase badge-pulse">Breaking</span>
                 <div class="overflow-hidden w-72 md:w-[600px] h-4">
-                    <div class="marquee-content font-medium text-slate-300">
+                    <div id="breaking-news" class="marquee-content font-medium text-slate-300" aria-live="polite">
                         ⏰ LAST DATE TODAY (17 AUG): DSSSB DASS Grade-II, IAF Agniveervayu Non-Combatant, ISRO Scientist/Engineer, UPSC Principal/Vice Principal &amp; RITES Assistant Manager | NVS Vigyan Jyoti Project Staff Official PDF Available 🔥
                     </div>
                 </div>
@@ -873,8 +873,8 @@
             navMenu.classList.toggle('hidden');
         });
 
-        // Comprehensive Dataset for Punjab, NVS and National Jobs
-        const jobDatabase = [
+        // Curated dataset, extended at page load by data/auto-jobs.json.
+        let jobDatabase = [
             {
                 id: 8,
                 title: "NVS Vigyan Jyoti Project Scientist-I & Accountant Recruitment 2026",
@@ -1134,6 +1134,132 @@
             }
         ];
 
+        // Automatic alert feed helpers. Remote website text is treated as untrusted
+        // and normalized before it is rendered on this page.
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            })[character]);
+        }
+
+        function safeExternalUrl(value) {
+            if (typeof value !== 'string' || !value.trim()) return '#';
+            if (value.trim().startsWith('#')) return value.trim();
+            try {
+                const url = new URL(value, window.location.href);
+                return ['http:', 'https:'].includes(url.protocol) ? url.href : '#';
+            } catch (_) {
+                return '#';
+            }
+        }
+
+        function normalizeAutomaticJob(raw, index) {
+            if (!raw || typeof raw !== 'object') return null;
+            const text = (value, fallback = '', max = 900) => {
+                const normalized = String(value ?? fallback).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
+                return (normalized || fallback).slice(0, max);
+            };
+            const title = text(raw.title, '', 240);
+            if (!title) return null;
+            const rawId = Number(raw.id);
+            const id = Number.isSafeInteger(rawId) && rawId >= 100 ? rawId : 900000000000000 + index;
+            const type = raw.type === 'punjab' ? 'punjab' : 'central';
+            const allowedQualCategories = ['8th/10th', '12th', 'Graduate', 'Diploma/ITI', 'B.Ed/ETT', 'Police'];
+            const qualCategory = allowedQualCategories.includes(raw.qualCategory) ? raw.qualCategory : 'Graduate';
+            const allowedAlertTypes = ['recruitment', 'admission', 'answer-key', 'result', 'corrigendum'];
+            const alertType = allowedAlertTypes.includes(raw.alertType) ? raw.alertType : 'recruitment';
+            const isNewNotice = String(raw.badge || '').startsWith('NEW');
+            const presentations = {
+                recruitment: isNewNotice ? ['NEW JOB ALERT', 'bg-red-600'] : ['JOB NOTICE', 'bg-blue-600'],
+                admission: isNewNotice ? ['NEW ADMISSION', 'bg-purple-600'] : ['ADMISSION', 'bg-purple-600'],
+                'answer-key': isNewNotice ? ['NEW ANSWER KEY', 'bg-emerald-600'] : ['ANSWER KEY', 'bg-emerald-600'],
+                result: isNewNotice ? ['NEW RESULT', 'bg-rose-600'] : ['RESULT', 'bg-rose-600'],
+                corrigendum: isNewNotice ? ['NEW UPDATE', 'bg-amber-600'] : ['RECRUITMENT UPDATE', 'bg-amber-600']
+            };
+            const [badge, badgeColor] = presentations[alertType];
+
+            return {
+                id,
+                title,
+                department: text(raw.department, 'Official Recruitment Website', 180),
+                vacancies: text(raw.vacancies, 'See Notification', 80),
+                qualification: text(raw.qualification, 'See Official Notification', 180),
+                qualCategory,
+                lastDate: text(raw.lastDate, 'See Notification', 60),
+                startDate: text(raw.startDate, 'Newly Published', 80),
+                examDate: text(raw.examDate, 'See Official Notification', 100),
+                location: text(raw.location, type === 'punjab' ? 'Punjab' : 'All India', 100),
+                applyMode: text(raw.applyMode, 'As Notified', 80),
+                alertType,
+                isNewNotice,
+                badge,
+                badgeColor,
+                type,
+                categorySlug: text(raw.categorySlug, type === 'punjab' ? 'punjab-jobs' : 'central', 50),
+                advtNo: text(raw.advtNo, 'See Official Notice', 80),
+                feeGen: text(raw.feeGen, 'See Official Notification', 100),
+                feeSC: text(raw.feeSC, 'See Official Notification', 100),
+                feeMode: text(raw.feeMode, 'As Notified', 100),
+                age: text(raw.age, 'See Official Notification', 120),
+                details: text(raw.details, 'Open the official notice for complete recruitment details.', 900),
+                howToApply: Array.isArray(raw.howToApply) ? raw.howToApply.slice(0, 8).map(step => text(step, '', 260)).filter(Boolean) : null,
+                pdfLink: safeExternalUrl(raw.pdfLink),
+                applyLink: safeExternalUrl(raw.applyLink),
+                applyLabel: text(raw.applyLabel, 'Open Official Application', 60),
+                sourceName: text(raw.sourceName, 'Official website', 100),
+                discoveredAt: text(raw.discoveredAt, '', 40),
+                automated: true
+            };
+        }
+
+        function updateBreakingNews(automaticAlerts) {
+            const breaking = document.getElementById('breaking-news');
+            const latestAlerts = automaticAlerts.slice(0, 5);
+            if (breaking && latestAlerts.length) {
+                const hasNewAlert = latestAlerts.some(alert => alert.isNewNotice);
+                breaking.textContent = `${hasNewAlert ? '🔥 BREAKING' : '📢 LATEST OFFICIAL UPDATES'}: ${latestAlerts.map(alert => `${alert.badge}: ${alert.title}`).join('  |  ')}  •  Open details below`;
+            }
+        }
+
+        async function loadAutomaticJobs() {
+            try {
+                const response = await fetch('data/auto-jobs.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const payload = await response.json();
+                const automaticAlerts = (Array.isArray(payload.jobs) ? payload.jobs : [])
+                    .map(normalizeAutomaticJob)
+                    .filter(Boolean);
+                const tableAlerts = automaticAlerts.filter(alert =>
+                    ['recruitment', 'admission', 'corrigendum'].includes(alert.alertType)
+                );
+                const resultAlerts = automaticAlerts.filter(alert =>
+                    ['result', 'answer-key'].includes(alert.alertType)
+                );
+
+                const automaticTitles = new Set(tableAlerts.map(alert => alert.title.toLowerCase()));
+                jobDatabase = [
+                    ...tableAlerts,
+                    ...jobDatabase.filter(job => !automaticTitles.has(job.title.toLowerCase()))
+                ];
+
+                const resourceTitles = new Set(resultAlerts.map(alert => alert.title.toLowerCase()));
+                resultsList = [
+                    ...resultAlerts.map(alert => ({
+                        title: alert.title,
+                        score: alert.alertType === 'answer-key'
+                            ? `Official Answer Key • ${alert.sourceName}`
+                            : `Official Result • ${alert.sourceName}`,
+                        isNew: alert.isNewNotice,
+                        link: alert.pdfLink !== '#' ? alert.pdfLink : alert.applyLink
+                    })),
+                    ...resultsList.filter(item => !resourceTitles.has(item.title.toLowerCase()))
+                ];
+                updateBreakingNews(automaticAlerts);
+            } catch (error) {
+                console.warn('Automatic alerts could not be loaded; showing curated alerts.', error);
+            }
+        }
+
         // Admit Cards Dataset
         const admitCards = [
             { title: "NVS Chandigarh PGT/TGT Interview Call Letter 2026", date: "Active / Download", link: "https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/" },
@@ -1147,7 +1273,7 @@
         ];
 
         // Results Dataset
-        const resultsList = [
+        let resultsList = [
             { title: "NVS Chandigarh Teaching/Non-Teaching Shortlist 2026", score: "Empanelment Merit PDF", isNew: true },
             { title: "JNVST Class 6th Selection Test Merit List 2026", score: "District-wise List PDF", isNew: true },
             { title: "Punjab Police Head Constable Final Merit List 2024-25", score: "Selected List PDF", isNew: true },
@@ -1164,11 +1290,11 @@
             list.innerHTML = items.map(j => `
                 <div class="p-3 hover:bg-blue-50/60 transition cursor-pointer flex flex-col gap-1" onclick="openJobDetail(${j.id})">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">${j.vacancies}</span>
-                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${j.lastDate}</span>
+                        <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">${escapeHtml(j.vacancies)}</span>
+                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${escapeHtml(j.lastDate)}</span>
                     </div>
-                    <div class="font-bold text-xs text-slate-800 hover:text-blue-700 leading-snug">${j.title}</div>
-                    <div class="text-[11px] text-slate-500">${j.qualification}</div>
+                    <div class="font-bold text-xs text-slate-800 hover:text-blue-700 leading-snug">${escapeHtml(j.title)}</div>
+                    <div class="text-[11px] text-slate-500">${escapeHtml(j.qualification)}</div>
                 </div>
             `).join('');
         }
@@ -1179,11 +1305,11 @@
             list.innerHTML = items.map(j => `
                 <div class="p-3 hover:bg-purple-50/60 transition cursor-pointer flex flex-col gap-1" onclick="openJobDetail(${j.id})">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">${j.vacancies}</span>
-                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${j.lastDate}</span>
+                        <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">${escapeHtml(j.vacancies)}</span>
+                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${escapeHtml(j.lastDate)}</span>
                     </div>
-                    <div class="font-bold text-xs text-slate-800 hover:text-purple-700 leading-snug">${j.title}</div>
-                    <div class="text-[11px] text-slate-500">${j.qualification}</div>
+                    <div class="font-bold text-xs text-slate-800 hover:text-purple-700 leading-snug">${escapeHtml(j.title)}</div>
+                    <div class="text-[11px] text-slate-500">${escapeHtml(j.qualification)}</div>
                 </div>
             `).join('');
         }
@@ -1201,13 +1327,23 @@
             `).join('');
         }
 
+        function openResultItem(index) {
+            const item = resultsList[index];
+            const link = safeExternalUrl(item && item.link);
+            if (link !== '#') {
+                window.open(link, '_blank', 'noopener,noreferrer');
+            } else {
+                showToast('Official result / answer key details are being updated.');
+            }
+        }
+
         function renderResults() {
             const list = document.getElementById('results-list');
-            list.innerHTML = resultsList.map(item => `
-                <div class="p-3 hover:bg-rose-50/60 transition cursor-pointer flex items-center justify-between" onclick="showToast('Result PDF download initiated!')">
+            list.innerHTML = resultsList.map((item, index) => `
+                <div class="p-3 hover:bg-rose-50/60 transition cursor-pointer flex items-center justify-between" onclick="openResultItem(${index})">
                     <div>
-                        <div class="font-bold text-xs text-slate-800 hover:text-rose-700">${item.title}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-rose-600 font-semibold">${item.score}</span></div>
+                        <div class="font-bold text-xs text-slate-800 hover:text-rose-700">${escapeHtml(item.title)}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-rose-600 font-semibold">${escapeHtml(item.score)}</span></div>
                     </div>
                     ${item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>'}
                 </div>
@@ -1233,23 +1369,23 @@
                 <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
-                            <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.badge}</span>
+                            <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${escapeHtml(job.badge)}</span>
                             <div>
                                 <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition block text-xs sm:text-sm">
-                                    ${job.title}
+                                    ${escapeHtml(job.title)}
                                 </a>
-                                <span class="text-[11px] text-slate-500 font-medium">${job.department}</span>
+                                <span class="text-[11px] text-slate-500 font-medium">${escapeHtml(job.department)}</span>
                             </div>
                         </div>
                     </td>
                     <td class="p-3.5 text-xs text-slate-700 font-medium">
-                        <span class="inline-block bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-slate-800 font-semibold">${job.qualification}</span>
+                        <span class="inline-block bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-slate-800 font-semibold">${escapeHtml(job.qualification)}</span>
                     </td>
                     <td class="p-3.5 text-center font-extrabold text-xs text-brand-700">
-                        ${job.vacancies}
+                        ${escapeHtml(job.vacancies)}
                     </td>
                     <td class="p-3.5 text-xs font-bold text-red-600 whitespace-nowrap">
-                        <i class="far fa-calendar-check mr-1 text-slate-400"></i>${job.lastDate}
+                        <i class="far fa-calendar-check mr-1 text-slate-400"></i>${escapeHtml(job.lastDate)}
                     </td>
                     <td class="p-3.5 text-center">
                         <button onclick="openJobDetail(${job.id})" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-3 py-1.5 rounded text-xs transition shadow-xs flex items-center justify-center gap-1 mx-auto whitespace-nowrap">
@@ -1326,14 +1462,14 @@
             document.getElementById('modalLastDate').innerText = job.lastDate;
             document.getElementById('modalStartDate').innerText = job.startDate || 'Active / Live';
             document.getElementById('modalEndDate').innerText = job.lastDate;
-            document.getElementById('modalExamDate').innerText = job.examDate || 'Oct / Nov 2026';
-            document.getElementById('modalFeeGen').innerText = job.feeGen || '₹1,000/-';
-            document.getElementById('modalFeeSC').innerText = job.feeSC || '₹500/- / Exempted';
-            document.getElementById('modalFeeMode').innerText = job.feeMode || 'Online (Net Banking/UPI)';
-            document.getElementById('modalAge').innerText = job.age;
+            document.getElementById('modalExamDate').innerText = job.examDate || 'See Official Notification';
+            document.getElementById('modalFeeGen').innerText = job.feeGen || 'See Official Notification';
+            document.getElementById('modalFeeSC').innerText = job.feeSC || 'See Official Notification';
+            document.getElementById('modalFeeMode').innerText = job.feeMode || 'As Notified';
+            document.getElementById('modalAge').innerText = job.age || 'See Official Notification';
             document.getElementById('modalQualDetails').innerText = `${job.qualification} - ${job.details}`;
-            document.getElementById('modalOfficialPdf').href = job.pdfLink;
-            document.getElementById('modalApplyBtn').href = job.applyLink;
+            document.getElementById('modalOfficialPdf').href = safeExternalUrl(job.pdfLink);
+            document.getElementById('modalApplyBtn').href = safeExternalUrl(job.applyLink);
             document.getElementById('modalApplyLabel').innerText = job.applyLabel || 'Apply Online Now';
 
             const defaultApplySteps = [
@@ -1344,7 +1480,7 @@
                 'Submit the application form and download/print the acknowledgment for reference.'
             ];
             document.getElementById('modalApplySteps').innerHTML = (job.howToApply || defaultApplySteps)
-                .map(step => `<li>${step}</li>`).join('');
+                .map(step => `<li>${escapeHtml(step)}</li>`).join('');
 
             const modal = document.getElementById('jobModal');
             const container = document.getElementById('modalContainer');
@@ -1409,7 +1545,8 @@
         }
 
         // Initialize All Components on Load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadAutomaticJobs();
             renderPunjabColumn();
             renderCentralColumn();
             renderAdmitCards();
