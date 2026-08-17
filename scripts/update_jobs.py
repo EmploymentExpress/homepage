@@ -800,11 +800,26 @@ def parse_timestamp(value: str) -> datetime | None:
         return None
 
 
-def refresh_badges(jobs: list[dict[str, Any]], now: datetime, new_days: int) -> bool:
+def refresh_badges(
+    jobs: list[dict[str, Any]],
+    now: datetime,
+    new_hours: int = 72,
+    *,
+    new_days: int | None = None,
+) -> bool:
+    # Keep the old keyword usable for callers while making the default window
+    # explicit and precise in hours.
+    if new_days is not None:
+        new_hours = new_days * 24
     changed = False
     for job in jobs:
+        # Publication time is authoritative for the 72-hour NEW window. If an
+        # official page does not expose it, fall back to when the monitor found it.
+        published = parse_timestamp(job.get("publishedAt", ""))
         discovered = parse_timestamp(job.get("discoveredAt", ""))
-        is_new = discovered is not None and (now - discovered).days < new_days
+        timestamp = published or discovered
+        age_hours = (now - timestamp).total_seconds() / 3600 if timestamp else float("inf")
+        is_new = 0 <= age_hours <= new_hours
         notice_type = clean_text(job.get("alertType", "recruitment")).lower()
         if notice_type not in NOTICE_PRESENTATION:
             notice_type = "recruitment"
@@ -821,17 +836,55 @@ def refresh_badges(jobs: list[dict[str, Any]], now: datetime, new_days: int) -> 
     return changed
 
 
+def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
+    """Turn user-added notification URLs into monitor sources automatically."""
+    registry = read_json(path, {"links": []})
+    links = registry.get("links", []) if isinstance(registry, dict) else []
+    generated: list[dict[str, Any]] = []
+    for entry in links:
+        if isinstance(entry, str):
+            entry = {"url": entry}
+        if not isinstance(entry, dict):
+            continue
+        url = canonical_url(entry.get("url", ""))
+        if not url:
+            continue
+        host = urllib.parse.urlsplit(url).netloc.removeprefix("www.")
+        source_id = "custom-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+        generated.append({
+            "id": source_id,
+            "name": clean_text(entry.get("name") or host or "Additional job notification source"),
+            "department": clean_text(entry.get("department") or entry.get("name") or host),
+            "url": url,
+            "type": clean_text(entry.get("type") or "central").lower(),
+            "categorySlug": clean_text(entry.get("categorySlug") or "central"),
+            "location": clean_text(entry.get("location") or "All India"),
+            "noticeTypes": entry.get("noticeTypes") or sorted(DEFAULT_NOTICE_TYPES),
+            "bootstrapCount": int(entry.get("bootstrapCount", 1)),
+            "maxNewPerRun": int(entry.get("maxNewPerRun", 8)),
+            "includeKeywords": entry.get("includeKeywords", []),
+            "excludeKeywords": entry.get("excludeKeywords", []),
+        })
+    return generated
+
+
 def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = False) -> int:
     config = read_json(config_path, {})
     if not isinstance(config.get("sources"), list):
         raise RuntimeError(f"{config_path} must contain a sources array")
+
+    configured_urls = {canonical_url(source.get("url", "")) for source in config["sources"]}
+    for source in additional_link_sources():
+        if source["url"] not in configured_urls:
+            config["sources"].append(source)
+            configured_urls.add(source["url"])
 
     output = read_json(output_path, {"version": 1, "updatedAt": None, "jobs": []})
     state = read_json(state_path, {"version": 1, "sources": {}})
     jobs = list(output.get("jobs") or [])
     state_sources = state.setdefault("sources", {})
     now = datetime.now(timezone.utc).replace(microsecond=0)
-    jobs_changed = refresh_badges(jobs, now, int(config.get("newBadgeDays", 7)))
+    jobs_changed = refresh_badges(jobs, now, int(config.get("newBadgeHours", 72)))
     state_changed = False
     added = 0
     successful_sources = 0

@@ -1,6 +1,7 @@
 {
   "version": 1,
-  "newBadgeDays": 7,
+  "newBadgeHours": 72,
+  "breakingNoticeHours": 24,
   "maxStoredJobs": 200,
   "sources": [
     {
@@ -126,6 +127,21 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 1,
       "maxNewPerRun": 8
+    },
+    {
+      "id": "rcf-kapurthala",
+      "name": "Rail Coach Factory Kapurthala",
+      "department": "Rail Coach Factory (RCF), Kapurthala — Ministry of Railways",
+      "url": "https://rcf.indianrailways.gov.in/?lang=1",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Kapurthala, Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": ["act apprentice", "apprentice", "sports quota", "cultural quota"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8,
+      "timeout": 35,
+      "detailTimeout": 25
     }
   ]
 }

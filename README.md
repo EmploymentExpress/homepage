@@ -24,8 +24,8 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Live Search** — filters by post name / department / qualification; debounced + highlighted + “No results” state
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
 - **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
-- **Dynamic Breaking Alerts** — newly discovered notices automatically use the correct `NEW JOB ALERT`, `NEW ADMISSION`, `NEW ANSWER KEY`, `NEW RESULT` or `NEW UPDATE` label and update the existing Breaking marquee for seven days
-- **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts with posts count, last date, source information, and `Apply/Info` modal
+- **Time-limited new alerts** — newly discovered notices show a 🔥 icon with a `NEW` label for 72 hours from publication (or discovery when publication time is unavailable); they appear in the Breaking marquee for 24 hours and then are removed automatically
+- **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts including the RCF Kapurthala 734 Act Apprentice notification, with posts count, last date, source information, and `Apply/Info` modal
 - **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API; unknown automatic fields say “See Official Notification” rather than being guessed
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
 - **Syllabus & Official Portals widgets** + direct links to Navodaya Vidyalaya Samiti RO Chandigarh (`https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/`)
@@ -45,6 +45,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 │   └── requirements.txt                    # PDF extraction dependency
 ├── data/
 │   ├── auto-jobs.json                       # Generated jobs consumed by the page
+│   ├── notification-source-links.json       # User-added websites monitored on every future run
 │   └── seen-notices.json                    # Generated de-duplication state
 ├── scripts/update_jobs.py                   # Generic HTML/RSS/PDF monitor
 ├── tests/test_update_jobs.py                # Parser and de-duplication tests
@@ -103,11 +104,37 @@ The workflow stages and commits only the two files under `data/`; it never rewri
 
 > **Activation required:** this repository connection could not add a file under `.github/workflows`. After merging, create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
 
-Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC and RRB Chandigarh.
+Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC, RRB Chandigarh and RCF Kapurthala. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
 
 #### Add another website or RSS/Atom feed
 
-Add an object to the `sources` array in `automation/sources.json`:
+For a website that should be monitored automatically in all future runs, add its URL to `data/notification-source-links.json`. A plain URL is enough:
+
+```json
+{
+  "version": 1,
+  "links": [
+    "https://example.gov.in/recruitment/"
+  ]
+}
+```
+
+You can also provide metadata when the page needs filtering or a non-default category:
+
+```json
+{
+  "url": "https://example.gov.in/recruitment/",
+  "name": "Example Recruitment Board",
+  "department": "Example Recruitment Board",
+  "type": "central",
+  "categorySlug": "central",
+  "location": "All India",
+  "noticeTypes": ["recruitment", "result", "corrigendum"],
+  "includeKeywords": ["apprentice"]
+}
+```
+
+The monitor automatically converts every valid link in this registry into a source on every run, de-duplicates links already present in `automation/sources.json`, and remembers discovered notices for future scans. No Python code change is needed after adding a link. For a permanently curated source with custom settings, you can still add an object directly to the `sources` array in `automation/sources.json`:
 
 ```json
 {
