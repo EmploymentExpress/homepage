@@ -836,10 +836,48 @@ def refresh_badges(
     return changed
 
 
+def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
+    """Turn user-added notification URLs into monitor sources automatically."""
+    registry = read_json(path, {"links": []})
+    links = registry.get("links", []) if isinstance(registry, dict) else []
+    generated: list[dict[str, Any]] = []
+    for entry in links:
+        if isinstance(entry, str):
+            entry = {"url": entry}
+        if not isinstance(entry, dict):
+            continue
+        url = canonical_url(entry.get("url", ""))
+        if not url:
+            continue
+        host = urllib.parse.urlsplit(url).netloc.removeprefix("www.")
+        source_id = "custom-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+        generated.append({
+            "id": source_id,
+            "name": clean_text(entry.get("name") or host or "Additional job notification source"),
+            "department": clean_text(entry.get("department") or entry.get("name") or host),
+            "url": url,
+            "type": clean_text(entry.get("type") or "central").lower(),
+            "categorySlug": clean_text(entry.get("categorySlug") or "central"),
+            "location": clean_text(entry.get("location") or "All India"),
+            "noticeTypes": entry.get("noticeTypes") or sorted(DEFAULT_NOTICE_TYPES),
+            "bootstrapCount": int(entry.get("bootstrapCount", 1)),
+            "maxNewPerRun": int(entry.get("maxNewPerRun", 8)),
+            "includeKeywords": entry.get("includeKeywords", []),
+            "excludeKeywords": entry.get("excludeKeywords", []),
+        })
+    return generated
+
+
 def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = False) -> int:
     config = read_json(config_path, {})
     if not isinstance(config.get("sources"), list):
         raise RuntimeError(f"{config_path} must contain a sources array")
+
+    configured_urls = {canonical_url(source.get("url", "")) for source in config["sources"]}
+    for source in additional_link_sources():
+        if source["url"] not in configured_urls:
+            config["sources"].append(source)
+            configured_urls.add(source["url"])
 
     output = read_json(output_path, {"version": 1, "updatedAt": None, "jobs": []})
     state = read_json(state_path, {"version": 1, "sources": {}})

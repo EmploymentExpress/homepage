@@ -78,6 +78,21 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(old_result["badge"], "RESULT")
         self.assertEqual(old_result["badgeColor"], "bg-rose-600")
 
+    def test_additional_notification_links_become_sources(self):
+        with tempfile.TemporaryDirectory() as folder:
+            registry = Path(folder) / "links.json"
+            registry.write_text(json.dumps({
+                "links": [
+                    "https://example.gov.in/recruitment/",
+                    {"url": "https://example.gov.in/recruitment/", "name": "Duplicate"},
+                    {"url": "https://railway.gov.in/jobs", "name": "Railway Jobs", "type": "central"},
+                ]
+            }), encoding="utf-8")
+            sources = monitor.additional_link_sources(registry)
+            self.assertEqual(len(sources), 3)
+            self.assertEqual(sources[0]["id"], sources[1]["id"])
+            self.assertEqual(sources[2]["name"], "Railway Jobs")
+
     def test_feed_and_detail_inference(self):
         feed = """<?xml version="1.0"?>
         <rss version="2.0"><channel><item>

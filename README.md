@@ -45,6 +45,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 │   └── requirements.txt                    # PDF extraction dependency
 ├── data/
 │   ├── auto-jobs.json                       # Generated jobs consumed by the page
+│   ├── notification-source-links.json       # User-added websites monitored on every future run
 │   └── seen-notices.json                    # Generated de-duplication state
 ├── scripts/update_jobs.py                   # Generic HTML/RSS/PDF monitor
 ├── tests/test_update_jobs.py                # Parser and de-duplication tests
@@ -107,7 +108,33 @@ Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Polic
 
 #### Add another website or RSS/Atom feed
 
-Add an object to the `sources` array in `automation/sources.json`:
+For a website that should be monitored automatically in all future runs, add its URL to `data/notification-source-links.json`. A plain URL is enough:
+
+```json
+{
+  "version": 1,
+  "links": [
+    "https://example.gov.in/recruitment/"
+  ]
+}
+```
+
+You can also provide metadata when the page needs filtering or a non-default category:
+
+```json
+{
+  "url": "https://example.gov.in/recruitment/",
+  "name": "Example Recruitment Board",
+  "department": "Example Recruitment Board",
+  "type": "central",
+  "categorySlug": "central",
+  "location": "All India",
+  "noticeTypes": ["recruitment", "result", "corrigendum"],
+  "includeKeywords": ["apprentice"]
+}
+```
+
+The monitor automatically converts every valid link in this registry into a source on every run, de-duplicates links already present in `automation/sources.json`, and remembers discovered notices for future scans. No Python code change is needed after adding a link. For a permanently curated source with custom settings, you can still add an object directly to the `sources` array in `automation/sources.json`:
 
 ```json
 {
