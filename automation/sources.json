@@ -1,6 +1,7 @@
 {
   "version": 1,
-  "newBadgeDays": 7,
+  "newBadgeHours": 72,
+  "breakingNoticeHours": 24,
   "maxStoredJobs": 200,
   "sources": [
     {

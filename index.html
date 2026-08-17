@@ -158,7 +158,7 @@
                 <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded text-[10px] tracking-wider uppercase badge-pulse">Breaking</span>
                 <div class="overflow-hidden w-72 md:w-[600px] h-4">
                     <div id="breaking-news" class="marquee-content font-medium text-slate-300" aria-live="polite">
-                        🚆 NEW RCF KAPURTHALA ACT APPRENTICE NOTIFICATION: 734 POSTS | 10th + ITI | APPLY ONLINE BY 05 SEP 2026 | Official Advertisement No. A-1/2026 🔥
+                        📢 No new official job notification published in the last 24 hours. Check the latest alerts below.
                     </div>
                 </div>
             </div>
@@ -277,7 +277,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <a href="javascript:void(0)" onclick="openJobDetail(10)" class="bg-gradient-to-br from-red-600 to-rose-800 text-white p-3.5 rounded-xl shadow-sm hover:shadow-md transition flex items-center justify-between group border border-red-400/30">
                 <div>
-                    <span class="text-[10px] bg-amber-400 text-slate-950 uppercase font-black px-1.5 py-0.5 rounded tracking-wide badge-pulse">NEW JOB ALERT</span>
+                    <span class="text-[10px] bg-slate-200 text-slate-800 uppercase font-black px-1.5 py-0.5 rounded tracking-wide">JOB NOTICE</span>
                     <h3 class="font-bold text-sm mt-1 leading-tight group-hover:underline">RCF Kapurthala Act Apprentice 2026</h3>
                     <p class="text-xs text-red-100 font-medium">734 Posts • 10th + ITI • Apply by 5 Sep</p>
                 </div>
@@ -1206,7 +1206,8 @@
             const qualCategory = allowedQualCategories.includes(raw.qualCategory) ? raw.qualCategory : 'Graduate';
             const allowedAlertTypes = ['recruitment', 'admission', 'answer-key', 'result', 'corrigendum'];
             const alertType = allowedAlertTypes.includes(raw.alertType) ? raw.alertType : 'recruitment';
-            const isNewNotice = String(raw.badge || '').startsWith('NEW');
+            const publishedAt = text(raw.publishedAt, text(raw.discoveredAt, '', 40), 40);
+            const isNewNotice = isWithinHours({ publishedAt, discoveredAt: raw.discoveredAt }, NEW_NOTICE_WINDOW_HOURS);
             const presentations = {
                 recruitment: isNewNotice ? ['NEW JOB ALERT', 'bg-red-600'] : ['JOB NOTICE', 'bg-blue-600'],
                 admission: isNewNotice ? ['NEW ADMISSION', 'bg-purple-600'] : ['ADMISSION', 'bg-purple-600'],
@@ -1245,17 +1246,40 @@
                 applyLink: safeExternalUrl(raw.applyLink),
                 applyLabel: text(raw.applyLabel, 'Open Official Application', 60),
                 sourceName: text(raw.sourceName, 'Official website', 100),
+                publishedAt,
                 discoveredAt: text(raw.discoveredAt, '', 40),
                 automated: true
             };
         }
 
+        const NEW_NOTICE_WINDOW_HOURS = 72;
+        const BREAKING_NOTICE_WINDOW_HOURS = 24;
+
+        function noticeTimestamp(alert) {
+            const value = alert && (alert.publishedAt || alert.discoveredAt);
+            if (!value) return 0;
+            const timestamp = Date.parse(value);
+            return Number.isFinite(timestamp) ? timestamp : 0;
+        }
+
+        function isWithinHours(alert, hours) {
+            const timestamp = noticeTimestamp(alert);
+            if (!timestamp) return false;
+            const age = Date.now() - timestamp;
+            return age >= 0 && age <= hours * 60 * 60 * 1000;
+        }
+
         function updateBreakingNews(automaticAlerts) {
             const breaking = document.getElementById('breaking-news');
-            const latestAlerts = automaticAlerts.slice(0, 5);
-            if (breaking && latestAlerts.length) {
-                const hasNewAlert = latestAlerts.some(alert => alert.isNewNotice);
-                breaking.textContent = `${hasNewAlert ? '🔥 BREAKING' : '📢 LATEST OFFICIAL UPDATES'}: ${latestAlerts.map(alert => `${alert.badge}: ${alert.title}`).join('  |  ')}  •  Open details below`;
+            if (!breaking) return;
+            const breakingAlerts = automaticAlerts
+                .filter(alert => isWithinHours(alert, BREAKING_NOTICE_WINDOW_HOURS))
+                .sort((a, b) => noticeTimestamp(b) - noticeTimestamp(a))
+                .slice(0, 5);
+            if (breakingAlerts.length) {
+                breaking.textContent = `🔥 BREAKING: ${breakingAlerts.map(alert => `NEW: ${alert.title}`).join('  |  ')}  •  Open details below`;
+            } else {
+                breaking.textContent = '📢 No new official job notification published in the last 24 hours. Check the latest alerts below.';
             }
         }
 
@@ -1407,7 +1431,7 @@
                 <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
-                            <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${escapeHtml(job.badge)}</span>
+                            <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
                             <div>
                                 <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition block text-xs sm:text-sm">
                                     ${escapeHtml(job.title)}
@@ -1593,4 +1617,6 @@
         });
     </script>
 </body>
+</html>
+ody>
 </html>

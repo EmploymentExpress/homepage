@@ -24,7 +24,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Live Search** — filters by post name / department / qualification; debounced + highlighted + “No results” state
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
 - **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
-- **Dynamic Breaking Alerts** — newly discovered notices automatically use the correct `NEW JOB ALERT`, `NEW ADMISSION`, `NEW ANSWER KEY`, `NEW RESULT` or `NEW UPDATE` label and update the existing Breaking marquee for seven days
+- **Time-limited new alerts** — newly discovered notices show a 🔥 icon with a `NEW` label for 72 hours from publication (or discovery when publication time is unavailable); they appear in the Breaking marquee for 24 hours and then are removed automatically
 - **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts including the RCF Kapurthala 734 Act Apprentice notification, with posts count, last date, source information, and `Apply/Info` modal
 - **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API; unknown automatic fields say “See Official Notification” rather than being guessed
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists

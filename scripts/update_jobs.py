@@ -800,11 +800,26 @@ def parse_timestamp(value: str) -> datetime | None:
         return None
 
 
-def refresh_badges(jobs: list[dict[str, Any]], now: datetime, new_days: int) -> bool:
+def refresh_badges(
+    jobs: list[dict[str, Any]],
+    now: datetime,
+    new_hours: int = 72,
+    *,
+    new_days: int | None = None,
+) -> bool:
+    # Keep the old keyword usable for callers while making the default window
+    # explicit and precise in hours.
+    if new_days is not None:
+        new_hours = new_days * 24
     changed = False
     for job in jobs:
+        # Publication time is authoritative for the 72-hour NEW window. If an
+        # official page does not expose it, fall back to when the monitor found it.
+        published = parse_timestamp(job.get("publishedAt", ""))
         discovered = parse_timestamp(job.get("discoveredAt", ""))
-        is_new = discovered is not None and (now - discovered).days < new_days
+        timestamp = published or discovered
+        age_hours = (now - timestamp).total_seconds() / 3600 if timestamp else float("inf")
+        is_new = 0 <= age_hours <= new_hours
         notice_type = clean_text(job.get("alertType", "recruitment")).lower()
         if notice_type not in NOTICE_PRESENTATION:
             notice_type = "recruitment"
@@ -831,7 +846,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     jobs = list(output.get("jobs") or [])
     state_sources = state.setdefault("sources", {})
     now = datetime.now(timezone.utc).replace(microsecond=0)
-    jobs_changed = refresh_badges(jobs, now, int(config.get("newBadgeDays", 7)))
+    jobs_changed = refresh_badges(jobs, now, int(config.get("newBadgeHours", 72)))
     state_changed = False
     added = 0
     successful_sources = 0
