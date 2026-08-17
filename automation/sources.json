@@ -69,6 +69,32 @@
       "maxNewPerRun": 5
     },
     {
+      "id": "erd-punjab-fresh-posts",
+      "name": "ERD Punjab Fresh Posts",
+      "department": "Education Recruitment Directorate (ERD), Punjab",
+      "url": "https://erd.punjab.gov.in/fresh_posts.aspx",
+      "type": "punjab",
+      "categorySlug": "teacher",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "admission", "corrigendum"],
+      "includeKeywords": [
+        "lecturer",
+        "master cadre",
+        "ett",
+        "tgt",
+        "pgt",
+        "physical training instructor",
+        "pti",
+        "head teacher",
+        "education recruitment"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8,
+      "timeout": 35,
+      "detailTimeout": 25
+    },
+    {
       "id": "nvs",
       "name": "Navodaya Vidyalaya Samiti",
       "department": "Navodaya Vidyalaya Samiti (NVS)",
