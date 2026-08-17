@@ -28,7 +28,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
 - **Syllabus & Official Portals widgets** + direct links to Navodaya Vidyalaya Samiti RO Chandigarh (`https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/`)
 - **Floating Telegram/WhatsApp/YouTube buttons** + footer disclaimer (YouTube with headline “Subscribe YouTube Channel”)
-- **SEO:** canonical, Open Graph, Twitter Card, Organization + WebSite JSON-LD, `robots.txt` + `sitemap.xml` (lastmod 2026-08-17)
+- **SEO:** canonical, Open Graph, Twitter Card, Organization + WebSite JSON-LD, `robots.txt` + `sitemap.xml` (lastmod 2026-08-17), Google Search Console verification meta tag (`google-site-verification`)
 - **A11y & Performance:** semantic headings (`sr-only` H1), ARIA, keyboard `Esc` to close modal, focus rings, custom scrollbar, `preconnect` hints
 
 ---
@@ -77,6 +77,24 @@ To add / edit a vacancy, edit `jobDatabase` in `index.html`:
 ```
 
 ---
+
+### 🔍 Google Search Console Setup
+
+1. Go to **https://search.google.com/search-console** and sign in.
+2. Click **Add property** → choose **URL prefix** → enter `https://employmentexpress.github.io/homepage/` (must match the canonical + sitemap URL exactly, including trailing `/`).
+3. Choose **HTML tag** verification method → copy the `content` value (looks like `dBw...123`).
+4. In `index.html` replace `REPLACE_WITH_YOUR_GOOGLE_VERIFICATION_CODE` inside:
+
+   ```html
+   <meta name="google-site-verification" content="REPLACE_WITH_YOUR_GOOGLE_VERIFICATION_CODE">
+   ```
+
+   with your real code, commit and push — GitHub Pages will deploy in ~1-2 min.
+5. Back in Search Console click **Verify**.
+6. After verification: **Sitemaps** → submit `https://employmentexpress.github.io/homepage/sitemap.xml` → then **Request indexing** for the homepage if needed.
+7. Optional additional verification (if you prefer / need backup): download the `googleXXXX.html` file Google offers and place it at the repo root (e.g. `google123abc.html` with content `google-site-verification: google123abc.html`) — this repo already has `robots.txt` allowing crawl and `sitemap.xml` referenced.
+
+> Keep the meta tag in place permanently — removing it can de-verify the property.
 
 ### 🚀 Local Preview
 
