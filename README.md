@@ -12,8 +12,9 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 
 - **Telegram:** https://t.me/employment_express1
 - **WhatsApp Channel:** https://whatsapp.com/channel/0029Va9xQHV4tRrxpVKaG93w
+- **YouTube — Subscribe YouTube Channel:** https://www.youtube.com/channel/UCI39CbrtpEflEPabKeCAd9A
 
-> All `Join Telegram` / `Join WhatsApp` buttons, floating social buttons, top-bar alerts, and footer icons link to the channels above. Subscriber counts have been intentionally removed for a clean, evergreen UI.
+> All `Join Telegram` / `Join WhatsApp` / `Subscribe YouTube Channel` buttons, floating social buttons, top-bar alerts, and footer icons link to the channels above. Subscriber counts have been intentionally removed for a clean, evergreen UI.
 
 ---
 
@@ -26,7 +27,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback
 - **Syllabus & Official Portals widgets** + community join card
-- **Floating Telegram/WhatsApp buttons** + footer disclaimer
+- **Floating Telegram/WhatsApp/YouTube buttons** + footer disclaimer (YouTube with headline “Subscribe YouTube Channel”)
 - **SEO:** canonical, Open Graph, Twitter Card, Organization + WebSite JSON-LD, `robots.txt` + `sitemap.xml` (lastmod 2026-08-17)
 - **A11y & Performance:** semantic headings (`sr-only` H1), ARIA, keyboard `Esc` to close modal, focus rings, custom scrollbar, `preconnect` hints
 
@@ -101,6 +102,7 @@ No build step — commit to `arena/01a00dc7-homepage` and push; GitHub Pages ser
 
 - Telegram (official): https://t.me/employment_express1
 - WhatsApp Channel (official): https://whatsapp.com/channel/0029Va9xQHV4tRrxpVKaG93w
+- YouTube — Subscribe YouTube Channel: https://www.youtube.com/channel/UCI39CbrtpEflEPabKeCAd9A
 - PSSSB: https://sssb.punjab.gov.in — Punjab Police: https://punjabpolice.gov.in — PPSC: https://ppsc.gov.in — PSPCL: https://pspcl.in
 
 ---
