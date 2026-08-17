@@ -1,0 +1,5 @@
+# robots.txt for EMPLOYMENT EXPRESS
+User-agent: *
+Allow: /
+
+Sitemap: https://employmentexpress.github.io/homepage/sitemap.xml
