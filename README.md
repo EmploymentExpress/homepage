@@ -25,7 +25,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
 - **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
 - **Dynamic Breaking Alerts** — newly discovered notices automatically use the correct `NEW JOB ALERT`, `NEW ADMISSION`, `NEW ANSWER KEY`, `NEW RESULT` or `NEW UPDATE` label and update the existing Breaking marquee for seven days
-- **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts with posts count, last date, source information, and `Apply/Info` modal
+- **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts including the RCF Kapurthala 734 Act Apprentice notification, with posts count, last date, source information, and `Apply/Info` modal
 - **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API; unknown automatic fields say “See Official Notification” rather than being guessed
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
 - **Syllabus & Official Portals widgets** + direct links to Navodaya Vidyalaya Samiti RO Chandigarh (`https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/`)
@@ -103,7 +103,7 @@ The workflow stages and commits only the two files under `data/`; it never rewri
 
 > **Activation required:** this repository connection could not add a file under `.github/workflows`. After merging, create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
 
-Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC and RRB Chandigarh.
+Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC, RRB Chandigarh and RCF Kapurthala. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
 
 #### Add another website or RSS/Atom feed
 
