@@ -23,8 +23,10 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Tailwind CSS** responsive layout — sticky header, breaking-news marquee with NVS Chandigarh RO & Punjab job alerts, 6-category quick filter, 4 adaptive mega-grid columns
 - **Live Search** — filters by post name / department / qualification; debounced + highlighted + “No results” state
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
-- **Master Vacancy Table (2026)** — 10 active recruitments with `NEW JOB ALERT` & `Hot Post` badges, posts count, last date (Sep–Oct 2026), and `Apply/Info` modal
-- **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API
+- **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
+- **Dynamic Breaking Alerts** — newly discovered notices automatically use the correct `NEW JOB ALERT`, `NEW ADMISSION`, `NEW ANSWER KEY`, `NEW RESULT` or `NEW UPDATE` label and update the existing Breaking marquee for seven days
+- **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts with posts count, last date, source information, and `Apply/Info` modal
+- **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API; unknown automatic fields say “See Official Notification” rather than being guessed
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
 - **Syllabus & Official Portals widgets** + direct links to Navodaya Vidyalaya Samiti RO Chandigarh (`https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/`)
 - **Floating Telegram/WhatsApp/YouTube buttons** + footer disclaimer (YouTube with headline “Subscribe YouTube Channel”)
@@ -37,11 +39,19 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 
 ```
 /
-├── index.html      # Single-page homepage (Tailwind CDN + Font Awesome + data-driven JS)
-├── assets/
-│   └── logo.png    # Favicon / brand logo (238 KB)
-├── sitemap.xml     # Daily changefreq, priority 1.0
-├── robots.txt      # Allow: / + sitemap
+├── automation/
+│   ├── update-job-alerts.workflow.yml       # Six-hour GitHub Actions template
+│   ├── sources.json                         # Websites/feeds to monitor
+│   └── requirements.txt                    # PDF extraction dependency
+├── data/
+│   ├── auto-jobs.json                       # Generated jobs consumed by the page
+│   └── seen-notices.json                    # Generated de-duplication state
+├── scripts/update_jobs.py                   # Generic HTML/RSS/PDF monitor
+├── tests/test_update_jobs.py                # Parser and de-duplication tests
+├── index.html                               # Single-page, data-driven homepage
+├── assets/logo.png                          # Favicon / brand logo
+├── sitemap.xml
+├── robots.txt
 └── README.md
 ```
 
@@ -53,7 +63,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Font Awesome 6.4**, **Plus Jakarta Sans + Tiro Gurmukhi** (Google Fonts)
 - **Vanilla JS** — `jobDatabase` (10 entries, `type: punjab|central`, `categorySlug`), `admitCards`, `resultsList`, renderers (`renderPunjabColumn`, `renderCentralColumn`, etc.), filters (`filterJobs`, `filterByQual`, `filterByCategory`), modal & toast
 
-To add / edit a vacancy, edit `jobDatabase` in `index.html`:
+To add / edit a **curated** vacancy, edit `jobDatabase` in `index.html`. Automatically discovered vacancies live in `data/auto-jobs.json` and should not be edited by hand:
 
 ```js
 {
@@ -74,6 +84,69 @@ To add / edit a vacancy, edit `jobDatabase` in `index.html`:
   pdfLink: "https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/",
   applyLink: "https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/"
 }
+```
+
+---
+
+### 🤖 Automatic Job Alert Setup
+
+The ready-to-install workflow template in `automation/update-job-alerts.workflow.yml` is configured to run once every six hours (`17 */6 * * *`, in UTC) and supports manual runs. Once installed, it:
+
+1. Downloads every enabled page/feed in `automation/sources.json`.
+2. Classifies recruitment, admission, answer-key, result, and recruitment corrigendum/addendum links while excluding unrelated exam schedules, admit cards, tenders and administrative notices.
+3. Reads linked HTML metadata/body text and up to the first 10 pages of linked PDFs.
+4. Extracts only details it can verify (vacancies, qualifications, dates, advertisement number and age). Missing details remain “See Official Notification.”
+5. De-duplicates notices using `data/seen-notices.json`, adds new records to `data/auto-jobs.json`, and commits only when data changes.
+6. Recruitment, admission and recruitment-update notices use the existing vacancy cards/table/modal. Results and answer keys use the existing **Results & Answer Key** column. All new types can appear in the existing Breaking marquee.
+
+The workflow stages and commits only the two files under `data/`; it never rewrites `index.html`, CSS, or the page structure, so scheduled runs cannot change the existing layout.
+
+> **Activation required:** this repository connection could not add a file under `.github/workflows`. After merging, create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
+
+Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC and RRB Chandigarh.
+
+#### Add another website or RSS/Atom feed
+
+Add an object to the `sources` array in `automation/sources.json`:
+
+```json
+{
+  "id": "new-board",
+  "name": "New Recruitment Board",
+  "department": "New Recruitment Board",
+  "url": "https://example.gov.in/recruitment/",
+  "type": "punjab",
+  "categorySlug": "punjab-jobs",
+  "location": "Punjab",
+  "noticeTypes": ["recruitment", "admission", "answer-key", "result", "corrigendum"],
+  "bootstrapCount": 1,
+  "maxNewPerRun": 5,
+  "includeKeywords": ["hiring notice"],
+  "excludeKeywords": ["contract award"]
+}
+```
+
+1. Open `automation/sources.json` and copy one complete object inside the `sources` array.
+2. Give it a unique lowercase `id`, update its display `name`, `department`, and set `url` to the direct official notices page or RSS/Atom feed.
+3. Set `type` to `punjab` or `central`; `categorySlug` controls the existing homepage filter used for recruitment/admission/update cards.
+4. Set `noticeTypes` to any combination of `recruitment`, `admission`, `answer-key`, `result`, and `corrigendum`. The `corrigendum` type includes recruitment addenda.
+5. Save, test with `python3 scripts/update_jobs.py --dry-run`, then commit the configuration. The next active six-hour workflow run starts monitoring it.
+
+Additional options:
+
+- `includeKeywords` and `excludeKeywords` are optional for a website that uses unusual wording. If a custom include keyword should be treated as something other than recruitment, set `defaultNoticeType` to one of the supported notice types.
+- Use `bootstrapCount: 0` when adding an old results/archive page so historical notices are marked as seen but not published as new. Use `1` to publish its first current notice.
+- If one organization has separate advertisement, result and admission pages, add each page as a separate source object with a unique `id` and the appropriate `noticeTypes`.
+- On a source's first successful scan, the monitor marks all existing links as seen and publishes only `bootstrapCount` links. Later runs publish only unseen links.
+- No generic monitor can reliably read literally every website. A site that renders notices only through JavaScript, blocks GitHub's IP addresses, requires login/CAPTCHA, or has no stable links needs its public RSS/API endpoint configured instead.
+- After installing the template under `.github/workflows`, scheduled workflows run only from GitHub's default branch. Repository **Actions → General → Workflow permissions** must allow read/write access, and branch protection must permit the bot commit (or be adjusted to your preferred review flow).
+
+Run and test locally:
+
+```bash
+python3 -m pip install -r automation/requirements.txt
+python3 -m unittest discover -s tests -v
+python3 scripts/update_jobs.py --dry-run
 ```
 
 ---

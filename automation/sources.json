@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "newBadgeDays": 7,
+  "maxStoredJobs": 200,
+  "sources": [
+    {
+      "id": "psssb",
+      "name": "PSSSB",
+      "department": "Punjab Subordinate Services Selection Board (PSSSB)",
+      "url": "https://sssb.punjab.gov.in/Advertisements.html",
+      "type": "punjab",
+      "categorySlug": "psssb",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "corrigendum"],
+      "includeKeywords": ["public notice regarding revised dates", "corrigendum", "addendum"],
+      "defaultNoticeType": "corrigendum",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "psssb-results",
+      "name": "PSSSB Results and Answer Keys",
+      "department": "Punjab Subordinate Services Selection Board (PSSSB)",
+      "url": "https://sssb.punjab.gov.in/Results.html",
+      "type": "punjab",
+      "categorySlug": "psssb",
+      "location": "Punjab",
+      "noticeTypes": ["result", "answer-key", "corrigendum"],
+      "bootstrapCount": 0,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "ppsc",
+      "name": "PPSC",
+      "department": "Punjab Public Service Commission (PPSC)",
+      "url": "https://ppsc.gov.in/",
+      "type": "punjab",
+      "categorySlug": "ppsc",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": ["corrigendum", "addendum"],
+      "defaultNoticeType": "corrigendum",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "punjab-police",
+      "name": "Punjab Police",
+      "department": "Punjab Police Recruitment",
+      "url": "https://punjabpolice.gov.in/punjabpolice/recruitment.aspx",
+      "type": "punjab",
+      "categorySlug": "punjab-police",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "pspcl",
+      "name": "PSPCL",
+      "department": "Punjab State Power Corporation Limited (PSPCL)",
+      "url": "https://pspcl.in/recruitment/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "nvs",
+      "name": "Navodaya Vidyalaya Samiti",
+      "department": "Navodaya Vidyalaya Samiti (NVS)",
+      "url": "https://navodaya.gov.in/nvs/en/Recruitment/",
+      "type": "central",
+      "categorySlug": "teacher",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "nvs-admission-updates",
+      "name": "NVS Admission and JNVST Updates",
+      "department": "Navodaya Vidyalaya Samiti (NVS / JNVST)",
+      "url": "https://navodaya.gov.in/nvs/en/Home1/index.html",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["admission", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 0,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "ssc",
+      "name": "Staff Selection Commission",
+      "department": "Staff Selection Commission (SSC)",
+      "url": "https://ssc.gov.in/home/noticeboard",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "upsc",
+      "name": "Union Public Service Commission",
+      "department": "Union Public Service Commission (UPSC)",
+      "url": "https://upsc.gov.in/recruitment/recruitment-advertisement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "rrb-chandigarh",
+      "name": "Railway Recruitment Board Chandigarh",
+      "department": "Railway Recruitment Board (RRB), Chandigarh",
+      "url": "https://www.rrbcdg.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India / Chandigarh Region",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    }
+  ]
+}
