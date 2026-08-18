@@ -123,6 +123,19 @@
         "273792f6773c2b15a32cdf3a9ee717019baa51382b3b958c8c5ee01381864cb6",
         "60085f5adc1b34ce039e39b726598d34f9229a556592198e9a65a8169c766dfb"
       ]
+    },
+    "punjab-legal-services-authority": {
+      "initializedAt": "2026-08-18T08:04:13Z",
+      "fingerprints": [
+        "f9e5f9c4a25b6543c196802f5ed26183003a41e47feebf36342a475d34980986",
+        "b42b9ba71903889b535c9aff440c76f44371535c939c5f09ca096358bccb467f"
+      ]
+    },
+    "aiims-exams-courses": {
+      "initializedAt": "2026-08-18T08:04:13Z",
+      "fingerprints": [
+        "20f6d084e990485e27428f6e7edf6b20ce1ed56966a10b7b7c2f129d735ecb06"
+      ]
     }
   }
 }
