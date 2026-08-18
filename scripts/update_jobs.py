@@ -895,24 +895,36 @@ def pdf_text(data: bytes) -> str:
         return ""
 
 
-def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str, str, str]:
-    """Return (searchable text, description source, best apply URL)."""
+def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str, str, str, str]:
+    """Return (searchable text, description source, best apply URL, best PDF URL).
+
+    The PDF URL is the direct notification PDF when one can be found. If the
+    candidate itself is a PDF, that URL is returned. If the candidate is an
+    HTML detail page that contains a PDF link, the strongest PDF on that page
+    (preferring labelled advertisement/notification/result links over generic
+    helpers) is returned so the homepage can show the real PDF under
+    ``Official Notice / Portal`` automatically. When no PDF is found on the
+    detail page the candidate URL itself is kept (the official detail page).
+    """
     combined = clean_text(f"{candidate.title}. {candidate.summary}")
     description_source = candidate.summary
     apply_url = candidate.url
+    pdf_url = candidate.url
     if source.get("enrichDetails", True) is False:
-        return combined, description_source, apply_url
+        return combined, description_source, apply_url, pdf_url
 
     try:
         download = fetch_url(candidate.url, timeout=int(source.get("detailTimeout", 20)), retries=1)
     except RuntimeError as exc:
         print(f"  Could not enrich {candidate.url}: {exc}", file=sys.stderr)
-        return combined, description_source, apply_url
+        return combined, description_source, apply_url, pdf_url
 
     is_pdf = download.content_type == "application/pdf" or urllib.parse.urlsplit(download.url).path.lower().endswith(".pdf")
     if is_pdf:
         extracted = pdf_text(download.data)
-        return clean_text(f"{combined}. {extracted}")[:MAX_TEXT_LENGTH], description_source or extracted, apply_url
+        # Candidate itself is the notification PDF — use its final URL after redirects.
+        pdf_url = canonical_url(download.url) or candidate.url
+        return clean_text(f"{combined}. {extracted}")[:MAX_TEXT_LENGTH], description_source or extracted, apply_url, pdf_url
 
     text = decode_document(download)
     _, parser = parse_html(text, download.url)
@@ -924,7 +936,37 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
             if safe:
                 apply_url = safe
                 break
-    return richer, description_source, apply_url
+    # Find the strongest PDF on the detail page for the Official Notice button.
+    best_pdf = ""
+    fallback_pdf = ""
+    for url, label in parser.links:
+        safe = canonical_url(url)
+        if not safe:
+            continue
+        # Most official PDFs end with .pdf in the path; also handle rare cases
+        # like download.php?file=xyz.pdf by checking for .pdf in the URL.
+        path = urllib.parse.urlsplit(safe).path.lower()
+        is_pdf_url = path.endswith(".pdf")
+        if not is_pdf_url and ".pdf" in safe.lower():
+            # Only treat as PDF if the label or URL strongly suggests it.
+            if re.search(r"(?i)\bpdf\b", label or "") or PRIMARY_ATTACHMENT_PATTERN.search(label or ""):
+                is_pdf_url = True
+        if not is_pdf_url:
+            continue
+        if HELPER_ATTACHMENT_PATTERN.search(label or ""):
+            continue
+        if PRIMARY_ATTACHMENT_PATTERN.search(label or "") and is_pdf_url:
+            best_pdf = safe
+            break
+        if is_pdf_url and not fallback_pdf:
+            fallback_pdf = safe
+    if best_pdf:
+        pdf_url = best_pdf
+    elif fallback_pdf:
+        pdf_url = fallback_pdf
+    else:
+        pdf_url = candidate.url
+    return richer, description_source, apply_url, pdf_url
 
 
 NOTICE_PRESENTATION = {
@@ -985,13 +1027,26 @@ def notice_steps(notice_type: str) -> list[str]:
 def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: datetime) -> dict[str, Any]:
     title = clean_title(candidate.title)
     notice_type = classify_notice(candidate, source) or "recruitment"
-    searchable, description_source, apply_url = enrich_candidate(candidate, source)
+    searchable, description_source, apply_url, discovered_pdf_url = enrich_candidate(candidate, source)
     qualification, qual_category = infer_qualification(searchable, source)
     candidate_url = canonical_url(candidate.url)
+    discovered_pdf_url = canonical_url(discovered_pdf_url) or candidate_url
+    # If the detail page's best PDF points to a discovery host, discard it.
+    if is_discovery_host(discovered_pdf_url):
+        discovered_pdf_url = candidate_url
     source_url = canonical_url(source["url"])
     if is_discovery_host(candidate_url) or is_discovery_host(source_url):
         raise ValueError("discovery-feed URLs cannot be published as job details")
     is_pdf = urllib.parse.urlsplit(candidate_url).path.lower().endswith(".pdf")
+    # Prefer the PDF discovered on the detail page for the Official Notice link
+    # when one exists; otherwise keep the candidate URL itself (direct PDF or
+    # official detail page). This puts the real notification PDF under
+    # ``Official Notice / Portal`` automatically, when possible.
+    pdf_link_final = discovered_pdf_url if discovered_pdf_url else candidate_url
+    # Guard against discovery hosts and ensure a canonical form.
+    if is_discovery_host(pdf_link_final):
+        pdf_link_final = candidate_url
+    pdf_link_final = canonical_url(pdf_link_final) or candidate_url
     last_date = find_labelled_date(
         searchable,
         r"last\s+date(?:\s+for\s+(?:submission|application|receipt|registration))?|closing\s+date|applications?\s+close",
@@ -1035,7 +1090,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "age": infer_age(searchable),
         "details": useful_summary(description_source or searchable[:1200], title, source_name, notice_type),
         "howToApply": notice_steps(notice_type),
-        "pdfLink": "" if is_discovery_host(candidate_url) else candidate_url,
+        "pdfLink": "" if is_discovery_host(pdf_link_final) else pdf_link_final,
         "applyLink": "" if is_discovery_host(apply_url or candidate_url) else (
             canonical_url(source_url if is_pdf and apply_url == candidate_url else apply_url) or candidate_url
         ),
