@@ -16,6 +16,23 @@ SPEC.loader.exec_module(monitor)
 
 
 class JobMonitorTests(unittest.TestCase):
+    def test_layout_guard_restores_changes_and_removes_new_assets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "assets").mkdir()
+            (root / "index.html").write_text("original layout", encoding="utf-8")
+            (root / "assets" / "logo.png").write_bytes(b"original logo")
+            snapshot = monitor.capture_protected_layout(root)
+
+            (root / "index.html").write_text("changed by automation", encoding="utf-8")
+            (root / "assets" / "new-layout.css").write_text("body {}", encoding="utf-8")
+            self.assertNotEqual(monitor.capture_protected_layout(root), snapshot)
+
+            monitor.restore_protected_layout(snapshot, root)
+            self.assertEqual(monitor.capture_protected_layout(root), snapshot)
+            self.assertEqual((root / "index.html").read_text(encoding="utf-8"), "original layout")
+            self.assertFalse((root / "assets" / "new-layout.css").exists())
+
     def test_html_parser_classifies_recruitment_and_result(self):
         markup = """
         <html><head><meta name="description" content="Official notices"></head><body>

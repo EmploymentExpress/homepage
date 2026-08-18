@@ -103,7 +103,7 @@ The ready-to-install workflow template in `automation/update-job-alerts.workflow
 5. De-duplicates notices using `data/seen-notices.json`, adds new records to `data/auto-jobs.json`, and commits only when data changes.
 6. Recruitment, admission and recruitment-update notices use the existing vacancy cards/table/modal. Results and answer keys use the existing **Results & Answer Key** column. All new types can appear in the existing Breaking marquee.
 
-The workflow stages and commits only the two files under `data/`; it never rewrites `index.html`, CSS, or the page structure, so scheduled runs cannot change the existing layout.
+The automation is protected at two layers. `scripts/update_jobs.py` snapshots `index.html` and `assets/` before every CLI run and automatically restores them if any parser or dependency attempts a layout change. The workflow also stages and commits only `data/auto-jobs.json` and `data/seen-notices.json`, so scheduled recruitment updates cannot alter the website layout, CSS, logo/assets, or page structure.
 
 > **Activation required:** this repository connection cannot add a file under `.github/workflows` (it lacks the `workflows` permission). Create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
 

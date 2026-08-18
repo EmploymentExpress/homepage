@@ -39,6 +39,9 @@ DEFAULT_DISCOVERY_FEEDS = ROOT / "automation" / "discovery-feeds.json"
 DEFAULT_OFFICIAL_ORGS = ROOT / "automation" / "official-organizations.json"
 DEFAULT_OUTPUT = ROOT / "data" / "auto-jobs.json"
 DEFAULT_STATE = ROOT / "data" / "seen-notices.json"
+# Recruitment automation is data-only. These paths define the visual website and
+# are snapshotted/restored around every CLI run so the monitor cannot alter layout.
+PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
 DISCOVERY_HOSTS = {"haryanajobs.in", "rozgarnews.com"}
 DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "rozgarnews", "rozgar news")
 
@@ -1520,6 +1523,36 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     return 0
 
 
+def capture_protected_layout(
+    root: Path = ROOT, protected_paths: Iterable[str] = PROTECTED_LAYOUT_PATHS
+) -> dict[str, bytes]:
+    """Capture the visual website files before an automation run."""
+    snapshot: dict[str, bytes] = {}
+    for relative in protected_paths:
+        path = root / relative
+        files = path.rglob("*") if path.is_dir() else (path,)
+        for file_path in files:
+            if file_path.is_file():
+                snapshot[file_path.relative_to(root).as_posix()] = file_path.read_bytes()
+    return snapshot
+
+
+def restore_protected_layout(
+    snapshot: dict[str, bytes],
+    root: Path = ROOT,
+    protected_paths: Iterable[str] = PROTECTED_LAYOUT_PATHS,
+) -> None:
+    """Restore protected files and remove layout files created during a run."""
+    current = capture_protected_layout(root, protected_paths)
+    for relative in current.keys() - snapshot.keys():
+        (root / relative).unlink()
+    for relative, content in snapshot.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists() or path.read_bytes() != content:
+            path.write_bytes(content)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Update automatic recruitment, admission, answer-key, result and corrigendum alerts")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -1527,8 +1560,17 @@ def main() -> int:
     parser.add_argument("--state", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+    layout_snapshot = capture_protected_layout()
     try:
-        return run(args.config, args.output, args.state, args.dry_run)
+        try:
+            result = run(args.config, args.output, args.state, args.dry_run)
+        finally:
+            if capture_protected_layout() != layout_snapshot:
+                restore_protected_layout(layout_snapshot)
+                raise RuntimeError(
+                    "Layout protection stopped and reverted an attempted change to index.html or assets/"
+                )
+        return result
     except RuntimeError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
