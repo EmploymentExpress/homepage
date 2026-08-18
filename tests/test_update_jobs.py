@@ -410,5 +410,104 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(original["lastDate"], "20-09-2026")
 
 
+    # ------------------------------------------------------------------
+    # Offline application forms (onlineforms.in)
+    # ------------------------------------------------------------------
+    def test_offline_forms_registry_loads_and_masks_links(self):
+        forms = monitor.load_offline_forms()
+        self.assertGreater(len(forms), 0)
+        for entry in forms:
+            self.assertTrue(monitor.is_onlineforms_url(entry["url"]))
+        link = monitor.offline_form_link(forms[0]["url"])
+        self.assertTrue(link.startswith("redirect.html?f="))
+        self.assertNotIn("onlineforms", link)
+        self.assertTrue(link.endswith(monitor.redirect_token(forms[0]["url"])))
+
+    def test_offline_form_title_match_finds_specific_form(self):
+        forms = monitor.load_offline_forms()
+        matched = monitor.match_offline_form(
+            "Indian Air Force Agniveervayu Non-Combatant Recruitment 2026 - apply offline",
+            "Indian Air Force",
+            forms,
+        )
+        self.assertIsNotNone(matched)
+        self.assertIn("air-force-non-combatant", matched["url"])
+
+        unmatched = monitor.match_offline_form(
+            "Recruitment of Software Engineers at a private firm", "Private Firm", forms
+        )
+        self.assertIsNone(unmatched)
+
+    def test_offline_forms_processing_publishes_and_masks_links(self):
+        forms = monitor.load_offline_forms()
+        config = {
+            "sources": [{
+                "id": "onlineforms-offline-forms",
+                "role": "offline-forms",
+                "enabled": True,
+                "name": "Offline Forms",
+                "url": "https://onlineforms.in/latest-offline-forms/",
+                "type": "central",
+                "categorySlug": "central",
+                "location": "All India",
+                "timeout": 5,
+            }]
+        }
+        now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
+        jobs = []
+        with tempfile.TemporaryDirectory() as folder:
+            redirect_path = Path(folder) / "offline-redirects.json"
+            with patch.object(monitor, "DEFAULT_OFFLINE_REDIRECTS", redirect_path), \
+                 patch.object(monitor, "fetch_url", side_effect=RuntimeError("no network")):
+                added, changed = monitor.process_offline_forms(config, jobs, {"sources": {}}, now)
+            self.assertGreater(added, 0)
+            self.assertTrue(changed)
+            payload = json.loads(redirect_path.read_text(encoding="utf-8"))
+            self.assertEqual(len(payload["redirects"]), len(forms))
+            for job in jobs:
+                self.assertEqual(job["applyMode"], "Offline")
+                self.assertEqual(job["applyLabel"], "Download Offline Application Form")
+                for field in ("offlineFormLink", "pdfLink", "applyLink"):
+                    self.assertTrue(job[field].startswith("redirect.html?f="))
+                    self.assertNotIn("onlineforms", job[field].lower())
+
+    def test_offline_form_link_attached_to_existing_offline_job(self):
+        forms = monitor.load_offline_forms()
+        existing = {
+            "id": 999,
+            "title": "Air Force Non-Combatant Recruitment 2026 - apply offline",
+            "department": "Indian Air Force",
+            "applyMode": "Offline",
+            "pdfLink": "https://example.gov.in/notice.pdf",
+            "applyLink": "https://example.gov.in/apply",
+        }
+        config = {"sources": [{
+            "id": "x", "role": "offline-forms", "enabled": True,
+            "url": "https://onlineforms.in/latest-offline-forms/", "timeout": 5,
+        }]}
+        now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
+        jobs = [dict(existing)]
+        with tempfile.TemporaryDirectory() as folder:
+            redirect_path = Path(folder) / "offline-redirects.json"
+            with patch.object(monitor, "DEFAULT_OFFLINE_REDIRECTS", redirect_path), \
+                 patch.object(monitor, "fetch_url", side_effect=RuntimeError("no network")):
+                monitor.process_offline_forms(config, jobs, {"sources": {}}, now)
+        target = next(job for job in jobs if job["id"] == 999)
+        self.assertTrue(target["offlineFormLink"].startswith("redirect.html?f="))
+        self.assertNotIn("onlineforms", target["offlineFormLink"])
+        self.assertEqual(target["applyLabel"], "Download Offline Application Form")
+
+    def test_offline_source_configured_in_sources_json(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        offline = [source for source in config["sources"] if source.get("role") == "offline-forms"]
+        self.assertEqual(len(offline), 1)
+        self.assertTrue(offline[0]["enabled"])
+        self.assertIn("onlineforms.in", offline[0]["url"])
+
+
 if __name__ == "__main__":
     unittest.main()

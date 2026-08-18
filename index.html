@@ -284,32 +284,6 @@
             </div>
         </div>
 
-        <!-- Data freshness and deadline summary -->
-        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 shadow-sm" aria-label="Website update status">
-            <div class="flex items-center gap-2 text-xs text-slate-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse" aria-hidden="true"></span>
-                <strong class="text-slate-900">Website data updated:</strong>
-                <time id="site-last-updated">18 Aug 2026</time>
-            </div>
-            <div id="site-nearest-deadline" class="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">
-                <i class="far fa-calendar-check mr-1"></i> Checking nearest application last date…
-            </div>
-        </div>
-
-        <!-- Recently Added Jobs Flash Cards (auto-populated from official websites; disappear 48 hrs after publication) -->
-        <section id="flash-cards-section" class="hidden">
-            <div class="flex items-center justify-between mb-2.5">
-                <h2 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-                    <span class="text-base">🔥</span> Newly Added Jobs
-                    <span class="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded uppercase tracking-wide badge-pulse">Just In</span>
-                </h2>
-                <span class="text-[10px] text-slate-400 font-semibold">Auto-removed after 48 hours</span>
-            </div>
-            <div id="flash-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                <!-- Populated dynamically via JS from recently discovered notices -->
-            </div>
-        </section>
-
         <!-- Main 4-Column Mega Grid (Classic EMPLOYMENT EXPRESS Layout) -->
         <!-- LAYOUT FROZEN: keep this 4-column grid and card order (Punjab | Central | Admit Card | Results); content updates only — see AGENTS.md -->
         <div id="answer-keys" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-28">
@@ -693,6 +667,9 @@
                     <i class="fas fa-share-alt"></i> Share Job Alert
                 </button>
                 <div class="flex items-center gap-2">
+                    <a id="modalOfflineFormBtn" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition">
+                        <i class="fas fa-file-alt"></i> <span id="modalOfflineFormLabel">Download Offline Application Form</span>
+                    </a>
                     <a id="modalOfficialPdf" href="#" target="_blank" class="px-3 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold rounded-lg text-xs flex items-center gap-1.5 transition">
                         <i class="fas fa-file-pdf text-red-600"></i> Official Notice / Portal
                     </a>
@@ -1143,6 +1120,7 @@
             const alertType = allowedAlertTypes.includes(raw.alertType) ? raw.alertType : 'recruitment';
             const publishedAt = text(raw.publishedAt, text(raw.discoveredAt, '', 40), 40);
             const isNewNotice = isWithinHours({ publishedAt, discoveredAt: raw.discoveredAt }, NEW_NOTICE_WINDOW_HOURS);
+            const isJustIn = isWithinHours({ publishedAt, discoveredAt: raw.discoveredAt }, JUST_IN_WINDOW_HOURS);
             const presentations = {
                 recruitment: isNewNotice ? ['NEW JOB ALERT', 'bg-red-600'] : ['JOB NOTICE', 'bg-blue-600'],
                 admission: isNewNotice ? ['NEW ADMISSION', 'bg-purple-600'] : ['ADMISSION', 'bg-purple-600'],
@@ -1166,6 +1144,7 @@
                 applyMode: text(raw.applyMode, 'As Notified', 80),
                 alertType,
                 isNewNotice,
+                isJustIn,
                 badge,
                 badgeColor,
                 type,
@@ -1180,6 +1159,8 @@
                 pdfLink: safeExternalUrl(raw.pdfLink),
                 applyLink: safeExternalUrl(raw.applyLink),
                 applyLabel: text(raw.applyLabel, 'Open Official Application', 60),
+                offlineFormLink: safeExternalUrl(raw.offlineFormLink),
+                offlineFormName: text(raw.offlineFormName, 'Offline Application Form', 80),
                 sourceName: text(raw.sourceName, 'Official website', 100),
                 publishedAt,
                 discoveredAt: text(raw.discoveredAt, '', 40),
@@ -1194,7 +1175,9 @@
 
         const NEW_NOTICE_WINDOW_HOURS = 72;
         const BREAKING_NOTICE_WINDOW_HOURS = 24;
-        const FLASH_CARD_WINDOW_HOURS = 48;
+        // The "Just In" tag is shown on newly discovered notices for 48 hours after
+        // publication and is removed automatically after that window elapses.
+        const JUST_IN_WINDOW_HOURS = 48;
 
         function noticeTimestamp(alert) {
             const value = alert && (alert.publishedAt || alert.discoveredAt);
@@ -1222,53 +1205,6 @@
             } else {
                 breaking.textContent = '📢 No new official job notification published in the last 24 hours. Check the latest alerts below.';
             }
-        }
-
-        // Recently Added Jobs flash cards: only automatic alerts published/discovered
-        // within FLASH_CARD_WINDOW_HOURS are shown, so each card disappears 48 hours
-        // after publication automatically.
-        function renderFlashCards(automaticAlerts) {
-            const section = document.getElementById('flash-cards-section');
-            const grid = document.getElementById('flash-cards-grid');
-            if (!section || !grid) return;
-            const recent = automaticAlerts
-                .filter(alert => isWithinHours(alert, FLASH_CARD_WINDOW_HOURS))
-                .sort((a, b) => noticeTimestamp(b) - noticeTimestamp(a))
-                .slice(0, 8);
-            if (!recent.length) {
-                section.classList.add('hidden');
-                grid.innerHTML = '';
-                return;
-            }
-            section.classList.remove('hidden');
-            const gradients = [
-                'from-red-600 to-rose-800 border-red-400/30',
-                'from-purple-700 to-indigo-800 border-purple-400/30',
-                'from-blue-600 to-indigo-700 border-blue-400/30',
-                'from-emerald-600 to-teal-700 border-emerald-400/30'
-            ];
-            const labels = {
-                recruitment: 'NEW JOB',
-                admission: 'NEW ADMISSION',
-                'answer-key': 'NEW ANSWER KEY',
-                result: 'NEW RESULT',
-                corrigendum: 'NEW UPDATE'
-            };
-            grid.innerHTML = recent.map((job, index) => {
-                const gradient = gradients[index % gradients.length];
-                const label = labels[job.alertType] || 'NEW NOTICE';
-                return `
-                    <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="bg-gradient-to-br ${gradient} text-white p-3.5 rounded-xl shadow-sm hover:shadow-md transition flex items-center justify-between group border">
-                        <div>
-                            <span class="text-[10px] bg-amber-400 text-slate-950 uppercase font-black px-1.5 py-0.5 rounded tracking-wide">🔥 ${label}</span>
-                            <h3 class="font-bold text-sm mt-1 leading-tight group-hover:underline">${escapeHtml(job.title)}</h3>
-                            <p class="text-xs text-white/80 font-medium">${escapeHtml(job.vacancies)} • ${escapeHtml(job.department)}</p>
-                            <p class="text-[10px] text-white font-bold mt-1"><i class="far fa-calendar-check mr-1"></i>Last date: ${escapeHtml(job.lastDate)}</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-white/70 group-hover:translate-x-1 transition"></i>
-                    </a>
-                `;
-            }).join('');
         }
 
         // Last Date Reminders: shows every job whose application deadline falls within the
@@ -1406,13 +1342,8 @@
                     const updatedLabel = new Date(feedUpdatedAt).toLocaleString('en-IN', {
                         day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                     });
-                    const freshness = document.getElementById('site-last-updated');
                     const resultsMeta = document.getElementById('results-section-meta');
                     const admitMeta = document.getElementById('admit-section-meta');
-                    if (freshness) {
-                        freshness.dateTime = payload.updatedAt;
-                        freshness.textContent = updatedLabel;
-                    }
                     if (resultsMeta) resultsMeta.textContent = `Updated: ${updatedLabel}`;
                     if (admitMeta) admitMeta.textContent = `Updated: ${updatedLabel}`;
                 }
@@ -1447,13 +1378,13 @@
                             ? `Official Answer Key • ${alert.sourceName}`
                             : `Official Result • ${alert.sourceName}`,
                         isNew: alert.isNewNotice,
+                        isJustIn: alert.isJustIn === true,
                         updatedAt: alert.publishedAt || alert.discoveredAt,
                         link: alert.pdfLink !== '#' ? alert.pdfLink : alert.applyLink
                     })),
                     ...resultsList.filter(item => !resourceTitles.has(item.title.toLowerCase()))
                 ];
                 updateBreakingNews(automaticAlerts);
-                renderFlashCards(automaticAlerts);
             } catch (error) {
                 console.warn('Automatic alerts could not be loaded; showing curated alerts.', error);
             }
@@ -1525,12 +1456,10 @@
                     : 'No open dated applications';
             });
             const all = nearestDeadline([...jobDatabase, ...admissionDatabase]);
-            const siteSummary = document.getElementById('site-nearest-deadline');
             const masterSummary = document.getElementById('master-section-meta');
             const summary = all
                 ? `Nearest last date: ${all.job.lastDate} — ${all.job.title}`
                 : 'No upcoming dated application deadline';
-            if (siteSummary) siteSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
             if (masterSummary) masterSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
         }
 
@@ -1549,10 +1478,14 @@
             const info = deadlineInfo(job);
             const statusClass = info.active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200';
             const shortDetail = String(job.details || '').replace(/<[^>]*>/g, '').slice(0, 80);
+            const justInBadge = job.isJustIn
+                ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse">Just In</span>'
+                : '';
             return `
                 <article class="p-3 job-compact-card border-b border-slate-100 cursor-pointer" onclick="openJobDetail(${job.id})">
                     <div class="flex flex-col gap-1.5">
                         <div class="flex flex-wrap items-center gap-1.5">
+                            ${justInBadge}
                             <span class="text-[10px] font-black text-${color}-700 bg-${color}-100 px-2 py-0.5 rounded">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge || 'NOTICE')}</span>
                             <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">${escapeHtml(job.vacancies)}</span>
                             <span class="text-[10px] font-bold border px-2 py-0.5 rounded ${statusClass}">${escapeHtml(info.status)}</span>
@@ -1565,6 +1498,7 @@
                             <span class="text-[10px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2 py-0.5 rounded hover:bg-${color}-100">View Details →</span>
                         </div>
                         ${job.lastDateExtended ? `<p class="text-[10px] font-bold text-emerald-700"><i class="fas fa-circle-info mr-1"></i>Extended to ${escapeHtml(job.lastDate)}</p>` : ''}
+                        ${job.offlineFormLink ? `<a href="${escapeHtml(safeExternalUrl(job.offlineFormLink))}" target="_blank" rel="noopener noreferrer" class="mt-1 text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded hover:bg-emerald-100 inline-flex items-center gap-1.5"><i class="fas fa-file-alt"></i> Offline Application Form</a>` : ''}
                     </div>
                 </article>`;
         }
@@ -1638,7 +1572,7 @@
                         <div class="text-[10px] text-slate-500 mt-1"><i class="far fa-calendar-check mr-1 text-rose-500"></i><strong>Result/update date:</strong> ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'See official notice')}</div>
                         <div class="text-[9px] text-slate-400 mt-0.5">Application last date: Not applicable to results / answer keys</div>
                     </div>
-                    ${item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>'}
+                    ${item.isJustIn ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse">Just In</span>' : (item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>')}
                 </div>
             `).join('');
         }
@@ -1662,12 +1596,14 @@
                 <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
+                            ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse">Just In</span>' : ''}
                             <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
                             <div>
                                 <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition block text-xs sm:text-sm">
                                     ${escapeHtml(job.title)}
                                 </a>
                                 <span class="text-[11px] text-slate-500 font-medium">${escapeHtml(job.department)}</span>
+                                ${job.offlineFormLink ? `<a href="${escapeHtml(safeExternalUrl(job.offlineFormLink))}" target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded hover:bg-emerald-100"><i class="fas fa-file-alt mr-1"></i>Offline Application Form</a>` : ''}
                             </div>
                         </div>
                     </td>
@@ -1764,6 +1700,17 @@
             document.getElementById('modalOfficialPdf').href = safeExternalUrl(job.pdfLink);
             document.getElementById('modalApplyBtn').href = safeExternalUrl(job.applyLink);
             document.getElementById('modalApplyLabel').innerText = job.applyLabel || 'Apply Online Now';
+
+            const offlineBtn = document.getElementById('modalOfflineFormBtn');
+            const offlineLabel = document.getElementById('modalOfflineFormLabel');
+            if (job.offlineFormLink) {
+                offlineBtn.href = safeExternalUrl(job.offlineFormLink);
+                offlineLabel.innerText = job.offlineFormName || 'Download Offline Application Form';
+                offlineBtn.classList.remove('hidden');
+            } else {
+                offlineBtn.href = '#';
+                offlineBtn.classList.add('hidden');
+            }
 
             const defaultApplySteps = [
                 'Visit the official recruitment portal link given below.',

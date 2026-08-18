@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "description": "Offline-apply vacancies whose offline application form is hosted on onlineforms.in. The monitor merges this maintained registry with whatever it can scrape from the configured offline-forms listing source(s). Each entry must point to the onlineforms.in page for that specific job. Add new offline-apply vacancies here (or they will be picked up automatically from the listing source).",
+  "offlineForms": [
+    {
+      "title": "Air Force Non-Combatant Recruitment 2026 Offline Application Form",
+      "keywords": ["air force", "non combatant", "agniveer", "iaf", "ncb"],
+      "url": "https://onlineforms.in/air-force-non-combatant-recruitment/",
+      "department": "Indian Air Force (IAF)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "Railway Sports Quota Recruitment 2026 Offline Application Form",
+      "keywords": ["railway", "sports quota", "rrc", "railway recruitment cell"],
+      "url": "https://onlineforms.in/railway-sports-quota-recruitment/",
+      "department": "Railway Recruitment Cell (RRC)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "CCRS Recruitment 2026 Offline Application Form",
+      "keywords": ["ccrs", "council for research in siddha", "clerk", "social worker", "udc", "ldc"],
+      "url": "https://onlineforms.in/ccrs-recruitment-2026-clerk-social-worker/",
+      "department": "Central Council for Research in Siddha (CCRS)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "DGQA Technician Recruitment 2026 Offline Application Form",
+      "keywords": ["dgqa", "technician", "directorate general quality assurance"],
+      "url": "https://onlineforms.in/dgqa-technician-recruitment/",
+      "department": "Directorate General of Quality Assurance (DGQA)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "Indian Army Sports Quota Recruitment 2026 Offline Application Form",
+      "keywords": ["army", "sports quota", "havildar", "naib subedar"],
+      "url": "https://onlineforms.in/indian-army-sports-quota-recruitment/",
+      "department": "Indian Army (Ministry of Defence)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "Indian Air Force MTS Recruitment 2026 Offline Application Form PDF",
+      "keywords": ["air force", "mts", "multi tasking staff", "iaf"],
+      "url": "https://onlineforms.in/indian-air-force-mts-recruitment/",
+      "department": "Indian Air Force (IAF)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "BRO GREF Recruitment 2026 Offline Application Form",
+      "keywords": ["bro", "gref", "border roads organisation", "draughtsman", "store keeper"],
+      "url": "https://onlineforms.in/bro-gref-recruitment/",
+      "department": "Border Roads Organisation (BRO)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India"
+    },
+    {
+      "title": "District Court Ludhiana Recruitment 2026 Offline Application Form",
+      "keywords": ["district court ludhiana", "ludhiana", "clerk"],
+      "url": "https://onlineforms.in/district-court-ludhiana-recruitment/",
+      "department": "District Court, Ludhiana",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab"
+    }
+  ]
+}

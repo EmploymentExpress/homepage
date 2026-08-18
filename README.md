@@ -25,7 +25,8 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
 - **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
 - **Time-limited new alerts** — newly discovered notices show a 🔥 icon with a `NEW` label for 72 hours from publication (or discovery when publication time is unavailable); they appear in the Breaking marquee for 24 hours and then are removed automatically
-- **🔥 Newly Added Jobs flash cards** — auto-populated from recently discovered official notices; each card carries a 🔥 + `NEW` badge and disappears automatically 48 hours after publication (the whole section hides when there is nothing recent)
+- **⏱️ "Just In" tag** — newly discovered official notices appear directly in their respective section (Latest Punjab Jobs, All India & NVS/Central, Results & Answer Key, Admission & Courses, and the Master Table) carrying a **Just In** tag that stays for **48 hours** and is removed automatically after publication
+- **📄 Offline application forms** — offline-apply vacancies carry a **Download Offline Application Form** link sourced from an external offline-form portal. The portal's URL and branding are masked: the visible link points to `redirect.html?f=<token>`, which resolves the real URL from `data/offline-redirects.json` (the external URL never appears on the page or in any visible link)
 - **Last Date Reminders** — auto-populated 2 days (48 hours) before each job's `lastDate`, with a live per-second countdown timer; jobs leave the list automatically once their deadline passes (see extension handling below)
 - **Last-date extension handling** — when the monitor finds an official corrigendum extending a deadline, the affected job is marked **Last Date Extended** with the old date struck through → new date and a link to the notice, instead of being removed
 - **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts including the RCF Kapurthala 734 Act Apprentice notification, with posts count, last date, source information, and `Apply/Info` modal
@@ -45,11 +46,14 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 ├── automation/
 │   ├── update-job-alerts.workflow.yml       # Six-hour GitHub Actions template
 │   ├── sources.json                         # Websites/feeds to monitor
+│   ├── offline-forms.json                   # Maintained offline-apply form registry (onlineforms.in)
 │   └── requirements.txt                    # PDF extraction dependency
 ├── data/
 │   ├── auto-jobs.json                       # Generated jobs consumed by the page
 │   ├── notification-source-links.json       # User-added websites monitored on every future run
+│   ├── offline-redirects.json               # Generated token → offline-form URL map (masked)
 │   └── seen-notices.json                    # Generated de-duplication state
+├── redirect.html                            # Client-side token resolver for offline forms (no external URL shown)
 ├── scripts/update_jobs.py                   # Generic HTML/RSS/PDF monitor
 ├── tests/test_update_jobs.py                # Parser and de-duplication tests
 ├── index.html                               # Single-page, data-driven homepage
@@ -97,14 +101,12 @@ To add / edit a **curated** vacancy, edit `jobDatabase` in `index.html`. Automat
 **The homepage layout is frozen** — the *Classic 4-Column Mega Grid* (restored in PR #17):
 
 1. Quick Notice Banners / Highlight Grid
-2. Data freshness and deadline summary
-3. 🔥 Newly Added Jobs flash cards
-4. **Last Date Reminders** (red section)
-5. **Main 4-Column Mega Grid** — Punjab Jobs | All India & NVS/Central | Admit Card 2026 | Results & Answer Key
-6. Admission & Courses
-7. Qualification Quick Finder Pills
-8. Master Vacancy Table
-9. Quick Resources & State Syllabus Widget
+2. **Main 4-Column Mega Grid** — Punjab Jobs | All India & NVS/Central | Admit Card 2026 | Results & Answer Key
+3. **Last Date Reminders** (red section)
+4. Admission & Courses
+5. Qualification Quick Finder Pills
+6. Master Vacancy Table
+7. Quick Resources & State Syllabus Widget
 
 Any AI agent (or human) asked to *update* the site must change **only the instructed details** —
 job entries, dates, links, text, generated `data/*.json` files — and must **not** reorder sections,
@@ -268,7 +270,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ### 📅 Current Data (2026)
 
-- Titles, meta, OG/Twitter, H1, flash cards, and table headers now read **2026**
+- Titles, meta, OG/Twitter, H1, section cards, and table headers now read **2026**
 - Active recruitments updated to **15 Sep – 28 Oct 2026** (relative to 17 Aug 2026)
 - Footer: © 2026 EMPLOYMENT EXPRESS
 
