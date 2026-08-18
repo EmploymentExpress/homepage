@@ -52,14 +52,33 @@
       "aliases": ["dhbvn", "dakshin haryana bijli vitran nigam"]
     },
     {
-      "id": "aiims-bathinda",
-      "name": "AIIMS Bathinda",
+      "id": "aiims-bathinda-project",
+      "name": "AIIMS Bathinda (Project Posts)",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
-      "url": "https://aiimsbathinda.edu.in/Recruitment_Types.aspx",
+      "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
       "type": "central",
       "categorySlug": "central",
       "location": "Bathinda, Punjab",
-      "aliases": ["aiims bathinda", "aiims, bathinda"]
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": [
+        "aiims bathinda project",
+        "aiims, bathinda project",
+        "aiims bathinda project post",
+        "aiims bathinda project posts",
+        "aiims bathinda walk-in interview",
+        "aiims bathinda contractual"
+      ]
+    },
+    {
+      "id": "aiims-bathinda-non-faculty",
+      "name": "AIIMS Bathinda (Non-Faculty)",
+      "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+      "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Bathinda, Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["aiims bathinda", "aiims, bathinda", "aiims bathinda non-faculty"]
     },
     {
       "id": "aiims-exams",

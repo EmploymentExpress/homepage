@@ -199,6 +199,9 @@ class Candidate:
     url: str
     summary: str = ""
     published_at: str = ""
+    # Date printed next to the notice on its source page (dd-mm-YYYY), when the
+    # page publishes one. Used for the notice's displayed publication date.
+    notice_date: str = ""
 
 
 class NoticeHTMLParser(HTMLParser):
@@ -208,6 +211,9 @@ class NoticeHTMLParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.base_url = base_url
         self.links: list[tuple[str, str]] = []
+        # Table rows, so notice tables that keep the description in one cell and
+        # the download links in another can be read as a single notice.
+        self.rows: list[dict[str, Any]] = []
         self.page_title = ""
         self.description = ""
         self.visible_parts: list[str] = []
@@ -217,6 +223,10 @@ class NoticeHTMLParser(HTMLParser):
         self._in_title = False
         self._title_parts: list[str] = []
         self._hidden_depth = 0
+        self._row: dict[str, Any] | None = None
+        self._cell_parts: list[str] | None = None
+        self._cell_plain_parts: list[str] = []
+        self._cell_links = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key.lower(): value or "" for key, value in attrs}
@@ -237,6 +247,14 @@ class NoticeHTMLParser(HTMLParser):
             self._anchor_context = self.visible_parts[-4:]
         elif tag == "img" and self._anchor_href:
             self._anchor_parts.extend([values.get("alt", ""), values.get("title", "")])
+        elif tag == "tr":
+            self._row = {"cells": [], "links": []}
+        elif tag in {"td", "th"}:
+            if self._row is None:
+                self._row = {"cells": [], "links": []}
+            self._cell_parts = []
+            self._cell_plain_parts = []
+            self._cell_links = 0
 
     def handle_endtag(self, tag: str) -> None:
         tag = tag.lower()
@@ -253,9 +271,29 @@ class NoticeHTMLParser(HTMLParser):
                 if contextual_title:
                     title = contextual_title
             self.links.append((self._anchor_href, title))
+            if self._row is not None:
+                self._row["links"].append((self._anchor_href, title))
+                self._cell_links += 1
             self._anchor_href = None
             self._anchor_parts = []
             self._anchor_context = []
+        elif tag in {"td", "th"}:
+            if self._row is not None and self._cell_parts is not None:
+                self._row["cells"].append({
+                    "text": clean_text(" ".join(self._cell_parts)),
+                    # Text outside anchors only: a download column is mostly link
+                    # labels, so this stays (near) empty for it and the real
+                    # subject cell wins when picking the notice title.
+                    "plainText": clean_text(" ".join(self._cell_plain_parts)),
+                    "links": self._cell_links,
+                })
+            self._cell_parts = None
+            self._cell_plain_parts = []
+            self._cell_links = 0
+        elif tag == "tr":
+            if self._row is not None and self._row["cells"]:
+                self.rows.append(self._row)
+            self._row = None
 
     def handle_data(self, data: str) -> None:
         if self._in_title:
@@ -266,6 +304,10 @@ class NoticeHTMLParser(HTMLParser):
                 self.visible_parts.append(text)
                 if self._anchor_href:
                     self._anchor_parts.append(text)
+                if self._cell_parts is not None:
+                    self._cell_parts.append(text)
+                    if not self._anchor_href:
+                        self._cell_plain_parts.append(text)
 
     @property
     def text(self) -> str:
@@ -418,14 +460,127 @@ def strip_markup(value: str) -> str:
     return clean_text(re.sub(r"<[^>]+>", " ", value or ""))
 
 
+# Labels used by notice tables for the file links themselves. They describe the
+# attachment, not the notice, so a row is preferred over these as the title.
+ATTACHMENT_LABELS = (
+    "advertisement",
+    "advertisement notice",
+    "advt",
+    "notice",
+    "notification",
+    "application form",
+    "google form link",
+    "google form",
+    "form link",
+    "apply link",
+    "application fee",
+    "application fee link",
+    "online payment link",
+    "payment link",
+    "detail",
+    "details",
+    "pdf",
+    "english",
+    "hindi",
+    "punjabi",
+)
+# Link labels inside a notice row that point at the notice itself rather than at
+# a helper resource (fee payment, blank form, Google Form, etc.).
+PRIMARY_ATTACHMENT_PATTERN = re.compile(
+    r"(?i)\b(?:advertisement|advt|notification|notice|corrigendum|addendum|"
+    r"result|answer\s*key|merit\s*list|shortlisted|detailed?)\b"
+)
+HELPER_ATTACHMENT_PATTERN = re.compile(
+    r"(?i)\b(?:google\s*form|form\s*link|application\s*fee|fee\s*link|"
+    r"payment|onlinesbi|sbicollect|apply\s*online)\b"
+)
+
+
+def _is_attachment_label(title: str) -> bool:
+    normalised = clean_text(title).lower().strip(" .:-–—")
+    normalised = re.sub(r"^\d+\s*[).:-]?\s*", "", normalised)
+    return normalised in ATTACHMENT_LABELS or len(normalised) < 8
+
+
+def _row_notice_title(row: dict[str, Any]) -> str:
+    """Longest descriptive cell in a notice-table row (the notice subject)."""
+    best = ""
+    for cell in row.get("cells", []):
+        # A download column carries its text inside the anchors, so judging cells by
+        # their non-anchor text keeps the notice subject from losing to a long list
+        # of file labels.
+        text = clean_text(cell.get("plainText", "")) if cell.get("links") else clean_text(cell.get("text", ""))
+        text = re.sub(r"^\s*\d+\s*[).:-]\s*", "", text).strip(" ,;|")
+        if not text or _is_attachment_label(text):
+            continue
+        if re.fullmatch(r"(?i)[\d\s./-]*", text) or parse_date_token(text):
+            continue
+        if len(text) > len(best):
+            best = text
+    return clean_title(best)
+
+
+def _row_notice_date(row: dict[str, Any]) -> str:
+    for cell in row.get("cells", []):
+        parsed = parse_date_token(clean_text(cell.get("text", "")))
+        if parsed:
+            return parsed
+    return ""
+
+
+def _row_primary_link(row: dict[str, Any]) -> str:
+    """Pick the link in a row that represents the notice document itself."""
+    fallback = ""
+    for url, label in row.get("links", []):
+        safe = canonical_url(url)
+        if not safe or HELPER_ATTACHMENT_PATTERN.search(label or ""):
+            continue
+        is_pdf = urllib.parse.urlsplit(safe).path.lower().endswith(".pdf")
+        if PRIMARY_ATTACHMENT_PATTERN.search(label or "") and is_pdf:
+            return safe
+        if is_pdf and not fallback:
+            fallback = safe
+    return fallback
+
+
+def table_row_candidates(parser: NoticeHTMLParser) -> tuple[list[Candidate], set[str]]:
+    """Read notice tables where one row = one notice with several file links.
+
+    Returns the row notices plus every URL they already account for, so the same
+    files are not published a second time under their bare attachment labels.
+    """
+    candidates: list[Candidate] = []
+    claimed: set[str] = set()
+    for row in parser.rows:
+        title = _row_notice_title(row)
+        if len(title) < 12 or not row.get("links"):
+            continue
+        url = _row_primary_link(row)
+        if not url:
+            continue
+        # Link labels ("Google Form Link", "Application Fee") describe attachments,
+        # not the notice, so they are deliberately kept out of the summary used for
+        # classification and keyword filtering.
+        candidates.append(Candidate(title, url, "", "", _row_notice_date(row)))
+        claimed.update(
+            canonical_url(link) for link, _ in row.get("links", []) if canonical_url(link)
+        )
+    return candidates, claimed
+
+
 def parse_html(text: str, base_url: str) -> tuple[list[Candidate], NoticeHTMLParser]:
     parser = NoticeHTMLParser(base_url)
     parser.feed(text)
-    candidates = [
+    # Every link inside a parsed notice row is already represented by that row, so it
+    # must not be published again under its bare attachment label ("Advertisement",
+    # "Application Form", "Google Form Link", ...).
+    row_candidates, claimed_urls = table_row_candidates(parser)
+    candidates = list(row_candidates)
+    candidates.extend(
         Candidate(clean_title(title), canonical_url(url))
         for url, title in parser.links
-        if canonical_url(url) and clean_title(title)
-    ]
+        if canonical_url(url) and clean_title(title) and canonical_url(url) not in claimed_urls
+    )
     return candidates, parser
 
 
@@ -533,7 +688,8 @@ def parse_date_token(value: str) -> str:
         day, month, year = (int(part) for part in numeric.groups())
         year += 2000 if year < 100 else 0
     else:
-        words = re.fullmatch(r"(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)\s+(\d{4})", value)
+        # Accepts "13 June 2026", "13-Jun-2026" and "13/June/2026".
+        words = re.fullmatch(r"(\d{1,2})(?:st|nd|rd|th)?[\s./-]+([a-z]+)[\s./-]+(\d{4})", value)
         if not words:
             return ""
         day, month_name, year_text = words.groups()
@@ -818,7 +974,9 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "qualification": qualification,
         "qualCategory": qual_category,
         "lastDate": last_date or "See Notification",
-        "startDate": start_date or (f"Published {candidate.published_at[:10]}" if candidate.published_at else "Newly Published"),
+        "startDate": start_date
+        or (f"Published {candidate.notice_date}" if candidate.notice_date else "")
+        or (f"Published {candidate.published_at[:10]}" if candidate.published_at else "Newly Published"),
         "examDate": "See Official Notification",
         "location": clean_text(source.get("location") or ("Punjab" if source.get("type") == "punjab" else "All India")),
         "applyMode": "Offline" if "offline application" in searchable.lower() else "Online / As Notified",

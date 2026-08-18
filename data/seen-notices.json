@@ -74,16 +74,6 @@
       "initializedAt": "2026-08-18T03:24:00Z",
       "fingerprints": []
     },
-    "aiims-bathinda": {
-      "initializedAt": "2026-08-18T04:11:47Z",
-      "fingerprints": [
-        "c11938edd11e287b581ea8c33e9081a54f2d2322bccf12723d078f27b4b654fa",
-        "d2a99d79e42b0dc081d00fcaf7ac3607bcab57dd77b0bd3973c89385c15a4481",
-        "ea1f520db803a7cc22f68b6248480273d9ac25b500f5987406df8a621d118cf6",
-        "2eea93dfb62cb080676a626586789d71caff80a3d25d182cddcf862de239339f",
-        "97371b3a633e88f402ce2d24b5928dd80a351d5e1bbc32d236f3a31134975ff8"
-      ]
-    },
     "aiims-exams": {
       "initializedAt": "2026-08-18T04:11:47Z",
       "fingerprints": [
