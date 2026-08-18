@@ -21,14 +21,12 @@ INDEX = ROOT / "index.html"
 CANONICAL_ORDER = [
     ("SEO H1", 'class="sr-only"'),
     ("Quick Notice Banners", "<!-- Quick Notice Banners / Highlight Grid -->"),
-    ("Data freshness summary", "<!-- Data freshness and deadline summary -->"),
-    ("Flash cards", 'id="flash-cards-section"'),
-    ("Last Date reminders", 'id="last-date-reminders"'),
     ("Mega grid wrapper", "<!-- Main 4-Column Mega Grid (Classic EMPLOYMENT EXPRESS Layout) -->"),
     ("Column 1: Punjab Jobs", 'id="punjab-jobs"'),
     ("Column 2: Central Jobs", 'id="central-jobs"'),
     ("Column 3: Admit Cards", 'id="admit-cards"'),
     ("Column 4: Results", 'id="results"'),
+    ("Last Date reminders", 'id="last-date-reminders"'),
     ("Admission & Courses", 'id="admission-courses"'),
     ("Qualification pills", "<!-- Qualification Quick Finder Pills -->"),
     ("Master table", "<!-- Master Table: Latest Govt Job Vacancies 2026 -->"),
@@ -50,7 +48,6 @@ REQUIRED_UNIQUE_IDS = [
     "admission-list",
     "last-date-reminders",
     "last-date-list",
-    "flash-cards-section",
 ]
 
 # The classic mega grid: four cards side-by-side on desktop.

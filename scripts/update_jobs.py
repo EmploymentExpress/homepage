@@ -37,8 +37,15 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "automation" / "sources.json"
 DEFAULT_DISCOVERY_FEEDS = ROOT / "automation" / "discovery-feeds.json"
 DEFAULT_OFFICIAL_ORGS = ROOT / "automation" / "official-organizations.json"
+DEFAULT_OFFLINE_FORMS = ROOT / "automation" / "offline-forms.json"
+DEFAULT_OFFLINE_REDIRECTS = ROOT / "data" / "offline-redirects.json"
 DEFAULT_OUTPUT = ROOT / "data" / "auto-jobs.json"
 DEFAULT_STATE = ROOT / "data" / "seen-notices.json"
+# The external portal used to source the offline application form for offline-apply
+# vacancies. Its URL is kept out of the visible site (links are masked behind a
+# client-side redirect on redirect.html); it is only used here to build that mask.
+ONLINEFORMS_HOST = "onlineforms.in"
+REDIRECT_PAGE = "redirect.html"
 # Recruitment automation is data-only. These paths define the visual website and
 # are snapshotted/restored around every CLI run so the monitor cannot alter layout.
 # The homepage layout is FROZEN for AI agents and humans alike — content-only
@@ -46,6 +53,37 @@ DEFAULT_STATE = ROOT / "data" / "seen-notices.json"
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
 DISCOVERY_HOSTS = {"haryanajobs.in", "rozgarnews.com"}
 DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "rozgarnews", "rozgar news")
+
+# Offline-apply vacancy handling (onlineforms.in offline application forms).
+# The external URL is masked on the website behind redirect.html so the portal's
+# branding/URL is not shown to visitors; only its data file records the mapping.
+OFFLINE_APPLY_MARKERS = (
+    "offline application",
+    "offline form",
+    "apply offline",
+    "offline mode",
+    "application form pdf",
+    "download application form",
+    "applications through post",
+    "send your application",
+    "by post",
+)
+OFFLINE_APPLY_STEPS = [
+    "Download the offline application form using the link below.",
+    "Read the official notification for eligibility, fee, documents and the address to send the form.",
+    "Fill the form, attach the required self-attested documents and a recent photograph.",
+    "Send the completed application to the notified address before the last date.",
+]
+# Fuzzy title-match words that are too generic to identify a specific vacancy.
+OFFLINE_STOPWORDS = {
+    "recruitment", "recruitments", "apply", "application", "applications",
+    "online", "offline", "form", "forms", "vacancy", "vacancies", "notification",
+    "notifications", "invites", "invited", "post", "posts", "etc", "others",
+    "and", "for", "with", "the", "in", "of", "to", "a", "an", "2026", "2025",
+    "job", "jobs", "govt", "sarkari", "pdf", "download",
+}
+# Minimum token-overlap fraction required before an offline form is auto-attached.
+OFFLINE_MATCH_MIN = 0.5
 
 USER_AGENT = (
     "Mozilla/5.0 (compatible; EmploymentExpressJobMonitor/1.0; "
@@ -984,7 +1022,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         or (f"Published {candidate.published_at[:10]}" if candidate.published_at else "Newly Published"),
         "examDate": "See Official Notification",
         "location": clean_text(source.get("location") or ("Punjab" if source.get("type") == "punjab" else "All India")),
-        "applyMode": "Offline" if "offline application" in searchable.lower() else "Online / As Notified",
+        "applyMode": "Offline" if any(marker in searchable.lower() for marker in OFFLINE_APPLY_MARKERS) else "Online / As Notified",
         "alertType": notice_type,
         "badge": badge,
         "badgeColor": badge_color,
@@ -1371,6 +1409,245 @@ def process_discovery_feeds(
     return jobs, added, state_changed
 
 
+# ---------------------------------------------------------------------------
+# Offline application forms (onlineforms.in)
+# ---------------------------------------------------------------------------
+def is_onlineforms_url(url: str) -> bool:
+    return host_name(url) == ONLINEFORMS_HOST
+
+
+def _offline_keywords(title: str) -> list[str]:
+    """Derive fuzzy-match keywords from a scraped offline-form title."""
+    return [
+        token
+        for token in re.findall(r"[a-z0-9]+", clean_text(title).lower())
+        if token not in OFFLINE_STOPWORDS
+    ]
+
+
+def load_offline_forms(path: Path = DEFAULT_OFFLINE_FORMS) -> list[dict[str, Any]]:
+    """Load the maintained registry of offline-apply forms on onlineforms.in."""
+    data = read_json(path, {})
+    entries = data.get("offlineForms", []) if isinstance(data, dict) else []
+    forms: list[dict[str, Any]] = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        url = canonical_url(entry.get("url", ""))
+        title = clean_text(entry.get("title", ""))
+        if not url or not is_onlineforms_url(url) or not title:
+            continue
+        forms.append({
+            "title": title,
+            "keywords": [
+                clean_text(k) for k in (entry.get("keywords") or _offline_keywords(title)) if clean_text(k)
+            ],
+            "url": url,
+            "department": clean_text(entry.get("department") or "Official Recruitment Notice"),
+            "type": clean_text(entry.get("type") or "central"),
+            "categorySlug": clean_text(entry.get("categorySlug") or "central"),
+            "location": clean_text(entry.get("location") or "All India"),
+        })
+    return forms
+
+
+def offline_form_tokens(entry: dict[str, Any]) -> set[str]:
+    text = " ".join([str(entry.get("title", "")), *[str(k) for k in entry.get("keywords", [])]])
+    return {token for token in re.findall(r"[a-z0-9]+", text.lower()) if token not in OFFLINE_STOPWORDS}
+
+
+def match_offline_form(
+    title: str, department: str, forms: list[dict[str, Any]]
+) -> dict[str, Any] | None:
+    """Return the best-matching onlineforms.in entry for a job, or None."""
+    query = offline_form_tokens({"title": f"{title} {department}", "keywords": []})
+    if not query:
+        return None
+    best_entry = None
+    best_score = 0.0
+    for entry in forms:
+        tokens = offline_form_tokens(entry)
+        overlap = len(query & tokens)
+        if overlap == 0:
+            continue
+        score = overlap / max(len(query), 1)
+        if score > best_score:
+            best_score = score
+            best_entry = entry
+    return best_entry if best_score >= OFFLINE_MATCH_MIN else None
+
+
+def redirect_token(url: str) -> str:
+    """Opaque, stable token that hides the external offline-form URL on the site."""
+    return hashlib.sha256(canonical_url(url).encode("utf-8")).hexdigest()[:12]
+
+
+def build_redirect_map(
+    forms: list[dict[str, Any]], existing: dict[str, str] | None = None
+) -> dict[str, str]:
+    mapping = dict(existing or {})
+    for entry in forms:
+        mapping.setdefault(redirect_token(entry["url"]), entry["url"])
+    return mapping
+
+
+def offline_form_link(entry_url: str) -> str:
+    return f"{REDIRECT_PAGE}?f={redirect_token(entry_url)}"
+
+
+def offline_job_from_entry(
+    entry: dict[str, Any], now: datetime, redirect: dict[str, str]
+) -> dict[str, Any]:
+    """Build an offline-apply vacancy whose form link is masked behind redirect.html."""
+    url = canonical_url(entry["url"])
+    link = offline_form_link(url)
+    redirect.setdefault(redirect_token(url), url)
+    is_punjab = clean_text(entry.get("type")) == "punjab"
+    stable_id = int(hashlib.sha256(("offline:" + url).encode("utf-8")).hexdigest()[:12], 16)
+    discovered = now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return {
+        "id": stable_id,
+        "title": clean_title(entry["title"]),
+        "department": entry["department"],
+        "vacancies": "See Notification",
+        "qualification": "See Official Notification",
+        "qualCategory": "Graduate",
+        "lastDate": "See Notification",
+        "startDate": "Newly Published",
+        "examDate": "See Official Notification",
+        "location": entry["location"],
+        "applyMode": "Offline",
+        "alertType": "recruitment",
+        "badge": "OFFLINE FORM",
+        "badgeColor": "bg-slate-700",
+        "type": "punjab" if is_punjab else "central",
+        "categorySlug": clean_text(
+            entry.get("categorySlug") or ("punjab-jobs" if is_punjab else "central")
+        ),
+        "advtNo": "See Official Notice",
+        "feeGen": "See Official Notification",
+        "feeSC": "See Official Notification",
+        "feeMode": "As Notified",
+        "age": "See Official Notification",
+        "details": (
+            f"Offline application vacancy for {clean_title(entry['title'])}. "
+            "Download the offline application form and apply before the last date "
+            "notified by the recruiting authority."
+        ),
+        "howToApply": OFFLINE_APPLY_STEPS,
+        "pdfLink": link,
+        "applyLink": link,
+        "applyLabel": "Download Offline Application Form",
+        "offlineFormLink": link,
+        "offlineFormName": "Offline Application Form",
+        "sourceName": "Official Recruitment Notice",
+        "sourceUrl": url,
+        "publishedAt": "",
+        "discoveredAt": discovered,
+        "isExtension": False,
+        "extensionDate": "",
+        "automated": True,
+    }
+
+
+def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
+    """Merge the maintained registry with links scraped from configured offline-form listing sources."""
+    pool: dict[str, dict[str, Any]] = {}
+    for entry in load_offline_forms():
+        pool[entry["url"]] = entry
+    for source in config.get("sources", []):
+        if source.get("role") != "offline-forms" or source.get("enabled", True) is False:
+            continue
+        source_url = canonical_url(source.get("url", ""))
+        if not source_url:
+            continue
+        try:
+            download = fetch_url(source_url, timeout=int(source.get("timeout", 25)))
+            for cand in source_candidates(download)[: int(source.get("maxLinks", 600))]:
+                cand_url = canonical_url(cand.url)
+                if not cand_url or not is_onlineforms_url(cand_url):
+                    continue
+                title = clean_title(cand.title)
+                if len(title) < 8 or title.lower() in GENERIC_TITLES:
+                    continue
+                pool.setdefault(cand_url, {
+                    "title": title,
+                    "keywords": _offline_keywords(title),
+                    "url": cand_url,
+                    "department": clean_text(source.get("department") or "Official Recruitment Notice"),
+                    "type": clean_text(source.get("type") or "central"),
+                    "categorySlug": clean_text(source.get("categorySlug") or "central"),
+                    "location": clean_text(source.get("location") or "All India"),
+                })
+        except Exception as exc:
+            print(
+                f"  Offline-forms listing unavailable ({source.get('name')}): {exc}",
+                file=sys.stderr,
+            )
+    return list(pool.values())
+
+
+def process_offline_forms(
+    config: dict[str, Any],
+    jobs: list[dict[str, Any]],
+    state: dict[str, Any],
+    now: datetime,
+    dry_run: bool = False,
+) -> tuple[int, bool]:
+    """Publish offline-apply vacancies with a masked offline application form link.
+
+    Returns (added, changed). onlineforms.in URLs never appear in the visible site
+    links; they are only recorded in data/offline-redirects.json and resolved by
+    redirect.html.
+    """
+    pool = gather_offline_forms_pool(config)
+    if not pool:
+        return 0, False
+    existing_redirects = read_json(DEFAULT_OFFLINE_REDIRECTS, {})
+    existing_map = (
+        existing_redirects.get("redirects", {})
+        if isinstance(existing_redirects, dict)
+        else {}
+    )
+    redirect = build_redirect_map(pool, existing_map)
+
+    existing_titles = {clean_text(job.get("title", "")).lower() for job in jobs}
+    added = 0
+    changed = False
+    for entry in pool:
+        title_lower = clean_text(entry["title"]).lower()
+        if title_lower in existing_titles:
+            continue
+        jobs.append(offline_job_from_entry(entry, now, redirect))
+        existing_titles.add(title_lower)
+        added += 1
+        changed = True
+
+    # Always attach the (masked) offline application form to every offline-apply job.
+    for job in jobs:
+        if str(job.get("applyMode", "")).lower().startswith("offline") and not job.get("offlineFormLink"):
+            entry = match_offline_form(job.get("title", ""), job.get("department", ""), pool)
+            if entry:
+                link = offline_form_link(entry["url"])
+                redirect.setdefault(redirect_token(entry["url"]), entry["url"])
+                job["offlineFormLink"] = link
+                job["offlineFormName"] = "Offline Application Form"
+                job["applyLabel"] = "Download Offline Application Form"
+                changed = True
+
+    if changed and not dry_run:
+        write_json(DEFAULT_OFFLINE_REDIRECTS, {
+            "version": 1,
+            "updatedAt": now.replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+            "redirects": redirect,
+        })
+    print(
+        f"Finished: {added} offline form alert(s) published, "
+        f"{len(redirect)} redirect token(s) registered."
+    )
+    return added, changed
+
+
 def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
     """Turn user-added notification URLs into monitor sources automatically."""
     registry = read_json(path, {"links": []})
@@ -1427,7 +1704,9 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     for source in config["sources"]:
         if source.get("enabled", True) is False:
             continue
-        if source.get("role") == "discovery" or is_discovery_host(source.get("url", "")):
+        if source.get("role") == "discovery" or source.get("role") == "offline-forms" or is_discovery_host(
+            source.get("url", "")
+        ):
             continue
         source_id = clean_text(source.get("id"))
         source_url = canonical_url(source.get("url", ""))
@@ -1488,6 +1767,14 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         jobs_changed = True
     if discovery_state_changed:
         state_changed = True
+
+    if any(source.get("role") == "offline-forms" for source in config.get("sources", [])):
+        offline_added, offline_changed = process_offline_forms(config, jobs, state, now, dry_run)
+        if offline_added:
+            added += offline_added
+            jobs_changed = True
+        if offline_changed:
+            state_changed = True
 
     if apply_extensions(jobs):
         jobs_changed = True
@@ -1580,3 +1867,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

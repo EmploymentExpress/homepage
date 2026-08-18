@@ -349,6 +349,21 @@
       "noticeTypes": ["recruitment", "admission", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 1,
       "maxNewPerRun": 8
+    },
+    {
+      "id": "onlineforms-offline-forms",
+      "enabled": true,
+      "role": "offline-forms",
+      "name": "Online Forms - Offline Application Forms",
+      "department": "Official Offline Recruitment Notices",
+      "url": "https://onlineforms.in/latest-offline-forms/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment"],
+      "bootstrapCount": 3,
+      "maxNewPerRun": 8,
+      "timeout": 35
     }
   ]
 }

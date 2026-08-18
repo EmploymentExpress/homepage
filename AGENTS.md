@@ -25,8 +25,13 @@ to change** and nothing else.
 - Job/notice entries inside the JS datasets in `index.html` (`jobs`, `admitCards`, `results`,
   admissions, etc.) — add/edit/remove the entries you were told about, leave the rest untouched
 - Generated data files: `data/auto-jobs.json`, `data/seen-notices.json`,
-  `data/notification-source-links.json`
+  `data/notification-source-links.json`, `data/offline-redirects.json`
 - Monitor sources & logic: `automation/*.json`, `scripts/update_jobs.py` (data-only behaviour)
+- The offline-form registry: `automation/offline-forms.json` — add offline-apply vacancies
+  here (each entry points to the external offline-form page for that job). The external URL is
+  masked on the site: links render as `redirect.html?f=<token>` and the real URL lives only in
+  the generated `data/offline-redirects.json`. Never display the external portal's name or URL
+  on the homepage.
 - Specific text a user asks you to fix (titles, dates, links, counts) — in place, no reflow
 
 ## 📐 Canonical section order (do not reorder)
@@ -34,18 +39,21 @@ to change** and nothing else.
 Inside `<main>` of `index.html`:
 
 1. Quick Notice Banners / Highlight Grid
-2. Data freshness and deadline summary
-3. 🔥 Newly Added Jobs flash cards (`#flash-cards-section`, hidden when empty)
-4. **Last Date Reminders** (`#last-date-reminders`, red section)
-5. **Main 4-Column Mega Grid** (`#answer-keys` wrapper, `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`):
+2. **Main 4-Column Mega Grid** (`#answer-keys` wrapper, `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`):
    - Column 1: Latest Punjab Jobs (`#punjab-jobs`, blue)
    - Column 2: All India & NVS / Central (`#central-jobs`, purple)
    - Column 3: Admit Card 2026 (`#admit-cards`, emerald)
    - Column 4: Results & Answer Key (`#results`, rose)
-6. Admission & Courses (`#admission-courses`)
-7. Qualification Quick Finder Pills
-8. Master Table: Latest Govt Job Vacancies 2026
-9. Quick Resources & State Syllabus Widget
+3. **Last Date Reminders** (`#last-date-reminders`, red section)
+4. Admission & Courses (`#admission-courses`)
+5. Qualification Quick Finder Pills
+6. Master Table: Latest Govt Job Vacancies 2026
+7. Quick Resources & State Syllabus Widget
+
+Newly discovered official notices are rendered **in place inside their respective section**
+(Latest Punjab Jobs / All India & NVS / Results & Answer Key / Admission & Courses / the
+Master Table) with a **"Just In"** tag that stays for **48 hours** after publication and is
+removed automatically once that window elapses.
 
 ## 🛡 How the layout is enforced
 
