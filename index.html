@@ -274,6 +274,18 @@
             </div>
         </div>
 
+        <!-- Data freshness and deadline summary -->
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 shadow-sm" aria-label="Website update status">
+            <div class="flex items-center gap-2 text-xs text-slate-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse" aria-hidden="true"></span>
+                <strong class="text-slate-900">Website data updated:</strong>
+                <time id="site-last-updated">18 Aug 2026</time>
+            </div>
+            <div id="site-nearest-deadline" class="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">
+                <i class="far fa-calendar-check mr-1"></i> Checking nearest application last date…
+            </div>
+        </div>
+
         <!-- Recently Added Jobs Flash Cards (auto-populated from official websites; disappear 48 hrs after publication) -->
         <section id="flash-cards-section" class="hidden">
             <div class="flex items-center justify-between mb-2.5">
@@ -296,9 +308,12 @@
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
                         <i class="fas fa-briefcase"></i> Latest Punjab Jobs
                     </h2>
-                    <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-blue-200 font-bold">Punjab Govt</span>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-blue-100 font-bold">Punjab Govt</span>
+                        <div id="punjab-section-meta" class="text-[10px] text-blue-100 font-semibold mt-1">Nearest last date: Checking…</div>
+                    </div>
                 </div>
-                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="punjab-jobs-list">
+                <div class="divide-y divide-slate-100 flex-1" id="punjab-jobs-list">
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
@@ -315,9 +330,12 @@
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
                         <i class="fas fa-flag"></i> All India &amp; NVS / Central
                     </h2>
-                    <span class="text-[10px] bg-purple-900 px-2 py-0.5 rounded text-purple-200 font-bold">NVS/SSC/RRB</span>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-purple-900 px-2 py-0.5 rounded text-purple-100 font-bold">NVS/SSC/RRB</span>
+                        <div id="central-section-meta" class="text-[10px] text-purple-100 font-semibold mt-1">Nearest last date: Checking…</div>
+                    </div>
                 </div>
-                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="central-jobs-list">
+                <div class="divide-y divide-slate-100 flex-1" id="central-jobs-list">
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
@@ -333,9 +351,12 @@
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
                         <i class="fas fa-graduation-cap"></i> Admission &amp; Courses
                     </h2>
-                    <span class="text-[10px] bg-teal-900 px-2 py-0.5 rounded text-teal-200 font-bold">JNVST / NVS</span>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-teal-900 px-2 py-0.5 rounded text-teal-100 font-bold">JNVST / NVS</span>
+                        <div id="admission-section-meta" class="text-[10px] text-teal-100 font-semibold mt-1">Nearest last date: Checking…</div>
+                    </div>
                 </div>
-                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="admission-list">
+                <div class="divide-y divide-slate-100 flex-1" id="admission-list">
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
@@ -378,7 +399,10 @@
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
                         <i class="fas fa-trophy"></i> Results &amp; Answer Key
                     </h2>
-                    <span class="text-[10px] bg-rose-900 px-2 py-0.5 rounded text-rose-200 font-bold">Updated</span>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-rose-900 px-2 py-0.5 rounded text-rose-100 font-bold">Updated</span>
+                        <div id="results-section-meta" class="text-[10px] text-rose-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                    </div>
                 </div>
                 <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="results-list">
                     <!-- Populated dynamically via JS -->
@@ -394,7 +418,10 @@
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
                         <i class="fas fa-id-card"></i> Admit Card 2026
                     </h2>
-                    <span class="text-[10px] bg-emerald-900 px-2 py-0.5 rounded text-emerald-200 font-bold">Direct Link</span>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-emerald-900 px-2 py-0.5 rounded text-emerald-100 font-bold">Direct Link</span>
+                        <div id="admit-section-meta" class="text-[10px] text-emerald-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                    </div>
                 </div>
                 <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="admit-cards-list">
                     <!-- Populated dynamically via JS -->
@@ -430,7 +457,8 @@
                     <h2 class="font-extrabold text-slate-900 text-base md:text-lg flex items-center gap-2">
                         <i class="fas fa-bell text-brand-600"></i> All Active Govt Recruitment Notifications 2026
                     </h2>
-                    <p class="text-xs text-slate-500 font-medium">Regularly updated with direct apply links, notifications PDF &amp; eligibility details</p>
+                    <p class="text-xs text-slate-500 font-medium">Complete details with direct apply links, notification source, eligibility and last date beside every vacancy</p>
+                    <p id="master-section-meta" class="text-[11px] text-red-700 font-bold mt-1"><i class="far fa-calendar-check mr-1"></i>Nearest last date: Checking…</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <span id="activeCount" class="text-xs font-bold text-slate-600 bg-slate-200/80 px-2.5 py-1 rounded-md">Showing 10 of 10</span>
@@ -1230,6 +1258,7 @@
                             <span class="text-[10px] bg-amber-400 text-slate-950 uppercase font-black px-1.5 py-0.5 rounded tracking-wide">🔥 ${label}</span>
                             <h3 class="font-bold text-sm mt-1 leading-tight group-hover:underline">${escapeHtml(job.title)}</h3>
                             <p class="text-xs text-white/80 font-medium">${escapeHtml(job.vacancies)} • ${escapeHtml(job.department)}</p>
+                            <p class="text-[10px] text-white font-bold mt-1"><i class="far fa-calendar-check mr-1"></i>Last date: ${escapeHtml(job.lastDate)}</p>
                         </div>
                         <i class="fas fa-chevron-right text-white/70 group-hover:translate-x-1 transition"></i>
                     </a>
@@ -1367,6 +1396,21 @@
                 const response = await fetch('data/auto-jobs.json', { cache: 'no-store' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const payload = await response.json();
+                const feedUpdatedAt = Date.parse(payload.updatedAt || '');
+                if (Number.isFinite(feedUpdatedAt)) {
+                    const updatedLabel = new Date(feedUpdatedAt).toLocaleString('en-IN', {
+                        day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    const freshness = document.getElementById('site-last-updated');
+                    const resultsMeta = document.getElementById('results-section-meta');
+                    const admitMeta = document.getElementById('admit-section-meta');
+                    if (freshness) {
+                        freshness.dateTime = payload.updatedAt;
+                        freshness.textContent = updatedLabel;
+                    }
+                    if (resultsMeta) resultsMeta.textContent = `Updated: ${updatedLabel}`;
+                    if (admitMeta) admitMeta.textContent = `Updated: ${updatedLabel}`;
+                }
                 const automaticAlerts = (Array.isArray(payload.jobs) ? payload.jobs : [])
                     .map(normalizeAutomaticJob)
                     .filter(Boolean);
@@ -1398,6 +1442,7 @@
                             ? `Official Answer Key • ${alert.sourceName}`
                             : `Official Result • ${alert.sourceName}`,
                         isNew: alert.isNewNotice,
+                        updatedAt: alert.publishedAt || alert.discoveredAt,
                         link: alert.pdfLink !== '#' ? alert.pdfLink : alert.applyLink
                     })),
                     ...resultsList.filter(item => !resourceTitles.has(item.title.toLowerCase()))
@@ -1439,35 +1484,98 @@
             { title: "PPSC Agriculture Development Officer (ADO) Result", score: "Marks List", isNew: false }
         ];
 
-        // Render Functions
+        // Render functions and section-level freshness/deadline labels.
+        function deadlineInfo(job) {
+            const deadline = parseLastDate(job.lastDate);
+            if (!deadline) return { deadline: null, status: 'Check notice', active: false };
+            const remaining = deadline.getTime() - Date.now();
+            if (remaining < 0) return { deadline, status: 'Applications closed', active: false };
+            const days = Math.ceil(remaining / 86400000);
+            return {
+                deadline,
+                status: days <= 1 ? 'Closes today' : `${days} days left`,
+                active: true
+            };
+        }
+
+        function nearestDeadline(jobs) {
+            return jobs
+                .map(job => ({ job, ...deadlineInfo(job) }))
+                .filter(item => item.deadline && item.active)
+                .sort((a, b) => a.deadline - b.deadline)[0] || null;
+        }
+
+        function updateSectionSummaries() {
+            const sections = [
+                ['punjab-section-meta', jobDatabase.filter(job => job.type === 'punjab')],
+                ['central-section-meta', jobDatabase.filter(job => job.type === 'central')],
+                ['admission-section-meta', admissionDatabase]
+            ];
+            sections.forEach(([id, jobs]) => {
+                const element = document.getElementById(id);
+                if (!element) return;
+                const nearest = nearestDeadline(jobs);
+                element.textContent = nearest
+                    ? `Nearest last date: ${nearest.job.lastDate}`
+                    : 'No open dated applications';
+            });
+            const all = nearestDeadline([...jobDatabase, ...admissionDatabase]);
+            const siteSummary = document.getElementById('site-nearest-deadline');
+            const masterSummary = document.getElementById('master-section-meta');
+            const summary = all
+                ? `Nearest last date: ${all.job.lastDate} — ${all.job.title}`
+                : 'No upcoming dated application deadline';
+            if (siteSummary) siteSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
+            if (masterSummary) masterSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
+        }
+
+        function renderJobSectionCard(job, color) {
+            const info = deadlineInfo(job);
+            const statusClass = info.active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+            const details = String(job.details || 'Open the full details for the official notification, eligibility and application instructions.').slice(0, 220);
+            return `
+                <article class="p-4 hover:bg-${color}-50/50 transition border-b border-slate-100">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
+                                <span class="text-[10px] font-black text-${color}-700 bg-${color}-100 px-2 py-0.5 rounded">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge || 'NOTICE')}</span>
+                                <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">${escapeHtml(job.vacancies)}</span>
+                                <span class="text-[10px] font-bold border px-2 py-0.5 rounded ${statusClass}">${escapeHtml(info.status)}</span>
+                            </div>
+                            <button type="button" onclick="openJobDetail(${job.id})" class="text-left font-extrabold text-sm text-slate-900 hover:text-${color}-700 leading-snug">${escapeHtml(job.title)}</button>
+                            <p class="text-[11px] font-semibold text-slate-500 mt-0.5">${escapeHtml(job.department)}</p>
+                        </div>
+                        <div class="shrink-0 sm:text-right bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                            <div class="text-[9px] uppercase tracking-wide font-black text-red-500">Last date</div>
+                            <div class="text-xs font-extrabold text-red-700"><i class="far fa-calendar-check mr-1"></i>${escapeHtml(job.lastDate)}</div>
+                        </div>
+                    </div>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 mt-3 text-[11px]">
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Qualification:</dt> <dd class="inline">${escapeHtml(job.qualification)}</dd></div>
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Start date:</dt> <dd class="inline">${escapeHtml(job.startDate || 'See notice')}</dd></div>
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Apply mode:</dt> <dd class="inline">${escapeHtml(job.applyMode || 'As notified')}</dd></div>
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Location:</dt> <dd class="inline">${escapeHtml(job.location || 'See notice')}</dd></div>
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Advertisement:</dt> <dd class="inline">${escapeHtml(job.advtNo || 'See notice')}</dd></div>
+                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Age limit:</dt> <dd class="inline">${escapeHtml(job.age || 'See notice')}</dd></div>
+                    </dl>
+                    ${job.lastDateExtended ? `<p class="text-[11px] font-bold text-emerald-700 mt-2"><i class="fas fa-circle-info mr-1"></i>Last date extended from <span class="line-through text-slate-400">${escapeHtml(job.originalLastDate || 'previous date')}</span> to ${escapeHtml(job.lastDate)}</p>` : ''}
+                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed"><strong class="text-slate-900">Details:</strong> ${escapeHtml(details)}${String(job.details || '').length > 220 ? '…' : ''}</p>
+                    <div class="flex flex-wrap items-center gap-2 mt-2">
+                        <button type="button" onclick="openJobDetail(${job.id})" class="text-[11px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2.5 py-1.5 rounded hover:bg-${color}-100">All details &amp; fees</button>
+                        <a href="${safeExternalUrl(job.pdfLink)}" target="_blank" rel="noopener noreferrer" onclick="if(this.getAttribute('href')==='#'){openJobDetail(${job.id});return false;}" class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded hover:bg-slate-200"><i class="fas fa-file-pdf text-red-600 mr-1"></i>Official notice</a>
+                        <a href="${safeExternalUrl(job.applyLink)}" target="_blank" rel="noopener noreferrer" onclick="if(this.getAttribute('href')==='#'){openJobDetail(${job.id});return false;}" class="text-[11px] font-bold text-white bg-${color}-700 px-2.5 py-1.5 rounded hover:brightness-110"><i class="fas fa-paper-plane mr-1"></i>${escapeHtml(job.applyLabel || 'Apply / open portal')}</a>
+                    </div>
+                </article>`;
+        }
+
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            const items = jobDatabase.filter(j => j.type === 'punjab');
-            list.innerHTML = items.map(j => `
-                <div class="p-3 hover:bg-blue-50/60 transition cursor-pointer flex flex-col gap-1" onclick="openJobDetail(${j.id})">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">${escapeHtml(j.vacancies)}</span>
-                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${escapeHtml(j.lastDate)}</span>
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 hover:text-blue-700 leading-snug">${escapeHtml(j.title)}</div>
-                    <div class="text-[11px] text-slate-500">${escapeHtml(j.qualification)}</div>
-                </div>
-            `).join('');
+            list.innerHTML = jobDatabase.filter(job => job.type === 'punjab').map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            const items = jobDatabase.filter(j => j.type === 'central');
-            list.innerHTML = items.map(j => `
-                <div class="p-3 hover:bg-purple-50/60 transition cursor-pointer flex flex-col gap-1" onclick="openJobDetail(${j.id})">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">${escapeHtml(j.vacancies)}</span>
-                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${escapeHtml(j.lastDate)}</span>
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 hover:text-purple-700 leading-snug">${escapeHtml(j.title)}</div>
-                    <div class="text-[11px] text-slate-500">${escapeHtml(j.qualification)}</div>
-                </div>
-            `).join('');
+            list.innerHTML = jobDatabase.filter(job => job.type === 'central').map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -1481,14 +1589,20 @@
                     </div>`;
                 return;
             }
-            list.innerHTML = admissionDatabase.map(j => `
-                <div class="p-3 hover:bg-teal-50/60 transition cursor-pointer flex flex-col gap-1" onclick="openJobDetail(${j.id})">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-teal-700 bg-teal-100 px-2 py-0.5 rounded">${j.isNewNotice ? '🔥 ' : ''}${escapeHtml(j.badge || 'ADMISSION')}</span>
-                        <span class="text-[10px] text-red-600 font-semibold"><i class="far fa-clock"></i> ${escapeHtml(j.lastDate)}</span>
+            list.innerHTML = admissionDatabase.map(job => renderJobSectionCard(job, 'teal')).join('');
+        }
+
+        function renderAdmitCards() {
+            const list = document.getElementById('admit-cards-list');
+            list.innerHTML = admitCards.map((item, index) => `
+                <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between gap-2" role="link" tabindex="0" onclick="openAdmitCardItem(${index})" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openAdmitCardItem(${index}); }">
+                    <div>
+                        <div class="font-bold text-xs text-slate-800 hover:text-emerald-700">${escapeHtml(item.title)}</div>
+                        <div class="text-[10px] text-slate-500 mt-1"><span class="text-emerald-700 font-bold"><i class="far fa-calendar-check mr-1"></i>Release / exam date:</span> ${escapeHtml(item.date)}</div>
+                        ${item.source ? `<div class="text-[10px] text-brand-700 font-semibold mt-0.5"><i class="fas fa-landmark mr-1"></i>${escapeHtml(item.source)}</div>` : ''}
+                        <div class="text-[9px] text-slate-400 mt-1">Application last date: Not applicable to admit cards</div>
                     </div>
-                    <div class="font-bold text-xs text-slate-800 hover:text-teal-700 leading-snug">${escapeHtml(j.title)}</div>
-                    <div class="text-[11px] text-slate-500">${escapeHtml(j.department)}</div>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200 shrink-0">Get</span>
                 </div>
             `).join('');
         }
@@ -1501,20 +1615,6 @@
             } else {
                 showToast('The official admit-card link is not available yet.');
             }
-        }
-
-        function renderAdmitCards() {
-            const list = document.getElementById('admit-cards-list');
-            list.innerHTML = admitCards.map((item, index) => `
-                <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between gap-2" role="link" tabindex="0" onclick="openAdmitCardItem(${index})" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openAdmitCardItem(${index}); }">
-                    <div>
-                        <div class="font-bold text-xs text-slate-800 hover:text-emerald-700">${escapeHtml(item.title)}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-emerald-600 font-bold">● Status:</span> ${escapeHtml(item.date)}</div>
-                        ${item.source ? `<div class="text-[10px] text-brand-700 font-semibold mt-0.5"><i class="fas fa-landmark mr-1"></i>${escapeHtml(item.source)}</div>` : ''}
-                    </div>
-                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200 shrink-0">Get</span>
-                </div>
-            `).join('');
         }
 
         function openResultItem(index) {
@@ -1534,6 +1634,8 @@
                     <div>
                         <div class="font-bold text-xs text-slate-800 hover:text-rose-700">${escapeHtml(item.title)}</div>
                         <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-rose-600 font-semibold">${escapeHtml(item.score)}</span></div>
+                        <div class="text-[10px] text-slate-500 mt-1"><i class="far fa-calendar-check mr-1 text-rose-500"></i><strong>Result/update date:</strong> ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'See official notice')}</div>
+                        <div class="text-[9px] text-slate-400 mt-0.5">Application last date: Not applicable to results / answer keys</div>
                     </div>
                     ${item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>'}
                 </div>
@@ -1743,11 +1845,10 @@
             renderAdmitCards();
             renderResults();
             renderMasterTable();
+            updateSectionSummaries();
             renderLastDateReminders();
             setInterval(updateLastDateTimers, 1000);
         });
     </script>
 </body>
-</html>
-ody>
 </html>
