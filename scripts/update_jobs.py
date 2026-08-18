@@ -35,8 +35,12 @@ except ImportError:  # PDF enrichment is optional for local, dependency-free run
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "automation" / "sources.json"
+DEFAULT_DISCOVERY_FEEDS = ROOT / "automation" / "discovery-feeds.json"
+DEFAULT_OFFICIAL_ORGS = ROOT / "automation" / "official-organizations.json"
 DEFAULT_OUTPUT = ROOT / "data" / "auto-jobs.json"
 DEFAULT_STATE = ROOT / "data" / "seen-notices.json"
+DISCOVERY_HOSTS = {"haryanajobs.in", "rozgarnews.com"}
+DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "rozgarnews", "rozgar news")
 
 USER_AGENT = (
     "Mozilla/5.0 (compatible; EmploymentExpressJobMonitor/1.0; "
@@ -276,6 +280,21 @@ def canonical_url(value: str) -> str:
     return urllib.parse.urlunsplit(
         (parsed.scheme.lower(), parsed.netloc.lower(), path, urllib.parse.urlencode(query), "")
     )
+
+
+def host_name(url: str) -> str:
+    return urllib.parse.urlsplit(canonical_url(url) or url).netloc.lower().removeprefix("www.")
+
+
+def is_discovery_host(url: str) -> bool:
+    return host_name(url) in DISCOVERY_HOSTS
+
+
+def strip_discovery_branding(value: str) -> str:
+    text = clean_text(value)
+    for term in DISCOVERY_BRAND_TERMS:
+        text = re.sub(rf"(?i)\b{re.escape(term)}\b", " ", text)
+    return re.sub(r"\s+", " ", text).strip(" -|:–—")
 
 
 def fingerprint(candidate: Candidate) -> str:
@@ -726,6 +745,8 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     qualification, qual_category = infer_qualification(searchable, source)
     candidate_url = canonical_url(candidate.url)
     source_url = canonical_url(source["url"])
+    if is_discovery_host(candidate_url) or is_discovery_host(source_url):
+        raise ValueError("discovery-feed URLs cannot be published as job details")
     is_pdf = urllib.parse.urlsplit(candidate_url).path.lower().endswith(".pdf")
     last_date = find_labelled_date(
         searchable,
@@ -736,7 +757,9 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         r"start(?:ing)?\s+date|opening\s+date|applications?\s+open",
     )
     discovered = now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    source_name = clean_text(source.get("name") or source.get("department") or "Official website")
+    source_name = strip_discovery_branding(
+        clean_text(source.get("name") or source.get("department") or "Official website")
+    )
     stable_id = int(hashlib.sha256(fingerprint(candidate).encode()).hexdigest()[:12], 16)
     badge, badge_color = notice_presentation(notice_type, True)
     presentation = NOTICE_PRESENTATION[notice_type]
@@ -765,8 +788,10 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "age": infer_age(searchable),
         "details": useful_summary(description_source or searchable[:1200], title, source_name, notice_type),
         "howToApply": notice_steps(notice_type),
-        "pdfLink": candidate_url if is_pdf else candidate_url,
-        "applyLink": canonical_url(source_url if is_pdf and apply_url == candidate_url else apply_url) or candidate_url,
+        "pdfLink": "" if is_discovery_host(candidate_url) else candidate_url,
+        "applyLink": "" if is_discovery_host(apply_url or candidate_url) else (
+            canonical_url(source_url if is_pdf and apply_url == candidate_url else apply_url) or candidate_url
+        ),
         "applyLabel": presentation["applyLabel"],
         "sourceName": source_name,
         "sourceUrl": source_url,
@@ -836,6 +861,208 @@ def refresh_badges(
     return changed
 
 
+DISCOVERY_STOPWORDS = {
+    "a", "an", "and", "for", "from", "in", "of", "on", "or", "the", "to", "with",
+    "job", "jobs", "vacancy", "vacancies", "recruitment", "notification", "notice",
+    "apply", "online", "offline", "latest", "new", "update", "updates", "2024",
+    "2025", "2026", "2027", "post", "posts", "official",
+}
+
+
+def organization_aliases(org: dict[str, Any]) -> list[str]:
+    aliases = [clean_text(org.get("name", "")), clean_text(org.get("department", ""))]
+    aliases.extend(clean_text(item) for item in org.get("aliases", []) or [])
+    return [alias.lower() for alias in aliases if len(alias) >= 3]
+
+
+def approved_official_organizations(
+    sources: list[dict[str, Any]],
+    extra_path: Path = DEFAULT_OFFICIAL_ORGS,
+) -> list[dict[str, Any]]:
+    """Approved official boards only. Discovery feeds are never included."""
+    orgs: list[dict[str, Any]] = []
+    extra = read_json(extra_path, {"organizations": []})
+    for entry in extra.get("organizations", []) if isinstance(extra, dict) else []:
+        if isinstance(entry, dict) and canonical_url(entry.get("url", "")) and not is_discovery_host(entry.get("url", "")):
+            orgs.append(entry)
+    seen_ids = {clean_text(org.get("id")) for org in orgs}
+    for source in sources:
+        if source.get("role") == "discovery" or is_discovery_host(source.get("url", "")):
+            continue
+        source_id = clean_text(source.get("id"))
+        if not source_id or source_id in seen_ids:
+            continue
+        orgs.append(source)
+        seen_ids.add(source_id)
+    return orgs
+
+
+def match_official_organization(headline: str, organizations: list[dict[str, Any]]) -> dict[str, Any] | None:
+    text = strip_discovery_branding(headline).lower()
+    best: dict[str, Any] | None = None
+    best_len = 0
+    for org in organizations:
+        for alias in organization_aliases(org):
+            if len(alias) <= best_len:
+                continue
+            if re.search(rf"(?i)(?<![a-z0-9]){re.escape(alias)}(?![a-z0-9])", text):
+                best = org
+                best_len = len(alias)
+    return best
+
+
+def headline_tokens(headline: str) -> set[str]:
+    words = re.findall(r"[a-z0-9]{3,}", strip_discovery_branding(headline).lower())
+    return {word for word in words if word not in DISCOVERY_STOPWORDS}
+
+
+def official_notices_for_headline(headline: str, candidates: list[Candidate]) -> list[Candidate]:
+    tokens = headline_tokens(headline)
+    scored: list[tuple[int, Candidate]] = []
+    for candidate in candidates:
+        overlap = tokens & headline_tokens(candidate.title)
+        if overlap:
+            scored.append((len(overlap), candidate))
+    scored.sort(key=lambda item: item[0], reverse=True)
+    return [candidate for _, candidate in scored[:3]]
+
+
+def looks_like_discovery_headline(candidate: Candidate) -> bool:
+    title = strip_discovery_branding(candidate.title)
+    if len(title) < 12 or title.lower() in GENERIC_TITLES:
+        return False
+    lowered = f"{title} {candidate.summary}".lower()
+    if any(term in lowered for term in EXCLUDED_TERMS):
+        return False
+    hints = RECRUITMENT_TERMS + ADMISSION_TERMS + ANSWER_KEY_TERMS + RESULT_TERMS + UPDATE_TERMS + (
+        "jobs", "job ", " vacancy", "notification", "advt", "advertisement"
+    )
+    return any(term in lowered for term in hints)
+
+
+def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str, Any]]:
+    registry = read_json(path, {"feeds": []})
+    feeds: list[dict[str, Any]] = []
+    for entry in registry.get("feeds", []) if isinstance(registry, dict) else []:
+        if not isinstance(entry, dict):
+            continue
+        url = canonical_url(entry.get("url", ""))
+        feed_id = clean_text(entry.get("id"))
+        if not url or not feed_id or not is_discovery_host(url):
+            continue
+        feeds.append({
+            "id": feed_id,
+            "name": clean_text(entry.get("name") or feed_id),
+            "url": url,
+            "maxHeadlines": int(entry.get("maxHeadlines") or registry.get("maxHeadlinesPerFeed", 40)),
+            "maxNewPerRun": int(entry.get("maxNewPerRun") or registry.get("maxNewPerFeed", 5)),
+        })
+    return feeds
+
+
+def process_discovery_feeds(
+    organizations: list[dict[str, Any]],
+    state: dict[str, Any],
+    now: datetime,
+    dry_run: bool = False,
+) -> tuple[list[dict[str, Any]], int, bool]:
+    """Scan aggregator headlines, then publish only matching official notices."""
+    jobs: list[dict[str, Any]] = []
+    added = 0
+    state_changed = False
+    state_sources = state.setdefault("sources", {})
+    official_cache: dict[str, list[Candidate]] = {}
+
+    for feed in load_discovery_feeds():
+        print(f"Checking discovery feed {feed['name']}: {feed['url']}")
+        try:
+            download = fetch_url(feed["url"], timeout=25)
+            headlines = deduplicate_candidates(
+                candidate
+                for candidate in source_candidates(download)[: feed["maxHeadlines"]]
+                if looks_like_discovery_headline(candidate)
+            )
+        except Exception as exc:
+            print(f"  Discovery feed unavailable: {exc}", file=sys.stderr)
+            continue
+
+        source_state = state_sources.setdefault(feed["id"], {"initializedAt": None, "fingerprints": []})
+        known = set(source_state.get("fingerprints") or [])
+        unseen = [headline for headline in headlines if fingerprint(headline) not in known]
+        first_success = not source_state.get("initializedAt")
+        selected = unseen[: 0 if first_success else feed["maxNewPerRun"]]
+        source_state["fingerprints"] = list(dict.fromkeys(
+            (source_state.get("fingerprints") or []) + [fingerprint(item) for item in (headlines if first_success else selected)]
+        ))[-2000:]
+        if first_success:
+            source_state["initializedAt"] = now.isoformat().replace("+00:00", "Z")
+        if first_success or selected:
+            state_changed = True
+
+        print(
+            f"  Found {len(headlines)} headline(s), {len(unseen)} unseen, "
+            f"{'baselining only' if first_success else f'resolving {len(selected)}'}"
+        )
+        if first_success:
+            continue
+
+        published_this_feed = 0
+        for headline in selected:
+            official = match_official_organization(headline.title, organizations)
+            if official is None:
+                print(f"  Skipped unmatched headline: {headline.title[:90]}")
+                continue
+            official_url = canonical_url(official.get("url", ""))
+            if not official_url or is_discovery_host(official_url):
+                print(f"  Skipped {official.get('id')}: no approved official URL")
+                continue
+            if official_url not in official_cache:
+                try:
+                    official_download = fetch_url(official_url, timeout=int(official.get("timeout", 25)))
+                    official_cache[official_url] = deduplicate_candidates(
+                        candidate
+                        for candidate in source_candidates(official_download)[: int(official.get("maxLinks", 600))]
+                        if looks_like_notice(candidate, official) and not is_discovery_host(candidate.url)
+                    )
+                except Exception as exc:
+                    print(f"  Official source unavailable ({official.get('name')}): {exc}", file=sys.stderr)
+                    official_cache[official_url] = []
+            matches = official_notices_for_headline(headline.title, official_cache[official_url])
+            if not matches:
+                print(f"  No official notice matched {official.get('name')} for: {headline.title[:80]}")
+                continue
+            official_source_state = state_sources.setdefault(
+                clean_text(official.get("id") or official_url),
+                {"initializedAt": now.isoformat().replace("+00:00", "Z"), "fingerprints": []},
+            )
+            known_official = set(official_source_state.get("fingerprints") or [])
+            for official_candidate in matches:
+                key = fingerprint(official_candidate)
+                if key in known_official:
+                    continue
+                try:
+                    job = job_from_candidate(official_candidate, official, now)
+                except Exception as exc:
+                    print(f"  Could not build official job from {official_candidate.url}: {exc}", file=sys.stderr)
+                    continue
+                if any(is_discovery_host(str(job.get(field, ""))) for field in ("pdfLink", "applyLink", "sourceUrl")):
+                    print(f"  Dropped job that still pointed at a discovery host: {job.get('title')}")
+                    continue
+                jobs.append(job)
+                known_official.add(key)
+                added += 1
+                published_this_feed += 1
+                state_changed = True
+            official_source_state["fingerprints"] = list(dict.fromkeys(
+                (official_source_state.get("fingerprints") or []) + list(known_official)
+            ))[-2000:]
+            if official_source_state.get("initializedAt") is None:
+                official_source_state["initializedAt"] = now.isoformat().replace("+00:00", "Z")
+        print(f"  Published {published_this_feed} official alert(s) from discovery")
+
+    return jobs, added, state_changed
+
+
 def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
     """Turn user-added notification URLs into monitor sources automatically."""
     registry = read_json(path, {"links": []})
@@ -847,7 +1074,7 @@ def additional_link_sources(path: Path = ROOT / "data" / "notification-source-li
         if not isinstance(entry, dict):
             continue
         url = canonical_url(entry.get("url", ""))
-        if not url:
+        if not url or is_discovery_host(url):
             continue
         host = urllib.parse.urlsplit(url).netloc.removeprefix("www.")
         source_id = "custom-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
@@ -891,6 +1118,8 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
 
     for source in config["sources"]:
         if source.get("enabled", True) is False:
+            continue
+        if source.get("role") == "discovery" or is_discovery_host(source.get("url", "")):
             continue
         source_id = clean_text(source.get("id"))
         source_url = canonical_url(source.get("url", ""))
@@ -938,6 +1167,19 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             jobs.append(job)
             added += 1
             jobs_changed = True
+
+    discovery_jobs, discovery_added, discovery_state_changed = process_discovery_feeds(
+        approved_official_organizations(config["sources"]),
+        state,
+        now,
+        dry_run,
+    )
+    if discovery_jobs:
+        jobs.extend(discovery_jobs)
+        added += discovery_added
+        jobs_changed = True
+    if discovery_state_changed:
+        state_changed = True
 
     if jobs_changed:
         unique_jobs: list[dict[str, Any]] = []

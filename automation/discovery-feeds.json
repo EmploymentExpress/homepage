@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "maxHeadlinesPerFeed": 40,
+  "maxNewPerFeed": 5,
+  "feeds": [
+    {
+      "id": "haryanajobs-discovery",
+      "name": "HaryanaJobs headlines (discovery only)",
+      "url": "https://haryanajobs.in/"
+    },
+    {
+      "id": "rozgarnews-discovery",
+      "name": "RozgarNews headlines (discovery only)",
+      "url": "https://rozgarnews.com/"
+    }
+  ]
+}

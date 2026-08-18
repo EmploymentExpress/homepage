@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "organizations": [
+    {
+      "id": "hssc",
+      "name": "HSSC",
+      "department": "Haryana Staff Selection Commission (HSSC)",
+      "url": "https://www.hssc.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Haryana",
+      "aliases": ["hssc", "haryana staff selection commission"]
+    },
+    {
+      "id": "hpsc",
+      "name": "HPSC",
+      "department": "Haryana Public Service Commission (HPSC)",
+      "url": "https://hpsc.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Haryana",
+      "aliases": ["hpsc", "haryana public service commission"]
+    },
+    {
+      "id": "haryana-police",
+      "name": "Haryana Police",
+      "department": "Haryana Police Recruitment",
+      "url": "https://www.haryanapolice.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Haryana",
+      "aliases": ["haryana police", "haryana police recruitment"]
+    },
+    {
+      "id": "uhbvn",
+      "name": "UHBVN",
+      "department": "Uttar Haryana Bijli Vitran Nigam (UHBVN)",
+      "url": "https://www.uhbvn.org.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Haryana",
+      "aliases": ["uhbvn", "uttar haryana bijli vitran nigam"]
+    },
+    {
+      "id": "dhbvn",
+      "name": "DHBVN",
+      "department": "Dakshin Haryana Bijli Vitran Nigam (DHBVN)",
+      "url": "https://www.dhbvn.org.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Haryana",
+      "aliases": ["dhbvn", "dakshin haryana bijli vitran nigam"]
+    },
+    {
+      "id": "aiims-bathinda",
+      "name": "AIIMS Bathinda",
+      "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+      "url": "https://aiimsbathinda.edu.in/Recruitment_Types.aspx",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Bathinda, Punjab",
+      "aliases": ["aiims bathinda", "aiims, bathinda"]
+    },
+    {
+      "id": "aiims-exams",
+      "name": "AIIMS Examinations",
+      "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
+      "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "aliases": ["aiims exams", "aiimsexams", "aiims examination"]
+    }
+  ]
+}

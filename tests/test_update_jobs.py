@@ -176,5 +176,57 @@ class JobMonitorTests(unittest.TestCase):
             self.assertTrue(any("Teacher" in job["title"] for job in second["jobs"]))
 
 
+    def test_discovery_matches_official_org_and_never_publishes_aggregator(self):
+        headline = monitor.Candidate(
+            "HSSC Clerk Recruitment 2026 – 450 posts last date",
+            "https://haryanajobs.in/hssc-clerk-2026",
+        )
+        orgs = monitor.approved_official_organizations(
+            [{"id": "psssb", "name": "PSSSB", "url": "https://sssb.punjab.gov.in/Advertisements.html"}]
+        )
+        matched = monitor.match_official_organization(headline.title, orgs)
+        self.assertIsNotNone(matched)
+        self.assertEqual(matched["id"], "hssc")
+        self.assertFalse(monitor.is_discovery_host(matched["url"]))
+
+        unmatched = monitor.match_official_organization(
+            "Private bank walk-in for sales executives", orgs
+        )
+        self.assertIsNone(unmatched)
+
+        official = monitor.Candidate(
+            "Advertisement for recruitment of 450 Clerk posts",
+            "https://www.hssc.gov.in/files/clerk-2026.pdf",
+        )
+        matches = monitor.official_notices_for_headline(headline.title, [official])
+        self.assertEqual(matches[0].url, official.url)
+
+        source = {
+            "name": "HSSC",
+            "department": "Haryana Staff Selection Commission (HSSC)",
+            "url": "https://www.hssc.gov.in/",
+            "type": "central",
+            "categorySlug": "central",
+            "location": "Haryana",
+            "enrichDetails": False,
+        }
+        job = monitor.job_from_candidate(
+            official, source, datetime(2026, 8, 18, tzinfo=timezone.utc)
+        )
+        for field in ("pdfLink", "applyLink", "sourceUrl"):
+            self.assertFalse(monitor.is_discovery_host(job[field]))
+            self.assertNotIn("haryanajobs", job[field].lower())
+            self.assertNotIn("rozgarnews", job[field].lower())
+        self.assertNotIn("haryanajobs", job["title"].lower())
+        self.assertNotIn("rozgarnews", job["details"].lower())
+
+        with self.assertRaises(ValueError):
+            monitor.job_from_candidate(
+                headline,
+                {"name": "HaryanaJobs", "url": "https://haryanajobs.in/", "enrichDetails": False},
+                datetime(2026, 8, 18, tzinfo=timezone.utc),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
