@@ -48,7 +48,7 @@
       "id": "punjab-police",
       "name": "Punjab Police",
       "department": "Punjab Police Recruitment",
-      "url": "https://punjabpolice.gov.in/punjabpolice/recruitment.aspx",
+      "url": "https://www.punjabpolice.gov.in/en/recruitments/",
       "type": "punjab",
       "categorySlug": "punjab-police",
       "location": "Punjab",
@@ -67,6 +67,20 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 1,
       "maxNewPerRun": 5
+    },
+    {
+      "id": "pnrc",
+      "name": "PNRC",
+      "department": "Punjab Nurses Registration Council (PNRC)",
+      "url": "https://www.pnrconline.in/Home.aspx",
+      "type": "punjab",
+      "categorySlug": "central",
+      "location": "Punjab",
+      "noticeTypes": ["admission", "result", "answer-key", "corrigendum"],
+      "includeKeywords": ["counselling", "counseling", "nursing courses"],
+      "defaultNoticeType": "admission",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
     },
     {
       "id": "nvs",
@@ -153,6 +167,19 @@
       "location": "Bathinda, Punjab",
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "includeKeywords": ["faculty", "senior resident", "junior resident", "nursing", "group a", "group b", "group c"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "pgimer",
+      "name": "PGIMER Chandigarh",
+      "department": "Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh",
+      "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/Vacancies/JSP/VACANCIE_VIEW.jsp?countt=0",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": ["senior resident", "junior resident", "faculty", "assistant professor", "walk-in interview", "walk in interview", "project", "recruitment"],
       "bootstrapCount": 1,
       "maxNewPerRun": 8
     },

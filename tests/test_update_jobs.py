@@ -227,6 +227,105 @@ class JobMonitorTests(unittest.TestCase):
                 datetime(2026, 8, 18, tzinfo=timezone.utc),
             )
 
+    def test_detect_extension_reads_only_explicit_extension_notices(self):
+        extension_examples = {
+            "The last date for online application has been extended up to 30 September 2026": "30-09-2026",
+            "Corrigendum: last date of registration is extended till 30-09-2026": "30-09-2026",
+            "The closing date stands extended up to 25.10.2026 for all candidates": "25-10-2026",
+        }
+        for text, expected_date in extension_examples.items():
+            with self.subTest(text=text):
+                is_extension, new_date = monitor.detect_extension(text)
+                self.assertTrue(is_extension)
+                self.assertEqual(new_date, expected_date)
+
+        # An extension phrase with no readable date must not invent one.
+        is_extension, new_date = monitor.detect_extension("Extension of last date")
+        self.assertTrue(is_extension)
+        self.assertEqual(new_date, "")
+
+        # Non-extension corrigenda must not be flagged.
+        for text in (
+            "Corrigendum regarding revised vacancies and age relaxation",
+            "Addendum regarding category-wise distribution of posts",
+        ):
+            with self.subTest(text=text):
+                self.assertFalse(monitor.detect_extension(text)[0])
+
+    def test_apply_extensions_marks_original_and_preserves_first_date(self):
+        jobs = [
+            {
+                "id": 1,
+                "title": "Recruitment of 450 Clerk posts",
+                "department": "Example Board",
+                "alertType": "recruitment",
+                "advtNo": "4/2026",
+                "lastDate": "20-09-2026",
+                "pdfLink": "https://example.gov.in/advt-4.pdf",
+            },
+            {
+                "id": 2,
+                "title": "Corrigendum to Advertisement No. 4/2026 for recruitment of Clerks",
+                "department": "Example Board",
+                "alertType": "corrigendum",
+                "advtNo": "4/2026",
+                "lastDate": "See Notification",
+                "isExtension": True,
+                "extensionDate": "30-09-2026",
+                "pdfLink": "https://example.gov.in/corr-4.pdf",
+                "applyLink": "",
+            },
+            {
+                "id": 3,
+                "title": "Corrigendum regarding age relaxation",
+                "department": "Example Board",
+                "alertType": "corrigendum",
+                "advtNo": "See Official Notice",
+                "lastDate": "See Notification",
+                "isExtension": False,
+                "extensionDate": "",
+            },
+        ]
+        self.assertTrue(monitor.apply_extensions(jobs))
+        original = next(job for job in jobs if job["id"] == 1)
+        self.assertTrue(original["lastDateExtended"])
+        self.assertEqual(original["originalLastDate"], "20-09-2026")
+        self.assertEqual(original["lastDate"], "30-09-2026")
+        self.assertEqual(original["extendedLastDate"], "30-09-2026")
+        self.assertEqual(original["extensionNoticeUrl"], "https://example.gov.in/corr-4.pdf")
+        # Internal fields are stripped from every corrigendum.
+        for job in jobs:
+            self.assertNotIn("isExtension", job)
+            self.assertNotIn("extensionDate", job)
+        # Non-extension corrigendum leaves other jobs untouched.
+        self.assertFalse(any(job.get("lastDateExtended") for job in jobs if job["id"] == 3))
+
+    def test_apply_extensions_does_not_apply_without_readable_date(self):
+        jobs = [
+            {
+                "id": 1,
+                "title": "Recruitment of 40 Driver posts",
+                "department": "Example Board",
+                "alertType": "recruitment",
+                "advtNo": "2/2026",
+                "lastDate": "20-09-2026",
+            },
+            {
+                "id": 2,
+                "title": "Corrigendum to Advertisement No. 2/2026 for recruitment of Drivers",
+                "department": "Example Board",
+                "alertType": "corrigendum",
+                "advtNo": "2/2026",
+                "lastDate": "See Notification",
+                "isExtension": True,
+                "extensionDate": "",
+            },
+        ]
+        self.assertFalse(monitor.apply_extensions(jobs))
+        original = next(job for job in jobs if job["id"] == 1)
+        self.assertNotIn("lastDateExtended", original)
+        self.assertEqual(original["lastDate"], "20-09-2026")
+
 
 if __name__ == "__main__":
     unittest.main()
