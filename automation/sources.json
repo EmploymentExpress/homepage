@@ -269,6 +269,35 @@
       "maxNewPerRun": 8
     },
     {
+      "id": "punjab-legal-services-authority",
+      "enabled": true,
+      "name": "Punjab State Legal Services Authority",
+      "department": "Punjab State Legal Services Authority (PULSA)",
+      "url": "https://punjab.nalsa.gov.in/notice-category/recruitments/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": [
+        "applications are invited",
+        "application invited",
+        "recruitment",
+        "vacancy",
+        "advertisement",
+        "legal aid defense counsel",
+        "legal aid defence counsel",
+        "office assistant",
+        "receptionist",
+        "data entry operator",
+        "peon"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8,
+      "timeout": 35,
+      "detailTimeout": 25
+    },
+    {
       "id": "aiims-exams",
       "enabled": true,
       "name": "AIIMS Examinations",
