@@ -106,6 +106,28 @@
       "categorySlug": "central",
       "location": "All India",
       "aliases": ["aiims exams", "aiimsexams", "aiims examination"]
+    },
+    {
+      "id": "isro-lpsc",
+      "name": "ISRO Liquid Propulsion Systems Centre",
+      "department": "Indian Space Research Organisation (ISRO) — Liquid Propulsion Systems Centre (LPSC)",
+      "url": "https://apps.lpsc.gov.in/common/advt.jsp",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["isro lpsc", "lpsc", "liquid propulsion systems centre", "isro liquid propulsion systems centre"]
+    },
+    {
+      "id": "csir",
+      "name": "Council of Scientific & Industrial Research",
+      "department": "Council of Scientific & Industrial Research (CSIR)",
+      "url": "https://www.csir.res.in/en/career-opportunities/recruitment",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["csir", "council of scientific and industrial research", "council of scientific & industrial research"]
     }
   ]
 }

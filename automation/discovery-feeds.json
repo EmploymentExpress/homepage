@@ -2,5 +2,20 @@
   "version": 1,
   "maxHeadlinesPerFeed": 40,
   "maxNewPerFeed": 5,
-  "feeds": []
+  "feeds": [
+    {
+      "id": "haryanajobs-isro-lpsc-2026",
+      "name": "HaryanaJobs headline discovery: ISRO LPSC Recruitment 2026",
+      "url": "https://haryanajobs.in/isro-lpsc-recruitment-2026/",
+      "maxHeadlines": 10,
+      "maxNewPerRun": 1
+    },
+    {
+      "id": "haryanajobs-csir-technician-2026",
+      "name": "HaryanaJobs headline discovery: CSIR Technician Recruitment 2026",
+      "url": "https://haryanajobs.in/csir-technician-recruitment-2026/",
+      "maxHeadlines": 10,
+      "maxNewPerRun": 1
+    }
+  ]
 }

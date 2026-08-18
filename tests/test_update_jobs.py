@@ -310,6 +310,37 @@ class JobMonitorTests(unittest.TestCase):
                 datetime(2026, 8, 18, tzinfo=timezone.utc),
             )
 
+    def test_supplied_haryanajobs_articles_are_discovery_only_for_lpsc_and_csir(self):
+        feeds = monitor.load_discovery_feeds(
+            Path(__file__).resolve().parents[1] / "automation" / "discovery-feeds.json"
+        )
+        self.assertEqual(
+            {feed["url"] for feed in feeds},
+            {
+                "https://haryanajobs.in/isro-lpsc-recruitment-2026/",
+                "https://haryanajobs.in/csir-technician-recruitment-2026/",
+            },
+        )
+        self.assertTrue(all(monitor.is_discovery_host(feed["url"]) for feed in feeds))
+
+        organizations = monitor.approved_official_organizations([])
+        examples = {
+            "ISRO LPSC Recruitment 2026: Technical Assistant, Fireman & Other Posts": (
+                "isro-lpsc", "https://apps.lpsc.gov.in/common/advt.jsp"
+            ),
+            "CSIR Technician Recruitment 2026: Apply Online Start": (
+                "csir", "https://www.csir.res.in/en/career-opportunities/recruitment"
+            ),
+        }
+        for headline, (organization_id, official_url) in examples.items():
+            with self.subTest(headline=headline):
+                matched = monitor.match_official_organization(headline, organizations)
+                self.assertIsNotNone(matched)
+                self.assertEqual(matched["id"], organization_id)
+                self.assertEqual(matched["url"], official_url)
+                self.assertFalse(monitor.is_discovery_host(matched["url"]))
+
+
     def test_detect_extension_reads_only_explicit_extension_notices(self):
         extension_examples = {
             "The last date for online application has been extended up to 30 September 2026": "30-09-2026",

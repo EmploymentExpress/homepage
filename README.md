@@ -143,11 +143,11 @@ The monitor currently has these official recruitment sources enabled:
 2. **AIIMS Recruitments** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e`
 3. **AIIMS Academic Courses** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976f`
 
-All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`, so automatic updates are published **only from PULSA and the two AIIMS Exams links**. The discovery headline feeds (HaryanaJobs / RozgarNews) are also switched off (`automation/discovery-feeds.json` has an empty `feeds` list) so no update from any other website can enter the feed. To re-enable a board, set its `enabled` flag to `true`; to re-enable discovery, restore the feed objects in `automation/discovery-feeds.json`. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. Two HaryanaJobs article URLs are configured exclusively as discovery inputs for the ISRO LPSC and CSIR headlines; they cannot become published sources. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
 
 #### Discovery-only feeds (HaryanaJobs / RozgarNews)
 
-`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. **Currently the `feeds` list is empty, so discovery is switched off** — this keeps automatic updates limited to PULSA and the two enabled AIIMS Examinations links. If discovery is re-enabled later, this is how it behaves:
+`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. The configured HaryanaJobs ISRO LPSC and CSIR article URLs are used solely to discover headlines. Each follows this safe flow:
 
 1. The monitor reads headlines from HaryanaJobs and RozgarNews.
 2. It extracts the recruiting organisation name from the headline.
