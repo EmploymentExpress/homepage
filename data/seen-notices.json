@@ -4,6 +4,26 @@
     "rozgarnews-discovery": {
       "initializedAt": null,
       "fingerprints": []
+    },
+    "punjab-legal-services-authority": {
+      "initializedAt": "2026-08-18T14:09:31Z",
+      "fingerprints": [
+        "081513ec4ff77716ff00b15bdea96f3792dcaa58d7c237699e758dd975f7c957",
+        "f9e5f9c4a25b6543c196802f5ed26183003a41e47feebf36342a475d34980986",
+        "b42b9ba71903889b535c9aff440c76f44371535c939c5f09ca096358bccb467f"
+      ]
+    },
+    "aiims-exams": {
+      "initializedAt": "2026-08-18T14:09:31Z",
+      "fingerprints": [
+        "20f6d084e990485e27428f6e7edf6b20ce1ed56966a10b7b7c2f129d735ecb06"
+      ]
+    },
+    "aiims-exams-courses": {
+      "initializedAt": "2026-08-18T14:09:31Z",
+      "fingerprints": [
+        "20f6d084e990485e27428f6e7edf6b20ce1ed56966a10b7b7c2f129d735ecb06"
+      ]
     }
   }
 }
