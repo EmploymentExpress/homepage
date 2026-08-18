@@ -1322,8 +1322,15 @@
             }
         }
 
-        // Admit Cards Dataset
+        // Admit Cards Dataset. Link only to the recruiting authority's official page;
+        // never republish a third-party download or intermediary article URL.
         const admitCards = [
+            {
+                title: "RRB Group D (Level-1) E-Call Letter 2026",
+                date: "Available exam-date-wise • CBT: 3–25 Aug 2026",
+                source: "CEN 09/2025 • Official RRB Chandigarh",
+                link: "https://www.rrbcdg.gov.in/2025-09-level1.php"
+            },
             { title: "NVS Chandigarh PGT/TGT Interview Call Letter 2026", date: "Active / Download", link: "https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/" },
             { title: "JNVST Class 6 Entrance Selection Hall Ticket", date: "Released", link: "https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/" },
             { title: "Punjab Police Constable 2026 Physical Admit Card", date: "Available Now", link: "#" },
@@ -1376,15 +1383,26 @@
             `).join('');
         }
 
+        function openAdmitCardItem(index) {
+            const item = admitCards[index];
+            const link = safeExternalUrl(item && item.link);
+            if (link !== '#') {
+                window.open(link, '_blank', 'noopener,noreferrer');
+            } else {
+                showToast('The official admit-card link is not available yet.');
+            }
+        }
+
         function renderAdmitCards() {
             const list = document.getElementById('admit-cards-list');
-            list.innerHTML = admitCards.map(item => `
-                <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between" onclick="showToast('Opening Admit Card / Portal Link...')">
+            list.innerHTML = admitCards.map((item, index) => `
+                <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between gap-2" role="link" tabindex="0" onclick="openAdmitCardItem(${index})" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openAdmitCardItem(${index}); }">
                     <div>
-                        <div class="font-bold text-xs text-slate-800 hover:text-emerald-700">${item.title}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-emerald-600 font-bold">● Status:</span> ${item.date}</div>
+                        <div class="font-bold text-xs text-slate-800 hover:text-emerald-700">${escapeHtml(item.title)}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-emerald-600 font-bold">● Status:</span> ${escapeHtml(item.date)}</div>
+                        ${item.source ? `<div class="text-[10px] text-brand-700 font-semibold mt-0.5"><i class="fas fa-landmark mr-1"></i>${escapeHtml(item.source)}</div>` : ''}
                     </div>
-                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200">Get</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200 shrink-0">Get</span>
                 </div>
             `).join('');
         }
