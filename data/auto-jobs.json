@@ -1,5 +1,43 @@
 {
   "version": 1,
-  "updatedAt": null,
-  "jobs": []
+  "updatedAt": "2026-08-18T03:24:00Z",
+  "jobs": [
+    {
+      "id": 166588676450542,
+      "title": "Recruitment for the posts of Junior Engineer/Electrical, Junior Engineer/Sub-Station and Junior Engineer/Civil against CRA 303/24",
+      "department": "Punjab State Power Corporation Limited (PSPCL)",
+      "vacancies": "See Notification",
+      "qualification": "Graduate",
+      "qualCategory": "Graduate",
+      "lastDate": "See Notification",
+      "startDate": "Newly Published",
+      "examDate": "See Official Notification",
+      "location": "Punjab",
+      "applyMode": "Online / As Notified",
+      "alertType": "recruitment",
+      "badge": "NEW JOB ALERT",
+      "badgeColor": "bg-red-600",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "advtNo": "CRA",
+      "feeGen": "See Official Notification",
+      "feeSC": "See Official Notification",
+      "feeMode": "As Notified",
+      "age": "See Official Notification",
+      "details": "Recruitment for the posts of Junior Engineer/Electrical, Junior Engineer/Sub-Station and Junior Engineer/Civil against CRA 303/24.. AAFCP5120Q Mail Contact us Skip to Main Content -A A +A A A ਪੰਜਾਬੀ About About us Vision & Mission Profile of PSPCL Organization Statistics Recruitment Pay Bill Through PSPCL Website Through PSPCL Mobile App Erp Information Center Tenders Open/E-Tender Expected Cost Above Rs 5 Lacs Tender Expected Cost Less Than 5 Lacs Auction & E-Auction Expression of Interest Funds Requirements Request For Proposal For Registration Energy Conservation Energy Conservation Act, 2001 State Energy Efficiency Action Plan (SEEAP) Tips for Energy Conservation Awareness campaigns/even",
+      "howToApply": [
+        "Open the official notification and read the complete eligibility conditions.",
+        "Confirm the application dates, fee, age limit and required documents on the official website.",
+        "Use only the official application link and keep the submitted form or receipt for reference."
+      ],
+      "pdfLink": "https://pspcl.in/Otherlinks/CRA-303-24.aspx",
+      "applyLink": "https://pspcl.in/Otherlinks/CRA-303-24.aspx",
+      "applyLabel": "Open Official Application",
+      "sourceName": "PSPCL",
+      "sourceUrl": "https://pspcl.in/recruitment/",
+      "publishedAt": "",
+      "discoveredAt": "2026-08-18T03:24:00Z",
+      "automated": true
+    }
+  ]
 }
