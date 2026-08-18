@@ -154,8 +154,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-barnala",
@@ -168,8 +168,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-bathinda",
@@ -182,8 +182,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-faridkot",
@@ -196,8 +196,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-fatehgarh-sahib",
@@ -210,8 +210,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-fazilka",
@@ -224,8 +224,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-ferozepur",
@@ -238,8 +238,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-gurdaspur",
@@ -252,8 +252,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-hoshiarpur",
@@ -266,8 +266,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-jalandhar",
@@ -280,8 +280,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-kapurthala",
@@ -294,8 +294,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-ludhiana",
@@ -308,8 +308,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-mansa",
@@ -322,8 +322,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-moga",
@@ -336,8 +336,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-sri-muktsar-sahib",
@@ -350,8 +350,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-nawanshahr",
@@ -364,8 +364,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-pathankot",
@@ -378,8 +378,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-patiala",
@@ -392,8 +392,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-rupnagar",
@@ -406,8 +406,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-sas-nagar",
@@ -420,8 +420,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-sangrur",
@@ -434,8 +434,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-tarn-taran",
@@ -448,8 +448,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     },
     {
       "id": "ecourts-malerkotla",
@@ -462,8 +462,8 @@
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 0,
       "maxNewPerRun": 5,
-      "timeout": 35,
-      "detailTimeout": 25
+      "timeout": 20,
+      "detailTimeout": 15
     }
   ]
 }
