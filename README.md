@@ -104,7 +104,20 @@ The workflow stages and commits only the two files under `data/`; it never rewri
 
 > **Activation required:** this repository connection cannot add a file under `.github/workflows` (it lacks the `workflows` permission). Create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
 
-Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, and the **Recruitment sections of all 23 district courts of Punjab** (eCourts `districts.ecourts.gov.in/india/punjab/<district>/recruit`). Each district court source is configured with `bootstrapCount: 0`, so the first scan records the existing (mostly historical) notices as seen without backfilling them as new — only genuinely new district-court recruitment/result/answer-key/corrigendum notices published after the baseline are alerted going forward. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, **AIIMS Bathinda recruitment** (`https://aiimsbathinda.edu.in/Recruitment_Types.aspx`), and **AIIMS Examinations** (`https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e`). District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+
+#### Discovery-only feeds (HaryanaJobs / RozgarNews)
+
+`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources.
+
+1. The monitor reads headlines from HaryanaJobs and RozgarNews.
+2. It extracts the recruiting organisation name from the headline.
+3. It matches that name against the approved official list (`automation/sources.json` plus `automation/official-organizations.json`).
+4. On a match, it opens the **official** government recruitment page and extracts dates, vacancies, qualifications, PDFs and apply links from that page.
+5. If no approved official organisation matches, the headline is skipped.
+6. HaryanaJobs / RozgarNews URLs, branding and article text are never stored in `data/auto-jobs.json` and never shown on the website.
+
+Add another official board by appending an object to `automation/official-organizations.json` (`id`, `name`, `url`, `aliases`). Do **not** put aggregator URLs in `automation/sources.json` or `data/notification-source-links.json`.
 
 #### Add another website or RSS/Atom feed
 
