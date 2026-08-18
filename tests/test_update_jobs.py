@@ -93,6 +93,72 @@ class JobMonitorTests(unittest.TestCase):
             self.assertEqual(sources[0]["id"], sources[1]["id"])
             self.assertEqual(sources[2]["name"], "Railway Jobs")
 
+    def test_notice_table_row_becomes_one_alert_with_its_own_date(self):
+        """AIIMS Bathinda style table: one row = one notice, many file links."""
+        markup = """
+        <table><thead><tr><th>#</th><th>Date</th><th>Title</th><th>Related Links</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>26-Dec-2025</td>
+            <td>Recruitment of Tutor/ Clinical Instructor Posts on Direct Recruitment Basis at AIIMS Bathinda</td>
+            <td>1) <a href="/images/Reqruitment/20251226050655.pdf">Advertisement</a>
+                2) <a href="/images/Reqruitment/20251226050716.pdf">Application Form</a>
+                3) <a href="https://forms.gle/qqxvTEvCN72yNk4m6">Google Form Link</a>
+                4) <a href="https://www.onlinesbi.sbi/sbicollect/icollecthome.htm?corpID=2322756">Application Fee Link</a></td>
+          </tr>
+        </tbody></table>
+        """
+        source = {
+            "id": "aiims-bathinda-non-faculty",
+            "name": "AIIMS Bathinda (Non-Faculty)",
+            "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+            "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            "type": "central",
+            "categorySlug": "central",
+            "location": "Bathinda, Punjab",
+            "enrichDetails": False,
+            "excludeKeywords": ["google form", "application fee"],
+        }
+        candidates, _ = monitor.parse_html(
+            markup, "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2"
+        )
+        notices = [c for c in candidates if monitor.looks_like_notice(c, source)]
+        # The row publishes once, under its descriptive title, not once per link.
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(
+            notices[0].title,
+            "Recruitment of Tutor/ Clinical Instructor Posts on Direct Recruitment Basis at AIIMS Bathinda",
+        )
+        self.assertTrue(notices[0].url.endswith("20251226050655.pdf"))
+        self.assertEqual(notices[0].notice_date, "26-12-2025")
+
+        job = monitor.job_from_candidate(
+            notices[0], source, datetime(2026, 8, 18, tzinfo=timezone.utc)
+        )
+        self.assertEqual(job["startDate"], "Published 26-12-2025")
+        self.assertEqual(job["alertType"], "recruitment")
+        self.assertEqual(job["sourceUrl"], "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2")
+        # Helper links (payment gateway, blank form) never become the notice link.
+        self.assertNotIn("onlinesbi", job["pdfLink"])
+        self.assertNotIn("forms.gle", job["pdfLink"])
+
+    def test_configured_aiims_bathinda_sources_are_the_two_listing_pages(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        bathinda = [
+            source for source in config["sources"] if "aiimsbathinda.edu.in" in source["url"]
+        ]
+        self.assertEqual(
+            sorted(source["url"] for source in bathinda),
+            [
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
+            ],
+        )
+
     def test_feed_and_detail_inference(self):
         feed = """<?xml version="1.0"?>
         <rss version="2.0"><channel><item>
