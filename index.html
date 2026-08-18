@@ -1534,6 +1534,17 @@
             if (masterSummary) masterSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
         }
 
+        // Sort jobs by last date descending — farthest deadline first, then unparseable dates last
+        function sortByLastDateDesc(jobs) {
+            return [...jobs].sort((a, b) => {
+                const da = parseLastDate(a.lastDate);
+                const db = parseLastDate(b.lastDate);
+                const ta = da ? da.getTime() : -1;
+                const tb = db ? db.getTime() : -1;
+                return tb - ta; // descending: farthest date first
+            });
+        }
+
         function renderJobSectionCard(job, color) {
             const info = deadlineInfo(job);
             const statusClass = info.active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200';
@@ -1560,12 +1571,12 @@
 
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            list.innerHTML = jobDatabase.filter(job => job.type === 'punjab').map(job => renderJobSectionCard(job, 'blue')).join('');
+            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            list.innerHTML = jobDatabase.filter(job => job.type === 'central').map(job => renderJobSectionCard(job, 'purple')).join('');
+            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -1579,7 +1590,7 @@
                     </div>`;
                 return;
             }
-            list.innerHTML = admissionDatabase.map(job => renderJobSectionCard(job, 'teal')).join('');
+            list.innerHTML = sortByLastDateDesc(admissionDatabase).map(job => renderJobSectionCard(job, 'teal')).join('');
         }
 
         function renderAdmitCards() {
@@ -1647,7 +1658,7 @@
             noMsg.classList.add('hidden');
             countBadge.innerText = `Showing ${dataToRender.length} of ${jobDatabase.length}`;
 
-            tbody.innerHTML = dataToRender.map(job => `
+            tbody.innerHTML = sortByLastDateDesc(dataToRender).map(job => `
                 <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
