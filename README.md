@@ -92,6 +92,36 @@ To add / edit a **curated** vacancy, edit `jobDatabase` in `index.html`. Automat
 
 ---
 
+### 🤖 AI Agent & Automation Guidelines (PROTECTED LAYOUT)
+
+**The homepage layout is frozen** — the *Classic 4-Column Mega Grid* (restored in PR #17):
+
+1. Quick Notice Banners / Highlight Grid
+2. Data freshness and deadline summary
+3. 🔥 Newly Added Jobs flash cards
+4. **Last Date Reminders** (red section)
+5. **Main 4-Column Mega Grid** — Punjab Jobs | All India & NVS/Central | Admit Card 2026 | Results & Answer Key
+6. Admission & Courses
+7. Qualification Quick Finder Pills
+8. Master Vacancy Table
+9. Quick Resources & State Syllabus Widget
+
+Any AI agent (or human) asked to *update* the site must change **only the instructed details** —
+job entries, dates, links, text, generated `data/*.json` files — and must **not** reorder sections,
+change the grid structure, or alter element `id`s/`class`es unless a layout change is explicitly
+requested. Full rules: **[`AGENTS.md`](AGENTS.md)**.
+
+This is enforced, not just documented:
+
+- `tests/test_layout_order.py` pins the exact section order, the 4-column grid classes and unique
+  anchor IDs — the GitHub Actions workflow runs it on every run, so layout-drift edits **fail CI**.
+- `scripts/update_jobs.py` snapshots & restores `index.html` and `assets/` around every monitoring
+  run (`PROTECTED_LAYOUT_PATHS`), so automation can only write generated data to `data/*.json`.
+- Guard comments at the top of `<main>` and above the JS datasets in `index.html` repeat the rules
+  inline for any agent editing the file directly.
+
+---
+
 ### 🤖 Automatic Job Alert Setup
 
 The ready-to-install workflow template in `automation/update-job-alerts.workflow.yml` is configured to run once every six hours (`17 */6 * * *`, in UTC) and supports manual runs. Once installed, it:

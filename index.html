@@ -326,6 +326,7 @@
         </section>
 
         <!-- Main 4-Column Mega Grid (Classic EMPLOYMENT EXPRESS Layout) -->
+        <!-- LAYOUT FROZEN: keep this 4-column grid and card order (Punjab | Central | Admit Card | Results); content updates only — see AGENTS.md -->
         <div id="answer-keys" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-28">
             <!-- Column 1: Latest Punjab Jobs -->
             <div id="punjab-jobs" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
@@ -1502,6 +1503,16 @@
         function updateSectionSummaries() {
             const sections = [
                 ['punjab-section-meta', jobDatabase.filter(job => job.type === 'punjab')],
+                ['central-section-meta', jobDatabase.filter(job => job.type === 'central')],
+                ['admission-section-meta', admissionDatabase]
+            ];
+            sections.forEach(([id, jobs]) => {
+                const element = document.getElementById(id);
+                if (!element) return;
+                const nearest = nearestDeadline(jobs);
+                element.textContent = nearest
+                    ? `Nearest last date: ${nearest.job.lastDate}`
+                    : 'No open dated ase.filter(job => job.type === 'punjab')],
                 ['central-section-meta', jobDatabase.filter(job => job.type === 'central')],
                 ['admission-section-meta', admissionDatabase]
             ];
