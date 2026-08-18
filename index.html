@@ -147,6 +147,16 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
         }
+        .job-compact-card {
+            transition: all 0.15s ease;
+        }
+        .job-compact-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px -3px rgba(0, 0, 0, 0.06);
+        }
+        .job-compact-card:active {
+            transform: scale(0.99);
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
@@ -300,31 +310,6 @@
             </div>
         </section>
 
-        <!-- Last Date Reminders (auto-populated 2 days before each job's last date, with live countdown) -->
-        <section id="last-date-reminders" class="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden" aria-labelledby="last-date-heading">
-            <div class="bg-gradient-to-r from-red-700 to-rose-600 px-4 sm:px-5 py-3.5 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-white text-red-700 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider badge-pulse">Urgent</span>
-                        <h2 id="last-date-heading" class="font-extrabold text-base sm:text-lg">Last Date Reminders</h2>
-                    </div>
-                    <p id="last-date-subtext" class="text-[11px] sm:text-xs text-red-100 mt-1">Applications closing within the next 2 days — apply before the deadline.</p>
-                </div>
-                <div id="last-date-countdown" class="text-xs font-extrabold bg-red-900/40 border border-white/20 rounded-lg px-3 py-1.5 whitespace-nowrap">
-                    <i class="far fa-clock mr-1"></i> <span id="last-date-nearest">Checking…</span>
-                </div>
-            </div>
-
-            <div id="last-date-list" class="divide-y divide-slate-200">
-                <!-- Populated dynamically via JS from jobs closing within 48 hours -->
-            </div>
-
-            <div class="px-4 py-2.5 bg-amber-50 border-t border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
-                <i class="fas fa-triangle-exclamation mt-0.5"></i>
-                <span><strong>Reminder:</strong> Application portals can close at their notified time. Confirm current status, full eligibility and documents on the linked official recruitment portal before submitting.</span>
-            </div>
-        </section>
-
         <!-- Main 4-Column Mega Grid (Classic EMPLOYMENT EXPRESS Layout) -->
         <!-- LAYOUT FROZEN: keep this 4-column grid and card order (Punjab | Central | Admit Card | Results); content updates only — see AGENTS.md -->
         <div id="answer-keys" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-28">
@@ -405,6 +390,31 @@
             </div>
 
         </div>
+
+        <!-- Last Date Reminders (auto-populated 2 days before each job's last date, with live countdown) -->
+        <section id="last-date-reminders" class="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden" aria-labelledby="last-date-heading">
+            <div class="bg-gradient-to-r from-red-700 to-rose-600 px-4 sm:px-5 py-3.5 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-white text-red-700 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider badge-pulse">Urgent</span>
+                        <h2 id="last-date-heading" class="font-extrabold text-base sm:text-lg">Last Date Reminders</h2>
+                    </div>
+                    <p id="last-date-subtext" class="text-[11px] sm:text-xs text-red-100 mt-1">Applications closing within the next 2 days — apply before the deadline.</p>
+                </div>
+                <div id="last-date-countdown" class="text-xs font-extrabold bg-red-900/40 border border-white/20 rounded-lg px-3 py-1.5 whitespace-nowrap">
+                    <i class="far fa-clock mr-1"></i> <span id="last-date-nearest">Checking…</span>
+                </div>
+            </div>
+
+            <div id="last-date-list" class="divide-y divide-slate-200">
+                <!-- Populated dynamically via JS from jobs closing within 48 hours -->
+            </div>
+
+            <div class="px-4 py-2.5 bg-amber-50 border-t border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
+                <i class="fas fa-triangle-exclamation mt-0.5"></i>
+                <span><strong>Reminder:</strong> Application portals can close at their notified time. Confirm current status, full eligibility and documents on the linked official recruitment portal before submitting.</span>
+            </div>
+        </section>
 
         <!-- Admission & Courses -->
         <div class="grid grid-cols-1 gap-4">
@@ -1524,53 +1534,49 @@
             if (masterSummary) masterSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
         }
 
+        // Sort jobs by last date descending — farthest deadline first, then unparseable dates last
+        function sortByLastDateDesc(jobs) {
+            return [...jobs].sort((a, b) => {
+                const da = parseLastDate(a.lastDate);
+                const db = parseLastDate(b.lastDate);
+                const ta = da ? da.getTime() : -1;
+                const tb = db ? db.getTime() : -1;
+                return tb - ta; // descending: farthest date first
+            });
+        }
+
         function renderJobSectionCard(job, color) {
             const info = deadlineInfo(job);
             const statusClass = info.active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200';
-            const details = String(job.details || 'Open the full details for the official notification, eligibility and application instructions.').slice(0, 220);
+            const shortDetail = String(job.details || '').replace(/<[^>]*>/g, '').slice(0, 80);
             return `
-                <article class="p-4 hover:bg-${color}-50/50 transition border-b border-slate-100">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                        <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
-                                <span class="text-[10px] font-black text-${color}-700 bg-${color}-100 px-2 py-0.5 rounded">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge || 'NOTICE')}</span>
-                                <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">${escapeHtml(job.vacancies)}</span>
-                                <span class="text-[10px] font-bold border px-2 py-0.5 rounded ${statusClass}">${escapeHtml(info.status)}</span>
-                            </div>
-                            <button type="button" onclick="openJobDetail(${job.id})" class="text-left font-extrabold text-sm text-slate-900 hover:text-${color}-700 leading-snug">${escapeHtml(job.title)}</button>
-                            <p class="text-[11px] font-semibold text-slate-500 mt-0.5">${escapeHtml(job.department)}</p>
+                <article class="p-3 job-compact-card border-b border-slate-100 cursor-pointer" onclick="openJobDetail(${job.id})">
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="text-[10px] font-black text-${color}-700 bg-${color}-100 px-2 py-0.5 rounded">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge || 'NOTICE')}</span>
+                            <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">${escapeHtml(job.vacancies)}</span>
+                            <span class="text-[10px] font-bold border px-2 py-0.5 rounded ${statusClass}">${escapeHtml(info.status)}</span>
                         </div>
-                        <div class="shrink-0 sm:text-right bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                            <div class="text-[9px] uppercase tracking-wide font-black text-red-500">Last date</div>
-                            <div class="text-xs font-extrabold text-red-700"><i class="far fa-calendar-check mr-1"></i>${escapeHtml(job.lastDate)}</div>
+                        <h3 class="font-extrabold text-sm text-slate-900 hover:text-${color}-700 leading-snug">${escapeHtml(job.title)}</h3>
+                        <p class="text-[11px] font-semibold text-slate-500">${escapeHtml(job.department)}</p>
+                        ${shortDetail ? `<p class="text-[10px] text-slate-400 leading-relaxed truncate">${escapeHtml(shortDetail)}…</p>` : ''}
+                        <div class="flex items-center justify-between mt-0.5">
+                            <div class="text-[10px] font-extrabold text-red-600"><i class="far fa-calendar-check mr-1"></i>Last date: ${escapeHtml(job.lastDate)}</div>
+                            <span class="text-[10px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2 py-0.5 rounded hover:bg-${color}-100">View Details →</span>
                         </div>
-                    </div>
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 mt-3 text-[11px]">
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Qualification:</dt> <dd class="inline">${escapeHtml(job.qualification)}</dd></div>
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Start date:</dt> <dd class="inline">${escapeHtml(job.startDate || 'See notice')}</dd></div>
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Apply mode:</dt> <dd class="inline">${escapeHtml(job.applyMode || 'As notified')}</dd></div>
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Location:</dt> <dd class="inline">${escapeHtml(job.location || 'See notice')}</dd></div>
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Advertisement:</dt> <dd class="inline">${escapeHtml(job.advtNo || 'See notice')}</dd></div>
-                        <div class="bg-slate-50 rounded p-2"><dt class="font-bold text-slate-900 inline">Age limit:</dt> <dd class="inline">${escapeHtml(job.age || 'See notice')}</dd></div>
-                    </dl>
-                    ${job.lastDateExtended ? `<p class="text-[11px] font-bold text-emerald-700 mt-2"><i class="fas fa-circle-info mr-1"></i>Last date extended from <span class="line-through text-slate-400">${escapeHtml(job.originalLastDate || 'previous date')}</span> to ${escapeHtml(job.lastDate)}</p>` : ''}
-                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed"><strong class="text-slate-900">Details:</strong> ${escapeHtml(details)}${String(job.details || '').length > 220 ? '…' : ''}</p>
-                    <div class="flex flex-wrap items-center gap-2 mt-2">
-                        <button type="button" onclick="openJobDetail(${job.id})" class="text-[11px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2.5 py-1.5 rounded hover:bg-${color}-100">All details &amp; fees</button>
-                        <a href="${safeExternalUrl(job.pdfLink)}" target="_blank" rel="noopener noreferrer" onclick="if(this.getAttribute('href')==='#'){openJobDetail(${job.id});return false;}" class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded hover:bg-slate-200"><i class="fas fa-file-pdf text-red-600 mr-1"></i>Official notice</a>
-                        <a href="${safeExternalUrl(job.applyLink)}" target="_blank" rel="noopener noreferrer" onclick="if(this.getAttribute('href')==='#'){openJobDetail(${job.id});return false;}" class="text-[11px] font-bold text-white bg-${color}-700 px-2.5 py-1.5 rounded hover:brightness-110"><i class="fas fa-paper-plane mr-1"></i>${escapeHtml(job.applyLabel || 'Apply / open portal')}</a>
+                        ${job.lastDateExtended ? `<p class="text-[10px] font-bold text-emerald-700"><i class="fas fa-circle-info mr-1"></i>Extended to ${escapeHtml(job.lastDate)}</p>` : ''}
                     </div>
                 </article>`;
         }
 
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            list.innerHTML = jobDatabase.filter(job => job.type === 'punjab').map(job => renderJobSectionCard(job, 'blue')).join('');
+            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            list.innerHTML = jobDatabase.filter(job => job.type === 'central').map(job => renderJobSectionCard(job, 'purple')).join('');
+            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -1584,7 +1590,7 @@
                     </div>`;
                 return;
             }
-            list.innerHTML = admissionDatabase.map(job => renderJobSectionCard(job, 'teal')).join('');
+            list.innerHTML = sortByLastDateDesc(admissionDatabase).map(job => renderJobSectionCard(job, 'teal')).join('');
         }
 
         function renderAdmitCards() {
@@ -1652,7 +1658,7 @@
             noMsg.classList.add('hidden');
             countBadge.innerText = `Showing ${dataToRender.length} of ${jobDatabase.length}`;
 
-            tbody.innerHTML = dataToRender.map(job => `
+            tbody.innerHTML = sortByLastDateDesc(dataToRender).map(job => `
                 <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
