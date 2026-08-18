@@ -81,6 +81,23 @@
       "aliases": ["aiims bathinda", "aiims, bathinda", "aiims bathinda non-faculty"]
     },
     {
+      "id": "punjab-legal-services-authority",
+      "name": "Punjab State Legal Services Authority",
+      "department": "Punjab State Legal Services Authority (PULSA)",
+      "url": "https://punjab.nalsa.gov.in/notice-category/recruitments/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "punjab state legal services authority",
+        "pulsa",
+        "punjab nalsa",
+        "district legal services authority punjab",
+        "dlsa punjab"
+      ]
+    },
+    {
       "id": "aiims-exams",
       "name": "AIIMS Examinations",
       "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
