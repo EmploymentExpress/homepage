@@ -300,72 +300,6 @@
             </div>
         </section>
 
-        <!-- Latest Punjab Jobs (Priority Section) -->
-        <div class="grid grid-cols-1 gap-4">
-            <!-- Latest Punjab Jobs -->
-            <div id="punjab-jobs" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
-                <div class="bg-blue-700 text-white px-4 py-2.5 flex items-center justify-between">
-                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-                        <i class="fas fa-briefcase"></i> Latest Punjab Jobs
-                    </h2>
-                    <div class="text-right">
-                        <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-blue-100 font-bold">Punjab Govt</span>
-                        <div id="punjab-section-meta" class="text-[10px] text-blue-100 font-semibold mt-1">Nearest last date: Checking…</div>
-                    </div>
-                </div>
-                <div class="divide-y divide-slate-100 flex-1" id="punjab-jobs-list">
-                    <!-- Populated dynamically via JS -->
-                </div>
-                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="javascript:void(0)" onclick="resetFilter()" class="text-xs font-bold text-blue-600 hover:text-blue-800">View All Punjab Jobs &rarr;</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Central / All India / NVS Jobs -->
-        <div class="grid grid-cols-1 gap-4">
-            <!-- Central / NVS / SSC / Railway / Defence -->
-            <div id="central-jobs" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
-                <div class="bg-purple-700 text-white px-4 py-2.5 flex items-center justify-between">
-                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-                        <i class="fas fa-flag"></i> All India &amp; NVS / Central
-                    </h2>
-                    <div class="text-right">
-                        <span class="text-[10px] bg-purple-900 px-2 py-0.5 rounded text-purple-100 font-bold">NVS/SSC/RRB</span>
-                        <div id="central-section-meta" class="text-[10px] text-purple-100 font-semibold mt-1">Nearest last date: Checking…</div>
-                    </div>
-                </div>
-                <div class="divide-y divide-slate-100 flex-1" id="central-jobs-list">
-                    <!-- Populated dynamically via JS -->
-                </div>
-                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="javascript:void(0)" onclick="filterByCategory('central')" class="text-xs font-bold text-purple-600 hover:text-purple-800">View Central Jobs &rarr;</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admission & Courses -->
-        <div class="grid grid-cols-1 gap-4">
-            <div id="admission-courses" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
-                <div class="bg-teal-700 text-white px-4 py-2.5 flex items-center justify-between">
-                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-                        <i class="fas fa-graduation-cap"></i> Admission &amp; Courses
-                    </h2>
-                    <div class="text-right">
-                        <span class="text-[10px] bg-teal-900 px-2 py-0.5 rounded text-teal-100 font-bold">JNVST / NVS</span>
-                        <div id="admission-section-meta" class="text-[10px] text-teal-100 font-semibold mt-1">Nearest last date: Checking…</div>
-                    </div>
-                </div>
-                <div class="divide-y divide-slate-100 flex-1" id="admission-list">
-                    <!-- Populated dynamically via JS -->
-                </div>
-                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="#admission-courses" class="text-xs font-bold text-teal-600 hover:text-teal-800">View All Admissions &amp; Courses &rarr;</a>
-                </div>
-            </div>
-        </div>
-
-
         <!-- Last Date Reminders (auto-populated 2 days before each job's last date, with live countdown) -->
         <section id="last-date-reminders" class="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden" aria-labelledby="last-date-heading">
             <div class="bg-gradient-to-r from-red-700 to-rose-600 px-4 sm:px-5 py-3.5 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -391,9 +325,66 @@
             </div>
         </section>
 
-        <!-- Answer Key, Results & Admit Cards -->
-        <div id="answer-keys" class="grid grid-cols-1 md:grid-cols-2 gap-4 scroll-mt-28">
-            <!-- Results & Answer Keys -->
+        <!-- Main 4-Column Mega Grid (Classic EMPLOYMENT EXPRESS Layout) -->
+        <div id="answer-keys" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-28">
+            <!-- Column 1: Latest Punjab Jobs -->
+            <div id="punjab-jobs" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
+                <div class="bg-blue-700 text-white px-4 py-2.5 flex items-center justify-between">
+                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
+                        <i class="fas fa-briefcase"></i> Latest Punjab Jobs
+                    </h2>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-blue-900 px-2 py-0.5 rounded text-blue-100 font-bold">Punjab Govt</span>
+                        <div id="punjab-section-meta" class="text-[10px] text-blue-100 font-semibold mt-1">Nearest last date: Checking…</div>
+                    </div>
+                </div>
+                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="punjab-jobs-list">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
+                    <a href="javascript:void(0)" onclick="resetFilter()" class="text-xs font-bold text-blue-600 hover:text-blue-800">View All Punjab Jobs &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Column 2: Central / NVS / SSC / Railway / Defence -->
+            <div id="central-jobs" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
+                <div class="bg-purple-700 text-white px-4 py-2.5 flex items-center justify-between">
+                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
+                        <i class="fas fa-flag"></i> All India &amp; NVS / Central
+                    </h2>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-purple-900 px-2 py-0.5 rounded text-purple-100 font-bold">NVS/SSC/RRB</span>
+                        <div id="central-section-meta" class="text-[10px] text-purple-100 font-semibold mt-1">Nearest last date: Checking…</div>
+                    </div>
+                </div>
+                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="central-jobs-list">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
+                    <a href="javascript:void(0)" onclick="filterByCategory('central')" class="text-xs font-bold text-purple-600 hover:text-purple-800">View Central Jobs &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Column 3: Admit Card & Exam Date -->
+            <div id="admit-cards" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
+                <div class="bg-emerald-700 text-white px-4 py-2.5 flex items-center justify-between">
+                    <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
+                        <i class="fas fa-id-card"></i> Admit Card 2026
+                    </h2>
+                    <div class="text-right">
+                        <span class="text-[10px] bg-emerald-900 px-2 py-0.5 rounded text-emerald-100 font-bold">Direct Link</span>
+                        <div id="admit-section-meta" class="text-[10px] text-emerald-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                    </div>
+                </div>
+                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="admit-cards-list">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
+                    <a href="javascript:void(0)" class="text-xs font-bold text-emerald-600 hover:text-emerald-800">All Admit Cards &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Column 4: Results & Answer Keys -->
             <div id="results" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
                 <div class="bg-rose-700 text-white px-4 py-2.5 flex items-center justify-between">
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
@@ -412,22 +403,25 @@
                 </div>
             </div>
 
-            <!-- Admit Card & Exam Date -->
-            <div id="admit-cards" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
-                <div class="bg-emerald-700 text-white px-4 py-2.5 flex items-center justify-between">
+        </div>
+
+        <!-- Admission & Courses -->
+        <div class="grid grid-cols-1 gap-4">
+            <div id="admission-courses" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col scroll-mt-28">
+                <div class="bg-teal-700 text-white px-4 py-2.5 flex items-center justify-between">
                     <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-                        <i class="fas fa-id-card"></i> Admit Card 2026
+                        <i class="fas fa-graduation-cap"></i> Admission &amp; Courses
                     </h2>
                     <div class="text-right">
-                        <span class="text-[10px] bg-emerald-900 px-2 py-0.5 rounded text-emerald-100 font-bold">Direct Link</span>
-                        <div id="admit-section-meta" class="text-[10px] text-emerald-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                        <span class="text-[10px] bg-teal-900 px-2 py-0.5 rounded text-teal-100 font-bold">JNVST / NVS</span>
+                        <div id="admission-section-meta" class="text-[10px] text-teal-100 font-semibold mt-1">Nearest last date: Checking…</div>
                     </div>
                 </div>
-                <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="admit-cards-list">
+                <div class="divide-y divide-slate-100 flex-1" id="admission-list">
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="javascript:void(0)" class="text-xs font-bold text-emerald-600 hover:text-emerald-800">All Admit Cards &rarr;</a>
+                    <a href="#admission-courses" class="text-xs font-bold text-teal-600 hover:text-teal-800">View All Admissions &amp; Courses &rarr;</a>
                 </div>
             </div>
         </div>
