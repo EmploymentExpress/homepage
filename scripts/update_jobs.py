@@ -41,6 +41,8 @@ DEFAULT_OUTPUT = ROOT / "data" / "auto-jobs.json"
 DEFAULT_STATE = ROOT / "data" / "seen-notices.json"
 # Recruitment automation is data-only. These paths define the visual website and
 # are snapshotted/restored around every CLI run so the monitor cannot alter layout.
+# The homepage layout is FROZEN for AI agents and humans alike — content-only
+# updates; see AGENTS.md and tests/test_layout_order.py before editing index.html.
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
 DISCOVERY_HOSTS = {"haryanajobs.in", "rozgarnews.com"}
 DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "rozgarnews", "rozgar news")
