@@ -107,11 +107,16 @@ The workflow stages and commits only the two files under `data/`; it never rewri
 
 > **Activation required:** this repository connection cannot add a file under `.github/workflows` (it lacks the `workflows` permission). Create `.github/workflows/update-job-alerts.yml` through GitHub's web editor and copy the complete contents of `automation/update-job-alerts.workflow.yml` into it. Commit that file to the default branch, then use **GitHub → Actions → Update job alerts → Run workflow** for the first scan. Until this one-time activation is completed, alerts can be updated manually with `python3 scripts/update_jobs.py` but the six-hour schedule will not run.
 
-Configured official pages cover PSSSB advertisements/results, PPSC, Punjab Police, PSPCL, NVS recruitment/JNVST updates, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, **AIIMS Bathinda Non-Faculty** (`https://aiimsbathinda.edu.in/Recruitment.aspx?type=2`), **AIIMS Bathinda Project Posts** (`https://aiimsbathinda.edu.in/Recruitment.aspx?type=4`), and **AIIMS Examinations** (`https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e`). District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+The monitor is currently restricted to the two **AIIMS Examinations** portal links only:
+
+1. **AIIMS Recruitments** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e`
+2. **AIIMS Academic Courses** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976f`
+
+All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`, so automatic updates are published **only from the two AIIMS Exams links**. The discovery headline feeds (HaryanaJobs / RozgarNews) are also switched off (`automation/discovery-feeds.json` has an empty `feeds` list) so no update from any other website can enter the feed. To re-enable a board, set its `enabled` flag to `true`; to re-enable discovery, restore the feed objects in `automation/discovery-feeds.json`. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
 
 #### Discovery-only feeds (HaryanaJobs / RozgarNews)
 
-`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources.
+`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. **Currently the `feeds` list is empty, so discovery is switched off** — this keeps automatic updates limited to the two enabled AIIMS Examinations links. If discovery is re-enabled later, this is how it behaves:
 
 1. The monitor reads headlines from HaryanaJobs and RozgarNews.
 2. It extracts the recruiting organisation name from the headline.
