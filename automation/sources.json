@@ -116,7 +116,7 @@
     },
     {
       "id": "ssc",
-      "enabled": false,
+      "enabled": true,
       "name": "Staff Selection Commission",
       "department": "Staff Selection Commission (SSC)",
       "url": "https://ssc.gov.in/home/noticeboard",
@@ -270,7 +270,7 @@
     },
     {
       "id": "punjab-legal-services-authority",
-      "enabled": true,
+      "enabled": false,
       "name": "Punjab State Legal Services Authority",
       "department": "Punjab State Legal Services Authority (PULSA)",
       "url": "https://punjab.nalsa.gov.in/notice-category/recruitments/",
@@ -299,7 +299,7 @@
     },
     {
       "id": "aiims-exams",
-      "enabled": true,
+      "enabled": false,
       "name": "AIIMS Examinations",
       "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
       "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e",
@@ -311,8 +311,35 @@
       "maxNewPerRun": 8
     },
     {
-      "id": "aiims-exams-courses",
+      "id": "dsssb",
       "enabled": true,
+      "name": "DSSSB Vacancies",
+      "department": "Delhi Subordinate Services Selection Board (DSSSB)",
+      "url": "https://dsssb.delhi.gov.in/dsssb-vacancies",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Delhi",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "rajasthan-lsg",
+      "enabled": true,
+      "name": "Rajasthan Local Self Government Department",
+      "department": "Local Self Government Department, Rajasthan",
+      "url": "https://lsg.urban.rajasthan.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Rajasthan",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": ["safai", "recruitment", "advertisement"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5
+    },
+    {
+      "id": "aiims-exams-courses",
+      "enabled": false,
       "name": "AIIMS Academic Courses",
       "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
       "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976f",

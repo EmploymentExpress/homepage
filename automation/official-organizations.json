@@ -2,6 +2,55 @@
   "version": 1,
   "organizations": [
     {
+      "id": "upsc",
+      "name": "UPSC",
+      "department": "Union Public Service Commission (UPSC)",
+      "url": "https://upsc.gov.in/recruitment/recruitment-advertisement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["upsc", "union public service commission"]
+    },
+    {
+      "id": "ssc",
+      "name": "SSC",
+      "department": "Staff Selection Commission (SSC)",
+      "url": "https://ssc.gov.in/home/noticeboard",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["ssc", "staff selection commission"]
+    },
+    {
+      "id": "dsssb",
+      "name": "DSSSB",
+      "department": "Delhi Subordinate Services Selection Board (DSSSB)",
+      "url": "https://dsssb.delhi.gov.in/dsssb-vacancies",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Delhi",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": ["dsssb", "delhi subordinate services selection board"]
+    },
+    {
+      "id": "rajasthan-lsg",
+      "name": "Rajasthan Local Self Government Department",
+      "department": "Local Self Government Department, Rajasthan",
+      "url": "https://lsg.urban.rajasthan.gov.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Rajasthan",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "rajasthan local self government",
+        "lsg rajasthan",
+        "rajasthan safai karamchari",
+        "rj safai karamchari"
+      ]
+    },
+    {
       "id": "hssc",
       "name": "HSSC",
       "department": "Haryana Staff Selection Commission (HSSC)",
@@ -50,62 +99,6 @@
       "categorySlug": "central",
       "location": "Haryana",
       "aliases": ["dhbvn", "dakshin haryana bijli vitran nigam"]
-    },
-    {
-      "id": "aiims-bathinda-project",
-      "name": "AIIMS Bathinda (Project Posts)",
-      "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
-      "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "Bathinda, Punjab",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "aliases": [
-        "aiims bathinda project",
-        "aiims, bathinda project",
-        "aiims bathinda project post",
-        "aiims bathinda project posts",
-        "aiims bathinda walk-in interview",
-        "aiims bathinda contractual"
-      ]
-    },
-    {
-      "id": "aiims-bathinda-non-faculty",
-      "name": "AIIMS Bathinda (Non-Faculty)",
-      "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
-      "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "Bathinda, Punjab",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "aliases": ["aiims bathinda", "aiims, bathinda", "aiims bathinda non-faculty"]
-    },
-    {
-      "id": "punjab-legal-services-authority",
-      "name": "Punjab State Legal Services Authority",
-      "department": "Punjab State Legal Services Authority (PULSA)",
-      "url": "https://punjab.nalsa.gov.in/notice-category/recruitments/",
-      "type": "punjab",
-      "categorySlug": "punjab-jobs",
-      "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
-      "aliases": [
-        "punjab state legal services authority",
-        "pulsa",
-        "punjab nalsa",
-        "district legal services authority punjab",
-        "dlsa punjab"
-      ]
-    },
-    {
-      "id": "aiims-exams",
-      "name": "AIIMS Examinations",
-      "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
-      "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "aliases": ["aiims exams", "aiimsexams", "aiims examination"]
     }
   ]
 }

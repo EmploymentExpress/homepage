@@ -2,5 +2,13 @@
   "version": 1,
   "maxHeadlinesPerFeed": 40,
   "maxNewPerFeed": 5,
-  "feeds": []
+  "feeds": [
+    {
+      "id": "rozgarnews-discovery",
+      "name": "Rozgarnews headlines (discovery only)",
+      "url": "https://rozgarnews.com/",
+      "maxHeadlines": 40,
+      "maxNewPerRun": 5
+    }
+  ]
 }
