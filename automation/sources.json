@@ -6,6 +6,7 @@
   "sources": [
     {
       "id": "psssb",
+      "enabled": false,
       "name": "PSSSB",
       "department": "Punjab Subordinate Services Selection Board (PSSSB)",
       "url": "https://sssb.punjab.gov.in/Advertisements.html",
@@ -20,6 +21,7 @@
     },
     {
       "id": "psssb-results",
+      "enabled": false,
       "name": "PSSSB Results and Answer Keys",
       "department": "Punjab Subordinate Services Selection Board (PSSSB)",
       "url": "https://sssb.punjab.gov.in/Results.html",
@@ -32,6 +34,7 @@
     },
     {
       "id": "ppsc",
+      "enabled": false,
       "name": "PPSC",
       "department": "Punjab Public Service Commission (PPSC)",
       "url": "https://ppsc.gov.in/",
@@ -46,6 +49,7 @@
     },
     {
       "id": "punjab-police",
+      "enabled": false,
       "name": "Punjab Police",
       "department": "Punjab Police Recruitment",
       "url": "https://www.punjabpolice.gov.in/en/recruitments/",
@@ -58,6 +62,7 @@
     },
     {
       "id": "pspcl",
+      "enabled": false,
       "name": "PSPCL",
       "department": "Punjab State Power Corporation Limited (PSPCL)",
       "url": "https://pspcl.in/recruitment/",
@@ -70,6 +75,7 @@
     },
     {
       "id": "pnrc",
+      "enabled": false,
       "name": "PNRC",
       "department": "Punjab Nurses Registration Council (PNRC)",
       "url": "https://www.pnrconline.in/Home.aspx",
@@ -84,6 +90,7 @@
     },
     {
       "id": "nvs",
+      "enabled": false,
       "name": "Navodaya Vidyalaya Samiti",
       "department": "Navodaya Vidyalaya Samiti (NVS)",
       "url": "https://navodaya.gov.in/nvs/en/Recruitment/",
@@ -96,6 +103,7 @@
     },
     {
       "id": "nvs-admission-updates",
+      "enabled": false,
       "name": "NVS Admission and JNVST Updates",
       "department": "Navodaya Vidyalaya Samiti (NVS / JNVST)",
       "url": "https://navodaya.gov.in/nvs/en/Home1/index.html",
@@ -108,6 +116,7 @@
     },
     {
       "id": "ssc",
+      "enabled": false,
       "name": "Staff Selection Commission",
       "department": "Staff Selection Commission (SSC)",
       "url": "https://ssc.gov.in/home/noticeboard",
@@ -120,6 +129,7 @@
     },
     {
       "id": "upsc",
+      "enabled": false,
       "name": "Union Public Service Commission",
       "department": "Union Public Service Commission (UPSC)",
       "url": "https://upsc.gov.in/recruitment/recruitment-advertisement",
@@ -132,6 +142,7 @@
     },
     {
       "id": "rrb-chandigarh",
+      "enabled": false,
       "name": "Railway Recruitment Board Chandigarh",
       "department": "Railway Recruitment Board (RRB), Chandigarh",
       "url": "https://www.rrbcdg.gov.in/",
@@ -144,6 +155,7 @@
     },
     {
       "id": "rcf-kapurthala",
+      "enabled": false,
       "name": "Rail Coach Factory Kapurthala",
       "department": "Rail Coach Factory (RCF), Kapurthala — Ministry of Railways",
       "url": "https://rcf.indianrailways.gov.in/?lang=1",
@@ -159,6 +171,7 @@
     },
     {
       "id": "aiims-bathinda-non-faculty",
+      "enabled": false,
       "name": "AIIMS Bathinda (Non-Faculty)",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
       "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
@@ -200,6 +213,7 @@
     },
     {
       "id": "aiims-bathinda-project",
+      "enabled": false,
       "name": "AIIMS Bathinda (Project Posts)",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
       "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
@@ -242,6 +256,7 @@
     },
     {
       "id": "pgimer",
+      "enabled": false,
       "name": "PGIMER Chandigarh",
       "department": "Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh",
       "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/Vacancies/JSP/VACANCIE_VIEW.jsp?countt=0",
@@ -255,9 +270,23 @@
     },
     {
       "id": "aiims-exams",
+      "enabled": true,
       "name": "AIIMS Examinations",
       "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
       "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "admission", "result", "answer-key", "corrigendum"],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "aiims-exams-courses",
+      "enabled": true,
+      "name": "AIIMS Academic Courses",
+      "department": "All India Institute of Medical Sciences (AIIMS) Examinations",
+      "url": "https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976f",
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
