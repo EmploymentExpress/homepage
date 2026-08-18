@@ -25,6 +25,9 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Qualification pills** — 10th / 12th / Graduate / ITI-Diploma / ETT-B.Ed (Teaching) / Defence-Police
 - **Automation-ready Alert Monitor** — the monitor and workflow template are configured to check official pages/RSS feeds once every six hours for recruitment, admission, answer-key, result, corrigendum and addendum notices; linked HTML/PDF details are extracted into the generated feed
 - **Time-limited new alerts** — newly discovered notices show a 🔥 icon with a `NEW` label for 72 hours from publication (or discovery when publication time is unavailable); they appear in the Breaking marquee for 24 hours and then are removed automatically
+- **🔥 Newly Added Jobs flash cards** — auto-populated from recently discovered official notices; each card carries a 🔥 + `NEW` badge and disappears automatically 48 hours after publication (the whole section hides when there is nothing recent)
+- **Last Date Reminders** — auto-populated 2 days (48 hours) before each job's `lastDate`, with a live per-second countdown timer; jobs leave the list automatically once their deadline passes (see extension handling below)
+- **Last-date extension handling** — when the monitor finds an official corrigendum extending a deadline, the affected job is marked **Last Date Extended** with the old date struck through → new date and a link to the notice, instead of being removed
 - **Master Vacancy Table (2026)** — curated vacancies plus automatic alerts including the RCF Kapurthala 734 Act Apprentice notification, with posts count, last date, source information, and `Apply/Info` modal
 - **Job Detail Modal** — vacancy, location, apply mode, last date, dates & fees, age/eligibility, how-to-apply, PDF + Apply links, Web Share API; unknown automatic fields say “See Official Notification” rather than being guessed
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
@@ -188,6 +191,15 @@ python3 -m pip install -r automation/requirements.txt
 python3 -m unittest discover -s tests -v
 python3 scripts/update_jobs.py --dry-run
 ```
+
+#### Last-date reminders & extension handling
+
+The **Last Date Reminders** section and its extension handling are split across two layers:
+
+1. **Frontend (`index.html`)** — `renderLastDateReminders()` scans `jobDatabase` for any job whose `lastDate` (`DD-MM-YYYY`, optionally `DD-MM-YYYY HH:MM`) falls within the next 48 hours and renders each one with a live countdown that ticks every second. When a job has `lastDateExtended: true` it is shown with a green **Last Date Extended** badge, the original date ~~struck through~~ and the new date alongside a “View notice” link to the official corrigendum. A job drops out of the reminders only once its *effective* `lastDate` has passed — so an extended job is never silently removed.
+2. **Monitor (`scripts/update_jobs.py`)** — the browser page cannot call government sites directly (CORS), so the six-hour monitor is what actually checks official websites. `detect_extension()` recognises explicit extension corrigenda (phrases like *“last date extended”*, *“extended up to/till/until”*, *“extension of last date”*) and reads the new date; `apply_extensions()` links that corrigendum back to its original recruitment (matched by advertisement number first, then department + title overlap) and sets `originalLastDate`, `lastDate` (new), `lastDateExtended: true`, `extendedLastDate`, and `extensionNoticeUrl`. If an extension is announced but no new date can be read, deadlines are left untouched rather than guessed.
+
+> Because extension detection relies on the scheduled scan (every six hours), a deadline extended only through an un-indexed PDF or a JS-only page may not be picked up — the same limitation that applies to the rest of the automatic alert feed.
 
 ---
 

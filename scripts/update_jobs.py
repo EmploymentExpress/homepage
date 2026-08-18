@@ -92,6 +92,29 @@ RESULT_TERMS = (
     "recommendation list",
 )
 UPDATE_TERMS = ("corrigendum", "addendum")
+# Phrases used by official corrigenda/addenda when the application deadline is
+# pushed back. Detection is deliberately specific so unrelated corrigenda (age,
+# vacancy, syllabus changes) are not mistaken for a last-date extension.
+EXTENSION_TERMS = (
+    "last date extended",
+    "last date has been extended",
+    "last date is extended",
+    "last date stands extended",
+    "last date further extended",
+    "extension of last date",
+    "extension of the last date",
+    "extension in last date",
+    "extension in the last date",
+    "extended up to",
+    "extended till",
+    "extended until",
+    "extend the last date",
+    "closing date extended",
+    "extension of date",
+    "extension of the date",
+    "date of application extended",
+    "date for application extended",
+)
 RECRUITMENT_CONTEXT_TERMS = RECRUITMENT_TERMS + (
     "advertisement",
     "advt",
@@ -531,6 +554,28 @@ def find_labelled_date(text: str, labels: str) -> str:
     return parse_date_token(match.group(1)) if match else ""
 
 
+def detect_extension(text: str) -> tuple[bool, str]:
+    """Return (is_extension, new_date) from a corrigendum/addendum body.
+
+    ``is_extension`` is True only when the text carries an explicit last-date
+    extension phrase. ``new_date`` is the revised deadline when one can be read
+    from the text, otherwise the empty string. When no date can be read the
+    extension is reported but not applied, so a stale deadline is never invented.
+    """
+    lowered = clean_text(text).lower()
+    if not any(term in lowered for term in EXTENSION_TERMS):
+        return False, ""
+    pattern = (
+        r"(?is)(?:last\s+date(?:\s+(?:has\s+been|is|stands?|further))?\s*(?:further\s+)?extended"
+        r"|closing\s+date\s+extended"
+        r"|extended\s*(?:up\s+to|till|until|to)"
+        r"|extension\s*(?:of|in)?\s*(?:the\s+)?(?:last|closing|application)\s+date"
+        r")\s*[:–-]?\s*[^.;|]{0,60}?\b(" + DATE_TOKEN + r")"
+    )
+    match = re.search(pattern, text)
+    return True, parse_date_token(match.group(1)) if match else ""
+
+
 def infer_vacancies(text: str) -> str:
     patterns = (
         r"(?i)\brecruitment\s+(?:of|for)\s+([1-9]\d{0,5}(?:,\d{3})?)(?:\s+[a-z][a-z&/()'-]*){0,8}\s+(?:vacancies|vacancy|posts?|positions?)\b",
@@ -763,6 +808,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     stable_id = int(hashlib.sha256(fingerprint(candidate).encode()).hexdigest()[:12], 16)
     badge, badge_color = notice_presentation(notice_type, True)
     presentation = NOTICE_PRESENTATION[notice_type]
+    is_extension, extension_date = detect_extension(searchable) if notice_type == "corrigendum" else (False, "")
 
     return {
         "id": stable_id,
@@ -797,8 +843,107 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "sourceUrl": source_url,
         "publishedAt": candidate.published_at,
         "discoveredAt": discovered,
+        # Internal fields used only to link a last-date-extension corrigendum back to
+        # its original recruitment. They are stripped by apply_extensions() and are
+        # never written to data/auto-jobs.json.
+        "isExtension": is_extension,
+        "extensionDate": extension_date,
         "automated": True
     }
+
+
+_EXTENSION_LINK_STOPWORDS = {
+    "corrigendum",
+    "corrigenda",
+    "addendum",
+    "advertisement",
+    "advt",
+    "notification",
+    "notice",
+    "regarding",
+    "dated",
+    "recruitment",
+    "recruitments",
+    "vacancy",
+    "vacancies",
+    "application",
+    "online",
+    "extended",
+    "extension",
+    "posts",
+    "post",
+    "official",
+}
+
+
+def _extension_title_tokens(title: str) -> set[str]:
+    words = re.findall(r"[a-z0-9]+", clean_text(title).lower())
+    return {word for word in words if len(word) >= 3 and word not in _EXTENSION_LINK_STOPWORDS}
+
+
+def _extension_matches(corrigendum: dict[str, Any], target: dict[str, Any]) -> bool:
+    """Heuristically decide whether a corrigendum belongs to a given job."""
+    if target.get("alertType") not in {"recruitment", "admission"}:
+        return False
+    corr_advt = clean_text(corrigendum.get("advtNo", "")).lower()
+    targ_advt = clean_text(target.get("advtNo", "")).lower()
+    if (
+        corr_advt
+        and corr_advt != "see official notice"
+        and targ_advt
+        and targ_advt != "see official notice"
+        and corr_advt == targ_advt
+    ):
+        return True
+    if clean_text(corrigendum.get("department", "")).lower() != clean_text(target.get("department", "")).lower():
+        return False
+    corr_tokens = _extension_title_tokens(corrigendum.get("title", ""))
+    targ_tokens = _extension_title_tokens(target.get("title", ""))
+    if not corr_tokens or not targ_tokens:
+        return False
+    overlap = len(corr_tokens & targ_tokens) / max(len(corr_tokens), len(targ_tokens))
+    return overlap >= 0.4
+
+
+def apply_extensions(jobs: list[dict[str, Any]]) -> bool:
+    """Link last-date-extension corrigenda to their original recruitments.
+
+    For each corrigendum that announces an extension, the matching recruitment is
+    marked with the new deadline (and its original one preserved). Corrigenda are
+    matched by advertisement number first, then by department + title overlap.
+    Internal ``isExtension`` / ``extensionDate`` fields are removed so they are not
+    persisted. Returns True when any job was changed.
+    """
+    changed = False
+    for job in jobs:
+        if job.get("alertType") != "corrigendum":
+            continue
+        is_extension = bool(job.pop("isExtension", False))
+        extension_date = clean_text(job.pop("extensionDate", ""))
+        if not is_extension:
+            continue
+        if not extension_date:
+            # Extension announced but no new date could be read: leave deadlines
+            # untouched rather than guessing.
+            continue
+        targets = [candidate for candidate in jobs if _extension_matches(job, candidate)]
+        # Prefer advertisement-number matches when present.
+        targets.sort(
+            key=lambda candidate: 0
+            if clean_text(candidate.get("advtNo", "")).lower() == clean_text(job.get("advtNo", "")).lower()
+            else 1
+        )
+        if not targets:
+            continue
+        for target in targets:
+            target.setdefault("originalLastDate", target.get("lastDate", "See Notification"))
+            target["lastDate"] = extension_date
+            target["lastDateExtended"] = True
+            target["extendedLastDate"] = extension_date
+            target["extensionNoticeUrl"] = job.get("pdfLink") or job.get("applyLink") or ""
+            target["extensionNoticeTitle"] = clean_text(job.get("title", ""))
+            changed = True
+    return changed
 
 
 def read_json(path: Path, fallback: Any) -> Any:
@@ -1180,6 +1325,9 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         jobs_changed = True
     if discovery_state_changed:
         state_changed = True
+
+    if apply_extensions(jobs):
+        jobs_changed = True
 
     if jobs_changed:
         unique_jobs: list[dict[str, Any]] = []
