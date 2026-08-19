@@ -2,5 +2,13 @@
   "version": 1,
   "maxHeadlinesPerFeed": 40,
   "maxNewPerFeed": 5,
-  "feeds": []
+  "feeds": [
+    {
+      "id": "linkingsky-punjab-jobs",
+      "name": "LinkingSky - Punjab & All-India Government Jobs",
+      "url": "https://linkingsky.com/government-exams/government-jobs-in-punjab.html",
+      "maxHeadlines": 40,
+      "maxNewPerFeed": 8
+    }
+  ]
 }
