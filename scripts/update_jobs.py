@@ -175,6 +175,16 @@ OFFLINE_DISPATCH_MARKERS = (
 # trusted and deliberately exempt.
 OFFLINE_LISTING_JUNK_TITLES = {
     "skip to content",
+    "close menu",
+    "other link",
+    "other links",
+    "important link",
+    "important links",
+    "mdu date sheet",
+    "date sheet",
+    "work recruitment",
+    "work recruitments",
+    "www.onlineforms.in",
     "online form",
     "online forms",
     "online form online form",
@@ -525,6 +535,134 @@ def clean_title(value: str) -> str:
     return title[:240]
 
 
+# A recruiting authority is required for every published vacancy. These labels
+# describe a feed or a link collection, not the department that owns a vacancy.
+GENERIC_RECRUITING_DEPARTMENTS = {
+    "official offline recruitment notices",
+    "official recruitment notice",
+    "official recruitment notices",
+    "official recruitment website",
+    "official website",
+    "recruitment notice",
+    "recruitment notices",
+    "additional job notification source",
+}
+
+# Role words used only as a fallback when an offline listing gives a combined
+# "Department + Posts" row but does not expose the department in a separate
+# machine-readable field. The text before the first role is the authority name.
+OFFLINE_ROLE_START_RE = re.compile(
+    r"(?i)\b(?:\d+\s*[–—-]\s*)?(?:assistant\s+professor|accounts?\s+assistant|"
+    r"branch\s+manager|civilian\s+motor\s+driver|computer\s+operator|data\s+entry\s+operator|"
+    r"female\s+supervisor|head\s+clerk|junior\s+engineer|lab\s+assistant|library\s+attendant|"
+    r"lift\s+operator|lower\s+division\s+clerk|multi[ -]?tasking\s+staff|senior\s+field\s+officer|"
+    r"social\s+worker|stenographer|teaching\s+and\s+non[ -]?teaching|technical\s+and\s+non[ -]?technical|"
+    r"agniveervayu|apprentice|clerk|cook|deo|dfo|driver|fireman|instructor|ldc|mts|peon|"
+    r"safaiwala|soldier|steno|teacher|technician|tradesman|tgt|pgt|prt|udc)\b"
+)
+
+
+def is_specific_department(value: str) -> bool:
+    department = clean_text(value)
+    return bool(
+        len(department) >= 3
+        and department.lower().strip(" .:-–—") not in GENERIC_RECRUITING_DEPARTMENTS
+    )
+
+
+def is_junk_job_title(value: str) -> bool:
+    title = clean_title(value).lower().strip(" .:-–—")
+    return bool(
+        not title
+        or title in GENERIC_TITLES
+        or title in OFFLINE_LISTING_JUNK_TITLES
+        or re.fullmatch(r"(?:other|important|quick|useful)\s+links?", title)
+    )
+
+
+def infer_recruiting_department(title: str) -> str:
+    """Best-effort authority name for a combined offline-listing headline.
+
+    Official source metadata or the article's ``Department / Organization`` row
+    always wins. This fallback is intentionally conservative: if it cannot find
+    a meaningful authority, the vacancy is not published under a generic feed
+    name.
+    """
+    subject = clean_title(title)
+    if is_junk_job_title(subject):
+        return ""
+    recruitment = re.search(r"(?i)\s+recruitment\b", subject)
+    if recruitment:
+        candidate = subject[: recruitment.start()]
+    else:
+        role = OFFLINE_ROLE_START_RE.search(subject)
+        candidate = subject[: role.start()] if role else ""
+    candidate = re.sub(r"(?i)\s+(?:apply|offline|online)\s*$", "", candidate)
+    candidate = clean_text(candidate).strip(" ,;|:-–—")
+    if len(candidate) < 3 or candidate.lower() in {
+        "application", "application form", "job", "jobs", "recruitment"
+    }:
+        return ""
+    return candidate[:180]
+
+
+def _department_aliases(department: str) -> list[str]:
+    authority = clean_text(department)
+    aliases = [authority]
+    aliases.extend(re.findall(r"\(([A-Z][A-Z0-9&./ -]{1,20})\)", authority))
+    without_parenthetical = clean_text(re.sub(r"\s*\([^)]*\)", "", authority))
+    if len(without_parenthetical) >= 4:
+        aliases.append(without_parenthetical)
+    # A readable leading name is useful for removing an already-present short
+    # form before the full official department name is prefixed.
+    leading = re.split(r"\s+(?:[-–—]|,\s*(?:Amritsar|Bathinda|Chandigarh|Delhi|Ludhiana|Patiala))\b", without_parenthetical, maxsplit=1)[0]
+    if len(leading) >= 4:
+        aliases.append(leading)
+    return list(dict.fromkeys(alias for alias in aliases if len(alias) >= 3))
+
+
+def title_mentions_department(title: str, department: str) -> bool:
+    """A title satisfies the rule only when it carries the full authority name."""
+    lowered = clean_text(title).lower()
+    authority = clean_text(department).lower()
+    return bool(
+        authority
+        and re.search(rf"(?<![a-z0-9]){re.escape(authority)}(?![a-z0-9])", lowered)
+    )
+
+
+def official_job_title(title: str, department: str) -> str:
+    """Return a specific vacancy title that visibly names its authority."""
+    subject = clean_title(title)
+    authority = clean_text(department)
+    if is_junk_job_title(subject) or not is_specific_department(authority):
+        return ""
+
+    # Action-only labels are links, not vacancy names. Keep the actual post and
+    # rewrite it as a recruitment subject before adding the authority.
+    generic_application = re.fullmatch(
+        r"(?i)applications?(?:\s+forms?)?\s+(?:are\s+invited\s+)?for\s+(?:the\s+)?(?:posts?\s+of\s+)?(.+)",
+        subject,
+    )
+    if generic_application:
+        post_name = clean_text(generic_application.group(1)).strip(" .:-–—")
+        subject = f"{post_name} Recruitment"
+
+    if title_mentions_department(subject, authority):
+        return subject[:240]
+    # If the headline starts with only an acronym/short name, remove that short
+    # form before prefixing the complete official authority (avoids
+    # "... (PSSSB) — PSSSB Clerk ..." while retaining the full name).
+    for alias in sorted(_department_aliases(authority)[1:], key=len, reverse=True):
+        shortened = re.sub(
+            rf"(?i)^\s*{re.escape(alias)}\s*[,|:–—-]*\s*", "", subject, count=1
+        )
+        if shortened != subject and clean_text(shortened):
+            subject = clean_text(shortened)
+            break
+    return f"{authority} — {subject}"[:240]
+
+
 def canonical_url(value: str) -> str:
     cleaned = clean_text(value)
     if not cleaned or cleaned.lower().endswith("undefined") or "/undefined" in cleaned.lower():
@@ -803,7 +941,7 @@ def classify_notice(candidate: Candidate, source: dict[str, Any]) -> str | None:
     title = clean_title(candidate.title)
     lowered = f"{title} {candidate.summary}".lower()
     allowed = allowed_notice_types(source)
-    if len(title) < 8 or title.lower() in GENERIC_TITLES:
+    if len(title) < 8 or is_junk_job_title(title):
         return None
     if any(term in lowered for term in EXCLUDED_TERMS):
         return None
@@ -1188,7 +1326,13 @@ def notice_steps(notice_type: str) -> list[str]:
 
 
 def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: datetime) -> dict[str, Any]:
-    title = clean_title(candidate.title)
+    source_name = strip_discovery_branding(
+        clean_text(source.get("name") or source.get("department") or "Official website")
+    )
+    department = clean_text(source.get("department") or source_name)
+    title = official_job_title(candidate.title, department)
+    if not title:
+        raise ValueError("notice has no specific recruiting department and vacancy title")
     notice_type = classify_notice(candidate, source) or "recruitment"
     searchable, description_source, apply_url, discovered_pdf_url = enrich_candidate(candidate, source)
     qualification, qual_category = infer_qualification(searchable, source)
@@ -1219,9 +1363,6 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         r"start(?:ing)?\s+date|opening\s+date|applications?\s+open",
     )
     discovered = now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    source_name = strip_discovery_branding(
-        clean_text(source.get("name") or source.get("department") or "Official website")
-    )
     stable_id = int(hashlib.sha256(fingerprint(candidate).encode()).hexdigest()[:12], 16)
     badge, badge_color = notice_presentation(notice_type, True)
     presentation = NOTICE_PRESENTATION[notice_type]
@@ -1230,7 +1371,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     return {
         "id": stable_id,
         "title": title,
-        "department": clean_text(source.get("department") or source_name),
+        "department": department,
         "vacancies": infer_vacancies(searchable),
         "qualification": qualification,
         "qualCategory": qual_category,
@@ -1387,6 +1528,38 @@ def parse_timestamp(value: str) -> datetime | None:
         return parsed.astimezone(timezone.utc)
     except (AttributeError, ValueError):
         return None
+
+
+def sanitize_published_jobs(jobs: list[dict[str, Any]], now: datetime) -> bool:
+    """Enforce specific authority/post titles and remove known expired jobs."""
+    changed = False
+    kept: list[dict[str, Any]] = []
+    for job in jobs:
+        raw_title = clean_title(job.get("title", ""))
+        if is_junk_job_title(raw_title):
+            changed = True
+            continue
+        department = clean_text(job.get("department", ""))
+        if not is_specific_department(department):
+            department = infer_recruiting_department(raw_title)
+        specific_title = official_job_title(raw_title, department)
+        if not specific_title:
+            changed = True
+            continue
+        if job.get("department") != department or job.get("title") != specific_title:
+            job["department"] = department
+            job["title"] = specific_title
+            changed = True
+        if (
+            clean_text(job.get("alertType", "recruitment")).lower() in {"recruitment", "admission"}
+            and _dated_notice_is_active(job.get("lastDate", ""), now) is False
+        ):
+            changed = True
+            continue
+        kept.append(job)
+    if len(kept) != len(jobs):
+        jobs[:] = kept
+    return changed
 
 
 def refresh_badges(
@@ -1704,20 +1877,43 @@ def _pick_offline_document(urls: Iterable[str]) -> str:
     return seen[0]
 
 
+def _offline_page_department(page_text: str) -> str:
+    """Extract the recruiting authority printed in an offline vacancy article."""
+    labelled = re.search(
+        r"(?is)\bDepartment\s*/?\s*Organi[sz]ation\s*[:|–—-]?\s*(.{3,180}?)"
+        r"(?=\s+(?:Advertisement|Advt|Post\s+Name|Vacanc(?:y|ies)|Salary|Application\s+Mode)\b)",
+        page_text,
+    )
+    if labelled:
+        department = clean_text(labelled.group(1)).strip(" .:|–—-")
+        if is_specific_department(department):
+            return department[:180]
+
+    intro = re.search(
+        r"(?is)([^.!?]{3,220}?)\s+(?:invites?\s+applications?|has\s+(?:recently\s+)?"
+        r"(?:released|issued|published))\b",
+        page_text,
+    )
+    if intro:
+        department = clean_text(intro.group(1)).rsplit(":-", 1)[-1].strip(" .:|–—-")
+        # Remove navigation/page-title text that can precede the actual sentence.
+        if len(department) > 140 and " recruitment " in department.lower():
+            department = re.split(r"(?i)\brecruitment\s+20\d{2}\b", department)[-1]
+            department = department.strip(" .:|–—-")
+        if is_specific_department(department) and len(department) <= 180:
+            return department
+    return ""
+
+
 def offline_page_documents(
     page_url: str, download: Download | None = None
 ) -> dict[str, str]:
-    """Read an offline-form portal vacancy page and locate its direct offline
-    application-form PDF, its official notification link, and its apply mode.
+    """Read an offline vacancy page and extract verifiable publishing details.
 
-    Returns {"form": url, "notification": url, "website": url, "applyMode": ...}
-    with empty strings for anything the page does not provide. applyMode is
-    "offline" when the page says the vacancy is applied offline, "online" when
-    it says online-apply, and "" when the page does not say either. The
-    portal-hosted PDFs are never displayed on the website: they are only
-    recorded behind the redirect token map in data/offline-redirects.json. The
-    notification link is used only when no official website copy exists, so
-    pages that link the official website keep that link instead.
+    In addition to the direct form/notification documents and apply mode, the
+    returned mapping carries the recruiting ``department`` plus the application
+    ``startDate`` and ``lastDate`` when printed on the article. Those fields let
+    the publisher reject expired archives and avoid generic feed-link titles.
     """
     if download is None:
         download = fetch_url(page_url, timeout=25)
@@ -1803,6 +1999,16 @@ def offline_page_documents(
         "notification": _pick_offline_document(notification_candidates),
         "website": _pick_offline_document(website_candidates),
         "applyMode": apply_mode,
+        "department": _offline_page_department(parser.text),
+        "startDate": find_labelled_date(
+            parser.text,
+            r"application\s+form\s+begin|start(?:ing)?\s+(?:from|date)|opening\s+date|applications?\s+open",
+        ),
+        "lastDate": find_labelled_date(
+            parser.text,
+            r"application\s+form\s+submission\s+last\s+date|last\s+date(?:\s+for\s+(?:submission|application|receipt|registration))?|closure\s+date|closing\s+date",
+        ),
+        "pageTitle": strip_offline_branding(parser.page_title),
     }
 
 
@@ -1817,6 +2023,12 @@ def mask_offline_url(url: str, redirect: dict[str, str]) -> str:
     return target
 
 
+def _offline_listing_last_date(title: str) -> str:
+    """Last date appended to a table-style offline vacancy listing row."""
+    matches = list(re.finditer(DATE_TOKEN, clean_text(title), re.IGNORECASE))
+    return parse_date_token(matches[-1].group(0)) if matches else ""
+
+
 def _offline_listing_title(title: str) -> str:
     """Normalise a vacancy name scraped from an offline-form listing page.
 
@@ -1825,6 +2037,7 @@ def _offline_listing_title(title: str) -> str:
     """
     text = strip_offline_branding(clean_title(title))
     text = re.sub(r"(?i)\s*(?:last date\s*[:\-]?\s*)?" + DATE_TOKEN + r"\s*$", "", text)
+    text = re.sub(r"(?i)\s+mentioned\s+in\s+page\s*$", "", text)
     return text.strip(" -|:–—,")
 
 
@@ -1859,6 +2072,8 @@ def load_offline_forms(path: Path = DEFAULT_OFFLINE_FORMS) -> list[dict[str, Any
             "type": clean_text(entry.get("type") or "central"),
             "categorySlug": clean_text(entry.get("categorySlug") or "central"),
             "location": clean_text(entry.get("location") or "All India"),
+            "lastDate": clean_text(entry.get("lastDate")),
+            "curated": True,
         })
     return forms
 
@@ -1933,16 +2148,24 @@ def offline_job_from_entry(
     is_punjab = clean_text(entry.get("type")) == "punjab"
     stable_id = int(hashlib.sha256(("offline:" + url).encode("utf-8")).hexdigest()[:12], 16)
     discovered = now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    entry_title = strip_offline_branding(clean_title(entry["title"]))
+    raw_title = strip_offline_branding(clean_title(entry["title"]))
+    department = clean_text(
+        documents.get("department") or entry.get("department") or infer_recruiting_department(raw_title)
+    )
+    entry_title = official_job_title(raw_title, department)
+    if not entry_title:
+        raise ValueError("offline vacancy has no specific recruiting department and post name")
+    last_date = clean_text(documents.get("lastDate") or entry.get("lastDate"))
+    start_date = clean_text(documents.get("startDate"))
     return {
         "id": stable_id,
         "title": entry_title,
-        "department": entry["department"],
+        "department": department,
         "vacancies": "See Notification",
         "qualification": "See Official Notification",
         "qualCategory": "Graduate",
-        "lastDate": "See Notification",
-        "startDate": "Newly Published",
+        "lastDate": last_date or "See Notification",
+        "startDate": start_date or "Newly Published",
         "examDate": "See Official Notification",
         "location": entry["location"],
         "applyMode": "Offline",
@@ -1973,7 +2196,7 @@ def offline_job_from_entry(
             if documents.get("form")
             else "Download Offline Application Form"
         ),
-        "sourceName": "Official Recruitment Notice",
+        "sourceName": department,
         "sourceUrl": url,
         "publishedAt": "",
         "discoveredAt": discovered,
@@ -2008,27 +2231,27 @@ def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
                 if not cand_url or not is_offline_form_url(cand_url):
                     continue
                 # The portal's own branding must never reach a published alert.
+                listing_last_date = _offline_listing_last_date(cand.title)
                 title = _offline_listing_title(cand.title)
-                if (
-                    len(title) < 8
-                    or title.lower() in GENERIC_TITLES
-                    or title.lower() in OFFLINE_LISTING_JUNK_TITLES
-                ):
+                if len(title) < 8 or is_junk_job_title(title):
                     continue
                 if cand_url in registry_urls:
-                    # Use the job name exactly as the portal lists it.
                     registry_entry = pool[cand_url]
                     registry_entry["title"] = title
                     registry_entry["keywords"] = _offline_keywords(title)
+                    if listing_last_date:
+                        registry_entry["lastDate"] = listing_last_date
                     continue
                 pool.setdefault(cand_url, {
                     "title": title,
                     "keywords": _offline_keywords(title),
                     "url": cand_url,
-                    "department": clean_text(source.get("department") or "Official Recruitment Notice"),
+                    "department": infer_recruiting_department(title),
                     "type": clean_text(source.get("type") or "central"),
                     "categorySlug": clean_text(source.get("categorySlug") or "central"),
                     "location": clean_text(source.get("location") or "All India"),
+                    "lastDate": listing_last_date,
+                    "curated": False,
                 })
         except Exception as exc:
             print(
@@ -2049,6 +2272,15 @@ def _redirect_target_for_link(
         return ""
     token = match.group(1)
     return canonical_url(existing_map.get(token) or redirect.get(token) or "")
+
+
+def _dated_notice_is_active(last_date: str, now: datetime) -> bool | None:
+    """True/False for a readable deadline; None when the deadline is unknown."""
+    parsed = parse_date_token(clean_text(last_date))
+    if not parsed:
+        return None
+    deadline = datetime.strptime(parsed, "%d-%m-%Y").date()
+    return deadline >= now.date()
 
 
 def process_offline_forms(
@@ -2095,7 +2327,8 @@ def process_offline_forms(
     def page_documents(page_url: str) -> dict[str, str]:
         key = canonical_url(page_url)
         cached = page_cache.get(key)
-        if isinstance(cached, dict):
+        required_fields = {"form", "notification", "website", "applyMode", "department", "lastDate"}
+        if isinstance(cached, dict) and required_fields.issubset(cached):
             return {str(entry_key): str(value) for entry_key, value in cached.items()}
         try:
             documents = offline_page_documents(key)
@@ -2104,7 +2337,12 @@ def process_offline_forms(
                 f"  Offline page document extraction failed ({key}): {exc}",
                 file=sys.stderr,
             )
-            return {"form": "", "notification": "", "website": "", "applyMode": ""}
+            if isinstance(cached, dict):
+                return {str(entry_key): str(value) for entry_key, value in cached.items()}
+            return {
+                "form": "", "notification": "", "website": "", "applyMode": "",
+                "department": "", "startDate": "", "lastDate": "", "pageTitle": "",
+            }
         page_cache[key] = documents
         return dict(documents)
 
@@ -2136,13 +2374,40 @@ def process_offline_forms(
             kept.append(job)
             continue
         source_url = canonical_url(job.get("sourceUrl") or "")
+        documents: dict[str, str] = {}
         if source_url and is_offline_form_url(source_url) and not is_pdf_url(source_url):
-            if page_documents(source_url).get("applyMode") == "online":
+            documents = page_documents(source_url)
+            if documents.get("applyMode") == "online":
                 print(
                     f"  Dropped online-apply vacancy mislabelled as offline: {job.get('title')}"
                 )
                 changed = True
                 continue
+
+        department = clean_text(
+            documents.get("department")
+            or job.get("department")
+            or infer_recruiting_department(job.get("title", ""))
+        )
+        if not is_specific_department(department):
+            department = infer_recruiting_department(job.get("title", ""))
+        specific_title = official_job_title(job.get("title", ""), department)
+        if not specific_title:
+            print(f"  Dropped vacancy without a specific department/post name: {job.get('title')}")
+            changed = True
+            continue
+        if job.get("department") != department or job.get("title") != specific_title:
+            job["department"] = department
+            job["title"] = specific_title
+            changed = True
+        verified_last_date = clean_text(documents.get("lastDate") or job.get("lastDate"))
+        if verified_last_date and verified_last_date != "See Notification" and job.get("lastDate") != verified_last_date:
+            job["lastDate"] = verified_last_date
+            changed = True
+        if _dated_notice_is_active(job.get("lastDate", ""), now) is False:
+            print(f"  Dropped expired offline vacancy: {job.get('title')}")
+            changed = True
+            continue
         kept.append(job)
     jobs[:] = kept
 
@@ -2163,17 +2428,54 @@ def process_offline_forms(
                 f"{clean_title(entry['title'])[:80]}"
             )
             continue
+
+        verified_entry = dict(entry)
+        verified_entry["department"] = clean_text(
+            documents.get("department")
+            or entry.get("department")
+            or infer_recruiting_department(entry.get("title", ""))
+        )
+        if not is_specific_department(verified_entry["department"]):
+            verified_entry["department"] = infer_recruiting_department(entry.get("title", ""))
+        verified_entry["lastDate"] = clean_text(
+            documents.get("lastDate") or entry.get("lastDate")
+        )
+        if not official_job_title(verified_entry.get("title", ""), verified_entry["department"]):
+            print(
+                f"  Skipped vacancy without a specific department/post name: "
+                f"{clean_title(entry['title'])[:80]}"
+            )
+            continue
+        active = _dated_notice_is_active(verified_entry["lastDate"], now)
+        if active is False:
+            print(f"  Skipped expired offline vacancy: {clean_title(entry['title'])[:80]}")
+            continue
+        if active is None and not verified_entry.get("curated"):
+            print(
+                f"  Skipped unverified offline vacancy without a readable last date: "
+                f"{clean_title(entry['title'])[:80]}"
+            )
+            continue
+
+        specific_title = official_job_title(
+            verified_entry["title"], verified_entry["department"]
+        )
         existing = jobs_by_source.get(entry_url)
         if existing:
-            # The portal's own name for the vacancy wins.
-            if clean_text(existing.get("title", "")).lower() != clean_text(entry["title"]).lower():
-                existing["title"] = clean_title(entry["title"])
-                changed = True
+            for field, value in (
+                ("title", specific_title),
+                ("department", verified_entry["department"]),
+                ("lastDate", verified_entry["lastDate"] or existing.get("lastDate")),
+                ("startDate", documents.get("startDate") or existing.get("startDate")),
+            ):
+                if value and existing.get(field) != value:
+                    existing[field] = value
+                    changed = True
             continue
-        title_lower = clean_text(entry["title"]).lower()
+        title_lower = specific_title.lower()
         if title_lower in existing_titles:
             continue
-        jobs.append(offline_job_from_entry(entry, now, redirect, documents))
+        jobs.append(offline_job_from_entry(verified_entry, now, redirect, documents))
         existing_titles.add(title_lower)
         added += 1
         changed = True
@@ -2303,7 +2605,15 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         raise RuntimeError(f"{config_path} must contain a sources array")
 
     configured_urls = {canonical_url(source.get("url", "")) for source in config["sources"]}
-    for source in additional_link_sources():
+    # The repository-level user registry augments the repository's normal config.
+    # A caller supplying a temporary/custom config expects that config to remain
+    # isolated (not silently mixed with the live site's additional sources).
+    extra_sources = (
+        additional_link_sources()
+        if config_path.resolve() == DEFAULT_CONFIG.resolve()
+        else []
+    )
+    for source in extra_sources:
         if source["url"] not in configured_urls:
             config["sources"].append(source)
             configured_urls.add(source["url"])
@@ -2313,7 +2623,9 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     jobs = list(output.get("jobs") or [])
     state_sources = state.setdefault("sources", {})
     now = datetime.now(timezone.utc).replace(microsecond=0)
-    jobs_changed = refresh_badges(jobs, now, int(config.get("newBadgeHours", 72)))
+    jobs_changed = sanitize_published_jobs(jobs, now)
+    if refresh_badges(jobs, now, int(config.get("newBadgeHours", 72))):
+        jobs_changed = True
     state_changed = False
     added = 0
     successful_sources = 0

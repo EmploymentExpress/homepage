@@ -41,12 +41,18 @@ Whenever job details are updated, curated, or generated via automation:
 - **`applyLink` (Apply Online / Portal):** MUST always point directly to the specific online application or registration portal page for that post.
 - **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). Always extract or provide the direct notification or portal page URL.
 
-## ⏱️ "Just In" Badge & 48-Hour Auto-Removal Rule
+## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:
 - **"Just In" Batching:** Every newly published or newly discovered job detail must carry a `publishedAt` or `discoveredAt` ISO timestamp.
+- **Newest First:** Every vacancy/admission column and the master active-recruitment table sorts by publication/discovery time, newest first. Do not replace freshness order with last-date order.
+- **Active Recruitments:** A recruitment/admission with a readable deadline is removed after that deadline passes. Notices whose deadline cannot be verified must say `See Notification`, never use a guessed date.
 - **48-Hour Window:** The homepage automatically renders a prominent **"Just In"** tag on newly discovered official notices across all main grid sections and the master vacancy table.
 - **Automatic Expiry:** The **"Just In"** badge/tag stays active for exactly **48 hours** after publication/discovery and is automatically removed by the page logic once that 48-hour window elapses.
+
+## 🏛️ Specific recruiting-department title rule
+
+Every published job title must visibly contain the full recruiting department/organisation name and the actual post or vacancy subject. Convert action-only labels such as `Application for Clerk` into a specific title such as `Punjab State Legal Services Authority (PULSA) — Clerk Recruitment`; reject navigation/link labels such as `Other Links`, `Close menu`, or `work Recruitments`. Generic source labels such as `Official Recruitment Notice` are never valid department names.
 
 ## 📐 Canonical section order (do not reorder)
 

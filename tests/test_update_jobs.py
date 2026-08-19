@@ -176,6 +176,49 @@ class JobMonitorTests(unittest.TestCase):
             ],
         )
 
+    def test_published_title_always_names_recruiting_department(self):
+        self.assertEqual(
+            monitor.official_job_title(
+                "Application for Clerk",
+                "Punjab State Legal Services Authority (PULSA)",
+            ),
+            "Punjab State Legal Services Authority (PULSA) — Clerk Recruitment",
+        )
+        self.assertEqual(
+            monitor.official_job_title(
+                "PSSSB Clerk, Typist & Data Entry Operator Recruitment 2026",
+                "Punjab Subordinate Services Selection Board (PSSSB)",
+            ),
+            "Punjab Subordinate Services Selection Board (PSSSB) — Clerk, Typist & Data Entry Operator Recruitment 2026",
+        )
+        for junk in ("Other Links", "Close menu", "work Recruitments", "MDU Date Sheet"):
+            with self.subTest(junk=junk):
+                self.assertEqual(
+                    monitor.official_job_title(junk, "Example Government Department"),
+                    "",
+                )
+
+    def test_job_from_candidate_prefixes_official_department(self):
+        candidate = monitor.Candidate(
+            "Application for 40 Clerk posts",
+            "https://example.gov.in/clerk-notice.pdf",
+        )
+        source = {
+            "name": "Example Board",
+            "department": "Example Government Recruitment Board",
+            "url": "https://example.gov.in/recruitment",
+            "type": "central",
+            "enrichDetails": False,
+        }
+        job = monitor.job_from_candidate(
+            candidate, source, datetime(2026, 8, 19, tzinfo=timezone.utc)
+        )
+        self.assertEqual(
+            job["title"],
+            "Example Government Recruitment Board — 40 Clerk posts Recruitment",
+        )
+        self.assertEqual(job["department"], "Example Government Recruitment Board")
+
     def test_feed_and_detail_inference(self):
         feed = """<?xml version="1.0"?>
         <rss version="2.0"><channel><item>
@@ -527,6 +570,27 @@ class JobMonitorTests(unittest.TestCase):
         self.assertTrue(monitor.is_pdf_url(documents["form"]))
         self.assertTrue(monitor.is_pdf_url(documents["notification"]))
 
+    def test_offline_page_documents_extracts_department_and_application_dates(self):
+        page = monitor.Download(
+            "https://onlineforms.in/example-board-recruitment/",
+            "text/html",
+            b"""
+            <html><head><title>Example Board Clerk Recruitment 2026</title></head><body>
+              <p>Example Government Recruitment Board invites applications to fill Clerk vacancies.</p>
+              <table>
+                <tr><td>Department/ Organization</td><td>Example Government Recruitment Board</td></tr>
+                <tr><td>Advertisement No.</td><td>04/2026</td></tr>
+                <tr><td>Application Form Begin</td><td>12 August 2026</td></tr>
+                <tr><td>Application Form Submission Last Date</td><td>30 September 2026</td></tr>
+              </table>
+            </body></html>
+            """,
+        )
+        documents = monitor.offline_page_documents(page.url, page)
+        self.assertEqual(documents["department"], "Example Government Recruitment Board")
+        self.assertEqual(documents["startDate"], "12-08-2026")
+        self.assertEqual(documents["lastDate"], "30-09-2026")
+
     def test_offline_page_documents_prefers_official_website_notification(self):
         page = monitor.Download(
             "https://onlineforms.in/defence-services-staff-college-recruitment/",
@@ -634,6 +698,10 @@ class JobMonitorTests(unittest.TestCase):
                 "notification": notification_pdf,
                 "website": "",
                 "applyMode": "",
+                "department": "",
+                "startDate": "",
+                "lastDate": "",
+                "pageTitle": "",
             })
 
     def test_offline_listing_junk_titles_are_filtered_and_purged(self):
@@ -804,8 +872,8 @@ class JobMonitorTests(unittest.TestCase):
             "text/html",
             b"""
             <html><body>
-              <a href="https://onlineforms.in/some-offline-job-recruitment/">Some Offline Job Recruitment 2026 Apply Offline</a>
-              <a href="https://onlineforms.in/some-online-job-recruitment/">Some Online Job Recruitment 2026 Apply Online</a>
+              <a href="https://onlineforms.in/some-offline-job-recruitment/">Some Offline Job Recruitment 2026 Apply Offline 30.09.2026</a>
+              <a href="https://onlineforms.in/some-online-job-recruitment/">Some Online Job Recruitment 2026 Apply Online 30.09.2026</a>
             </body></html>
             """,
         )
