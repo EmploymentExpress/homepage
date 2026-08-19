@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Offline-apply vacancies whose offline application form is hosted on onlineforms.in. The monitor merges this maintained registry with whatever it can scrape from the configured offline-forms listing source(s). Each entry must point to the onlineforms.in page for that specific job. Add new offline-apply vacancies here (or they will be picked up automatically from the listing source).",
+  "description": "Offline-apply vacancies whose offline application form is hosted on one of the configured offline-form portals (see OFFLINE_FORM_HOSTS in scripts/update_jobs.py). The monitor merges this maintained registry with whatever it can scrape from the configured offline-forms listing source(s). Each entry must point to the portal page for that specific job. Add new offline-apply vacancies here (or they will be picked up automatically from the listing source).",
   "offlineForms": [
     {
       "title": "Air Force Non-Combatant Recruitment 2026 Offline Form",
@@ -73,6 +73,15 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Ludhiana, Punjab"
+    },
+    {
+      "title": "Army ASC Centre South Recruitment 2026 Offline Application Form",
+      "keywords": ["army asc centre south", "asc centre south", "asc centre", "fireman", "tradesman", "cleaner", "civilian motor driver"],
+      "url": "https://www.speedjob.in/army-asc-centre-south-recruitment-2026/",
+      "department": "ASC Centre (South), Bangalore - Ministry of Defence",
+      "type": "central",
+      "categorySlug": "army",
+      "location": "Bangalore, All India"
     }
   ]
 }

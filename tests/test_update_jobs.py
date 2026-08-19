@@ -411,13 +411,13 @@ class JobMonitorTests(unittest.TestCase):
 
 
     # ------------------------------------------------------------------
-    # Offline application forms (onlineforms.in)
+    # Offline application forms (offline-form portals)
     # ------------------------------------------------------------------
     def test_offline_forms_registry_loads_and_masks_links(self):
         forms = monitor.load_offline_forms()
         self.assertGreater(len(forms), 0)
         for entry in forms:
-            self.assertTrue(monitor.is_onlineforms_url(entry["url"]))
+            self.assertTrue(monitor.is_offline_form_url(entry["url"]))
         link = monitor.offline_form_link(forms[0]["url"])
         self.assertTrue(link.startswith("redirect.html?f="))
         self.assertNotIn("onlineforms", link)
@@ -756,6 +756,44 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(entry["title"], "Air Force Non-Combatant Recruitment 2026 Offline Form")
         self.assertEqual(entry["department"], "Indian Air Force (IAF)")
 
+    def test_offline_listing_title_strips_branding_and_trailing_last_date(self):
+        self.assertEqual(
+            monitor._offline_listing_title(
+                "Army ASC Centre South MTS, Cook, Cleaner, Fireman, Tradesman & Various Post 04.09.2026"
+            ),
+            "Army ASC Centre South MTS, Cook, Cleaner, Fireman, Tradesman & Various Post",
+        )
+        self.assertEqual(
+            monitor._offline_listing_title("UPSC EPFO APFC Last Date : 11.09.2026"),
+            "UPSC EPFO APFC",
+        )
+        self.assertEqual(
+            monitor._offline_listing_title(
+                "www.onlineforms.in Haryana Anganwadi Recruitment 2026"
+            ),
+            "Haryana Anganwadi Recruitment 2026",
+        )
+
+    def test_speedjob_urls_are_treated_as_offline_form_portal(self):
+        self.assertTrue(
+            monitor.is_offline_form_url(
+                "https://www.speedjob.in/army-asc-centre-south-recruitment-2026/"
+            )
+        )
+        self.assertTrue(monitor.is_offline_form_url("https://speedjob.in/latest-job/"))
+        self.assertFalse(monitor.is_offline_form_url("https://indianarmy.nic.in/"))
+
+    def test_offline_form_portal_urls_are_masked_behind_redirect_tokens(self):
+        redirect: dict[str, str] = {}
+        target = (
+            "https://www.speedjob.in/wp-content/uploads/2026/08/"
+            "ASC-Centre-South-Group-C-Recruitment-Application-Form-226.pdf"
+        )
+        masked = monitor.mask_offline_url(target, redirect)
+        self.assertTrue(masked.startswith("redirect.html?f="))
+        token = masked.split("=", 1)[1]
+        self.assertEqual(redirect[token], target)
+
     def test_offline_forms_processing_skips_online_apply_vacancies(self):
         config = {"sources": [{
             "id": "x", "role": "offline-forms", "enabled": True,
@@ -885,9 +923,13 @@ class JobMonitorTests(unittest.TestCase):
             )
         )
         offline = [source for source in config["sources"] if source.get("role") == "offline-forms"]
-        self.assertEqual(len(offline), 1)
-        self.assertTrue(offline[0]["enabled"])
-        self.assertIn("onlineforms.in", offline[0]["url"])
+        self.assertGreaterEqual(len(offline), 1)
+        for source in offline:
+            self.assertTrue(source["enabled"])
+            self.assertTrue(monitor.is_offline_form_url(source["url"]))
+        hosts = {monitor.host_name(source["url"]) for source in offline}
+        self.assertIn("onlineforms.in", hosts)
+        self.assertIn("speedjob.in", hosts)
 
 
 if __name__ == "__main__":

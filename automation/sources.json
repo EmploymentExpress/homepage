@@ -366,6 +366,21 @@
       "timeout": 35
     },
     {
+      "id": "speedjob-offline-forms",
+      "enabled": true,
+      "role": "offline-forms",
+      "name": "Speed Job - Latest Recruitment Notices",
+      "department": "Official Offline Recruitment Notices",
+      "url": "https://www.speedjob.in/latest-job/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment"],
+      "bootstrapCount": 3,
+      "maxNewPerRun": 8,
+      "timeout": 35
+    },
+    {
       "id": "gndu-recruitment",
       "enabled": true,
       "name": "Guru Nanak Dev University Recruitment",
