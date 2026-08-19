@@ -220,7 +220,7 @@
                         <button id="searchClearBtn" class="absolute right-24 top-1 bottom-1 px-2 text-slate-400 hover:text-slate-700 transition hidden" onclick="clearSearch()" title="Clear search">
                             ✕
                         </button>
-                        <button onclick="filterJobs()" class="absolute right-1 top-1 bottom-1 px-3.5 bg-brand-600 text-white rounded-md text-xs font-bold hover:bg-brand-700 transition">
+                        <button onclick="filterJobs({ scroll: true, openSingle: true })" class="absolute right-1 top-1 bottom-1 px-3.5 bg-brand-600 text-white rounded-md text-xs font-bold hover:bg-brand-700 transition">
                             Search
                         </button>
                     </div>
@@ -255,7 +255,80 @@
                     <a href="#results" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Results</a>
                     <a href="#answer-keys" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Answer Key</a>
                     <a href="#syllabus" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Syllabus</a>
-                    <a href="#previous-papers" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Previous Papers</a>
+                    <!-- Previous Year Question dropdown: direct PDF URLs extracted from fetched source pages, not article redirects. -->
+                    <div id="previous-papers" class="relative group scroll-mt-28">
+                        <button type="button" class="px-3.5 py-2.5 hover:bg-brand-700 transition flex items-center gap-1.5" aria-haspopup="true" aria-controls="previous-question-dropdown">
+                            <i class="fas fa-file-download text-amber-300"></i> Previous Year Question <i class="fas fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div id="previous-question-dropdown" class="hidden group-hover:block group-focus-within:block static md:absolute md:left-0 md:top-full z-50 w-full md:w-[min(92vw,56rem)] max-h-[70vh] overflow-y-auto custom-scrollbar bg-white text-slate-800 border border-slate-200 rounded-b-xl shadow-2xl p-4">
+                            <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-2 mb-3">
+                                <div>
+                                    <div class="text-sm font-extrabold text-brand-900">Previous Year Question Papers</div>
+                                    <p class="text-[11px] text-slate-500 font-semibold">Only real hosted PDF links are listed below. Click any link to start the PDF download/open directly.</p>
+                                </div>
+                                <span class="text-[10px] font-black uppercase tracking-wide text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-1 whitespace-nowrap">Direct PDF</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-[11px] leading-snug">
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">Punjab Police</div>
+                                    <a href="https://cdn-images.prepp.in/public/image/punjab-police-constable-2025-question-paper-and-answer-key-pdf-jun-18-2025-shift-2-1785134678.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police Constable 2025 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Constable 2025 Jun 18 Shift 2</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/punjab-police-constable-2025-question-paper-and-answer-key-pdf-jun-4-2025-shift-1-1785134678.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police Constable 2025 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Constable 2025 Jun 4 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Police_Constable_Official_Paper_I_II_Jul_30_2024_Shift_1__7e1d978f9dcc8b26e59d6f18468b74c1.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police Constable 2024 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Constable 2024 Jul 30 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Police_Constable_Official_Paper_I_II_Aug_08_2024_Shift_1__f73c5bdc11ac386b1c625cc104934d1e.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police Constable 2024 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Constable 2024 Aug 8 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/QP_25_S1_e76c898607bd05bcf0b89c672d8ff1cc.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police Constable 2023 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Constable 2023 Sep 25 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Police_SI_Official_Paper_I_Held_On_20_June_2023_Shift_1__5b703c3814b461acf639f4f85f731b31.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police SI 2023 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Sub Inspector 2023 Jun 20 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Police_SI_16_Oct_2022_Paper_I_English__5f171439ac44be4891a6147cf98d3cee.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Police SI 2022 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>Sub Inspector 2022 Paper I</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">PSSSB / Patwari</div>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Patwari_Official_Paper_Held_On_14_May_2023__269948c587a32946d5e91f146f8a4414.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2023 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2023 Paper I</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Punjab_Patwari_Pre_8_Aug_2021_English_d02c19caae304c3a1569bca12bb2cfca.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2021 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2021 Pre English</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/ENGLISH_3_punjab_patwari_4207eb465a27dc706091354042a1cb86.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2017 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2017 English</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/AGRICULTURE2_0_1_punjab_08cf19f61de2364387b6943169105e70.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari Agriculture PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2017 Agriculture</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://images.collegedunia.com/public/image/fb5b3fbc5845484390108a7041066321.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2016 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2016 Set A</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://images.collegedunia.com/public/image/448af9cc883d6b0ddff61eedadb1e5a0.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2016 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Punjab Patwari 2016 Set C</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://images.collegedunia.com/public/image/75911989ac9b0fe705aee33b801e863a.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab Patwari 2013 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>Punjab Patwari 2013 Paper 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">PPSC / Punjab PCS</div>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/2025/12/19115753/Punjab-PCS-GS-Paper-1-Held-on-7-Dec-2025-A.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS GS PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PCS GS Paper 1 2025 Set A</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/2025/12/19115748/Punjab-PCS-CSAT-Paper-2-Held-on-7-Dec-2025-A.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS CSAT PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PCS CSAT Paper 2 2025 Set A</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/sites/22/2025/11/18111146/General-Studies-Paper-Set-A-2021.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS 2021 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PCS 2021 General Studies Set A</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/sites/22/2025/11/18111234/Punjab-PCS-CSAT-Paper-2-Set-A-2021.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS 2021 CSAT PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PCS 2021 CSAT Set A</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/sites/22/2025/11/18111201/PCS-Mains-Exam-English.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS Mains PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PCS Mains English Paper</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.adda247.com/jobs/wp-content/uploads/sites/22/2025/11/18111205/PCS-Mains-Exam-General-Paper-I.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting Punjab PCS Mains GS PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>PCS Mains General Paper I</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">NVS / Navodaya</div>
+                                    <a href="https://cdn-images.prepp.in/public/image/kvs-nvs-pgt-2025-paper-and-answer-key-pdf-11-jan-2026-shift-1-1768200120.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS PGT PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>KVS NVS PGT 2025 Tier 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/kvs-nvs-tgt-2025-paper-and-answer-key-pdf-11-jan-2026-shift-2-1768200111.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS TGT PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>KVS NVS TGT 2025 Tier 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/KVS_NVS_2025_MTS_Question_Paper_PDF_10_Jan_2026_Shift_2__3f25afb4ab14454bccb249d7cea7c2f9.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS MTS PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>KVS NVS MTS 2025 Shift 2</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/NVS_Staff_Nurse_Female_08_Mar_2022_Official_Paper_7273f991f081cef11deabd9d035146f2.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS Staff Nurse PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>NVS Staff Nurse 2022</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/NVS_TGT_Maths_Hindi_Official_Paper_Held_On_28_Nov_2022_Shift_1_English_cc0caf0ea9aa6cca5e3f5fb9c75ef44f.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS TGT 2022 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>NVS TGT Maths &amp; Hindi 2022</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://images.collegedunia.com/public/image/e361354586bf1a91fc1d3479522ddc4d.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS PGT 2019 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>NVS PGT Biology Sep 2019</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://images.collegedunia.com/public/image/d04d90f2b97a88b205193b068e311bbd.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting NVS TGT 2019 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>NVS TGT Science Sep 2019</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">PSPCL</div>
+                                    <a href="https://cdn-images.prepp.in/public/image/udcgeneralsession_06_2023questionpaper_a8097df35a17726789ed6ea82a872788.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL UDC PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PSPCL UDC 2023</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/Eosession0523ques_d440d2de6dc337175d22b74fda3f0d04.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL Engineer Officers PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PSPCL Engineer Officers 2023</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/udcgeneralsession_06_2022questionpaper_5bc15f24040784ad289d5b7e8f8e06f5.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL UDC 2022 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PSPCL UDC 2022</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/ES_civil_session_03_22_question_paper_4b1e5b8f25e4bc8c3197dfd8510f49f1.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL Engineer Subordinate PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>Engineer Subordinate Civil 2022</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/udcgeneralsession_06_2021questionpaper_1a75e93b3065788b12f3725c0302358c.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL UDC 2021 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>PSPCL UDC 2021</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/qp_udc_gen_s_2019_0f15033e26bf2633a6e3d2a2a7c8dcba.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting PSPCL UDC 2019 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>PSPCL UDC 2019</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <div class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">SSC / Railway / UPSC</div>
+                                    <a href="https://cdn-images.prepp.in/public/image/ssc-cgl-2025-tier-1-question-paper-and-answer-key-pdf-sep-12-2025-shift-1-1776750147.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting SSC CGL PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>SSC CGL Tier 1 2025 Sep 12</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/SSC_CGL_2024_Tier_1_Shift_1_Question_Paper_with_Answer_Key_PDF_Sept_9_2024_1_44_988bb30196ade189a7ab6b24132f7714.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting SSC CGL 2024 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>SSC CGL Tier 1 2024 Sep 9</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/RRB_Group_D_3_Aug_2026_Memory_Based_Paper_473dde5d518f357e09bb2033615d113b.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting RRB Group D PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>RRB Group D 2026 Aug 3</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://cdn-images.prepp.in/public/image/rrb-group-d-2025-question-paper-and-answer-key-pdf-english-nov-27-2025-shift-1-1771403523.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting RRB Group D 2025 PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>RRB Group D 2025 Nov 27 Shift 1</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.upsc.gov.in/sites/default/files/QP-CAPF-Exam-2026-GENERAL-ABILITY-AND-INTELLIGENCE-200726.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting UPSC CAPF PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700 border-b border-slate-100 pb-1"><span>UPSC CAPF 2026 General Ability</span><i class="fas fa-download text-emerald-600"></i></a>
+                                    <a href="https://www.upsc.gov.in/sites/default/files/QP-CAPF-Exam-2026-GENERAL-STUDIES-ESSAY-AND-COMPREHENSION-200726.pdf" target="_blank" rel="noopener noreferrer" download onclick="showToast('Starting UPSC CAPF PDF download...')" class="flex items-center justify-between gap-2 hover:text-emerald-700"><span>UPSC CAPF 2026 GS Essay</span><i class="fas fa-download text-emerald-600"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <a href="#offline-forms" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Offline Forms</a>
                 </div>
             </div>
@@ -1822,11 +1895,31 @@
         }
 
         // Search Filter (Live with Clear Button & Counter)
-        function filterJobs() {
+        function getJobSearchText(job) {
+            return [
+                job.title,
+                job.department,
+                job.qualification,
+                job.qualCategory,
+                job.vacancies,
+                job.location,
+                job.applyMode,
+                job.badge,
+                job.categorySlug,
+                job.advtNo,
+                job.details,
+                job.type
+            ].map(value => String(value || '').toLowerCase()).join(' ');
+        }
+
+        function filterJobs(options = {}) {
+            const settings = (options && typeof options === 'object') ? options : {};
             const input = document.getElementById('searchInput');
             const clearBtn = document.getElementById('searchClearBtn');
             const counterMsg = document.getElementById('searchCounterMsg');
-            const query = input.value.toLowerCase().trim();
+            const rawQuery = input.value.trim();
+            const query = rawQuery.toLowerCase();
+            const queryTerms = query.split(/\s+/).filter(Boolean);
 
             // Show/hide clear button
             if (query.length > 0) {
@@ -1837,12 +1930,11 @@
 
             const allJobs = jobDatabase;
             let filtered = allJobs;
-            if (query.length > 0) {
-                filtered = allJobs.filter(j =>
-                    j.title.toLowerCase().includes(query) ||
-                    j.department.toLowerCase().includes(query) ||
-                    j.qualification.toLowerCase().includes(query)
-                );
+            if (queryTerms.length > 0) {
+                filtered = allJobs.filter(job => {
+                    const searchableText = getJobSearchText(job);
+                    return queryTerms.every(term => searchableText.includes(term));
+                });
             }
 
             renderMasterTable(filtered);
@@ -1850,9 +1942,25 @@
             // Update counter message
             if (query.length > 0) {
                 counterMsg.classList.remove('hidden');
-                counterMsg.innerHTML = `<i class="fas fa-search mr-1"></i>${filtered.length} of ${allJobs.length} vacancies match "<strong>${escapeHtml(query)}</strong>"`;
+                counterMsg.innerHTML = `<i class="fas fa-search mr-1"></i>${filtered.length} of ${allJobs.length} vacancies match "<strong>${escapeHtml(rawQuery)}</strong>"`;
             } else {
                 counterMsg.classList.add('hidden');
+            }
+
+            if (settings.scroll) {
+                const table = document.getElementById('master-table-body');
+                if (table) table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (settings.openSingle && queryTerms.length > 0) {
+                if (filtered.length === 1) {
+                    showToast('One matching vacancy found — opening job details.');
+                    setTimeout(() => openJobDetail(filtered[0].id), 250);
+                } else if (filtered.length === 0) {
+                    showToast(`No vacancy found for "${rawQuery}". Try another job name or keyword.`);
+                } else {
+                    showToast(`${filtered.length} matching vacancies found. Click Apply / Info for full details.`);
+                }
             }
         }
 
@@ -1870,6 +1978,7 @@
         });
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
             if (e.key === 'Escape') clearSearch();
+            if (e.key === 'Enter') filterJobs({ scroll: true, openSingle: true });
         });
 
         // Filter by Qualification Pills
