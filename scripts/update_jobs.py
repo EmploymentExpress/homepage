@@ -51,7 +51,7 @@ REDIRECT_PAGE = "redirect.html"
 # The homepage layout is FROZEN for AI agents and humans alike — content-only
 # updates; see AGENTS.md and tests/test_layout_order.py before editing index.html.
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
-DISCOVERY_HOSTS = {"haryanajobs.in", "rozgarnews.com"}
+DISCOVERY_HOSTS = {"haryanajobs.in", "linkingsky.com", "rozgarnews.com"}
 DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "rozgarnews", "rozgar news")
 
 # Offline-apply vacancy handling (onlineforms.in offline application forms).
