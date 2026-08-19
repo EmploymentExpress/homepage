@@ -153,8 +153,19 @@ The monitor currently has these official recruitment sources enabled:
 1. **Punjab State Legal Services Authority (PULSA)** — `https://punjab.nalsa.gov.in/notice-category/recruitments/`
 2. **AIIMS Recruitments** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976e`
 3. **AIIMS Academic Courses** — `https://aiimsexams.ac.in/landingpage/courses/68dbbb27b7b096817673976f`
+4. **Guru Nanak Dev University (GNDU)** — `https://digital.gndu.ac.in/Career-with-us.aspx`
+5. **Punjab Agricultural University (PAU)** — `https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147`
+6. **Punjab Municipal Infrastructure Development Company (PMIDC)** — `https://pmidc.punjab.gov.in/recruitment/`
+7. **Department of Health & Family Welfare, Punjab** — `https://health.punjab.gov.in/?q=node/952`
+8. **Social Welfare, Women & Child Development, Chandigarh** — `https://chdsw.gov.in/index.php/recruitments/index`
+9. **Punjab Institute of Liver and Biliary Sciences (PILBS)** — `https://pilbs.punjab.gov.in/en/`
+10. **Department of Sports, Punjab** — `https://pbsports.punjab.gov.in/`
+11. **Tata Memorial Centre (TMC), Mumbai** — `https://tmc.gov.in/postmaster/Careers`
+12. **Baba Farid University of Health Sciences (BFUHS)** — `https://bfuhs.ggsmch.org/`
+13. **Guru Ravidas Ayurved University (GRAU)** — `https://graupunjab.org/jobs/`
+14. **Directorate of Education, SGPC (DESGPC)** — `https://www.desgpc.org/`
 
-All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`, so automatic updates are published **only from PULSA and the two AIIMS Exams links**. The discovery headline feeds (HaryanaJobs / RozgarNews) are also switched off (`automation/discovery-feeds.json` has an empty `feeds` list) so no update from any other website can enter the feed. To re-enable a board, set its `enabled` flag to `true`; to re-enable discovery, restore the feed objects in `automation/discovery-feeds.json`. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are additionally enabled under the special `offline-forms` role. All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. The discovery headline feeds (HaryanaJobs / RozgarNews) are also switched off (`automation/discovery-feeds.json` has an empty `feeds` list) so no update from any other website can enter the feed. To re-enable a board, set its `enabled` flag to `true`; to re-enable discovery, restore the feed objects in `automation/discovery-feeds.json`. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
 
 #### Discovery-only feeds (HaryanaJobs / RozgarNews)
 
