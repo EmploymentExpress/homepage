@@ -2,6 +2,38 @@
   "version": 1,
   "organizations": [
     {
+      "id": "gndu",
+      "name": "Guru Nanak Dev University",
+      "department": "Guru Nanak Dev University (GNDU), Amritsar",
+      "url": "https://digital.gndu.ac.in/Career-with-us.aspx",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Amritsar, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "gndu",
+        "guru nanak dev university",
+        "guru nanak dev university amritsar",
+        "gndu amritsar"
+      ]
+    },
+    {
+      "id": "pau",
+      "name": "Punjab Agricultural University",
+      "department": "Punjab Agricultural University (PAU), Ludhiana",
+      "url": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "pau",
+        "punjab agricultural university",
+        "punjab agricultural university ludhiana",
+        "pau ludhiana"
+      ]
+    },
+    {
       "id": "upsc",
       "name": "UPSC",
       "department": "Union Public Service Commission (UPSC)",

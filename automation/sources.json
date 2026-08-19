@@ -364,6 +364,70 @@
       "bootstrapCount": 3,
       "maxNewPerRun": 8,
       "timeout": 35
+    },
+    {
+      "id": "gndu-recruitment",
+      "enabled": true,
+      "name": "Guru Nanak Dev University Recruitment",
+      "department": "Guru Nanak Dev University (GNDU), Amritsar",
+      "url": "https://digital.gndu.ac.in/Career-with-us.aspx",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Amritsar, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": [
+        "Advertisement No",
+        "Advt",
+        "applications are invited",
+        "online applications",
+        "recruitment",
+        "teaching posts",
+        "non-teaching posts",
+        "walk-in",
+        "walk in interview"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "supply",
+        "eoi",
+        "expression of interest",
+        "leasing",
+        "canteen"
+      ],
+      "bootstrapCount": 2,
+      "maxNewPerRun": 8,
+      "timeout": 45,
+      "detailTimeout": 30
+    },
+    {
+      "id": "pau-recruitment",
+      "enabled": true,
+      "name": "Punjab Agricultural University Recruitments",
+      "department": "Punjab Agricultural University (PAU), Ludhiana",
+      "url": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": [
+        "post of",
+        "posts of",
+        "applications are invited",
+        "last date for submission of application",
+        "advertisement no",
+        "advt. no",
+        "walk-in",
+        "walk in interview",
+        "extension",
+        "result of written test",
+        "result of interview"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 2,
+      "maxNewPerRun": 8,
+      "timeout": 45,
+      "detailTimeout": 30
     }
   ]
 }
