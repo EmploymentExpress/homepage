@@ -33,8 +33,13 @@ KNOWN_CORRUPTION_FRAGMENTS = (
     "'No open dated ase.filter(job => job.type === 'punjab')],",
 )
 
-# Inline scripts that are not plain JavaScript.
-NON_JS_MARKERS = ("@context",)
+# Inline scripts that are not plain JavaScript: JSON-LD blocks begin with "{"
+# after whitespace. Do not key on "@context" alone — the main inline script
+# legitimately contains the string "@context": "https://schema.org" inside
+# injectJobPostingSchema(), and keying on that would skip the very script this
+# test exists to guard.
+def _is_json_ld(script: str) -> bool:
+    return script.lstrip().startswith("{")
 
 
 class InlineScriptSyntaxTest(unittest.TestCase):
@@ -77,7 +82,7 @@ class InlineScriptSyntaxTest(unittest.TestCase):
     @unittest.skipUnless(shutil.which("node"), "node executable not available")
     def test_inline_scripts_parse_with_node(self):
         for index, script in enumerate(self.scripts):
-            if any(marker in script for marker in NON_JS_MARKERS):
+            if _is_json_ld(script):
                 continue
             with self.subTest(inline_script=index):
                 result = subprocess.run(

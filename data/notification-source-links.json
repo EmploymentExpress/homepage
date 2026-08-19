@@ -18,6 +18,87 @@
       "categorySlug": "punjab-jobs",
       "location": "Ludhiana, Punjab",
       "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://pmidc.punjab.gov.in/recruitment/",
+      "name": "PMIDC Recruitment",
+      "department": "Punjab Municipal Infrastructure Development Company (PMIDC), Department of Local Government, Punjab",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "SAS Nagar (Mohali), Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://health.punjab.gov.in/?q=node/952",
+      "name": "Punjab Health Department Recruitment",
+      "department": "Department of Health and Family Welfare, Government of Punjab",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://chdsw.gov.in/index.php/recruitments/index",
+      "name": "Chandigarh Social Welfare Recruitment",
+      "department": "Department of Social Welfare, Women & Child Development, Chandigarh Administration",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://pilbs.punjab.gov.in/en/",
+      "name": "PILBS Recruitment",
+      "department": "Punjab Institute of Liver and Biliary Sciences (PILBS), SAS Nagar (Mohali)",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "SAS Nagar (Mohali), Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://pbsports.punjab.gov.in/",
+      "name": "Punjab Sports Department Recruitment",
+      "department": "Department of Sports, Government of Punjab",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://tmc.gov.in/postmaster/Careers",
+      "name": "Tata Memorial Centre Careers",
+      "department": "Tata Memorial Centre (TMC), Mumbai — Department of Atomic Energy, Government of India",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Mumbai, Maharashtra",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://bfuhs.ggsmch.org/",
+      "name": "BFUHS Recruitment",
+      "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Faridkot, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://graupunjab.org/jobs/",
+      "name": "GRAU Recruitment",
+      "department": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Hoshiarpur, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://www.desgpc.org/",
+      "name": "DESGPC Recruitment",
+      "department": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
     }
   ]
 }
