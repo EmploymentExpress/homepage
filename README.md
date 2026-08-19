@@ -111,7 +111,13 @@ To add / edit a **curated** vacancy, edit `jobDatabase` in `index.html`. Automat
 Any AI agent (or human) asked to *update* the site must change **only the instructed details** —
 job entries, dates, links, text, generated `data/*.json` files — and must **not** reorder sections,
 change the grid structure, or alter element `id`s/`class`es unless a layout change is explicitly
-requested. Full rules: **[`AGENTS.md`](AGENTS.md)**.
+requested.
+
+**Mandatory Link & Badge Rules for Agents and Automation:**
+1. **🔗 Direct Official Links:** `pdfLink` (Official Notice/PDF) and `applyLink` (Apply Online Portal) MUST ALWAYS point to the specific advertisement notification document/page and direct registration portal — NEVER generic root homepages (like `https://sssb.punjab.gov.in` or `https://pspcl.in`).
+2. **⏱️ "Just In" Tag & 48-Hour Auto-Expiry:** Whenever new job details are added or automated batches run, they MUST carry a `publishedAt`/`discoveredAt` timestamp so the frontend tags them with **"Just In"**. This badge/tag automatically expires and is removed 48 hours after publication.
+
+Full rules: **[`AGENTS.md`](AGENTS.md)**.
 
 This is enforced, not just documented:
 

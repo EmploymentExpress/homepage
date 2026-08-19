@@ -34,6 +34,20 @@ to change** and nothing else.
   on the homepage.
 - Specific text a user asks you to fix (titles, dates, links, counts) — in place, no reflow
 
+## 🔗 Official Advertisement & Apply Link Standard (Mandatory)
+
+Whenever job details are updated, curated, or generated via automation:
+- **`pdfLink` (Official Notice / PDF):** MUST always point directly to the specific advertisement notification PDF or active notice page for that job.
+- **`applyLink` (Apply Online / Portal):** MUST always point directly to the specific online application or registration portal page for that post.
+- **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). Always extract or provide the direct notification or portal page URL.
+
+## ⏱️ "Just In" Badge & 48-Hour Auto-Removal Rule
+
+Whenever new job details are added or published through automation:
+- **"Just In" Batching:** Every newly published or newly discovered job detail must carry a `publishedAt` or `discoveredAt` ISO timestamp.
+- **48-Hour Window:** The homepage automatically renders a prominent **"Just In"** tag on newly discovered official notices across all main grid sections and the master vacancy table.
+- **Automatic Expiry:** The **"Just In"** badge/tag stays active for exactly **48 hours** after publication/discovery and is automatically removed by the page logic once that 48-hour window elapses.
+
 ## 📐 Canonical section order (do not reorder)
 
 Inside `<main>` of `index.html`:

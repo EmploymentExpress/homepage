@@ -472,11 +472,16 @@ def clean_title(value: str) -> str:
 
 
 def canonical_url(value: str) -> str:
+    cleaned = clean_text(value)
+    if not cleaned or cleaned.lower().endswith("undefined") or "/undefined" in cleaned.lower():
+        return ""
     try:
-        parsed = urllib.parse.urlsplit(clean_text(value))
+        parsed = urllib.parse.urlsplit(cleaned)
     except ValueError:
         return ""
     if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+        return ""
+    if parsed.path.lower().endswith("/undefined") or parsed.path.lower() == "/undefined":
         return ""
     query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
     query = [(k, v) for k, v in query if not k.lower().startswith("utm_")]
@@ -1027,11 +1032,19 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
     richer = clean_text(f"{combined}. {parser.description}. {parser.text}")[:MAX_TEXT_LENGTH]
     description_source = description_source or parser.description
     for url, label in parser.links:
-        if re.search(r"(?i)\b(?:apply online|online application|register now|new registration)\b", label):
+        if re.search(r"(?i)\b(?:apply online|online application|register now|new registration|click here to apply|apply now|candidate registration|application form|online portal|apply|registration)\b", label or ""):
             safe = canonical_url(url)
             if safe:
                 apply_url = safe
                 break
+    if apply_url == candidate.url:
+        for url, _ in parser.links:
+            path_lower = urllib.parse.urlsplit(url).path.lower()
+            if any(term in path_lower for term in ("/apply", "/register", "/registration", "/online")):
+                safe = canonical_url(url)
+                if safe:
+                    apply_url = safe
+                    break
     # Find the strongest PDF on the detail page for the Official Notice button.
     best_pdf = ""
     fallback_pdf = ""
