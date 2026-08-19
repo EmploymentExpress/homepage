@@ -157,6 +157,14 @@
         .job-compact-card:active {
             transform: scale(0.99);
         }
+        /* Scrollbar-none utility for mobile pill scroll */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
@@ -209,10 +217,14 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                             <i class="fas fa-search text-sm"></i>
                         </div>
+                        <button id="searchClearBtn" class="absolute right-24 top-1 bottom-1 px-2 text-slate-400 hover:text-slate-700 transition hidden" onclick="clearSearch()" title="Clear search">
+                            ✕
+                        </button>
                         <button onclick="filterJobs()" class="absolute right-1 top-1 bottom-1 px-3.5 bg-brand-600 text-white rounded-md text-xs font-bold hover:bg-brand-700 transition">
                             Search
                         </button>
                     </div>
+                    <div id="searchCounterMsg" class="text-[11px] text-slate-500 font-semibold mt-1 hidden"></div>
                 </div>
 
                 <!-- Quick Action Buttons -->
@@ -417,14 +429,14 @@
                 <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
                     <i class="fas fa-filter text-brand-600"></i> Jobs By Qualification:
                 </div>
-                <div class="flex flex-wrap gap-2 text-xs">
-                    <button onclick="filterByQual('all')" class="qual-btn px-3 py-1.5 rounded-full font-bold bg-brand-600 text-white hover:bg-brand-700 transition">All Vacancies</button>
-                    <button onclick="filterByQual('8th/10th')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">10th Pass</button>
-                    <button onclick="filterByQual('12th')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">12th Pass</button>
-                    <button onclick="filterByQual('Graduate')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Graduate</button>
-                    <button onclick="filterByQual('Diploma/ITI')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">ITI / Diploma</button>
-                    <button onclick="filterByQual('B.Ed/ETT')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">ETT / B.Ed (Teaching)</button>
-                    <button onclick="filterByQual('Police')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Defence/Police</button>
+                <div class="flex flex-nowrap sm:flex-wrap gap-2 text-xs overflow-x-auto scrollbar-none snap-x pb-1 sm:pb-0">
+                    <button onclick="filterByQual('all')" class="qual-btn px-3 py-1.5 rounded-full font-bold bg-brand-600 text-white hover:bg-brand-700 transition snap-start whitespace-nowrap">All Vacancies (<span class="qual-count" data-qual="all">0</span>)</button>
+                    <button onclick="filterByQual('8th/10th')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">10th Pass (<span class="qual-count" data-qual="8th/10th">0</span>)</button>
+                    <button onclick="filterByQual('12th')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">12th Pass (<span class="qual-count" data-qual="12th">0</span>)</button>
+                    <button onclick="filterByQual('Graduate')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">Graduate (<span class="qual-count" data-qual="Graduate">0</span>)</button>
+                    <button onclick="filterByQual('Diploma/ITI')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">ITI / Diploma (<span class="qual-count" data-qual="Diploma/ITI">0</span>)</button>
+                    <button onclick="filterByQual('B.Ed/ETT')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">ETT / B.Ed (<span class="qual-count" data-qual="B.Ed/ETT">0</span>)</button>
+                    <button onclick="filterByQual('Police')" class="qual-btn px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition snap-start whitespace-nowrap">Defence / Police (<span class="qual-count" data-qual="Police">0</span>)</button>
                 </div>
             </div>
         </div>
@@ -662,10 +674,18 @@
             </div>
 
             <!-- Modal Footer Links -->
-            <div class="bg-slate-50 border-t border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
-                <button onclick="shareCurrentJob()" class="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
-                    <i class="fas fa-share-alt"></i> Share Job Alert
-                </button>
+            <div class="bg-slate-50 border-t border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3 sticky bottom-0 sm:static">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="shareViaWhatsApp()" class="text-xs font-semibold text-green-600 hover:text-green-800 flex items-center gap-1.5 transition" title="Share on WhatsApp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button onclick="shareViaNative()" class="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition" title="Share via device">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button onclick="copyJobLink()" class="text-xs font-semibold text-brand-600 hover:text-brand-800 flex items-center gap-1.5 transition" title="Copy direct link">
+                        <i class="fas fa-link"></i> Copy Link
+                    </button>
+                </div>
                 <div class="flex items-center gap-2">
                     <a id="modalOfflineFormBtn" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition">
                         <i class="fas fa-file-alt"></i> <span id="modalOfflineFormLabel">Download Offline Application Form</span>
@@ -1649,10 +1669,10 @@
             const statusClass = info.active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-100 text-slate-600 border-slate-200';
             const shortDetail = String(job.details || '').replace(/<[^>]*>/g, '').slice(0, 80);
             const justInBadge = job.isJustIn
-                ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse">Just In</span>'
+                ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>'
                 : '';
             return `
-                <article class="p-3 job-compact-card border-b border-slate-100 cursor-pointer" onclick="openJobDetail(${job.id})">
+                <article class="p-3 job-compact-card border-b border-slate-100 cursor-pointer hover:-translate-y-0.5 transition-all duration-200" onclick="openJobDetail(${job.id})">
                     <div class="flex flex-col gap-1.5">
                         <div class="flex flex-wrap items-center gap-1.5">
                             ${justInBadge}
@@ -1665,7 +1685,10 @@
                         ${shortDetail ? `<p class="text-[10px] text-slate-400 leading-relaxed truncate">${escapeHtml(shortDetail)}…</p>` : ''}
                         <div class="flex items-center justify-between mt-0.5">
                             <div class="text-[10px] font-extrabold text-red-600"><i class="far fa-calendar-check mr-1"></i>Last date: ${escapeHtml(job.lastDate)}</div>
-                            <span class="text-[10px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2 py-0.5 rounded hover:bg-${color}-100">View Details →</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="event.stopPropagation(); shareJobById(${job.id})" class="text-[10px] text-slate-400 hover:text-brand-600 transition" title="Share"><i class="fas fa-share-alt"></i></button>
+                                <span class="text-[10px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2 py-0.5 rounded hover:bg-${color}-100">View Details →</span>
+                            </div>
                         </div>
                         ${job.lastDateExtended ? `<p class="text-[10px] font-bold text-emerald-700"><i class="fas fa-circle-info mr-1"></i>Extended to ${escapeHtml(job.lastDate)}</p>` : ''}
                         ${job.offlineFormLink ? `<a href="${escapeHtml(safeExternalUrl(job.offlineFormLink))}" target="_blank" rel="noopener noreferrer" class="mt-1 text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded hover:bg-emerald-100 inline-flex items-center gap-1.5"><i class="fas fa-file-alt"></i> Offline Application Form</a>` : ''}
@@ -1742,7 +1765,7 @@
                         <div class="text-[10px] text-slate-500 mt-1"><i class="far fa-calendar-check mr-1 text-rose-500"></i><strong>Result/update date:</strong> ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'See official notice')}</div>
                         <div class="text-[9px] text-slate-400 mt-0.5">Application last date: Not applicable to results / answer keys</div>
                     </div>
-                    ${item.isJustIn ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse">Just In</span>' : (item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>')}
+                    ${item.isJustIn ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : (item.isNew ? '<span class="text-[9px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded badge-pulse">NEW</span>' : '<i class="fas fa-file-pdf text-rose-500 text-sm"></i>')}
                 </div>
             `).join('');
         }
@@ -1763,10 +1786,10 @@
             countBadge.innerText = `Showing ${dataToRender.length} of ${jobDatabase.length}`;
 
             tbody.innerHTML = sortByLastDateDesc(dataToRender).map(job => `
-                <tr class="hover:bg-slate-50/80 transition group border-b border-slate-100">
+                <tr class="hover:bg-slate-50/80 hover:-translate-y-0.5 transition-all duration-200 group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
-                            ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse">Just In</span>' : ''}
+                            ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : ''}
                             <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
                             <div>
                                 <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition block text-xs sm:text-sm">
@@ -1787,28 +1810,66 @@
                         <i class="far fa-calendar-check mr-1 text-slate-400"></i>${escapeHtml(job.lastDate)}
                     </td>
                     <td class="p-3.5 text-center">
-                        <button onclick="openJobDetail(${job.id})" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-3 py-1.5 rounded text-xs transition shadow-xs flex items-center justify-center gap-1 mx-auto whitespace-nowrap">
-                            <span>Apply / Info</span> <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
+                        <div class="flex items-center justify-center gap-1.5 mx-auto whitespace-nowrap">
+                            <button onclick="shareJobById(${job.id})" class="text-slate-400 hover:text-brand-600 transition px-1" title="Share"><i class="fas fa-share-alt text-xs"></i></button>
+                            <button onclick="openJobDetail(${job.id})" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-3 py-1.5 rounded text-xs transition shadow-xs flex items-center justify-center gap-1">
+                                <span>Apply / Info</span> <i class="fas fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // Search Filter
+        // Search Filter (Live with Clear Button & Counter)
         function filterJobs() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const filtered = jobDatabase.filter(j => 
-                j.title.toLowerCase().includes(query) || 
-                j.department.toLowerCase().includes(query) || 
-                j.qualification.toLowerCase().includes(query)
-            );
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('searchClearBtn');
+            const counterMsg = document.getElementById('searchCounterMsg');
+            const query = input.value.toLowerCase().trim();
+
+            // Show/hide clear button
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const allJobs = jobDatabase;
+            let filtered = allJobs;
+            if (query.length > 0) {
+                filtered = allJobs.filter(j =>
+                    j.title.toLowerCase().includes(query) ||
+                    j.department.toLowerCase().includes(query) ||
+                    j.qualification.toLowerCase().includes(query)
+                );
+            }
+
             renderMasterTable(filtered);
+
+            // Update counter message
+            if (query.length > 0) {
+                counterMsg.classList.remove('hidden');
+                counterMsg.innerHTML = `<i class="fas fa-search mr-1"></i>${filtered.length} of ${allJobs.length} vacancies match "<strong>${escapeHtml(query)}</strong>"`;
+            } else {
+                counterMsg.classList.add('hidden');
+            }
         }
 
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            document.getElementById('searchClearBtn').classList.add('hidden');
+            document.getElementById('searchCounterMsg').classList.add('hidden');
+            renderMasterTable(jobDatabase);
+            input.focus();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+            filterJobs();
+        });
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') filterJobs();
-            else if (document.getElementById('searchInput').value === '') renderMasterTable(jobDatabase);
+            if (e.key === 'Escape') clearSearch();
         });
 
         // Filter by Qualification Pills
@@ -1831,6 +1892,20 @@
             }
         }
 
+        // Update Qualification Pill Job Counts
+        function updateQualPillCounts() {
+            const allJobs = jobDatabase;
+            document.querySelectorAll('.qual-count').forEach(span => {
+                const qual = span.dataset.qual;
+                if (qual === 'all') {
+                    span.textContent = allJobs.length;
+                } else {
+                    const count = allJobs.filter(j => j.qualCategory.toLowerCase() === qual.toLowerCase()).length;
+                    span.textContent = count;
+                }
+            });
+        }
+
         // Filter by Category Button
         function filterByCategory(slug) {
             const filtered = jobDatabase.filter(j => j.categorySlug === slug);
@@ -1843,6 +1918,8 @@
 
         function resetFilter() {
             document.getElementById('searchInput').value = '';
+            document.getElementById('searchClearBtn').classList.add('hidden');
+            document.getElementById('searchCounterMsg').classList.add('hidden');
             renderMasterTable(jobDatabase);
         }
 
@@ -1895,6 +1972,9 @@
             const modal = document.getElementById('jobModal');
             const container = document.getElementById('modalContainer');
             modal.classList.remove('hidden');
+            // Push shareable URL
+            const shareUrl = getJobDirectUrl(job);
+            history.pushState({ jobId: job.id }, job.title, `?job=${job.id}`);
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 container.classList.remove('scale-95');
@@ -1908,6 +1988,9 @@
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
+            // Restore clean URL
+            const cleanUrl = window.location.origin + window.location.pathname;
+            history.pushState({}, document.title, cleanUrl);
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 200);
@@ -1928,6 +2011,14 @@
             }
         });
 
+        // Handle browser back button closing the modal
+        window.addEventListener('popstate', () => {
+            const modal = document.getElementById('jobModal');
+            if (!modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
         // Toast Feedback System
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -1941,17 +2032,143 @@
             }, 3000);
         }
 
+        function getJobDirectUrl(job) {
+            const base = window.location.origin + window.location.pathname;
+            return `${base}?job=${job.id}`;
+        }
+
         function shareCurrentJob() {
             if (navigator.share && currentOpenJob) {
                 navigator.share({
                     title: currentOpenJob.title,
                     text: `Check out ${currentOpenJob.title} (${currentOpenJob.vacancies}) on EMPLOYMENT EXPRESS!`,
-                    url: window.location.href,
+                    url: getJobDirectUrl(currentOpenJob),
                 }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(window.location.href);
+            } else if (currentOpenJob) {
+                navigator.clipboard.writeText(getJobDirectUrl(currentOpenJob));
                 showToast('Link copied to clipboard! Share with friends.');
             }
+        }
+
+        function shareViaWhatsApp() {
+            if (!currentOpenJob) return;
+            const text = encodeURIComponent(`Check out ${currentOpenJob.title} (${currentOpenJob.vacancies}) on EMPLOYMENT EXPRESS!\n${getJobDirectUrl(currentOpenJob)}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
+        }
+
+        function shareViaNative() {
+            shareCurrentJob();
+        }
+
+        function copyJobLink() {
+            if (!currentOpenJob) return;
+            const url = getJobDirectUrl(currentOpenJob);
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Direct link copied! Share it anywhere.');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Direct link copied! Share it anywhere.');
+            });
+        }
+
+        function shareJobById(id) {
+            const job = jobDatabase.find(j => j.id === id) || admissionDatabase.find(j => j.id === id);
+            if (!job) return;
+            const url = getJobDirectUrl(job);
+            const text = `Check out ${job.title} (${job.vacancies}) on EMPLOYMENT EXPRESS!`;
+            if (navigator.share) {
+                navigator.share({ title: job.title, text, url }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(url);
+                showToast('Link copied! Share with friends.');
+            }
+        }
+
+        // Deep Link: open ?job=ID directly
+        function checkDeepLink() {
+            const params = new URLSearchParams(window.location.search);
+            const jobId = params.get('job');
+            if (jobId) {
+                const id = Number(jobId);
+                if (Number.isFinite(id)) {
+                    const job = jobDatabase.find(j => j.id === id) || admissionDatabase.find(j => j.id === id);
+                    if (job) {
+                        openJobDetail(id);
+                        // Clean URL without reloading
+                        const cleanUrl = window.location.origin + window.location.pathname;
+                        history.replaceState({}, document.title, cleanUrl);
+                    }
+                }
+            }
+        }
+
+        // Google Jobs SEO: Inject Schema.org JobPosting / ItemList JSON-LD
+        function injectJobPostingSchema() {
+            // Remove any previously injected schema
+            const existing = document.getElementById('dynamic-job-schema');
+            if (existing) existing.remove();
+
+            const jobs = jobDatabase;
+            const jobPostings = jobs.map(job => {
+                const lastDateParsed = parseLastDate(job.lastDate);
+                const validThrough = lastDateParsed ? lastDateParsed.toISOString() : '';
+                const startDateParsed = parseLastDate(job.startDate);
+                const datePosted = startDateParsed ? startDateParsed.toISOString() : '';
+                return {
+                    "@type": "JobPosting",
+                    "title": job.title,
+                    "description": job.details || job.qualification || '',
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "name": "EMPLOYMENT EXPRESS",
+                        "value": String(job.id)
+                    },
+                    "hiringOrganization": {
+                        "@type": "Organization",
+                        "name": job.department,
+                        "sameAs": safeExternalUrl(job.pdfLink)
+                    },
+                    "jobLocation": {
+                        "@type": "Place",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressLocality": job.location || (job.type === 'punjab' ? 'Punjab' : 'India'),
+                            "addressCountry": "IN"
+                        }
+                    },
+                    "employmentType": "FULL_TIME",
+                    ...(datePosted ? { "datePosted": datePosted } : {}),
+                    ...(validThrough ? { "validThrough": validThrough } : {}),
+                    "url": getJobDirectUrl(job)
+                };
+            });
+
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                "name": "Government Job Vacancies on EMPLOYMENT EXPRESS",
+                "description": "Latest Punjab and Central Government recruitment notifications, admit cards, and results.",
+                "numberOfItems": jobPostings.length,
+                "itemListElement": jobPostings.map((posting, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": posting
+                }))
+            };
+
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'dynamic-job-schema';
+            script.textContent = JSON.stringify(schema);
+            document.head.appendChild(script);
         }
 
         // Initialize All Components on Load
@@ -1965,6 +2182,9 @@
             renderMasterTable();
             updateSectionSummaries();
             renderLastDateReminders();
+            updateQualPillCounts();
+            injectJobPostingSchema();
+            checkDeepLink();
             setInterval(updateLastDateTimers, 1000);
         });
     </script>
