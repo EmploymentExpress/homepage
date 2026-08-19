@@ -779,6 +779,12 @@
             navMenu.classList.toggle('hidden');
         });
 
+        // MANDATORY DATA RULES (AGENTS.md):
+        // 1. pdfLink MUST point directly to the advertisement notification PDF/notice page.
+        // 2. applyLink MUST point directly to the online apply/registration portal (NEVER root homepage).
+        // 3. New entries MUST carry publishedAt/discoveredAt ISO timestamp so they display
+        //    the "Just In" badge, which automatically expires after 48 hours.
+
         // Curated admissions & courses, extended at page load by data/auto-jobs.json.
         let admissionDatabase = [
             {
