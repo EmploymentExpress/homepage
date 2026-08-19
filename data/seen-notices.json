@@ -25,5 +25,193 @@
         "20f6d084e990485e27428f6e7edf6b20ce1ed56966a10b7b7c2f129d735ecb06"
       ]
     }
+  },
+  "offlinePageDocuments": {
+    "https://onlineforms.in/haryana-anganwadi-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2025/10/OnlineForms.in-Haryana-Anganwadi-AWW-AWH-Application-Form.pdf",
+      "notification": "",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/ordnance-factory-chanda-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/04/OnlineForms.in-Ordnance-Factory-Chanda-Application-Form-June-2026_compressed.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2026/04/Ordnance-Factory-Chanda-Notification-June-2026_compressed.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/smvdsb-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/06/OnlineForms.in-SMVDSB-Application_Form_15062026.pdf",
+      "notification": "https://www.maavaishnodevi.org/sites/default/files/2026/Detailed_Notice_15062026.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/echs-meerut-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/06/OnlineForms.in-ECHS-Meerut-Application-Form.pdf",
+      "notification": "https://www.echs.gov.in/assets/advertisement/ADVERTISEMENT_removed.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/sainik-school-jhansi-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2024/09/OnlineForms.in-Sainik-School-Jhansi-Application-Form-2026_compressed.pdf",
+      "notification": "https://nitj.ac.in/files/1756182149806-Final_Advt._no._01_of_2025_to_12_of_2025_(Non_Faculty).pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/sainik-school-amaravathinagar-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/03/Sainik-School-Amaravathinagar-Application-Form-2026.pdf",
+      "notification": "https://nitj.ac.in/files/1756182149806-Final_Advt._no._01_of_2025_to_12_of_2025_(Non_Faculty).pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/indian-army-cdm-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2023/08/OnlineForms.in-College-of-Defence-Management-Application-Form-21082023.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2023/09/College-of-Defence-Management-Notification-May-2026_compressed.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/district-court-balangir-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/05/OnlineForms.in-District-Court-Balangir-Application-Form-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1mQF5MCHmkcuvnQ2xDHw9tqDXGQ4EAPSm/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/yamunanagar-court-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2023/01/OnlineForms.in-Yamunanagar-Court-Application-Form-2023.pdf",
+      "notification": "https://drive.google.com/file/d/1BbXYvmpmURzx_g5DhF_aHOF03D3NBAR_/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/sainik-school-nalanda-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/05/OnlineForms.in-Sainik-School-Nalanda-Application-Form-Form.pdf",
+      "notification": "https://www.sainikschoolnalanda.edu.in/wp-content/uploads/2025/vac/Recruitment.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/defence-services-staff-college-recruitment/": {
+      "form": "https://drive.google.com/file/d/1JWX1It9WZ6LsTHj7V9eH-wqrNWUnGaCI/view?usp=sharing",
+      "notification": "https://ids.nic.in/KnowledgeBankDetails?type=Direct+Recruitment+of+78+Group+C+Vacancies+at+DSSC+Wellington",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/ids-jaipur-recruitment/": {
+      "form": "https://www.idsj.org/vacancies",
+      "notification": "https://www.idsj.org/vacancies",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/gonda-kvk-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/05/Gonda-KVK-Assistant-Steno-Application-form-2026.pdf",
+      "notification": "https://cms.kvk4.in/assets/uploads/1778582587.Advertizement%20of%20post-1.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/rampur-raza-library-recruitment/": {
+      "form": "",
+      "notification": "https://cdn.s3waas.gov.in/s3a8f15eda80c50adb0e71943adc8015cf/uploads/2026/05/17784740768799.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/sainik-school-punglwa-recruitment/": {
+      "form": "",
+      "notification": "https://onlineforms.in/wp-content/uploads/2026/05/Sainik-School-Punglwa-Vacancy-Notification-May-2026.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/uttarakhand-home-guard-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/05/OnlineForms.in-Uttarakhand-Home-Guard-Application-Form-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1GKYiitjw-Povt5q8PwuFUcSMf7ooC3F0/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/district-court-kanpur-nagar-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/05/OnlineForms.in-Kanpur-District-Court-Sweeper-Application-Form-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1QqvnGvneDoUP8kLH0EPD3ltutX2xgszu/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/ambala-district-court-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2024/01/OnlineForms.in-Ambala-District-Court-Application-Form-2026.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2024/01/Ambala-District-Court-Notification-2026050648.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/sainik-school-ghorakhal-recruitment/": {
+      "form": "",
+      "notification": "https://drive.google.com/file/d/1KWFcDRaq67Jubyja6SmLcDLkglU3sEh-/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/air-force-group-c-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2025/05/OnlineForms.in-Airforce-Group-C-Application-Form-May-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1ORWR_U8qu0eYjh6t2k9f6aIAlASqK5LY/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/indian-army-csbo-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/04/Onlineforms.in-Indian-Army-CSBO-Grade-2-Application-Form-2026_compressed.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2026/04/Indian-Army-CSBO-Grade-2-Advt_020526_compressed.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/hq-anc-group-c-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/04/OnlineForms.in-HQ-ANC-Group-C-Application-Form-2026.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2026/04/HQ-ANC-Group-C-Notification-2026.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/air-force-non-combatant-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2024/08/OnlineForms.in-Application-Forms-Agniveervayu-Non-Combatants-2026_compressed.pdf",
+      "notification": "https://iafrecruitment.edcil.co.in/agniveervayu/pdffiles/Latest%20Information%20Brochure_Agv%20NC_01%20of%202027.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/railway-sports-quota-recruitment/": {
+      "form": "",
+      "notification": "https://clw.indianrailways.gov.in/uploads/Sports%20Quota%20Notification%202026%2020271.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/ccrs-recruitment-2026-clerk-social-worker/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/08/OnlineForms.in-CCRS-Clerk-Social-Worker-Application-Form-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1e_ESt4gUKNcWR9Pei_6bNrnQwa59Pn_n/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/dgqa-technician-recruitment/": {
+      "form": "",
+      "notification": "https://drive.google.com/file/d/1flZ9kLc8lcry4_pgSFtfrC50mYklY-i-/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/indian-army-sports-quota-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2025/11/OnlineForms.in-Army-Sports-Quota-Application-Form-06-2026.pdf",
+      "notification": "https://onlineforms.in/wp-content/uploads/2025/11/OnlineForms.in-Army-Sports-Quota-Application-Form-06-2026.pdf",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/indian-air-force-mts-recruitment/": {
+      "form": "https://onlineforms.in/wp-content/uploads/2026/06/OnlineForms.in-Indian-Air-Force-MTS-Application-Form-2026.pdf",
+      "notification": "https://drive.google.com/file/d/1doCGNZ5x5sD91D8dRTgyzvNwm4HOJvQO/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/bro-gref-recruitment/": {
+      "form": "",
+      "notification": "https://drive.google.com/file/d/1D5Ly0GWwSrLm1-_ACKxHPZZfQkmOhk3m/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/district-court-ludhiana-recruitment/": {
+      "form": "https://drive.google.com/file/d/1a6l_enEV2Q7Gd8Kq7ZWoEIbM46elJfQi/view?usp=sharing",
+      "notification": "https://drive.google.com/file/d/1mmkkhZOdrqA1jQP2pSL6ZYiCgQyZm5dz/view?usp=sharing",
+      "website": "https://onlineforms.in/",
+      "applyMode": "offline"
+    },
+    "https://onlineforms.in/": {
+      "form": "",
+      "notification": "",
+      "website": "",
+      "applyMode": ""
+    }
   }
 }
