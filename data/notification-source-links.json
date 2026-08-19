@@ -1,4 +1,23 @@
 {
   "version": 1,
-  "links": []
+  "links": [
+    {
+      "url": "https://digital.gndu.ac.in/Career-with-us.aspx",
+      "name": "Guru Nanak Dev University Career / Recruitment",
+      "department": "Guru Nanak Dev University (GNDU), Amritsar",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Amritsar, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    },
+    {
+      "url": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
+      "name": "Punjab Agricultural University Recruitments",
+      "department": "Punjab Agricultural University (PAU), Ludhiana",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"]
+    }
+  ]
 }
