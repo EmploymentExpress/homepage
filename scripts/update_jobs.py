@@ -116,6 +116,24 @@ OFFLINE_NOTIFICATION_FILE_MARKERS = (
     "advt",
     "official-notice",
 )
+# Page-text signals that a portal vacancy is genuinely offline-apply. The
+# portal's own intro sentence ("...can apply through offline mode.") is the
+# strongest signal; the fallback markers are article-specific rows that never
+# appear in the portal's site-wide navigation.
+APPLY_MODE_PHRASE_RE = re.compile(
+    r"apply\s+through\s+(?:the\s+)?(online|offline)\s+mode", re.IGNORECASE
+)
+# Alternatives that continue an "apply through X mode" sentence
+# (e.g. "...can apply through online mode or offline mode.").
+APPLY_MODE_ALT_RE = re.compile(
+    r"\b(?:or|and)\s+(online|offline)\s+mode", re.IGNORECASE
+)
+OFFLINE_ARTICLE_MARKERS = (
+    "offline application form",
+    "download offline form",
+    "applications through post",
+    "applications by post",
+)
 # Listing-page chrome (nav/footer links) that must never be published as an
 # offline vacancy. Applied to scraped listing entries and to already-published
 # offline alerts; curated registry entries (automation/offline-forms.json) are
@@ -1439,13 +1457,36 @@ def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str,
     return feeds
 
 
+def offline_vacancy_covered_by_portal(
+    job: dict[str, Any], offline_pool: list[dict[str, Any]]
+) -> bool:
+    """True when an offline-apply vacancy is already covered by onlineforms.in.
+
+    Offline vacancies found on other discovery feeds are published only when
+    the offline-form portal has no entry for them.
+    """
+    if not str(job.get("applyMode", "")).lower().startswith("offline"):
+        return False
+    return (
+        match_offline_form(job.get("title", ""), job.get("department", ""), offline_pool)
+        is not None
+    )
+
+
 def process_discovery_feeds(
     organizations: list[dict[str, Any]],
     state: dict[str, Any],
     now: datetime,
     dry_run: bool = False,
+    offline_pool: list[dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], int, bool]:
-    """Scan aggregator headlines, then publish only matching official notices."""
+    """Scan aggregator headlines, then publish only matching official notices.
+
+    Online-apply vacancies publish normally. An offline-apply vacancy is
+    published only when onlineforms.in has no entry for it, because the
+    offline-form portal is the single source for offline vacancies.
+    """
+    offline_pool = list(offline_pool or [])
     jobs: list[dict[str, Any]] = []
     added = 0
     state_changed = False
@@ -1527,6 +1568,12 @@ def process_discovery_feeds(
                 if any(is_discovery_host(str(job.get(field, ""))) for field in ("pdfLink", "applyLink", "sourceUrl")):
                     print(f"  Dropped job that still pointed at a discovery host: {job.get('title')}")
                     continue
+                if offline_vacancy_covered_by_portal(job, offline_pool):
+                    print(
+                        f"  Skipped offline vacancy already covered by the offline-forms portal: "
+                        f"{job.get('title')[:80]}"
+                    )
+                    continue
                 jobs.append(job)
                 known_official.add(key)
                 added += 1
@@ -1583,14 +1630,16 @@ def offline_page_documents(
     page_url: str, download: Download | None = None
 ) -> dict[str, str]:
     """Read an onlineforms.in vacancy page and locate its direct offline
-    application-form PDF and its official notification link.
+    application-form PDF, its official notification link, and its apply mode.
 
-    Returns {"form": url, "notification": url} with empty strings for anything
-    the page does not provide. The portal-hosted PDFs are never displayed on the
-    website: they are only recorded behind the redirect token map in
-    data/offline-redirects.json. The notification link is used only when no
-    official website copy exists, so pages that link the official website keep
-    that link instead.
+    Returns {"form": url, "notification": url, "website": url, "applyMode": ...}
+    with empty strings for anything the page does not provide. applyMode is
+    "offline" when the page says the vacancy is applied offline, "online" when
+    it says online-apply, and "" when the page does not say either. The
+    portal-hosted PDFs are never displayed on the website: they are only
+    recorded behind the redirect token map in data/offline-redirects.json. The
+    notification link is used only when no official website copy exists, so
+    pages that link the official website keep that link instead.
     """
     if download is None:
         download = fetch_url(page_url, timeout=25)
@@ -1598,6 +1647,7 @@ def offline_page_documents(
     _, parser = parse_html(text, download.url)
     form_candidates: list[str] = []
     notification_candidates: list[str] = []
+    website_candidates: list[str] = []
     for href, label in parser.links:
         url = canonical_url(href)
         if not url:
@@ -1628,9 +1678,35 @@ def offline_page_documents(
             and len(label_lower.split()) <= 4
         ):
             notification_candidates.append(url)
+        if not pdf and "official website" in label_lower:
+            website_candidates.append(url)
+
+    page_text = parser.text.lower()
+    intro_modes = [
+        match.group(1).lower()
+        for match in APPLY_MODE_PHRASE_RE.finditer(page_text)
+    ]
+    # Only accept "or/and X mode" alternatives that follow an intro sentence, so
+    # an unrelated "online mode" mention cannot misclassify the vacancy.
+    alt_modes = (
+        [match.group(1).lower() for match in APPLY_MODE_ALT_RE.finditer(page_text)]
+        if intro_modes
+        else []
+    )
+    modes = intro_modes + alt_modes
+    if "offline" in modes or any(
+        marker in page_text for marker in OFFLINE_ARTICLE_MARKERS
+    ):
+        apply_mode = "offline"
+    elif "online" in modes:
+        apply_mode = "online"
+    else:
+        apply_mode = ""
     return {
         "form": _pick_offline_document(form_candidates),
         "notification": _pick_offline_document(notification_candidates),
+        "website": _pick_offline_document(website_candidates),
+        "applyMode": apply_mode,
     }
 
 
@@ -1741,7 +1817,10 @@ def offline_job_from_entry(
     url = canonical_url(entry["url"])
     documents = {str(key): str(value) for key, value in (page_documents or {}).items()}
     form_target = canonical_url(documents.get("form") or "") or url
-    notification_target = canonical_url(documents.get("notification") or "")
+    notification_target = (
+        canonical_url(documents.get("notification") or "")
+        or canonical_url(documents.get("website") or "")
+    )
     offline_link = mask_offline_url(form_target, redirect)
     pdf_link = mask_offline_url(notification_target or url, redirect)
     is_punjab = clean_text(entry.get("type")) == "punjab"
@@ -1797,10 +1876,17 @@ def offline_job_from_entry(
 
 
 def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
-    """Merge the maintained registry with links scraped from configured offline-form listing sources."""
+    """Merge the maintained registry with links scraped from configured offline-form listing sources.
+
+    The portal's own listing is authoritative for the vacancy name: a scraped
+    entry refreshes the title/keywords of a registry entry for the same URL
+    while keeping the registry's curated department/type/location.
+    """
     pool: dict[str, dict[str, Any]] = {}
+    registry_urls: set[str] = set()
     for entry in load_offline_forms():
         pool[entry["url"]] = entry
+        registry_urls.add(entry["url"])
     for source in config.get("sources", []):
         if source.get("role") != "offline-forms" or source.get("enabled", True) is False:
             continue
@@ -1819,6 +1905,12 @@ def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
                     or title.lower() in GENERIC_TITLES
                     or title.lower() in OFFLINE_LISTING_JUNK_TITLES
                 ):
+                    continue
+                if cand_url in registry_urls:
+                    # Use the job name exactly as the portal lists it.
+                    registry_entry = pool[cand_url]
+                    registry_entry["title"] = title
+                    registry_entry["keywords"] = _offline_keywords(title)
                     continue
                 pool.setdefault(cand_url, {
                     "title": title,
@@ -1856,17 +1948,22 @@ def process_offline_forms(
     state: dict[str, Any],
     now: datetime,
     dry_run: bool = False,
+    pool: list[dict[str, Any]] | None = None,
 ) -> tuple[int, bool]:
     """Publish offline-apply vacancies with a masked offline application form link.
 
-    Returns (added, changed). onlineforms.in URLs never appear in the visible site
-    links; they are only recorded in data/offline-redirects.json and resolved by
-    redirect.html. The offline form link points at the direct application-form
-    PDF from the vacancy page whenever the page provides one, and the official
-    notice link points at the notification document from the same page when the
-    job has no official-website copy of it.
+    Returns (added, changed). onlineforms.in is used for offline-apply vacancies
+    only: entries whose portal page says online-apply are skipped, and online
+    vacancies come from the other discovery feeds. onlineforms.in URLs never
+    appear in the visible site links; they are only recorded in
+    data/offline-redirects.json and resolved by redirect.html. The offline form
+    link points at the direct application-form PDF from the vacancy page
+    whenever the page provides one, and the official notice link points at the
+    notification document from the same page (or the official website the page
+    links) when the job has no official-website copy of it.
     """
-    pool = gather_offline_forms_pool(config)
+    if pool is None:
+        pool = gather_offline_forms_pool(config)
     if not pool:
         return 0, False
     existing_redirects = read_json(DEFAULT_OFFLINE_REDIRECTS, {})
@@ -1898,15 +1995,19 @@ def process_offline_forms(
                 f"  Offline page document extraction failed ({key}): {exc}",
                 file=sys.stderr,
             )
-            return {"form": "", "notification": ""}
+            return {"form": "", "notification": "", "website": "", "applyMode": ""}
         page_cache[key] = documents
         return dict(documents)
 
     added = 0
     changed = False
 
-    # Drop offline alerts whose titles are listing-page chrome rather than real
-    # vacancies (nav/footer links that slipped through earlier runs).
+    # Clean-up passes over already-published alerts:
+    # 1) drop offline alerts whose titles are listing-page chrome rather than
+    #    real vacancies (nav/footer links that slipped through earlier runs);
+    # 2) strip stale offline-form fields from non-offline jobs (online-apply
+    #    vacancies must not carry portal links);
+    # 3) drop offline alerts whose own portal page now says online-apply.
     kept: list[dict[str, Any]] = []
     for job in jobs:
         if (
@@ -1916,17 +2017,54 @@ def process_offline_forms(
         ):
             changed = True
             continue
+        if not str(job.get("applyMode", "")).lower().startswith("offline"):
+            if job.get("offlineFormLink") or job.get("offlineFormName"):
+                job.pop("offlineFormLink", None)
+                job.pop("offlineFormName", None)
+                if clean_text(job.get("applyLabel")) == "Download Offline Application Form":
+                    job["applyLabel"] = "Open Official Application"
+                changed = True
+            kept.append(job)
+            continue
+        source_url = canonical_url(job.get("sourceUrl") or "")
+        if source_url and is_onlineforms_url(source_url) and not is_pdf_url(source_url):
+            if page_documents(source_url).get("applyMode") == "online":
+                print(
+                    f"  Dropped online-apply vacancy mislabelled as offline: {job.get('title')}"
+                )
+                changed = True
+                continue
         kept.append(job)
     jobs[:] = kept
 
     existing_titles = {clean_text(job.get("title", "")).lower() for job in jobs}
+    jobs_by_source = {
+        canonical_url(job.get("sourceUrl") or ""): job
+        for job in jobs
+        if job.get("sourceUrl")
+    }
     for entry in pool:
+        entry_url = canonical_url(entry["url"])
+        documents = page_documents(entry_url)
+        if documents.get("applyMode") == "online":
+            # Online-apply vacancies come from the other discovery feeds, never
+            # from the offline-form portal.
+            print(
+                f"  Skipped online-apply vacancy on the offline-forms portal: "
+                f"{clean_title(entry['title'])[:80]}"
+            )
+            continue
+        existing = jobs_by_source.get(entry_url)
+        if existing:
+            # The portal's own name for the vacancy wins.
+            if clean_text(existing.get("title", "")).lower() != clean_text(entry["title"]).lower():
+                existing["title"] = clean_title(entry["title"])
+                changed = True
+            continue
         title_lower = clean_text(entry["title"]).lower()
         if title_lower in existing_titles:
             continue
-        jobs.append(
-            offline_job_from_entry(entry, now, redirect, page_documents(entry["url"]))
-        )
+        jobs.append(offline_job_from_entry(entry, now, redirect, documents))
         existing_titles.add(title_lower)
         added += 1
         changed = True
@@ -1974,7 +2112,10 @@ def process_offline_forms(
                 continue
         documents = page_documents(page_url)
         form_target = canonical_url(documents.get("form") or "")
-        notification_target = canonical_url(documents.get("notification") or "")
+        notification_target = (
+            canonical_url(documents.get("notification") or "")
+            or canonical_url(documents.get("website") or "")
+        )
         if form_target:
             new_link = mask_offline_url(form_target, redirect)
             if new_link and new_link != offline_link:
@@ -2122,11 +2263,23 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             added += 1
             jobs_changed = True
 
+    # The offline-form portal is the single source for offline-apply vacancies;
+    # its pool is built once and shared with the discovery-feed pipeline, which
+    # uses it to skip offline vacancies the portal already covers.
+    offline_source_active = any(
+        source.get("role") == "offline-forms"
+        for source in config.get("sources", [])
+    )
+    offline_pool: list[dict[str, Any]] = []
+    if offline_source_active:
+        offline_pool = gather_offline_forms_pool(config)
+
     discovery_jobs, discovery_added, discovery_state_changed = process_discovery_feeds(
         approved_official_organizations(config["sources"]),
         state,
         now,
         dry_run,
+        offline_pool,
     )
     if discovery_jobs:
         jobs.extend(discovery_jobs)
@@ -2135,8 +2288,10 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     if discovery_state_changed:
         state_changed = True
 
-    if any(source.get("role") == "offline-forms" for source in config.get("sources", [])):
-        offline_added, offline_changed = process_offline_forms(config, jobs, state, now, dry_run)
+    if offline_source_active:
+        offline_added, offline_changed = process_offline_forms(
+            config, jobs, state, now, dry_run, offline_pool
+        )
         if offline_added:
             added += offline_added
             jobs_changed = True
