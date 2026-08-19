@@ -59,6 +59,21 @@ class InlineScriptSyntaxTest(unittest.TestCase):
                 "the inline script cannot parse (see PR #18).",
             )
 
+    def test_vacancy_sections_use_newest_first_order(self):
+        self.assertIn("function sortNewestPublishedFirst(items)", self.html)
+        self.assertGreaterEqual(
+            self.html.count("sortNewestPublishedFirst("),
+            5,
+            "Punjab, Central, Admission and master-table renderers must keep newest notices first",
+        )
+        self.assertNotIn("sortByLastDateDesc(", self.html)
+
+    def test_frontend_rejects_generic_titles_and_departments(self):
+        self.assertIn("function jobTitleWithDepartment(title, department)", self.html)
+        for bad_label in ("other links", "close menu", "work recruitments"):
+            self.assertIn(f"'{bad_label}'", self.html)
+        self.assertIn("'official recruitment notice'", self.html)
+
     @unittest.skipUnless(shutil.which("node"), "node executable not available")
     def test_inline_scripts_parse_with_node(self):
         for index, script in enumerate(self.scripts):

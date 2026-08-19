@@ -1366,13 +1366,66 @@
             }
         }
 
+        const GENERIC_JOB_TITLES = new Set([
+            'other link', 'other links', 'close menu', 'mdu date sheet', 'date sheet',
+            'work recruitment', 'work recruitments',
+            'www.onlineforms.in'
+        ]);
+        const GENERIC_JOB_DEPARTMENTS = new Set([
+            'official offline recruitment notices', 'official recruitment notice',
+            'official recruitment notices', 'official recruitment website', 'official website'
+        ]);
+
+        function departmentAliases(department) {
+            const value = String(department || '').trim();
+            const aliases = [value];
+            aliases.push(...[...value.matchAll(/\(([A-Z][A-Z0-9&./ -]{1,20})\)/g)].map(match => match[1]));
+            const withoutParenthetical = value.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+            if (withoutParenthetical.length >= 4) aliases.push(withoutParenthetical);
+            const leading = withoutParenthetical.split(/\s+(?:[-–—]|,\s*(?:Amritsar|Bathinda|Chandigarh|Delhi|Ludhiana|Patiala))\b/i)[0];
+            if (leading.length >= 4) aliases.push(leading);
+            return [...new Set(aliases.filter(alias => alias.length >= 3))];
+        }
+
+        function titleIncludesDepartment(title, department) {
+            const lowered = String(title || '').toLowerCase();
+            const needle = String(department || '').trim().toLowerCase();
+            const index = lowered.indexOf(needle);
+            if (index < 0) return false;
+            const before = lowered[index - 1] || '';
+            const after = lowered[index + needle.length] || '';
+            return !/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after);
+        }
+
+        function jobTitleWithDepartment(title, department) {
+            const subject = String(title || '').replace(/\s+/g, ' ').trim();
+            const authority = String(department || '').replace(/\s+/g, ' ').trim();
+            if (!subject || GENERIC_JOB_TITLES.has(subject.toLowerCase())) return '';
+            if (!authority || GENERIC_JOB_DEPARTMENTS.has(authority.toLowerCase())) return '';
+            const applicationOnly = subject.match(/^applications?(?:\s+forms?)?\s+(?:are\s+invited\s+)?for\s+(?:the\s+)?(?:posts?\s+of\s+)?(.+)$/i);
+            let specificSubject = applicationOnly ? `${applicationOnly[1]} Recruitment` : subject;
+            if (titleIncludesDepartment(specificSubject, authority)) return specificSubject;
+            for (const alias of departmentAliases(authority).slice(1).sort((a, b) => b.length - a.length)) {
+                const escapedAlias = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const shortened = specificSubject.replace(
+                    new RegExp(`^\\s*${escapedAlias}\\s*[,|:–—-]*\\s*`, 'i'), ''
+                ).trim();
+                if (shortened && shortened !== specificSubject) {
+                    specificSubject = shortened;
+                    break;
+                }
+            }
+            return `${authority} — ${specificSubject}`;
+        }
+
         function normalizeAutomaticJob(raw, index) {
             if (!raw || typeof raw !== 'object') return null;
             const text = (value, fallback = '', max = 900) => {
                 const normalized = String(value ?? fallback).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
                 return (normalized || fallback).slice(0, max);
             };
-            const title = text(raw.title, '', 240);
+            const department = text(raw.department, '', 180);
+            const title = text(jobTitleWithDepartment(text(raw.title, '', 240), department), '', 420);
             if (!title) return null;
             const rawId = Number(raw.id);
             const id = Number.isSafeInteger(rawId) && rawId >= 100 ? rawId : 900000000000000 + index;
@@ -1396,7 +1449,7 @@
             return {
                 id,
                 title,
-                department: text(raw.department, 'Official Recruitment Website', 180),
+                department,
                 vacancies: text(raw.vacancies, 'See Notification', 80),
                 qualification: text(raw.qualification, 'See Official Notification', 180),
                 qualCategory,
@@ -1726,15 +1779,44 @@
             if (masterSummary) masterSummary.innerHTML = `<i class="far fa-calendar-check mr-1"></i>${escapeHtml(summary)}`;
         }
 
-        // Sort jobs by last date descending — farthest deadline first, then unparseable dates last
-        function sortByLastDateDesc(jobs) {
-            return [...jobs].sort((a, b) => {
-                const da = parseLastDate(a.lastDate);
-                const db = parseLastDate(b.lastDate);
-                const ta = da ? da.getTime() : -1;
-                const tb = db ? db.getTime() : -1;
-                return tb - ta; // descending: farthest date first
-            });
+        function isActiveApplication(job) {
+            const deadline = parseLastDate(job && job.lastDate);
+            return deadline === null || deadline.getTime() >= Date.now();
+        }
+
+        function prepareVisibleVacancies(jobs) {
+            return jobs
+                .map(job => ({
+                    ...job,
+                    title: jobTitleWithDepartment(job.title, job.department) || job.title
+                }))
+                .filter(isActiveApplication);
+        }
+
+        function publishedTimestamp(item) {
+            const officialTimestamp = noticeTimestamp(item);
+            if (officialTimestamp) return officialTimestamp;
+            const startDate = parseLastDate(item && item.startDate);
+            return startDate ? startDate.getTime() : 0;
+        }
+
+        // New publication/discovery time is always the primary order in every
+        // vacancy section. Original order is retained only when no date is known.
+        function sortNewestPublishedFirst(items) {
+            return items
+                .map((item, index) => ({ item, index, timestamp: publishedTimestamp(item) }))
+                .sort((a, b) => (b.timestamp - a.timestamp) || (a.index - b.index))
+                .map(entry => entry.item);
+        }
+
+        function sortResourcesNewestFirst(items) {
+            return items
+                .map((item, index) => {
+                    const timestamp = Date.parse(item.updatedAt || item.publishedAt || '');
+                    return { item, index, timestamp: Number.isFinite(timestamp) ? timestamp : 0 };
+                })
+                .sort((a, b) => (b.timestamp - a.timestamp) || (a.index - b.index))
+                .map(entry => entry.item);
         }
 
         function renderJobSectionCard(job, color) {
@@ -1771,12 +1853,12 @@
 
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            list.innerHTML = sortByLastDateDesc(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -1790,12 +1872,15 @@
                     </div>`;
                 return;
             }
-            list.innerHTML = sortByLastDateDesc(admissionDatabase).map(job => renderJobSectionCard(job, 'teal')).join('');
+            list.innerHTML = sortNewestPublishedFirst(admissionDatabase).map(job => renderJobSectionCard(job, 'teal')).join('');
         }
+
+        let renderedAdmitCards = admitCards;
 
         function renderAdmitCards() {
             const list = document.getElementById('admit-cards-list');
-            list.innerHTML = admitCards.map((item, index) => `
+            renderedAdmitCards = sortResourcesNewestFirst(admitCards);
+            list.innerHTML = renderedAdmitCards.map((item, index) => `
                 <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between gap-2" role="link" tabindex="0" onclick="openAdmitCardItem(${index})" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openAdmitCardItem(${index}); }">
                     <div>
                         <div class="font-bold text-xs text-slate-800 hover:text-emerald-700">${escapeHtml(item.title)}</div>
@@ -1809,7 +1894,7 @@
         }
 
         function openAdmitCardItem(index) {
-            const item = admitCards[index];
+            const item = renderedAdmitCards[index];
             const link = safeExternalUrl(item && item.link);
             if (link !== '#') {
                 window.open(link, '_blank', 'noopener,noreferrer');
@@ -1818,8 +1903,10 @@
             }
         }
 
+        let renderedResultsList = resultsList;
+
         function openResultItem(index) {
-            const item = resultsList[index];
+            const item = renderedResultsList[index];
             const link = safeExternalUrl(item && item.link);
             if (link !== '#') {
                 window.open(link, '_blank', 'noopener,noreferrer');
@@ -1830,7 +1917,8 @@
 
         function renderResults() {
             const list = document.getElementById('results-list');
-            list.innerHTML = resultsList.map((item, index) => `
+            renderedResultsList = sortResourcesNewestFirst(resultsList);
+            list.innerHTML = renderedResultsList.map((item, index) => `
                 <div class="p-3 hover:bg-rose-50/60 transition cursor-pointer flex items-center justify-between" onclick="openResultItem(${index})">
                     <div>
                         <div class="font-bold text-xs text-slate-800 hover:text-rose-700">${escapeHtml(item.title)}</div>
@@ -1858,7 +1946,7 @@
             noMsg.classList.add('hidden');
             countBadge.innerText = `Showing ${dataToRender.length} of ${jobDatabase.length}`;
 
-            tbody.innerHTML = sortByLastDateDesc(dataToRender).map(job => `
+            tbody.innerHTML = sortNewestPublishedFirst(dataToRender).map(job => `
                 <tr class="hover:bg-slate-50/80 hover:-translate-y-0.5 transition-all duration-200 group border-b border-slate-100">
                     <td class="p-3.5">
                         <div class="flex items-start gap-2">
@@ -2283,6 +2371,8 @@
         // Initialize All Components on Load
         window.addEventListener('DOMContentLoaded', async () => {
             await loadAutomaticJobs();
+            jobDatabase = prepareVisibleVacancies(jobDatabase);
+            admissionDatabase = prepareVisibleVacancies(admissionDatabase);
             renderPunjabColumn();
             renderCentralColumn();
             renderAdmissionSection();
