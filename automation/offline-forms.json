@@ -3,7 +3,7 @@
   "description": "Offline-apply vacancies whose offline application form is hosted on onlineforms.in. The monitor merges this maintained registry with whatever it can scrape from the configured offline-forms listing source(s). Each entry must point to the onlineforms.in page for that specific job. Add new offline-apply vacancies here (or they will be picked up automatically from the listing source).",
   "offlineForms": [
     {
-      "title": "Air Force Non-Combatant Recruitment 2026 Offline Application Form",
+      "title": "Air Force Non-Combatant Recruitment 2026 Offline Form",
       "keywords": ["air force", "non combatant", "agniveer", "iaf", "ncb"],
       "url": "https://onlineforms.in/air-force-non-combatant-recruitment/",
       "department": "Indian Air Force (IAF)",
@@ -12,7 +12,7 @@
       "location": "All India"
     },
     {
-      "title": "Railway Sports Quota Recruitment 2026 Offline Application Form",
+      "title": "Railway Sports Quota Recruitment 2026 Apply Online/ Offline",
       "keywords": ["railway", "sports quota", "rrc", "railway recruitment cell"],
       "url": "https://onlineforms.in/railway-sports-quota-recruitment/",
       "department": "Railway Recruitment Cell (RRC)",
@@ -21,7 +21,7 @@
       "location": "All India"
     },
     {
-      "title": "CCRS Recruitment 2026 Offline Application Form",
+      "title": "CCRS Recruitment 2026 Apply for Clerk & Social Worker",
       "keywords": ["ccrs", "council for research in siddha", "clerk", "social worker", "udc", "ldc"],
       "url": "https://onlineforms.in/ccrs-recruitment-2026-clerk-social-worker/",
       "department": "Central Council for Research in Siddha (CCRS)",
