@@ -497,6 +497,185 @@ class JobMonitorTests(unittest.TestCase):
         self.assertNotIn("onlineforms", target["offlineFormLink"])
         self.assertEqual(target["applyLabel"], "Download Offline Application Form")
 
+    def test_offline_page_documents_extracts_form_and_notification_pdfs(self):
+        page = monitor.Download(
+            "https://onlineforms.in/indian-army-cdm-recruitment/",
+            "text/html",
+            b"""
+            <html><body>
+              <h1>Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS &amp; Steno</h1>
+              <a href="https://onlineforms.in/ids-jaipur-recruitment/">IDS Jaipur Recruitment</a>
+              <table>
+                <tr><td>College of Defence Management Official Notice &amp; Link</td></tr>
+                <tr><td>Download Application Form</td>
+                    <td><a href="https://onlineforms.in/wp-content/uploads/2023/08/OnlineForms.in-College-of-Defence-Management-Application-Form-21082023.pdf">Download</a></td></tr>
+                <tr><td>Best Books for Exam Preparation</td>
+                    <td><a href="https://amzn.to/4vxBB7U">Recommended Books</a></td></tr>
+                <tr><td>Official Notification</td>
+                    <td><a href="https://onlineforms.in/wp-content/uploads/2023/09/College-of-Defence-Management-Notification-May-2026_compressed.pdf">Notification</a></td></tr>
+                <tr><td>Official Website</td><td><a href="https://indianarmy.nic.in/">Click Here</a></td></tr>
+                <tr><td>Govt. Job Updates on Telegram App</td>
+                    <td><a href="https://telegram.me/online_forms/">Join Channel</a></td></tr>
+              </table>
+              <a href="https://onlineforms.in/sainik-school-jhansi-recruitment/">Sainik School Jhansi Recruitment 2026 Apply Link</a>
+            </body></html>
+            """,
+        )
+        documents = monitor.offline_page_documents(page.url, page)
+        self.assertIn("OnlineForms.in-College-of-Defence-Management-Application-Form", documents["form"])
+        self.assertIn("College-of-Defence-Management-Notification", documents["notification"])
+        self.assertTrue(monitor.is_pdf_url(documents["form"]))
+        self.assertTrue(monitor.is_pdf_url(documents["notification"]))
+
+    def test_offline_page_documents_prefers_official_website_notification(self):
+        page = monitor.Download(
+            "https://onlineforms.in/defence-services-staff-college-recruitment/",
+            "text/html",
+            b"""
+            <html><body>
+              <table>
+                <tr><td>DSSC Wellington Official Notice &amp; Link</td></tr>
+                <tr><td>Download Application Form</td>
+                    <td><a href="https://drive.google.com/file/d/1JWX1It9WZ6LsTHj7V9eH-wqrNWUnGaCI/view">Download</a></td></tr>
+                <tr><td>Official Notification</td>
+                    <td><a href="https://ids.nic.in/KnowledgeBankDetails?type=Direct%20Recruitment">Notification</a></td></tr>
+                <tr><td>Official Website</td><td><a href="https://ids.nic.in/">Click Here</a></td></tr>
+              </table>
+            </body></html>
+            """,
+        )
+        documents = monitor.offline_page_documents(page.url, page)
+        self.assertEqual(documents["form"], "https://drive.google.com/file/d/1JWX1It9WZ6LsTHj7V9eH-wqrNWUnGaCI/view")
+        self.assertEqual(documents["notification"], "https://ids.nic.in/KnowledgeBankDetails?type=Direct+Recruitment")
+
+    def test_offline_job_from_entry_uses_direct_pdf_links(self):
+        entry = {
+            "title": "Indian Army CDM Recruitment 2026 Offline Application Form",
+            "url": "https://onlineforms.in/indian-army-cdm-recruitment/",
+            "department": "College of Defence Management (CDM)",
+            "type": "central",
+            "categorySlug": "central",
+            "location": "All India",
+        }
+        documents = {
+            "form": "https://onlineforms.in/wp-content/uploads/2023/08/OnlineForms.in-College-of-Defence-Management-Application-Form-21082023.pdf",
+            "notification": "https://onlineforms.in/wp-content/uploads/2023/09/College-of-Defence-Management-Notification-May-2026_compressed.pdf",
+        }
+        redirect: dict[str, str] = {}
+        now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
+        job = monitor.offline_job_from_entry(entry, now, redirect, documents)
+        form_token = monitor.redirect_token(documents["form"])
+        notification_token = monitor.redirect_token(documents["notification"])
+        self.assertEqual(job["offlineFormLink"], f"redirect.html?f={form_token}")
+        self.assertEqual(job["applyLink"], f"redirect.html?f={form_token}")
+        self.assertEqual(job["pdfLink"], f"redirect.html?f={notification_token}")
+        self.assertEqual(redirect[form_token], documents["form"])
+        self.assertEqual(redirect[notification_token], documents["notification"])
+        for field in ("offlineFormLink", "applyLink", "pdfLink"):
+            self.assertNotIn("onlineforms", job[field].lower())
+
+    def test_offline_forms_processing_upgrades_published_alerts_to_pdfs(self):
+        article = "https://onlineforms.in/indian-army-cdm-recruitment/"
+        form_pdf = "https://onlineforms.in/wp-content/uploads/2023/08/OnlineForms.in-College-of-Defence-Management-Application-Form-21082023.pdf"
+        notification_pdf = "https://onlineforms.in/wp-content/uploads/2023/09/College-of-Defence-Management-Notification-May-2026_compressed.pdf"
+        article_token = monitor.redirect_token(article)
+        page_html = f"""
+            <html><body>
+              <table>
+                <tr><td>Download Application Form</td><td><a href="{form_pdf}">Download</a></td></tr>
+                <tr><td>Official Notification</td><td><a href="{notification_pdf}">Notification</a></td></tr>
+              </table>
+            </body></html>
+        """
+        jobs = [{
+            "id": 123,
+            "title": "Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS & Steno",
+            "department": "Official Offline Recruitment Notices",
+            "applyMode": "Offline",
+            "applyLabel": "Download Offline Application Form",
+            "offlineFormLink": f"redirect.html?f={article_token}",
+            "applyLink": f"redirect.html?f={article_token}",
+            "pdfLink": f"redirect.html?f={article_token}",
+            "sourceUrl": article,
+        }]
+        config = {"sources": [{
+            "id": "x", "role": "offline-forms", "enabled": True,
+            "url": "https://onlineforms.in/latest-offline-forms/", "timeout": 5,
+        }]}
+
+        def fake_fetch(url, timeout=25, retries=2):
+            if url == article:
+                return monitor.Download(article, "text/html", page_html.encode("utf-8"))
+            raise RuntimeError("no network")
+
+        now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
+        state: dict[str, object] = {"sources": {}}
+        with tempfile.TemporaryDirectory() as folder:
+            redirect_path = Path(folder) / "offline-redirects.json"
+            redirect_path.write_text(json.dumps({
+                "version": 1,
+                "redirects": {article_token: article},
+            }), encoding="utf-8")
+            with patch.object(monitor, "DEFAULT_OFFLINE_REDIRECTS", redirect_path), \
+                 patch.object(monitor, "fetch_url", side_effect=fake_fetch):
+                monitor.process_offline_forms(config, jobs, state, now)
+            payload = json.loads(redirect_path.read_text(encoding="utf-8"))
+            redirects = payload["redirects"]
+            target = jobs[0]
+            form_token = monitor.redirect_token(form_pdf)
+            notification_token = monitor.redirect_token(notification_pdf)
+            self.assertEqual(target["offlineFormLink"], f"redirect.html?f={form_token}")
+            self.assertEqual(target["applyLink"], f"redirect.html?f={form_token}")
+            self.assertEqual(target["pdfLink"], f"redirect.html?f={notification_token}")
+            self.assertEqual(redirects[form_token], form_pdf)
+            self.assertEqual(redirects[notification_token], notification_pdf)
+            self.assertEqual(state["offlinePageDocuments"][article], {
+                "form": form_pdf, "notification": notification_pdf,
+            })
+
+    def test_offline_listing_junk_titles_are_filtered_and_purged(self):
+        config = {"sources": [{
+            "id": "x", "role": "offline-forms", "enabled": True,
+            "url": "https://onlineforms.in/latest-offline-forms/", "timeout": 5,
+        }]}
+        listing = monitor.Download(
+            "https://onlineforms.in/latest-offline-forms/",
+            "text/html",
+            b"""
+            <html><body>
+              <a href="https://onlineforms.in/indian-army-cdm-recruitment/">Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS &amp; Steno</a>
+              <a href="https://onlineforms.in/">Skip to content</a>
+              <a href="https://onlineforms.in/latest-online-forms/">Online Form</a>
+              <a href="https://onlineforms.in/latest-admit-card/">Admit Card</a>
+              <a href="https://onlineforms.in/latest-answer-key/">Answer Key</a>
+              <a href="https://onlineforms.in/admission/">Admission</a>
+            </body></html>
+            """,
+        )
+        with patch.object(monitor, "fetch_url", return_value=listing):
+            pool = monitor.gather_offline_forms_pool(config)
+        pool_urls = {entry["url"] for entry in pool}
+        pool_titles = {entry["title"].lower() for entry in pool}
+        self.assertIn("https://onlineforms.in/indian-army-cdm-recruitment/", pool_urls)
+        for junk in ("Skip to content", "Online Form", "Admit Card", "Answer Key", "Admission"):
+            self.assertNotIn(junk.lower(), pool_titles)
+
+        now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
+        jobs = [
+            {"id": 1, "title": "Skip to content", "applyMode": "Offline", "offlineFormLink": "redirect.html?f=000000000000"},
+            {"id": 2, "title": "Admit Card", "applyMode": "Offline", "offlineFormLink": "redirect.html?f=000000000001"},
+            {"id": 3, "title": "Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS & Steno", "applyMode": "Offline", "offlineFormLink": "redirect.html?f=000000000002", "sourceUrl": "https://onlineforms.in/indian-army-cdm-recruitment/"},
+        ]
+        with tempfile.TemporaryDirectory() as folder:
+            redirect_path = Path(folder) / "offline-redirects.json"
+            with patch.object(monitor, "DEFAULT_OFFLINE_REDIRECTS", redirect_path), \
+                 patch.object(monitor, "fetch_url", side_effect=RuntimeError("no network")):
+                monitor.process_offline_forms(config, jobs, {"sources": {}}, now)
+        remaining_ids = [job["id"] for job in jobs]
+        self.assertNotIn(1, remaining_ids)  # "Skip to content" purged
+        self.assertNotIn(2, remaining_ids)  # "Admit Card" purged
+        self.assertIn(3, remaining_ids)  # real vacancy kept (registry alerts may also be added)
+
     def test_offline_source_configured_in_sources_json(self):
         config = json.loads(
             (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
