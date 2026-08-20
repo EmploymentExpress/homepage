@@ -276,6 +276,28 @@
         "sgpc education directorate",
         "shiromani gurdwara parbandhak committee education"
       ]
+    },
+    {
+      "id": "india-post-gds",
+      "name": "India Post GDS Online Engagement",
+      "department": "India Post — Department of Posts, Ministry of Communications, Government of India",
+      "url": "https://indiapost.gov.in/gdsonlineengagement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "india post",
+        "indiapost",
+        "india post gds",
+        "department of posts",
+        "post office gds",
+        "postal department",
+        "gramin dak sevak",
+        "dak sevak",
+        "gds online engagement",
+        "gds"
+      ]
     }
   ]
 }

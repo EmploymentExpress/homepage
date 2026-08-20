@@ -999,6 +999,81 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("onlineforms.in", hosts)
         self.assertIn("speedjob.in", hosts)
 
+    def _india_post_gds_source(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        matches = [
+            source
+            for source in config["sources"]
+            if monitor.host_name(source["url"]) == "indiapost.gov.in"
+        ]
+        self.assertEqual(len(matches), 1)
+        return matches[0]
+
+    def test_india_post_gds_portal_is_a_monitored_official_source(self):
+        source = self._india_post_gds_source()
+        self.assertEqual(source["id"], "india-post-gds")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(source["url"], "https://indiapost.gov.in/gdsonlineengagement")
+        self.assertEqual(source["type"], "central")
+        self.assertEqual(source["categorySlug"], "central")
+        self.assertIn("Department of Posts", source["department"])
+
+        # Discovery-feed headlines about the GDS engagement must resolve to the
+        # official India Post portal rather than to an aggregator.
+        organizations = monitor.approved_official_organizations([source])
+        for headline in (
+            "India Post GDS Recruitment 2026 for 28636 Vacancies",
+            "Post Office GDS Bharti 2026 Apply Online",
+            "Department of Posts Gramin Dak Sevak merit list released",
+        ):
+            with self.subTest(headline=headline):
+                matched = monitor.match_official_organization(headline, organizations)
+                self.assertIsNotNone(matched)
+                self.assertEqual(matched["id"], "india-post-gds")
+
+    def test_india_post_gds_notices_are_classified_and_named(self):
+        source = dict(self._india_post_gds_source(), enrichDetails=False)
+        examples = {
+            "Gramin Dak Sevak (GDS) Online Engagement Schedule-I, January-2026": "recruitment",
+            "Circle-wise vacancy details of Gramin Dak Sevaks (Annexure-I)": "recruitment",
+            "List-IV of shortlisted candidates for Assam Circle": "result",
+            "Corrigendum to GDS Online Engagement Schedule-I, January-2026": "corrigendum",
+        }
+        for title, expected in examples.items():
+            with self.subTest(title=title):
+                candidate = monitor.Candidate(
+                    title, "https://indiapost.gov.in/gdsonlineengagement/pdf/notice.pdf"
+                )
+                self.assertEqual(monitor.classify_notice(candidate, source), expected)
+
+        for junk in ("Login / Register", "Frequently Asked Questions", "Privacy Policy"):
+            with self.subTest(junk=junk):
+                candidate = monitor.Candidate(junk, "https://indiapost.gov.in/gdsonlineengagement/x")
+                self.assertIsNone(monitor.classify_notice(candidate, source))
+
+        notification = monitor.Candidate(
+            "Gramin Dak Sevak (GDS) Online Engagement Schedule-I, January-2026",
+            "https://indiapost.gov.in/gdsonlineengagement/pdf/descriptive-notification.pdf",
+        )
+        job = monitor.job_from_candidate(
+            notification, source, datetime(2026, 8, 20, tzinfo=timezone.utc)
+        )
+        self.assertTrue(job["title"].startswith("India Post — Department of Posts"))
+        self.assertIn("Gramin Dak Sevak", job["title"])
+        # Official notice keeps the direct notification PDF; Apply Online keeps
+        # the engagement portal (never a generic root homepage).
+        self.assertEqual(
+            job["pdfLink"],
+            "https://indiapost.gov.in/gdsonlineengagement/pdf/descriptive-notification.pdf",
+        )
+        self.assertEqual(job["applyLink"], "https://indiapost.gov.in/gdsonlineengagement")
+        self.assertEqual(job["type"], "central")
+        self.assertEqual(job["location"], "All India")
+
 
 if __name__ == "__main__":
     unittest.main()

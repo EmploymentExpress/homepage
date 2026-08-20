@@ -755,6 +755,53 @@
       "maxNewPerRun": 5,
       "timeout": 35,
       "detailTimeout": 25
+    },
+    {
+      "id": "india-post-gds",
+      "enabled": true,
+      "name": "India Post GDS Online Engagement",
+      "department": "India Post — Department of Posts, Ministry of Communications, Government of India",
+      "url": "https://indiapost.gov.in/gdsonlineengagement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": [
+        "gramin dak sevak",
+        "dak sevak",
+        "branch postmaster",
+        "assistant branch postmaster",
+        "gds",
+        "abpm",
+        "bpm",
+        "online engagement",
+        "engagement schedule",
+        "descriptive notification",
+        "circle",
+        "annexure"
+      ],
+      "excludeKeywords": [
+        "login",
+        "sign in",
+        "forgot password",
+        "user manual",
+        "help desk",
+        "helpline",
+        "faq",
+        "frequently asked questions",
+        "screen reader",
+        "privacy policy",
+        "terms and conditions",
+        "website policies",
+        "contact us",
+        "feedback",
+        "tender",
+        "quotation"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8,
+      "timeout": 35,
+      "detailTimeout": 30
     }
   ]
 }
