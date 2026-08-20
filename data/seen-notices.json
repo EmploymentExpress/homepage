@@ -72,7 +72,8 @@
         "b428dfb17d83bc0bbfcc097f48eee948a6ff1b74f721aea633892470d7e90fde",
         "f05ec9517608e8b85ff12e0dc135b66f346b3f500c7f24fa3654614807f67653",
         "673e56ae7a0e47e48eb0bf0304937362e5c52fbce9483b79d7e7f74475cb1b07",
-        "61af6207cecfc7c78b8b5db10051210427e18640709c1b833e467b1fe77e5b42"
+        "61af6207cecfc7c78b8b5db10051210427e18640709c1b833e467b1fe77e5b42",
+        "c52ae482847bf394ab739a4ca21f716c09329b66a41796af529aeae2c3c1e69e"
       ]
     },
     "linkingsky-punjab-jobs": {
@@ -5323,6 +5324,16 @@
       "startDate": "18-08-2026",
       "lastDate": "08-09-2026",
       "pageTitle": "BEML Graduate Apprentice, Diploma Apprentice, Trade Apprentice Recruitment 2026"
+    },
+    "https://www.speedjob.in/uppsc-professor-and-assistant-professor-recruitment-2026/": {
+      "form": "",
+      "notification": "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx",
+      "website": "",
+      "applyMode": "online",
+      "department": "Uttar Pradesh Public Service Commission (UPPSC)",
+      "startDate": "18-08-2026",
+      "lastDate": "01-09-2026",
+      "pageTitle": "UPPSC Professor And Assistant Professor Recruitment 2026"
     }
   }
 }
