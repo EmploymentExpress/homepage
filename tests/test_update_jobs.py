@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import re
 import tempfile
 import unittest
 import sys
@@ -198,6 +199,60 @@ class JobMonitorTests(unittest.TestCase):
         )
         self.assertFalse(monitor.is_discovery_host(home[0]["url"]))
         self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
+
+    def test_curated_psssb_reopen_entry_follows_title_and_link_rules(self):
+        html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        entry = re.search(
+            r"\{\s*id: 16,.*?applyLabel: \"[^\"]*\"\s*\}", html, re.S
+        )
+        self.assertIsNotNone(entry, "Curated PSSSB Craft Instructor entry is missing")
+        block = entry.group(0)
+
+        def field(name):
+            match = re.search(rf"{name}: \"((?:[^\"\\]|\\.)*)\"", block)
+            self.assertIsNotNone(match, f"{name} missing from the curated entry")
+            return match.group(1)
+
+        title = field("title")
+        department = field("department")
+        # AGENTS.md naming rule: the visible title names the full recruiting
+        # board and the actual post, so re-rendering it never rewrites it.
+        self.assertEqual(monitor.official_job_title(title, department), title)
+        self.assertFalse(monitor.is_junk_job_title(title))
+        self.assertTrue(monitor.title_mentions_department(title, department))
+        self.assertIn("Craft Instructor", title)
+        self.assertRegex(title, r"(?i)re-?opened")
+        # AGENTS.md link rule: never a generic root homepage.
+        for name in ("pdfLink", "applyLink", "extensionNoticeUrl"):
+            url = monitor.canonical_url(field(name))
+            self.assertTrue(url, f"{name} must be a usable http(s) URL")
+            self.assertNotIn(
+                url, {"https://sssb.punjab.gov.in/", "http://sssb.punjab.gov.in/"}
+            )
+            self.assertFalse(monitor.is_discovery_host(url))
+
+    def test_psssb_source_catches_reopened_application_notices(self):
+        source = next(
+            item
+            for item in json.loads(
+                (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                    encoding="utf-8"
+                )
+            )["sources"]
+            if item["id"] == "psssb-home"
+        )
+        # A re-opening notice that also names the advertisement is a recruitment notice.
+        advertisement_notice = monitor.Candidate(
+            title="Public Notice regarding re-opening of online applications for Advertisement No. 03/2026",
+            url="https://sssb.punjab.gov.in/uploads/public-notice-reopen-03-2026.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(advertisement_notice, source), "recruitment")
+        # A bare re-opening notice is still captured through the source keywords.
+        window_notice = monitor.Candidate(
+            title="Public Notice regarding re-opening of the portal for Craft Instructor posts",
+            url="https://sssb.punjab.gov.in/uploads/public-notice-reopen-window.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(window_notice, source), "corrigendum")
 
     def test_published_title_always_names_recruiting_department(self):
         self.assertEqual(

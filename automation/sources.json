@@ -29,7 +29,17 @@
       "categorySlug": "psssb",
       "location": "Punjab",
       "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "includeKeywords": ["public notice regarding revised dates", "corrigendum", "addendum"],
+      "includeKeywords": [
+        "public notice regarding revised dates",
+        "corrigendum",
+        "addendum",
+        "re-open",
+        "reopen",
+        "re-opening",
+        "reopening",
+        "re-opened",
+        "reopened"
+      ],
       "defaultNoticeType": "corrigendum",
       "bootstrapCount": 1,
       "maxNewPerRun": 8
