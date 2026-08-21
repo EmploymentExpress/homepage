@@ -176,6 +176,29 @@ class JobMonitorTests(unittest.TestCase):
             ],
         )
 
+    def test_psssb_official_site_is_monitored(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        psssb = [
+            source for source in config["sources"] if "sssb.punjab.gov.in" in source["url"]
+        ]
+        self.assertTrue(psssb, "PSSSB must be configured as an automation source")
+        home = [
+            source
+            for source in psssb
+            if monitor.canonical_url(source["url"]) == "https://sssb.punjab.gov.in/"
+        ]
+        self.assertEqual(len(home), 1)
+        self.assertTrue(home[0]["enabled"])
+        self.assertEqual(
+            home[0]["department"], "Punjab Subordinate Services Selection Board (PSSSB)"
+        )
+        self.assertFalse(monitor.is_discovery_host(home[0]["url"]))
+        self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
+
     def test_published_title_always_names_recruiting_department(self):
         self.assertEqual(
             monitor.official_job_title(

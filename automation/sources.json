@@ -20,6 +20,21 @@
       "maxNewPerRun": 5
     },
     {
+      "id": "psssb-home",
+      "enabled": true,
+      "name": "PSSSB Latest Announcements",
+      "department": "Punjab Subordinate Services Selection Board (PSSSB)",
+      "url": "https://sssb.punjab.gov.in/",
+      "type": "punjab",
+      "categorySlug": "psssb",
+      "location": "Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": ["public notice regarding revised dates", "corrigendum", "addendum"],
+      "defaultNoticeType": "corrigendum",
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8
+    },
+    {
       "id": "psssb-results",
       "enabled": false,
       "name": "PSSSB Results and Answer Keys",
