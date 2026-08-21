@@ -41,6 +41,48 @@ Whenever job details are updated, curated, or generated via automation:
 - **`applyLink` (Apply Online / Portal):** MUST always point directly to the specific online application or registration portal page for that post.
 - **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). Always extract or provide the direct notification or portal page URL.
 
+## 🔍 Source-of-truth rule: always read the official website **and its page source** (Mandatory)
+
+Job details are never written from memory, from a search snippet, or from a job-alert blog.
+Before you add, edit, or re-date **any** job/notice detail — title, department, advertisement
+number, vacancy count, dates, `pdfLink`, `applyLink` — you must complete this loop:
+
+1. **Open the official website** of the recruiting board/department: the URL registered for it
+   in `automation/sources.json` (or `automation/official-organizations.json`). That registry is
+   the list of approved sources; if the organisation is not in it, add it there first.
+2. **Read that page's source** — the actual rendered HTML/link list ("What's New", "Latest
+   Updates", the vacancy listing), not a summary of it. Every URL you publish must be **copied
+   verbatim from an anchor `href` you saw in that page source**.
+3. **Update the job details to match the source**: the notice must actually exist there, and the
+   post name, advertisement number and dates you publish must match the board's own wording.
+
+**Hard rules that follow from this:**
+
+- ❌ **Never publish a URL you did not see in the official page source.** Aggregators
+  (freejobalert, sarkariresult, mysarkarinaukri, dailyjobalert, punjabjobalert, linkingsky,
+  testbook, adda247, …) may be used only as a *lead* to learn that a notice exists. Their
+  "direct link" URLs are routinely invented — discard any that is absent from the official page
+  source. Aggregator hosts must never appear in a published `pdfLink`/`applyLink`.
+- ❌ **Never guess a deep link** by pattern-matching another site's URL scheme, and never fall
+  back to a root homepage (see the link standard above).
+- ⚠️ **If the official site is unreachable**, stop: keep the existing value (or
+  `See Notification`), publish nothing new for that field, and say plainly in your reply/PR that
+  the source could not be read and what still needs verification. A broken or unverifiable link
+  is worse than no link.
+- 🔁 **Re-check the page source for changes** before touching dates. Re-openings, corrigenda,
+  extensions and cancellations must come from the board's own notice — when the board re-opens a
+  window, set `lastDateExtended`, `originalLastDate` and `extensionNoticeUrl` from that notice.
+- 🧭 **Fix the registry when the site moves.** Official portals get rebuilt (PSSSB moved from
+  `*.html` pages to a WordPress structure). If a configured URL is dead, repoint it in
+  `automation/sources.json` in the same pass instead of leaving a source that can never fetch.
+- 📝 **Say what you verified.** In the commit/PR message and in your reply, name the page you
+  read and the notice/anchor text you copied the link from.
+
+`tests/test_update_jobs.py` enforces the mechanical half of this rule
+(`test_curated_links_never_point_at_aggregator_hosts`,
+`test_agents_rules_require_official_page_source_verification`). The judgement half — actually
+opening the source before you type — is on you.
+
 ## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:

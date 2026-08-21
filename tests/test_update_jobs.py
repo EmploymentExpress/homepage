@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import re
 import tempfile
 import unittest
 import sys
@@ -175,6 +176,124 @@ class JobMonitorTests(unittest.TestCase):
                 "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
             ],
         )
+
+    def test_psssb_official_site_is_monitored(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        psssb = [
+            source for source in config["sources"] if "sssb.punjab.gov.in" in source["url"]
+        ]
+        self.assertTrue(psssb, "PSSSB must be configured as an automation source")
+        home = [
+            source
+            for source in psssb
+            if monitor.canonical_url(source["url"]) == "https://sssb.punjab.gov.in/"
+        ]
+        self.assertEqual(len(home), 1)
+        self.assertTrue(home[0]["enabled"])
+        self.assertEqual(
+            home[0]["department"], "Punjab Subordinate Services Selection Board (PSSSB)"
+        )
+        self.assertFalse(monitor.is_discovery_host(home[0]["url"]))
+        self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
+
+    def test_agents_rules_require_official_page_source_verification(self):
+        raw = (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8")
+        # Compare on a single line so re-wrapping the rule text cannot break the guard.
+        agents = " ".join(raw.split())
+        self.assertIn("Source-of-truth rule", agents)
+        for phrase in (
+            "and its page source",
+            "copied verbatim from an anchor",
+            "Never publish a URL you did not see in the official page source",
+            "If the official site is unreachable",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, agents)
+        # The same rule is repeated inline where the curated entries are edited.
+        index = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        self.assertIn("SOURCE OF TRUTH", index)
+
+    def test_curated_links_never_point_at_aggregator_hosts(self):
+        """Every published link must come from an official source, never a job blog."""
+        index = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        aggregator_hosts = monitor.DISCOVERY_HOSTS | {
+            "freejobalert.com",
+            "sarkariresult.com",
+            "mysarkarinaukri.com",
+            "dailyjobalert.in",
+            "testbook.com",
+            "adda247.com",
+            "pw.live",
+        }
+        links = re.findall(
+            r"(?:pdfLink|applyLink|extensionNoticeUrl|offlineFormLink): \"([^\"]+)\"", index
+        )
+        self.assertGreater(len(links), 10, "Curated entries should expose official links")
+        for link in links:
+            url = monitor.canonical_url(link)
+            with self.subTest(link=link):
+                self.assertTrue(url, "Published links must be usable http(s) URLs")
+                self.assertNotIn(monitor.host_name(url), aggregator_hosts)
+                self.assertFalse(monitor.is_discovery_host(url))
+
+    def test_curated_psssb_reopen_entry_follows_title_and_link_rules(self):
+        html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        entry = re.search(
+            r"\{\s*id: 16,.*?applyLabel: \"[^\"]*\"\s*\}", html, re.S
+        )
+        self.assertIsNotNone(entry, "Curated PSSSB Craft Instructor entry is missing")
+        block = entry.group(0)
+
+        def field(name):
+            match = re.search(rf"{name}: \"((?:[^\"\\]|\\.)*)\"", block)
+            self.assertIsNotNone(match, f"{name} missing from the curated entry")
+            return match.group(1)
+
+        title = field("title")
+        department = field("department")
+        # AGENTS.md naming rule: the visible title names the full recruiting
+        # board and the actual post, so re-rendering it never rewrites it.
+        self.assertEqual(monitor.official_job_title(title, department), title)
+        self.assertFalse(monitor.is_junk_job_title(title))
+        self.assertTrue(monitor.title_mentions_department(title, department))
+        self.assertIn("Craft Instructor", title)
+        self.assertRegex(title, r"(?i)re-?opened")
+        # AGENTS.md link rule: never a generic root homepage.
+        for name in ("pdfLink", "applyLink", "extensionNoticeUrl"):
+            url = monitor.canonical_url(field(name))
+            self.assertTrue(url, f"{name} must be a usable http(s) URL")
+            self.assertNotIn(
+                url, {"https://sssb.punjab.gov.in/", "http://sssb.punjab.gov.in/"}
+            )
+            self.assertFalse(monitor.is_discovery_host(url))
+
+    def test_psssb_source_catches_reopened_application_notices(self):
+        source = next(
+            item
+            for item in json.loads(
+                (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                    encoding="utf-8"
+                )
+            )["sources"]
+            if item["id"] == "psssb-home"
+        )
+        # A re-opening notice that also names the advertisement is a recruitment notice.
+        advertisement_notice = monitor.Candidate(
+            title="Public Notice regarding re-opening of online applications for Advertisement No. 03/2026",
+            url="https://sssb.punjab.gov.in/uploads/public-notice-reopen-03-2026.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(advertisement_notice, source), "recruitment")
+        # Real headline copied from the board's live "What's New" list: it names no
+        # recruitment term at all, so only the source keywords can catch it.
+        window_notice = monitor.Candidate(
+            title="Reopening of Advt 03 of 2026",
+            url="https://sssb.punjab.gov.in/wp-content/uploads/2026/08/reopening-advt-03-2026.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(window_notice, source), "corrigendum")
 
     def test_published_title_always_names_recruiting_department(self):
         self.assertEqual(
