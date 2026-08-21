@@ -247,10 +247,11 @@ class JobMonitorTests(unittest.TestCase):
             url="https://sssb.punjab.gov.in/uploads/public-notice-reopen-03-2026.pdf",
         )
         self.assertEqual(monitor.classify_notice(advertisement_notice, source), "recruitment")
-        # A bare re-opening notice is still captured through the source keywords.
+        # Real headline copied from the board's live "What's New" list: it names no
+        # recruitment term at all, so only the source keywords can catch it.
         window_notice = monitor.Candidate(
-            title="Public Notice regarding re-opening of the portal for Craft Instructor posts",
-            url="https://sssb.punjab.gov.in/uploads/public-notice-reopen-window.pdf",
+            title="Reopening of Advt 03 of 2026",
+            url="https://sssb.punjab.gov.in/wp-content/uploads/2026/08/reopening-advt-03-2026.pdf",
         )
         self.assertEqual(monitor.classify_notice(window_notice, source), "corrigendum")
 
