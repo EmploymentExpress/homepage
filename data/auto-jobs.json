@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-21T03:33:16Z",
+  "updatedAt": "2026-08-21T08:09:17Z",
   "jobs": [
     {
       "id": 262868705269347,
@@ -15,8 +15,8 @@
       "location": "All India",
       "applyMode": "Offline",
       "alertType": "recruitment",
-      "badge": "OFFLINE FORM",
-      "badgeColor": "bg-slate-700",
+      "badge": "NEW JOB ALERT",
+      "badgeColor": "bg-red-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
