@@ -200,6 +200,46 @@ class JobMonitorTests(unittest.TestCase):
         self.assertFalse(monitor.is_discovery_host(home[0]["url"]))
         self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
 
+    def test_agents_rules_require_official_page_source_verification(self):
+        raw = (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8")
+        # Compare on a single line so re-wrapping the rule text cannot break the guard.
+        agents = " ".join(raw.split())
+        self.assertIn("Source-of-truth rule", agents)
+        for phrase in (
+            "and its page source",
+            "copied verbatim from an anchor",
+            "Never publish a URL you did not see in the official page source",
+            "If the official site is unreachable",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, agents)
+        # The same rule is repeated inline where the curated entries are edited.
+        index = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        self.assertIn("SOURCE OF TRUTH", index)
+
+    def test_curated_links_never_point_at_aggregator_hosts(self):
+        """Every published link must come from an official source, never a job blog."""
+        index = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        aggregator_hosts = monitor.DISCOVERY_HOSTS | {
+            "freejobalert.com",
+            "sarkariresult.com",
+            "mysarkarinaukri.com",
+            "dailyjobalert.in",
+            "testbook.com",
+            "adda247.com",
+            "pw.live",
+        }
+        links = re.findall(
+            r"(?:pdfLink|applyLink|extensionNoticeUrl|offlineFormLink): \"([^\"]+)\"", index
+        )
+        self.assertGreater(len(links), 10, "Curated entries should expose official links")
+        for link in links:
+            url = monitor.canonical_url(link)
+            with self.subTest(link=link):
+                self.assertTrue(url, "Published links must be usable http(s) URLs")
+                self.assertNotIn(monitor.host_name(url), aggregator_hosts)
+                self.assertFalse(monitor.is_discovery_host(url))
+
     def test_curated_psssb_reopen_entry_follows_title_and_link_rules(self):
         html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
         entry = re.search(

@@ -877,6 +877,10 @@
         // 2. applyLink MUST point directly to the online apply/registration portal (NEVER root homepage).
         // 3. New entries MUST carry publishedAt/discoveredAt ISO timestamp so they display
         //    the "Just In" badge, which automatically expires after 48 hours.
+        // 4. SOURCE OF TRUTH: before adding or editing any entry below, open the recruiting
+        //    board's official website AND read its page source, then copy every URL verbatim
+        //    from an anchor href you saw there. Aggregator/job-blog links are never published;
+        //    if the official site cannot be read, leave the detail unchanged and report it.
 
         // Curated admissions & courses, extended at page load by data/auto-jobs.json.
         let admissionDatabase = [
