@@ -165,6 +165,13 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        /* Multi-line title clamp for master table headlines (limit to 3 lines max) */
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
@@ -2023,10 +2030,10 @@
                             ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : ''}
                             <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
                             <div class="min-w-0 flex-1">
-                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition text-xs sm:text-sm leading-snug line-clamp-3">
                                     ${escapeHtml(job.title)}
                                 </a>
-                                <div class="flex items-center gap-1.5 mt-0.5 flex-nowrap">
+                                <div class="flex items-center gap-1.5 mt-1 flex-nowrap">
                                     <i class="fas fa-landmark text-slate-400 text-[10px] shrink-0"></i>
                                     <span class="text-[11px] text-slate-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${escapeHtml(job.department)}</span>
                                 </div>
