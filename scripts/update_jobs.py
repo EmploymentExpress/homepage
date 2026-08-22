@@ -1780,6 +1780,13 @@ def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
             if is_generic_homepage(job.get(field, "")):
                 job[field] = ""
                 changed = True
+        if not canonical_url(job.get("noticeUrl", "")):
+            for field in ("pdfLink", "applyLink"):
+                url = canonical_url(job.get(field, ""))
+                if url and not is_generic_homepage(url):
+                    job["noticeUrl"] = url
+                    changed = True
+                    break
     return changed
 
 
@@ -1837,6 +1844,57 @@ def refresh_published_source_jobs(
     if pending:
         print(f"  Refreshed {refreshed}/{min(len(pending), limit)} already-published notice(s)")
     return changed
+
+
+
+def publish_unpublished_seen_notices(
+    jobs: list[dict[str, Any]],
+    discovered: list[Candidate],
+    known: set[str],
+    source: dict[str, Any],
+    now: datetime,
+) -> int:
+    """Publish still-open notices that bootstrap only marked as seen.
+
+    The first successful scan fingerprints every listing link and publishes
+    ``bootstrapCount`` items. Active vacancies that were already on the page
+    that day were then skipped forever. Catch them up when the listing still
+    shows a readable, unexpired last date.
+    """
+    published_urls: set[str] = set()
+    for job in jobs:
+        published_urls |= job_notice_urls(job)
+    pending: list[Candidate] = []
+    for candidate in discovered:
+        if fingerprint(candidate) not in known:
+            continue
+        if canonical_url(candidate.url) in published_urls:
+            continue
+        if find_existing_job_for_candidate(jobs, candidate, source) is not None:
+            continue
+        last_date = find_labelled_date(
+            f"{candidate.title} {candidate.summary}", LAST_DATE_LABELS
+        )
+        if _dated_notice_is_active(last_date, now) is not True:
+            continue
+        pending.append(candidate)
+
+    limit = max(0, int(source.get("maxCatchUpPerRun", source.get("maxNewPerRun", 5))))
+    added = 0
+    for candidate in pending[:limit]:
+        try:
+            job = job_from_candidate(candidate, source, now)
+        except Exception as exc:
+            print(f"  Could not catch up {candidate.url}: {exc}", file=sys.stderr)
+            continue
+        if _dated_notice_is_active(job.get("lastDate", ""), now) is False:
+            continue
+        jobs.append(job)
+        added += 1
+        print(f"  Caught up unpublished active notice: {clean_text(job.get('title', ''))[:80]}")
+    if pending:
+        print(f"  Catch-up published {added}/{min(len(pending), limit)} previously skipped notice(s)")
+    return added
 
 
 def read_json(path: Path, fallback: Any) -> Any:
@@ -3098,6 +3156,10 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
 
         if not first_success:
             if refresh_published_source_jobs(jobs, discovered, known, source, now):
+                jobs_changed = True
+            caught_up = publish_unpublished_seen_notices(jobs, discovered, known, source, now)
+            if caught_up:
+                added += caught_up
                 jobs_changed = True
 
     # The offline-form portal is the single source for offline-apply vacancies;

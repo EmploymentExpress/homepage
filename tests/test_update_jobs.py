@@ -1118,6 +1118,49 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("onlineforms.in", hosts)
         self.assertIn("speedjob.in", hosts)
 
+    def test_catch_up_publishes_seen_but_unpublished_active_notice(self):
+        page = b"""
+        <a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts. Last date 30 September 2026</a>
+        <a href='/driver.pdf'>Advertisement No. 9/2026 for recruitment of 12 Driver posts. Last date 15 October 2026</a>
+        """
+        source = {
+            "id": "example",
+            "name": "Example",
+            "department": "Example Government Recruitment Board",
+            "url": "https://example.gov.in/jobs",
+            "type": "central",
+            "enrichDetails": False,
+            "bootstrapCount": 1,
+            "maxNewPerRun": 5,
+            "maxCatchUpPerRun": 5,
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(json.dumps({"sources": [source]}), encoding="utf-8")
+            with patch.object(
+                monitor,
+                "fetch_url",
+                return_value=monitor.Download("https://example.gov.in/jobs", "text/html", page),
+            ):
+                monitor.run(config, output, state)
+            first = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(first["jobs"]), 1)
+
+            with patch.object(
+                monitor,
+                "fetch_url",
+                return_value=monitor.Download("https://example.gov.in/jobs", "text/html", page),
+            ):
+                monitor.run(config, output, state)
+            second = json.loads(output.read_text(encoding="utf-8"))
+            titles = " ".join(job["title"] for job in second["jobs"])
+            self.assertEqual(len(second["jobs"]), 2)
+            self.assertIn("Clerk", titles)
+            self.assertIn("Driver", titles)
+
     def test_placeholder_and_homepage_helpers(self):
         self.assertTrue(monitor.is_generic_homepage("https://sahitya-akademi.gov.in/"))
         self.assertTrue(monitor.is_generic_homepage("https://www.sssb.punjab.gov.in"))
