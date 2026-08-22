@@ -345,11 +345,53 @@ GENERIC_TITLES = {
     "careers",
     "career",
     "apply online",
+    "apply online now",
+    "apply online (recruitment portal)",
+    "recruitment portal",
+    "how to apply",
+    "how to apply online",
     "click here",
     "read more",
     "view more",
     "notification",
     "notifications",
+}
+# Advertisement-number captures that are table headings, not real advt ids.
+INVALID_ADVT_NUMBERS = {
+    "DATE",
+    "TITLE",
+    "NO",
+    "NUMBER",
+    "ADVT",
+    "ADVT.",
+    "NOTIFICATION",
+    "SEE",
+    "POST",
+    "POSTS",
+    "NAME",
+    "S",
+    "SR",
+    "SNO",
+    "SN",
+}
+# Labels that introduce an application deadline on official pages and listing titles.
+LAST_DATE_LABELS = (
+    r"last\s+date(?:\s+for\s+(?:submission|application|receipt|registration))?"
+    r"|closing\s+date"
+    r"|closure\s+date"
+    r"|applications?\s+close"
+    r"|on\s+or\s+before"
+    r"|upto"
+    r"|up\s+to"
+)
+PLACEHOLDER_DETAILS = {
+    "",
+    "see notification",
+    "see official notification",
+    "see official notice",
+    "newly published",
+    "as notified",
+    "active / live",
 }
 MONTHS = {
     "jan": 1,
@@ -525,7 +567,14 @@ def clean_text(value: Any) -> str:
 
 def clean_title(value: str) -> str:
     title = clean_text(value)
-    title = re.sub(r"(?i)(?:!!\s*)?\bnew\b(?:\s*!!)?", " ", title)
+    # Strip "NEW" badges ("NEW Advertisement", "!! NEW !!") but never the word
+    # inside a place name such as "New Delhi" or "New Town".
+    title = re.sub(
+        r"(?i)(?:!!\s*)?\bnew\b(?:\s*!!)?(?=\s+(?:advertisement|advt\.?|notification|recruitment|vacancy|update|result|job|opening)\b)",
+        " ",
+        title,
+    )
+    title = re.sub(r"(?i)!!\s*new\s*!!", " ", title)
     title = re.sub(
         r"(?i)^\s*(?:click here(?:\s+(?:to|for))?|download)\s*[-:–—]*\s*",
         "",
@@ -572,12 +621,20 @@ def is_specific_department(value: str) -> bool:
 
 def is_junk_job_title(value: str) -> bool:
     title = clean_title(value).lower().strip(" .:-–—")
-    return bool(
+    if (
         not title
         or title in GENERIC_TITLES
         or title in OFFLINE_LISTING_JUNK_TITLES
         or re.fullmatch(r"(?:other|important|quick|useful)\s+links?", title)
-    )
+    ):
+        return True
+    # Already-prefixed titles such as "Board — Apply Online (Recruitment Portal)".
+    parts = re.split(r"\s+[—–-]\s+", title, maxsplit=1)
+    if len(parts) == 2:
+        subject = parts[1].strip(" .:-–—")
+        if subject in GENERIC_TITLES or subject in OFFLINE_LISTING_JUNK_TITLES:
+            return True
+    return False
 
 
 def infer_recruiting_department(title: str) -> str:
@@ -685,6 +742,25 @@ def canonical_url(value: str) -> str:
 
 def host_name(url: str) -> str:
     return urllib.parse.urlsplit(canonical_url(url) or url).netloc.lower().removeprefix("www.")
+
+
+def is_generic_homepage(url: str) -> bool:
+    """True for a site root such as https://example.gov.in/ — never a notice/apply URL."""
+    parsed = urllib.parse.urlsplit(canonical_url(url) or "")
+    if not parsed.netloc:
+        return False
+    path = parsed.path.rstrip("/") or "/"
+    return path == "/" and not parsed.query
+
+
+def is_placeholder_detail(value: Any) -> bool:
+    text = clean_text(value).lower().strip(" .:-–—")
+    return text in PLACEHOLDER_DETAILS or text.startswith("published ")
+
+
+def is_direct_pdf_url(url: str) -> bool:
+    path = urllib.parse.urlsplit(canonical_url(url) or url).path.lower()
+    return path.endswith(".pdf")
 
 
 def is_discovery_host(url: str) -> bool:
@@ -1125,7 +1201,10 @@ def infer_advertisement_number(text: str) -> str:
     for pattern in patterns:
         match = re.search(pattern, text)
         if match:
-            return clean_text(match.group(1)).strip(" .,:;-").upper()
+            value = clean_text(match.group(1)).strip(" .,:;-").upper()
+            if value in INVALID_ADVT_NUMBERS or value.rstrip(".") in INVALID_ADVT_NUMBERS:
+                continue
+            return value
     return "See Official Notice"
 
 
@@ -1354,10 +1433,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     if is_discovery_host(pdf_link_final):
         pdf_link_final = candidate_url
     pdf_link_final = canonical_url(pdf_link_final) or candidate_url
-    last_date = find_labelled_date(
-        searchable,
-        r"last\s+date(?:\s+for\s+(?:submission|application|receipt|registration))?|closing\s+date|applications?\s+close",
-    )
+    last_date = find_labelled_date(searchable, LAST_DATE_LABELS)
     start_date = find_labelled_date(
         searchable,
         r"start(?:ing)?\s+date|opening\s+date|applications?\s+open",
@@ -1367,6 +1443,15 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     badge, badge_color = notice_presentation(notice_type, True)
     presentation = NOTICE_PRESENTATION[notice_type]
     is_extension, extension_date = detect_extension(searchable) if notice_type == "corrigendum" else (False, "")
+
+    apply_final = (
+        canonical_url(source_url if is_pdf and apply_url == candidate_url else apply_url)
+        or candidate_url
+    )
+    if is_discovery_host(apply_final) or is_generic_homepage(apply_final):
+        apply_final = "" if is_generic_homepage(candidate_url) or is_discovery_host(candidate_url) else candidate_url
+    if is_generic_homepage(pdf_link_final) or is_discovery_host(pdf_link_final):
+        pdf_link_final = "" if is_generic_homepage(candidate_url) or is_discovery_host(candidate_url) else candidate_url
 
     return {
         "id": stable_id,
@@ -1394,13 +1479,12 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "age": infer_age(searchable),
         "details": useful_summary(description_source or searchable[:1200], title, source_name, notice_type),
         "howToApply": notice_steps(notice_type),
-        "pdfLink": "" if is_discovery_host(pdf_link_final) else pdf_link_final,
-        "applyLink": "" if is_discovery_host(apply_url or candidate_url) else (
-            canonical_url(source_url if is_pdf and apply_url == candidate_url else apply_url) or candidate_url
-        ),
+        "pdfLink": "" if is_discovery_host(pdf_link_final) or is_generic_homepage(pdf_link_final) else pdf_link_final,
+        "applyLink": "" if is_discovery_host(apply_final) or is_generic_homepage(apply_final) else apply_final,
         "applyLabel": presentation["applyLabel"],
         "sourceName": source_name,
         "sourceUrl": source_url,
+        "noticeUrl": candidate_url,
         "publishedAt": candidate.published_at,
         "discoveredAt": discovered,
         # Internal fields used only to link a last-date-extension corrigendum back to
@@ -1471,15 +1555,15 @@ def apply_extensions(jobs: list[dict[str, Any]]) -> bool:
     For each corrigendum that announces an extension, the matching recruitment is
     marked with the new deadline (and its original one preserved). Corrigenda are
     matched by advertisement number first, then by department + title overlap.
-    Internal ``isExtension`` / ``extensionDate`` fields are removed so they are not
-    persisted. Returns True when any job was changed.
+    Internal ``isExtension`` / ``extensionDate`` fields are removed from every job
+    so they are not persisted. Returns True when any job was changed.
     """
     changed = False
     for job in jobs:
-        if job.get("alertType") != "corrigendum":
-            continue
         is_extension = bool(job.pop("isExtension", False))
         extension_date = clean_text(job.pop("extensionDate", ""))
+        if job.get("alertType") != "corrigendum":
+            continue
         if not is_extension:
             continue
         if not extension_date:
@@ -1503,6 +1587,255 @@ def apply_extensions(jobs: list[dict[str, Any]]) -> bool:
             target["extensionNoticeUrl"] = job.get("pdfLink") or job.get("applyLink") or ""
             target["extensionNoticeTitle"] = clean_text(job.get("title", ""))
             changed = True
+    return changed
+
+
+def strip_internal_job_fields(jobs: list[dict[str, Any]]) -> bool:
+    """Drop monitor-only fields so they never reach data/auto-jobs.json."""
+    changed = False
+    for job in jobs:
+        for field in ("isExtension", "extensionDate"):
+            if field in job:
+                job.pop(field, None)
+                changed = True
+    return changed
+
+
+def _date_sort_key(value: str) -> datetime | None:
+    parsed = parse_date_token(clean_text(value))
+    if not parsed:
+        return None
+    try:
+        return datetime.strptime(parsed, "%d-%m-%Y")
+    except ValueError:
+        return None
+
+
+def _is_weak_public_link(url: str, source_url: str = "") -> bool:
+    target = canonical_url(url)
+    if not target or is_generic_homepage(target) or is_discovery_host(target):
+        return True
+    if source_url and target == canonical_url(source_url):
+        return True
+    return False
+
+
+def _is_better_notice_link(new: str, old: str, source_url: str = "") -> bool:
+    new_url = canonical_url(new)
+    if not new_url or is_discovery_host(new_url) or is_generic_homepage(new_url):
+        return False
+    if _is_weak_public_link(old, source_url):
+        return True
+    if is_direct_pdf_url(new_url) and not is_direct_pdf_url(old):
+        return True
+    return False
+
+
+def job_notice_urls(job: dict[str, Any]) -> set[str]:
+    urls: set[str] = set()
+    for field in ("noticeUrl", "pdfLink", "applyLink"):
+        url = canonical_url(job.get(field, ""))
+        if url:
+            urls.add(url)
+    return urls
+
+
+def find_existing_job_for_candidate(
+    jobs: list[dict[str, Any]], candidate: Candidate, source: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Locate the already-published alert that corresponds to this notice URL."""
+    candidate_url = canonical_url(candidate.url)
+    if not candidate_url:
+        return None
+    exact = [job for job in jobs if candidate_url in job_notice_urls(job)]
+    if len(exact) == 1:
+        return exact[0]
+    if exact:
+        source_url = canonical_url(source.get("url", ""))
+        same_source = [
+            job for job in exact if canonical_url(job.get("sourceUrl", "")) == source_url
+        ]
+        return (same_source or exact)[0]
+    source_url = canonical_url(source.get("url", ""))
+    title = official_job_title(
+        candidate.title, clean_text(source.get("department") or source.get("name") or "")
+    ).lower()
+    if not title:
+        return None
+    titled = [
+        job
+        for job in jobs
+        if canonical_url(job.get("sourceUrl", "")) == source_url
+        and clean_text(job.get("title", "")).lower() == title
+    ]
+    return titled[0] if len(titled) == 1 else None
+
+
+def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
+    """Copy verified details from a re-fetched notice onto the published job.
+
+    Identity fields (id, discoveredAt) stay put. Placeholder values and generic
+    homepage links are replaced; a later official last date overwrites an older
+    one, but an already-applied extension is never reverted to an earlier date.
+    """
+    changed = False
+    source_url = clean_text(existing.get("sourceUrl") or fresh.get("sourceUrl") or "")
+
+    if not existing.get("noticeUrl") and fresh.get("noticeUrl"):
+        existing["noticeUrl"] = fresh["noticeUrl"]
+        changed = True
+
+    if not existing.get("publishedAt") and fresh.get("publishedAt"):
+        existing["publishedAt"] = fresh["publishedAt"]
+        changed = True
+
+    for field in (
+        "title",
+        "department",
+        "vacancies",
+        "qualification",
+        "qualCategory",
+        "advtNo",
+        "age",
+        "examDate",
+        "applyMode",
+        "applyLabel",
+        "details",
+        "howToApply",
+    ):
+        new = fresh.get(field)
+        old = existing.get(field)
+        if new in (None, ""):
+            continue
+        if field == "howToApply" and not isinstance(new, list):
+            continue
+        if is_placeholder_detail(old) and not is_placeholder_detail(new):
+            existing[field] = new
+            changed = True
+        elif field in {"title", "department"} and new != old and not is_placeholder_detail(new):
+            existing[field] = new
+            changed = True
+
+    new_last = parse_date_token(fresh.get("lastDate", ""))
+    old_last = parse_date_token(existing.get("lastDate", ""))
+    if new_last:
+        new_dt = _date_sort_key(new_last)
+        old_dt = _date_sort_key(old_last or "")
+        if not old_last or is_placeholder_detail(existing.get("lastDate", "")):
+            existing["lastDate"] = new_last
+            changed = True
+        elif new_last != old_last and new_dt and old_dt:
+            if existing.get("lastDateExtended") and new_dt < old_dt:
+                pass
+            else:
+                existing["lastDate"] = new_last
+                changed = True
+
+    new_start = clean_text(fresh.get("startDate", ""))
+    if new_start and not is_placeholder_detail(new_start):
+        if is_placeholder_detail(existing.get("startDate", "")):
+            existing["startDate"] = new_start
+            changed = True
+
+    for field in ("pdfLink", "applyLink"):
+        if _is_better_notice_link(fresh.get(field, ""), existing.get(field, ""), source_url):
+            existing[field] = canonical_url(fresh.get(field, ""))
+            changed = True
+        elif is_generic_homepage(existing.get(field, "")):
+            existing[field] = ""
+            changed = True
+
+    return changed
+
+
+def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
+    """Fill placeholder dates/vacancies/advt numbers from text already stored."""
+    changed = False
+    for job in jobs:
+        blob = " ".join(
+            clean_text(job.get(field, ""))
+            for field in ("title", "details", "qualification")
+        )
+        if is_placeholder_detail(job.get("lastDate", "")):
+            found = find_labelled_date(blob, LAST_DATE_LABELS)
+            if found:
+                job["lastDate"] = found
+                changed = True
+        if is_placeholder_detail(job.get("vacancies", "")):
+            found = infer_vacancies(blob)
+            if found != "See Notification":
+                job["vacancies"] = found
+                changed = True
+        if is_placeholder_detail(job.get("advtNo", "")):
+            found = infer_advertisement_number(blob)
+            if found != "See Official Notice":
+                job["advtNo"] = found
+                changed = True
+        if is_placeholder_detail(job.get("age", "")):
+            found = infer_age(blob)
+            if found != "See Official Notification":
+                job["age"] = found
+                changed = True
+        for field in ("pdfLink", "applyLink", "offlineFormLink"):
+            if is_generic_homepage(job.get(field, "")):
+                job[field] = ""
+                changed = True
+    return changed
+
+
+def refresh_published_source_jobs(
+    jobs: list[dict[str, Any]],
+    discovered: list[Candidate],
+    known: set[str],
+    source: dict[str, Any],
+    now: datetime,
+) -> bool:
+    """Re-extract details for already-published notices still listed on the source.
+
+    The first scan only stores what the listing/PDF yielded that day. Later runs
+    must update last dates, vacancy counts, apply links and notification PDFs
+    when the official page now has them — otherwise the homepage keeps stale
+    \"See Notification\" placeholders forever.
+    """
+    pending: list[tuple[Candidate, dict[str, Any]]] = []
+    for candidate in discovered:
+        if fingerprint(candidate) not in known:
+            continue
+        existing = find_existing_job_for_candidate(jobs, candidate, source)
+        if existing is None:
+            continue
+        pending.append((candidate, existing))
+
+    def refresh_score(item: tuple[Candidate, dict[str, Any]]) -> int:
+        existing = item[1]
+        score = 0
+        for field in ("lastDate", "vacancies", "advtNo", "age", "qualification"):
+            if is_placeholder_detail(existing.get(field, "")):
+                score += 2
+        if _is_weak_public_link(existing.get("applyLink", ""), existing.get("sourceUrl", "")):
+            score += 2
+        if _is_weak_public_link(existing.get("pdfLink", ""), existing.get("sourceUrl", "")):
+            score += 2
+        if not is_direct_pdf_url(existing.get("pdfLink", "")):
+            score += 1
+        return score
+
+    pending.sort(key=refresh_score, reverse=True)
+    limit = max(0, int(source.get("maxRefreshPerRun", source.get("maxNewPerRun", 5))))
+    changed = False
+    refreshed = 0
+    for candidate, existing in pending[:limit]:
+        try:
+            fresh = job_from_candidate(candidate, source, now)
+        except Exception as exc:
+            print(f"  Could not refresh {candidate.url}: {exc}", file=sys.stderr)
+            continue
+        if merge_job_details(existing, fresh):
+            changed = True
+            refreshed += 1
+            print(f"  Updated details: {clean_text(existing.get('title', ''))[:80]}")
+    if pending:
+        print(f"  Refreshed {refreshed}/{min(len(pending), limit)} already-published notice(s)")
     return changed
 
 
@@ -1532,7 +1865,7 @@ def parse_timestamp(value: str) -> datetime | None:
 
 def sanitize_published_jobs(jobs: list[dict[str, Any]], now: datetime) -> bool:
     """Enforce specific authority/post titles and remove known expired jobs."""
-    changed = False
+    changed = backfill_extracted_fields(jobs)
     kept: list[dict[str, Any]] = []
     for job in jobs:
         raw_title = clean_title(job.get("title", ""))
@@ -1849,8 +2182,7 @@ def strip_offline_branding(value: str) -> str:
 
 def is_pdf_url(url: str) -> bool:
     """True when the URL points at a PDF document (query strings ignored)."""
-    path = urllib.parse.urlsplit(canonical_url(url) or url).path.lower()
-    return path.endswith(".pdf")
+    return is_direct_pdf_url(url)
 
 
 def _label_matches(label: str, markers: Iterable[str]) -> bool:
@@ -1858,14 +2190,22 @@ def _label_matches(label: str, markers: Iterable[str]) -> bool:
     return any(marker in text for marker in markers)
 
 
-def _pick_offline_document(urls: Iterable[str]) -> str:
+def _pick_offline_document(urls: Iterable[str], *, allow_homepage: bool = False) -> str:
     """Pick the best document URL: portal-hosted PDF first, any PDF second, then
     the first labelled link (e.g. a Google Drive form copy or an official page)."""
     seen: list[str] = []
     for url in urls:
         target = canonical_url(url)
-        if target and target not in seen:
-            seen.append(target)
+        if not target or target in seen:
+            continue
+        if is_generic_homepage(target) and not allow_homepage:
+            continue
+        # A portal homepage/listing is never the application form or notice.
+        if is_offline_form_url(target) and not is_pdf_url(target):
+            path = urllib.parse.urlsplit(target).path.rstrip("/")
+            if path in {"", "/", "/latest-offline-forms", "/latest-job", "/latest-jobs"}:
+                continue
+        seen.append(target)
     if not seen:
         return ""
     for target in seen:
@@ -1938,6 +2278,7 @@ def offline_page_documents(
             labels.append(raw_label)
         filename = urllib.parse.urlsplit(url).path.lower().rsplit("/", 1)[-1]
         pdf = is_pdf_url(url)
+        homepage = is_generic_homepage(url)
         if _label_matches(filename, OFFLINE_FORM_FILE_MARKERS) or any(
             (pdf and _label_matches(label_lower, OFFLINE_FORM_LABEL_MARKERS))
             or (
@@ -1963,8 +2304,13 @@ def offline_page_documents(
             and len(label_lower.split()) <= 6
             for label_lower in labels
         ):
-            notification_candidates.append(url)
-        if not pdf and any("official website" in label_lower for label_lower in labels):
+            if not homepage:
+                notification_candidates.append(url)
+        if (
+            not pdf
+            and not is_offline_form_url(url)
+            and any("official website" in label_lower for label_lower in labels)
+        ):
             website_candidates.append(url)
 
     page_text = parser.text.lower()
@@ -1997,7 +2343,7 @@ def offline_page_documents(
     return {
         "form": _pick_offline_document(form_candidates),
         "notification": _pick_offline_document(notification_candidates),
-        "website": _pick_offline_document(website_candidates),
+        "website": _pick_offline_document(website_candidates, allow_homepage=True),
         "applyMode": apply_mode,
         "department": _offline_page_department(parser.text),
         "startDate": find_labelled_date(
@@ -2137,12 +2483,18 @@ def offline_job_from_entry(
     URL never appears on the website.
     """
     url = canonical_url(entry["url"])
-    documents = {str(key): str(value) for key, value in (page_documents or {}).items()}
+    documents = _sanitize_offline_documents(
+        {str(key): str(value) for key, value in (page_documents or {}).items()}
+    )
     form_target = canonical_url(documents.get("form") or "") or url
+    if is_generic_homepage(form_target):
+        form_target = url
     notification_target = (
         canonical_url(documents.get("notification") or "")
         or canonical_url(documents.get("website") or "")
     )
+    if notification_target and is_generic_homepage(notification_target):
+        notification_target = ""
     offline_link = mask_offline_url(form_target, redirect)
     pdf_link = mask_offline_url(notification_target or url, redirect)
     is_punjab = clean_text(entry.get("type")) == "punjab"
@@ -2283,6 +2635,31 @@ def _dated_notice_is_active(last_date: str, now: datetime) -> bool | None:
     return deadline >= now.date()
 
 
+def _sanitize_offline_documents(documents: dict[str, Any]) -> dict[str, str]:
+    """Drop portal homepages and site roots that slipped into cached documents."""
+    cleaned = {str(key): str(value or "") for key, value in documents.items()}
+    website = canonical_url(cleaned.get("website") or "")
+    if website and is_offline_form_url(website):
+        cleaned["website"] = ""
+    form = canonical_url(cleaned.get("form") or "")
+    if form and is_generic_homepage(form):
+        cleaned["form"] = ""
+    notification = canonical_url(cleaned.get("notification") or "")
+    if notification and is_generic_homepage(notification):
+        cleaned["notification"] = ""
+    if notification and is_offline_form_url(notification) and not is_pdf_url(notification):
+        path = urllib.parse.urlsplit(notification).path.rstrip("/")
+        if path in {"", "/", "/latest-offline-forms", "/latest-job", "/latest-jobs"}:
+            cleaned["notification"] = ""
+    return cleaned
+
+
+def _offline_documents_need_refresh(documents: dict[str, Any]) -> bool:
+    """True when a cached extraction used a homepage as the application form."""
+    form = canonical_url(documents.get("form") or "")
+    return bool(form and is_generic_homepage(form))
+
+
 def process_offline_forms(
     config: dict[str, Any],
     jobs: list[dict[str, Any]],
@@ -2328,17 +2705,21 @@ def process_offline_forms(
         key = canonical_url(page_url)
         cached = page_cache.get(key)
         required_fields = {"form", "notification", "website", "applyMode", "department", "lastDate"}
-        if isinstance(cached, dict) and required_fields.issubset(cached):
-            return {str(entry_key): str(value) for entry_key, value in cached.items()}
+        if (
+            isinstance(cached, dict)
+            and required_fields.issubset(cached)
+            and not _offline_documents_need_refresh(cached)
+        ):
+            return _sanitize_offline_documents(cached)
         try:
-            documents = offline_page_documents(key)
+            documents = _sanitize_offline_documents(offline_page_documents(key))
         except Exception as exc:
             print(
                 f"  Offline page document extraction failed ({key}): {exc}",
                 file=sys.stderr,
             )
             if isinstance(cached, dict):
-                return {str(entry_key): str(value) for entry_key, value in cached.items()}
+                return _sanitize_offline_documents(cached)
             return {
                 "form": "", "notification": "", "website": "", "applyMode": "",
                 "department": "", "startDate": "", "lastDate": "", "pageTitle": "",
@@ -2462,13 +2843,44 @@ def process_offline_forms(
         )
         existing = jobs_by_source.get(entry_url)
         if existing:
+            form_target = canonical_url(documents.get("form") or "") or entry_url
+            if is_generic_homepage(form_target):
+                form_target = entry_url
+            notification_target = (
+                canonical_url(documents.get("notification") or "")
+                or canonical_url(documents.get("website") or "")
+            )
+            if notification_target and is_generic_homepage(notification_target):
+                notification_target = ""
+            offline_link = mask_offline_url(form_target, redirect)
+            pdf_link = mask_offline_url(notification_target or entry_url, redirect)
             for field, value in (
                 ("title", specific_title),
                 ("department", verified_entry["department"]),
                 ("lastDate", verified_entry["lastDate"] or existing.get("lastDate")),
                 ("startDate", documents.get("startDate") or existing.get("startDate")),
+                ("offlineFormLink", offline_link),
+                ("applyLink", offline_link),
+                ("pdfLink", pdf_link),
+                ("applyLabel", "Download Offline Application Form"),
+                (
+                    "offlineFormName",
+                    "Download Offline Application Form (PDF)"
+                    if documents.get("form")
+                    else "Download Offline Application Form",
+                ),
             ):
                 if value and existing.get(field) != value:
+                    # Never replace a real notification PDF with a weaker page.
+                    if field == "pdfLink":
+                        current_target = _redirect_target_for_link(
+                            str(existing.get("pdfLink") or ""), redirect, existing_map
+                        ) or str(existing.get("pdfLink") or "")
+                        new_target = _redirect_target_for_link(
+                            str(value), redirect, existing_map
+                        ) or str(value)
+                        if is_direct_pdf_url(current_target) and not is_direct_pdf_url(new_target):
+                            continue
                     existing[field] = value
                     changed = True
             continue
@@ -2684,6 +3096,10 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             added += 1
             jobs_changed = True
 
+        if not first_success:
+            if refresh_published_source_jobs(jobs, discovered, known, source, now):
+                jobs_changed = True
+
     # The offline-form portal is the single source for offline-apply vacancies;
     # its pool is built once and shared with the discovery-feed pipeline, which
     # uses it to skip offline vacancies the portal already covers.
@@ -2724,6 +3140,12 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             jobs_changed = True
 
     if apply_extensions(jobs):
+        jobs_changed = True
+    if strip_internal_job_fields(jobs):
+        jobs_changed = True
+    # Re-run after refresh/backfill so a newly-read expired last date is removed
+    # and placeholder fields filled from stored notice text are persisted.
+    if sanitize_published_jobs(jobs, now):
         jobs_changed = True
 
     if jobs_changed:
@@ -2814,4 +3236,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

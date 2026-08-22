@@ -1118,6 +1118,325 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("onlineforms.in", hosts)
         self.assertIn("speedjob.in", hosts)
 
+    def test_placeholder_and_homepage_helpers(self):
+        self.assertTrue(monitor.is_generic_homepage("https://sahitya-akademi.gov.in/"))
+        self.assertTrue(monitor.is_generic_homepage("https://www.sssb.punjab.gov.in"))
+        self.assertFalse(monitor.is_generic_homepage("https://sssb.punjab.gov.in/wp-content/uploads/notice.pdf"))
+        self.assertTrue(monitor.is_placeholder_detail("See Notification"))
+        self.assertTrue(monitor.is_placeholder_detail("Newly Published"))
+        self.assertTrue(monitor.is_placeholder_detail("Published 18-08-2026"))
+        self.assertFalse(monitor.is_placeholder_detail("30-09-2026"))
+        self.assertFalse(monitor.is_placeholder_detail("125 Posts"))
+
+    def test_last_date_reads_upto_and_on_or_before(self):
+        self.assertEqual(
+            monitor.find_labelled_date(
+                "Applications must reach the Registrar upto 01.11.2025 by 5PM.",
+                monitor.LAST_DATE_LABELS,
+            ),
+            "01-11-2025",
+        )
+        self.assertEqual(
+            monitor.find_labelled_date(
+                "Completed forms should arrive on or before 04 September 2026.",
+                monitor.LAST_DATE_LABELS,
+            ),
+            "04-09-2026",
+        )
+
+    def test_advertisement_number_rejects_table_headings(self):
+        self.assertEqual(
+            monitor.infer_advertisement_number("Advt No Date Title ENDS ON 16/03/2026"),
+            "See Official Notice",
+        )
+        self.assertEqual(
+            monitor.infer_advertisement_number("Advertisement No. 03/2026 for Craft Instructor"),
+            "03/2026",
+        )
+
+    def test_apply_online_portal_label_is_junk(self):
+        self.assertTrue(monitor.is_junk_job_title("Apply Online (Recruitment Portal)"))
+        self.assertTrue(
+            monitor.is_junk_job_title(
+                "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala — Apply Online (Recruitment Portal)"
+            )
+        )
+        self.assertEqual(
+            monitor.official_job_title(
+                "Apply Online (Recruitment Portal)",
+                "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
+            ),
+            "",
+        )
+
+    def test_clean_title_keeps_new_delhi_and_strips_new_badge(self):
+        self.assertEqual(
+            monitor.clean_title("Sahitya Akademi, New Delhi — Clerk Recruitment"),
+            "Sahitya Akademi, New Delhi — Clerk Recruitment",
+        )
+        self.assertEqual(
+            monitor.official_job_title(
+                "Sahitya Akademi, New Delhi — Delhi Sahitya Akademi MTS, Driver, Clerk, T.A & Various Post",
+                "Sahitya Akademi, New Delhi",
+            ),
+            "Sahitya Akademi, New Delhi — Delhi Sahitya Akademi MTS, Driver, Clerk, T.A & Various Post",
+        )
+        self.assertEqual(
+            monitor.clean_title("NEW Advertisement No. 04/2026 for recruitment of clerks"),
+            "Advertisement No. 04/2026 for recruitment of clerks",
+        )
+
+    def test_job_from_candidate_never_publishes_root_homepage_links(self):
+        candidate = monitor.Candidate(
+            "Advertisement for recruitment of 10 Clerk posts",
+            "https://example.gov.in/",
+        )
+        source = {
+            "name": "Example Board",
+            "department": "Example Government Recruitment Board",
+            "url": "https://example.gov.in/",
+            "type": "central",
+            "enrichDetails": False,
+        }
+        job = monitor.job_from_candidate(
+            candidate, source, datetime(2026, 8, 21, tzinfo=timezone.utc)
+        )
+        self.assertEqual(job["pdfLink"], "")
+        self.assertEqual(job["applyLink"], "")
+        self.assertEqual(job["noticeUrl"], "https://example.gov.in/")
+
+    def test_apply_extensions_strips_internal_fields_from_recruitment_jobs(self):
+        jobs = [
+            {
+                "id": 1,
+                "title": "Recruitment of 10 Clerk posts",
+                "department": "Example Board",
+                "alertType": "recruitment",
+                "advtNo": "1/2026",
+                "lastDate": "20-09-2026",
+                "isExtension": False,
+                "extensionDate": "",
+            }
+        ]
+        self.assertFalse(monitor.apply_extensions(jobs))
+        self.assertNotIn("isExtension", jobs[0])
+        self.assertNotIn("extensionDate", jobs[0])
+
+    def test_merge_job_details_fills_placeholders_and_keeps_identity(self):
+        existing = {
+            "id": 42,
+            "title": "Example Government Recruitment Board — Clerk Recruitment",
+            "department": "Example Government Recruitment Board",
+            "vacancies": "See Notification",
+            "lastDate": "See Notification",
+            "startDate": "Newly Published",
+            "advtNo": "See Official Notice",
+            "age": "See Official Notification",
+            "qualification": "See Official Notification",
+            "pdfLink": "https://example.gov.in/",
+            "applyLink": "https://example.gov.in/",
+            "sourceUrl": "https://example.gov.in/jobs",
+            "discoveredAt": "2026-08-18T10:00:00Z",
+            "publishedAt": "",
+            "alertType": "recruitment",
+        }
+        fresh = {
+            "id": 99,
+            "title": "Example Government Recruitment Board — Clerk Recruitment",
+            "department": "Example Government Recruitment Board",
+            "vacancies": "40 Posts",
+            "lastDate": "30-09-2026",
+            "startDate": "12-08-2026",
+            "advtNo": "8/2026",
+            "age": "18 to 37 Years",
+            "qualification": "Graduate",
+            "qualCategory": "Graduate",
+            "pdfLink": "https://example.gov.in/files/clerk-8.pdf",
+            "applyLink": "https://example.gov.in/apply/clerk-8",
+            "noticeUrl": "https://example.gov.in/files/clerk-8.pdf",
+            "publishedAt": "2026-08-12T09:00:00Z",
+            "discoveredAt": "2026-08-21T12:00:00Z",
+        }
+        self.assertTrue(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["id"], 42)
+        self.assertEqual(existing["discoveredAt"], "2026-08-18T10:00:00Z")
+        self.assertEqual(existing["vacancies"], "40 Posts")
+        self.assertEqual(existing["lastDate"], "30-09-2026")
+        self.assertEqual(existing["startDate"], "12-08-2026")
+        self.assertEqual(existing["advtNo"], "8/2026")
+        self.assertEqual(existing["age"], "18 to 37 Years")
+        self.assertEqual(existing["pdfLink"], "https://example.gov.in/files/clerk-8.pdf")
+        self.assertEqual(existing["applyLink"], "https://example.gov.in/apply/clerk-8")
+        self.assertEqual(existing["noticeUrl"], "https://example.gov.in/files/clerk-8.pdf")
+        self.assertEqual(existing["publishedAt"], "2026-08-12T09:00:00Z")
+
+    def test_merge_job_details_does_not_revert_extended_last_date(self):
+        existing = {
+            "lastDate": "30-09-2026",
+            "originalLastDate": "20-09-2026",
+            "lastDateExtended": True,
+            "pdfLink": "https://example.gov.in/advt.pdf",
+            "applyLink": "https://example.gov.in/apply",
+        }
+        fresh = {
+            "lastDate": "20-09-2026",
+            "pdfLink": "https://example.gov.in/advt.pdf",
+            "applyLink": "https://example.gov.in/apply",
+        }
+        self.assertFalse(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["lastDate"], "30-09-2026")
+
+    def test_backfill_reads_last_date_from_stored_details(self):
+        jobs = [{
+            "title": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur — Professor posts",
+            "details": "Applications must reach the Registrar, GRAU upto 01.11.2025 by 5PM.",
+            "lastDate": "See Notification",
+            "vacancies": "See Notification",
+            "advtNo": "DATE",
+            "pdfLink": "https://graupunjab.org/",
+            "applyLink": "https://graupunjab.org/",
+        }]
+        self.assertTrue(monitor.backfill_extracted_fields(jobs))
+        self.assertEqual(jobs[0]["lastDate"], "01-11-2025")
+        self.assertEqual(jobs[0]["pdfLink"], "")
+        self.assertEqual(jobs[0]["applyLink"], "")
+
+    def test_seen_notice_is_refreshed_instead_of_left_stale(self):
+        listing = b"""
+        <a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts.
+        Last date of online registration: 30 September 2026. Age limit: 18 to 37 Years.</a>
+        """
+        source = {
+            "id": "example",
+            "name": "Example",
+            "department": "Example Government Recruitment Board",
+            "url": "https://example.gov.in/jobs",
+            "type": "central",
+            "categorySlug": "central",
+            "enrichDetails": False,
+            "bootstrapCount": 1,
+            "maxNewPerRun": 5,
+            "maxRefreshPerRun": 5,
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(json.dumps({"sources": [source]}), encoding="utf-8")
+
+            stale = {
+                "version": 1,
+                "updatedAt": "2026-08-18T00:00:00Z",
+                "jobs": [{
+                    "id": 1,
+                    "title": "Example Government Recruitment Board — Clerk posts Recruitment",
+                    "department": "Example Government Recruitment Board",
+                    "vacancies": "See Notification",
+                    "qualification": "See Official Notification",
+                    "qualCategory": "Graduate",
+                    "lastDate": "See Notification",
+                    "startDate": "Newly Published",
+                    "examDate": "See Official Notification",
+                    "location": "All India",
+                    "applyMode": "Online / As Notified",
+                    "alertType": "recruitment",
+                    "badge": "JOB NOTICE",
+                    "badgeColor": "bg-blue-600",
+                    "type": "central",
+                    "categorySlug": "central",
+                    "advtNo": "See Official Notice",
+                    "age": "See Official Notification",
+                    "details": "Open the official notice.",
+                    "howToApply": [],
+                    "pdfLink": "https://example.gov.in/clerk.pdf",
+                    "applyLink": "https://example.gov.in/jobs",
+                    "applyLabel": "Open Official Application",
+                    "sourceName": "Example",
+                    "sourceUrl": "https://example.gov.in/jobs",
+                    "noticeUrl": "https://example.gov.in/clerk.pdf",
+                    "publishedAt": "",
+                    "discoveredAt": "2026-08-18T00:00:00Z",
+                    "automated": True,
+                }],
+            }
+            output.write_text(json.dumps(stale), encoding="utf-8")
+            fingerprint = monitor.fingerprint(
+                monitor.Candidate(
+                    "Advertisement No. 8/2026 for recruitment of 40 Clerk posts. "
+                    "Last date of online registration: 30 September 2026. Age limit: 18 to 37 Years.",
+                    "https://example.gov.in/clerk.pdf",
+                )
+            )
+            # Also mark the cleaned title variant used by parse_html.
+            parsed, _ = monitor.parse_html(listing.decode(), "https://example.gov.in/jobs")
+            fingerprints = list(dict.fromkeys(
+                [fingerprint] + [monitor.fingerprint(item) for item in parsed]
+            ))
+            state.write_text(json.dumps({
+                "version": 1,
+                "sources": {
+                    "example": {
+                        "initializedAt": "2026-08-18T00:00:00Z",
+                        "fingerprints": fingerprints,
+                    }
+                },
+            }), encoding="utf-8")
+
+            with patch.object(
+                monitor,
+                "fetch_url",
+                return_value=monitor.Download("https://example.gov.in/jobs", "text/html", listing),
+            ):
+                monitor.run(config, output, state)
+
+            updated = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(updated["jobs"]), 1)
+            job = updated["jobs"][0]
+            self.assertEqual(job["id"], 1)
+            self.assertEqual(job["discoveredAt"], "2026-08-18T00:00:00Z")
+            self.assertEqual(job["lastDate"], "30-09-2026")
+            self.assertEqual(job["vacancies"], "40 Posts")
+            self.assertEqual(job["advtNo"], "8/2026")
+            self.assertEqual(job["age"], "18 to 37 Years")
+            self.assertNotIn("isExtension", job)
+            self.assertNotIn("extensionDate", job)
+
+    def test_offline_page_ignores_portal_homepage_as_official_website_or_form(self):
+        page = monitor.Download(
+            "https://onlineforms.in/example-board-recruitment/",
+            "text/html",
+            b"""
+            <html><body>
+              <table>
+                <tr><td>Download Application Form</td>
+                    <td><a href="https://sahitya-akademi.gov.in/">Download</a></td></tr>
+                <tr><td>Official Notification</td>
+                    <td><a href="https://onlineforms.in/wp-content/uploads/2026/08/notice.pdf">Notification</a></td></tr>
+                <tr><td>Official Website</td>
+                    <td><a href="https://onlineforms.in/">Click Here</a></td></tr>
+              </table>
+            </body></html>
+            """,
+        )
+        documents = monitor.offline_page_documents(page.url, page)
+        self.assertEqual(documents["form"], "")
+        self.assertEqual(documents["website"], "")
+        self.assertIn("notice.pdf", documents["notification"])
+
+    def test_stale_homepage_form_cache_is_refreshed(self):
+        self.assertTrue(
+            monitor._offline_documents_need_refresh({"form": "https://sahitya-akademi.gov.in/"})
+        )
+        cleaned = monitor._sanitize_offline_documents({
+            "form": "https://sahitya-akademi.gov.in/",
+            "notification": "https://example.gov.in/notice.pdf",
+            "website": "https://onlineforms.in/",
+        })
+        self.assertEqual(cleaned["form"], "")
+        self.assertEqual(cleaned["website"], "")
+        self.assertEqual(cleaned["notification"], "https://example.gov.in/notice.pdf")
+
 
 if __name__ == "__main__":
     unittest.main()

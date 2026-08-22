@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-21T19:34:11Z",
+  "updatedAt": "2026-08-22T00:38:07Z",
   "jobs": [
     {
       "id": 265384826326519,
@@ -32,16 +32,14 @@
         "Send the completed application to the notified address before the last date."
       ],
       "pdfLink": "redirect.html?f=9693e1c6927c",
-      "applyLink": "https://sahitya-akademi.gov.in/",
+      "applyLink": "",
       "applyLabel": "Download Offline Application Form",
-      "offlineFormLink": "https://sahitya-akademi.gov.in/",
+      "offlineFormLink": "",
       "offlineFormName": "Download Offline Application Form (PDF)",
       "sourceName": "Sahitya Akademi, New Delhi",
       "sourceUrl": "https://www.speedjob.in/delhi-sahitya-akademi-recruitment-2026/",
       "publishedAt": "",
       "discoveredAt": "2026-08-21T14:09:56Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -82,8 +80,6 @@
       "sourceUrl": "https://onlineforms.in/csir-nal-multi-tasking-staff-recruitment/",
       "publishedAt": "",
       "discoveredAt": "2026-08-21T03:33:16Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -121,8 +117,6 @@
       "sourceUrl": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
       "publishedAt": "",
       "discoveredAt": "2026-08-20T14:20:47Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -160,86 +154,6 @@
       "sourceUrl": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
       "publishedAt": "",
       "discoveredAt": "2026-08-20T08:08:16Z",
-      "isExtension": false,
-      "extensionDate": "",
-      "automated": true
-    },
-    {
-      "id": 79062631210860,
-      "title": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur — Advertisement, Application Proforma and other terms and conditions for the posts of Professor, Associate Professor and Assistant Professor at Government Ayurvedic College, Patiala",
-      "department": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur",
-      "vacancies": "See Notification",
-      "qualification": "10th / 12th / Graduate / Post Graduate",
-      "qualCategory": "Graduate",
-      "lastDate": "See Notification",
-      "startDate": "Newly Published",
-      "examDate": "See Official Notification",
-      "location": "Hoshiarpur, Punjab",
-      "applyMode": "Online / As Notified",
-      "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
-      "type": "punjab",
-      "categorySlug": "punjab-jobs",
-      "advtNo": "See Official Notice",
-      "feeGen": "See Official Notification",
-      "feeSC": "See Official Notification",
-      "feeMode": "As Notified",
-      "age": "See Official Notification",
-      "details": "01882-282326, , email: registrargraupunjab@gmail.com Website:-www.graupunjab.org Advertisement Applications are invited for the posts of Professors, Associate Professors and Assistant Professors in different departments of Government Ayurvedic College, Patiala (A constituent college of Guru Ravidas Ayurved University). The applications complete in all respects along with self attested photocopies of all relevant documents and requisite fee must reach to the Registrar, Guru Ravidas Ayurved University, VPO-Kharkan (Hoshiarpur) upto 01.11.2025 by 5PM through registered/speed post/by hand. Applications forms along with “Detailed instructions” regarding qualifications, experience, age, etc.",
-      "howToApply": [
-        "Open the official notification and read the complete eligibility conditions.",
-        "Confirm the application dates, fee, age limit and required documents on the official website.",
-        "Use only the official application link and keep the submitted form or receipt for reference."
-      ],
-      "pdfLink": "https://graupunjab.org/wp-content/uploads/2025/10/ADVT-new-for-GAC-Patiala-new-qute-5.pdf",
-      "applyLink": "https://graupunjab.org/jobs/",
-      "applyLabel": "Open Official Application",
-      "sourceName": "GRAU Recruitment",
-      "sourceUrl": "https://graupunjab.org/jobs/",
-      "publishedAt": "",
-      "discoveredAt": "2026-08-19T19:36:11Z",
-      "isExtension": false,
-      "extensionDate": "",
-      "automated": true
-    },
-    {
-      "id": 44352948056518,
-      "title": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala — Apply Online (Recruitment Portal)",
-      "department": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
-      "vacancies": "See Notification",
-      "qualification": "See Official Notification",
-      "qualCategory": "8th/10th",
-      "lastDate": "See Notification",
-      "startDate": "Newly Published",
-      "examDate": "See Official Notification",
-      "location": "Punjab",
-      "applyMode": "Online / As Notified",
-      "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
-      "type": "punjab",
-      "categorySlug": "punjab-jobs",
-      "advtNo": "DATE",
-      "feeGen": "See Official Notification",
-      "feeSC": "See Official Notification",
-      "feeMode": "As Notified",
-      "age": "See Official Notification",
-      "details": "Apply Online (Recruitment Portal).. Home :: SHIROMANI GURUDWARA PARBHANDAK COMMITTEE DIRECTORATE OF EDUCATION SHIROMANI GURDWARA PARBANDHAK COMMITTEE Panth Ratan Jathedar Gurcharan Singh Tohra Institute of Advanced Studies in Sikhism, Bahadurgarh(Patiala) - 147021 +(91) 75270-07300 +(91) 75270-07400 desgpc@gmail.com Recruitment 2026 How to apply ONLINE Advt No Date Title ENDS ON 390/2026 16/03/2026 Advt. for Admission in NISCHAI ACADEMY FOR JUDICIAL SERVICES (NAJS), BAHADURGARH, PATIALA 15/05/2026 Detail 395/2026 16/04/2026 Advt.",
-      "howToApply": [
-        "Open the official notification and read the complete eligibility conditions.",
-        "Confirm the application dates, fee, age limit and required documents on the official website.",
-        "Use only the official application link and keep the submitted form or receipt for reference."
-      ],
-      "pdfLink": "https://desgpc.softelsolutions.in/PDF/Advt390.pdf",
-      "applyLink": "https://desgpc.softelsolutions.in/How-to-Apply-ONLINE--REVISED.pdf",
-      "applyLabel": "Open Official Application",
-      "sourceName": "DESGPC Recruitment",
-      "sourceUrl": "https://www.desgpc.org/",
-      "publishedAt": "",
-      "discoveredAt": "2026-08-19T19:36:11Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -280,8 +194,6 @@
       "sourceUrl": "https://www.speedjob.in/haryana-wcd-female-supervisor-recruitment-2026/",
       "publishedAt": "",
       "discoveredAt": "2026-08-19T19:36:11Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -322,8 +234,6 @@
       "sourceUrl": "https://www.speedjob.in/indian-air-force-ldc-recruitment-2026/",
       "publishedAt": "",
       "discoveredAt": "2026-08-19T19:36:11Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
@@ -364,8 +274,6 @@
       "sourceUrl": "https://www.speedjob.in/ccrs-recruitment-2026/",
       "publishedAt": "",
       "discoveredAt": "2026-08-19T19:36:11Z",
-      "isExtension": false,
-      "extensionDate": "",
       "automated": true
     },
     {
