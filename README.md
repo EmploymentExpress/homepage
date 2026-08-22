@@ -164,19 +164,20 @@ The monitor currently has these official recruitment sources enabled:
 12. **Baba Farid University of Health Sciences (BFUHS)** — `https://bfuhs.ggsmch.org/`
 13. **Guru Ravidas Ayurved University (GRAU)** — `https://graupunjab.org/jobs/`
 14. **Directorate of Education, SGPC (DESGPC)** — `https://www.desgpc.org/`
+15. **Punjab Remote Sensing Centre (PRSC)** — `https://prsc.punjab.gov.in/Recruitment.aspx`
 
-The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are additionally enabled under the special `offline-forms` role. All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. The discovery headline feeds (HaryanaJobs / RozgarNews) are also switched off (`automation/discovery-feeds.json` has an empty `feeds` list) so no update from any other website can enter the feed. To re-enable a board, set its `enabled` flag to `true`; to re-enable discovery, restore the feed objects in `automation/discovery-feeds.json`. District court / eCourts pages are not monitored. The curated homepage currently highlights RCF Advertisement A-1/2026 for 734 Act Apprentice seats, with the official RCF portal linked for verification.
+The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are additionally enabled under the special `offline-forms` role. All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. The discovery headline feeds (LinkingSky, Punjab Job Alert, HaryanaJobs) run as **headline scanners only** (`automation/discovery-feeds.json`) — they are never published sources. To enable another board, set its `enabled` flag to `true`; to add a discovery feed, append its object to `automation/discovery-feeds.json`. District court / eCourts pages are not monitored.
 
-#### Discovery-only feeds (HaryanaJobs / RozgarNews)
+#### Discovery-only feeds (LinkingSky / Punjab Job Alert / HaryanaJobs)
 
-`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. **Currently the `feeds` list is empty, so discovery is switched off** — this keeps automatic updates limited to PULSA and the two enabled AIIMS Examinations links. If discovery is re-enabled later, this is how it behaves:
+`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. **Currently the `feeds` list contains LinkingSky (Punjab & All-India Government Jobs), Punjab Job Alert and HaryanaJobs (Haryana & Punjab Government Jobs)**; discovery publishes only official notices that match an approved official organisation. This is how it behaves:
 
-1. The monitor reads headlines from HaryanaJobs and RozgarNews.
+1. The monitor reads headlines from LinkingSky, Punjab Job Alert and HaryanaJobs.
 2. It extracts the recruiting organisation name from the headline.
 3. It matches that name against the approved official list (`automation/sources.json` plus `automation/official-organizations.json`).
 4. On a match, it opens the **official** government recruitment page and extracts dates, vacancies, qualifications, PDFs and apply links from that page.
 5. If no approved official organisation matches, the headline is skipped.
-6. HaryanaJobs / RozgarNews URLs, branding and article text are never stored in `data/auto-jobs.json` and never shown on the website.
+6. Aggregator URLs, branding and article text are never stored in `data/auto-jobs.json` and never shown on the website.
 
 Add another official board by appending an object to `automation/official-organizations.json` (`id`, `name`, `url`, `aliases`). Do **not** put aggregator URLs in `automation/sources.json` or `data/notification-source-links.json`.
 

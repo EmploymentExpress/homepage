@@ -1005,6 +1005,230 @@ def source_candidates(download: Download) -> list[Candidate]:
     return html_items
 
 
+# ---------------------------------------------------------------------------
+# Page-source rule (mandatory, runs on every workflow run)
+#
+# After checking an official website listing, if no new job notification is
+# found, the monitor re-reads the RAW page source of that official website and
+# publishes only links found there. The rule applies automatically to every
+# official website link in automation/sources.json,
+# automation/official-organizations.json and data/notification-source-links.json
+# (existing or added later) — no extra configuration is needed.
+# ---------------------------------------------------------------------------
+# Attribute names that may carry a notice URL even when the visible listing
+# parser misses them: <noscript> fallback blocks, <iframe>/<embed>/<object>
+# embeds, image maps (<area>), JavaScript-generated links and data-* hooks.
+PAGE_SOURCE_URL_ATTRS = (
+    "href", "src", "data-href", "data-url", "data-link", "data-src",
+)
+# Document extensions that can carry an official notice/notification.
+PAGE_SOURCE_DOC_EXTENSIONS = (
+    ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".rtf", ".odt",
+)
+# Static assets that can never be a notice (skipped in the raw scan).
+PAGE_SOURCE_ASSET_EXTENSIONS = (
+    ".css", ".js", ".mjs", ".json", ".xml", ".map", ".png", ".jpg", ".jpeg",
+    ".gif", ".svg", ".webp", ".ico", ".avif", ".woff", ".woff2", ".ttf",
+    ".eot", ".mp4", ".mp3", ".zip", ".rar", ".7z", ".tar", ".gz",
+)
+# Path words that mark a URL as a notice/document link in the raw source.
+PAGE_SOURCE_NOTICE_TOKENS = (
+    "notice", "notification", "notifications", "advt", "advertisement",
+    "advert", "recruit", "recruitment", "vacancy", "vacancies", "result",
+    "answer-key", "answerkey", "answer", "corrigendum", "addendum",
+    "admission", "admit", "application", "career", "careers", "job", "jobs",
+    "employ", "download", "form",
+)
+# Path words that mean a raw-source URL is page chrome, not a notice.
+PAGE_SOURCE_IGNORED_URL_TOKENS = (
+    "tender", "quotation", "login", "signin", "logout", "register", "privacy",
+    "terms", "twitter", "facebook", "instagram", "youtube", "whatsapp",
+    "telegram", "stylesheets", "scripts", "images", "fonts",
+)
+
+
+def _page_source_anchor_labels(text: str, base_url: str) -> dict[str, str]:
+    """Map absolute URL -> cleaned anchor label for every <a> in the raw source.
+
+    The normal listing parser already reads visible anchors; this map exists so
+    a raw-source URL (e.g. one inside <noscript> or <iframe>) can reuse the
+    label the page gives it.
+    """
+    labels: dict[str, str] = {}
+    for match in re.finditer(r"(?is)<a\b([^>]{0,600}?)>(.*?)</a\s*>", text):
+        attrs, inner = match.group(1), match.group(2)
+        href_match = re.search(
+            r"""(?ix)\bhref\s*=\s*["']([^"']+)["']""", attrs
+        )
+        if not href_match:
+            continue
+        url = canonical_url(urllib.parse.urljoin(base_url, href_match.group(1).strip()))
+        if not url:
+            continue
+        label = clean_text(re.sub(r"(?is)<[^>]+>", " ", inner))
+        if label:
+            labels.setdefault(url, label)
+    return labels
+
+
+def _is_page_source_asset(url: str) -> bool:
+    return urllib.parse.urlsplit(url).path.lower().endswith(PAGE_SOURCE_ASSET_EXTENSIONS)
+
+
+def _looks_like_page_source_notice(url: str) -> bool:
+    parts = urllib.parse.urlsplit(url)
+    path = parts.path.lower()
+    if path.endswith(PAGE_SOURCE_DOC_EXTENSIONS):
+        return True
+    if any(token in path for token in PAGE_SOURCE_IGNORED_URL_TOKENS):
+        return False
+    return any(token in path for token in PAGE_SOURCE_NOTICE_TOKENS)
+
+
+def _page_source_notice_urls(text: str, base_url: str) -> list[tuple[str, str]]:
+    """Notice-like (absolute URL, raw occurrence) pairs in page order.
+
+    Reads every href/src/data-* value in the whole source — including blocks
+    the visible listing parser deliberately skips (<script>, <style>,
+    <noscript>, <svg>) — plus bare http(s) URLs (JS configs, JSON-LD, meta
+    content). Same-page anchors, static assets and aggregator/portal hosts are
+    excluded. The raw occurrence is kept so context can be read from the exact
+    source location (relative hrefs do not appear verbatim in the page text).
+    """
+    attribute_pattern = re.compile(
+        r"""(?ix)\b(?:%s)\s*=\s*["']([^"']+)["']"""
+        % "|".join(PAGE_SOURCE_URL_ATTRS)
+    )
+    urls: list[tuple[str, str]] = []
+    seen: set[str] = set()
+
+    def consider(raw_url: str) -> None:
+        occurrence = raw_url.strip()
+        url = canonical_url(occurrence.rstrip(".,;:)]}>\"'"))
+        if not url or url in seen:
+            return
+        if url.split("#", 1)[0] == base_url.split("#", 1)[0]:
+            return  # same-page anchor / self link
+        if is_discovery_host(url) or is_offline_form_url(url):
+            return
+        if _is_page_source_asset(url) or not _looks_like_page_source_notice(url):
+            return
+        seen.add(url)
+        urls.append((url, occurrence))
+
+    for raw in attribute_pattern.findall(text):
+        consider(urllib.parse.urljoin(base_url, raw))
+    for raw in re.findall(r"(?i)https?://[^\s\"'<>\\]+", text):
+        consider(raw)
+    return urls
+
+
+def _page_source_context(text: str, occurrence: str) -> str:
+    """Plain text that immediately precedes a URL in the raw source.
+
+    Used as the title when the link has no anchor label (iframes, noscript
+    blocks, bare URLs): the notice title usually sits right before its link.
+    """
+    index = text.find(occurrence)
+    if index == -1:
+        index = text.lower().find(occurrence.lower())
+    if index == -1:
+        return ""
+    window = text[max(0, index - 400) : index]
+    window = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</\1>", " ", window)
+    window = re.sub(r"(?is)<[^>]+>", " ", window)
+    window = clean_text(window)
+    if not window:
+        return ""
+    window = window[-160:]
+    separators = list(re.finditer(r"(?:\s(?:[|»›•·]|[-–—]{1,2})\s|\s{2,})", window))
+    if separators:
+        window = window[separators[-1].end() :]
+    return window.strip(" |»›•-–—")[:160]
+
+
+def _page_source_candidate_title(url: str, label: str, text: str, occurrence: str) -> str:
+    """Pick a publishable title for a raw-source link.
+
+    Anchor label first, then the text preceding the URL in the raw source,
+    then the URL's own document name. Generic labels ("click here") and
+    code-remnant context ("var n = { url:") are never used; an empty result
+    means the link cannot be published.
+    """
+    context = _page_source_context(text, occurrence)
+    if context and re.search(r"[={}\\]", context):
+        context = ""
+    for candidate in (label, context):
+        if candidate and not is_junk_job_title(candidate) and len(candidate) >= 8:
+            return clean_title(candidate)
+    name = urllib.parse.urlsplit(url).path.rsplit("/", 1)[-1]
+    name = re.sub(
+        r"\.(?:pdf|docx?|xlsx?|pptx?|rtf|odt|html?|aspx?|php|jsp)$",
+        "",
+        name,
+        flags=re.I,
+    )
+    name = re.sub(r"[_+%]+", " ", name)
+    name = re.sub(r"(?i)\b(?:download|click|here|view|open)\b", " ", name)
+    name = clean_title(name)
+    if len(name) >= 8 and not is_junk_job_title(name):
+        return name
+    return ""
+
+
+def page_source_candidates(
+    download: Download, source: dict[str, Any], max_links: int = 200
+) -> list[Candidate]:
+    """Deep scan of the raw page source for notices the listing parser missed.
+
+    Official pages frequently publish notices in places the visible listing
+    parser skips: <noscript> fallback blocks, <iframe>/<embed> PDF embeds,
+    image maps (<area href>), JavaScript-generated links and data-* hooks.
+    This re-reads the raw source and keeps only links that classify as
+    supported notices for the source.
+    """
+    text = decode_document(download)
+    labels = _page_source_anchor_labels(text, download.url)
+    candidates: list[Candidate] = []
+    for url, occurrence in _page_source_notice_urls(text, download.url):
+        label = clean_text(labels.get(url, ""))
+        title = _page_source_candidate_title(url, label, text, occurrence)
+        if not title:
+            continue
+        candidate = Candidate(clean_title(title), url, summary=label[:400])
+        if looks_like_notice(candidate, source):
+            candidates.append(candidate)
+        if len(candidates) >= max_links:
+            break
+    return deduplicate_candidates(candidates)
+
+
+def page_source_fallback_candidates(
+    download: Download,
+    discovered: list[Candidate],
+    known: set[str],
+    source: dict[str, Any],
+) -> list[Candidate]:
+    """Page-source rule: candidates the raw page source adds beyond the listing.
+
+    Only meaningful for HTML pages (feeds are already fully parsed by the
+    listing step). Returns raw-source candidates that are not already known to
+    the monitor and not already in the listing, so the caller can publish them
+    like any other newly discovered notice.
+    """
+    if parse_feed(decode_document(download), download.url):
+        return []
+    listed_urls = {canonical_url(candidate.url) for candidate in discovered}
+    extras: list[Candidate] = []
+    for candidate in page_source_candidates(download, source):
+        if fingerprint(candidate) in known:
+            continue
+        if canonical_url(candidate.url) in listed_urls:
+            continue
+        extras.append(candidate)
+    return deduplicate_candidates(extras)
+
+
 def allowed_notice_types(source: dict[str, Any]) -> set[str]:
     configured = source.get("noticeTypes")
     if not isinstance(configured, list):
@@ -2123,6 +2347,8 @@ def process_discovery_feeds(
     state_changed = False
     state_sources = state.setdefault("sources", {})
     official_cache: dict[str, list[Candidate]] = {}
+    official_downloads: dict[str, Download] = {}
+    official_raw_cache: dict[str, list[Candidate]] = {}
 
     for feed in load_discovery_feeds():
         print(f"Checking discovery feed {feed['name']}: {feed['url']}")
@@ -2170,6 +2396,7 @@ def process_discovery_feeds(
             if official_url not in official_cache:
                 try:
                     official_download = fetch_url(official_url, timeout=int(official.get("timeout", 25)))
+                    official_downloads[official_url] = official_download
                     official_cache[official_url] = deduplicate_candidates(
                         candidate
                         for candidate in source_candidates(official_download)[: int(official.get("maxLinks", 600))]
@@ -2179,6 +2406,25 @@ def process_discovery_feeds(
                     print(f"  Official source unavailable ({official.get('name')}): {exc}", file=sys.stderr)
                     official_cache[official_url] = []
             matches = official_notices_for_headline(headline.title, official_cache[official_url])
+            if not matches and official_url in official_downloads:
+                # Page-source rule: the headline is only a lead. If the official
+                # website's visible listing did not show the notice, check the
+                # raw page source of that official website before dropping it.
+                # Applies to every approved official link, existing or added
+                # later — no extra configuration needed.
+                if official_url not in official_raw_cache:
+                    official_raw_cache[official_url] = page_source_candidates(
+                        official_downloads[official_url], official
+                    )
+                raw_matches = official_notices_for_headline(
+                    headline.title, official_raw_cache[official_url]
+                )
+                if raw_matches:
+                    print(
+                        f"  Listing showed no match; raw page source of {official.get('name')} "
+                        f"matched the headline"
+                    )
+                    matches = raw_matches
             if not matches:
                 print(f"  No official notice matched {official.get('name')} for: {headline.title[:80]}")
                 continue
@@ -3038,7 +3284,14 @@ def process_offline_forms(
 
 
 def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
-    """Turn user-added notification URLs into monitor sources automatically."""
+    """Turn user-added notification URLs into monitor sources automatically.
+
+    Each generated source goes through the same per-source pipeline as the
+    configured sources, so the page-source rule (after checking the official
+    website, if no new job notification is found, check the raw page source of
+    that official website) applies to user-added links too, with no extra
+    configuration.
+    """
     registry = read_json(path, {"links": []})
     links = registry.get("links", []) if isinstance(registry, dict) else []
     generated: list[dict[str, Any]] = []
@@ -3128,6 +3381,27 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         source_state = state_sources.setdefault(source_id, {"initializedAt": None, "fingerprints": []})
         known = set(source_state.get("fingerprints") or [])
         unseen = [candidate for candidate in discovered if fingerprint(candidate) not in known]
+        if not unseen:
+            # Page-source rule (mandatory, runs on every workflow run for every
+            # official website link — existing or newly added, no extra config):
+            # after checking the official website, if no new job notification
+            # was found in the listing, check the page source of the official
+            # website and publish only links found there.
+            page_source_extras = page_source_fallback_candidates(
+                download, discovered, known, source
+            )
+            if page_source_extras:
+                print(
+                    f"  Listing showed no new notification; raw page source of the "
+                    f"official website exposes {len(page_source_extras)} additional "
+                    f"notice link(s)"
+                )
+                discovered = deduplicate_candidates([*discovered, *page_source_extras])
+                unseen = [
+                    candidate
+                    for candidate in discovered
+                    if fingerprint(candidate) not in known
+                ]
         first_success = not source_state.get("initializedAt")
         if first_success:
             selected = unseen[: max(0, int(source.get("bootstrapCount", 1)))]
