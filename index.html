@@ -2653,43 +2653,77 @@
         }
 
         function buildJobPostingSchema(job) {
-            const datePosted = getSchemaDatePosted(job);
-            const validThrough = getSchemaValidThrough(job, datePosted);
-            const jobLocation = getSchemaJobLocation(job);
-            const baseSalary = getSchemaBaseSalary(job);
-            const description = getSchemaDescription(job);
-            const employmentType = getSchemaEmploymentType(job);
-            const sameAs = (job.pdfLink && job.pdfLink !== '#' && /^https?:\/\//i.test(job.pdfLink))
-                ? job.pdfLink
-                : "https://employmentexpress.github.io/homepage/";
+            if (!job || typeof job !== 'object') return null;
+            try {
+                const datePosted = getSchemaDatePosted(job);
+                const validThrough = getSchemaValidThrough(job, datePosted);
+                const jobLocation = getSchemaJobLocation(job);
+                const baseSalary = getSchemaBaseSalary(job);
+                const description = getSchemaDescription(job);
+                const employmentType = getSchemaEmploymentType(job);
+                const sameAs = (job.pdfLink && job.pdfLink !== '#' && /^https?:\/\//i.test(job.pdfLink))
+                    ? job.pdfLink
+                    : "https://employmentexpress.github.io/homepage/";
 
-            return {
-                "@type": "JobPosting",
-                "title": job.title,
-                "description": description,
-                "identifier": {
-                    "@type": "PropertyValue",
-                    "name": "EMPLOYMENT EXPRESS",
-                    "value": String(job.id)
-                },
-                "hiringOrganization": {
-                    "@type": "Organization",
-                    "name": job.department || "Government Recruitment Board",
-                    "sameAs": sameAs,
-                    "url": sameAs
-                },
-                "jobLocation": jobLocation,
-                "baseSalary": baseSalary,
-                "employmentType": employmentType,
-                "datePosted": datePosted,
-                "validThrough": validThrough,
-                "applicantLocationRequirements": {
-                    "@type": "Country",
-                    "name": "India"
-                },
-                "directApply": Boolean(job.applyLink && job.applyLink !== '#'),
-                "url": getJobDirectUrl(job)
-            };
+                return {
+                    "@type": "JobPosting",
+                    "title": job.title || "Government Recruitment Notification",
+                    "description": description,
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "name": "EMPLOYMENT EXPRESS",
+                        "value": String(job.id || Date.now())
+                    },
+                    "hiringOrganization": {
+                        "@type": "Organization",
+                        "name": job.department || "Government Recruitment Board",
+                        "sameAs": sameAs,
+                        "url": sameAs
+                    },
+                    "jobLocation": jobLocation,
+                    "baseSalary": baseSalary,
+                    "employmentType": employmentType,
+                    "datePosted": datePosted,
+                    "validThrough": validThrough,
+                    "applicantLocationRequirements": {
+                        "@type": "Country",
+                        "name": "India"
+                    },
+                    "directApply": Boolean(job.applyLink && job.applyLink !== '#'),
+                    "url": getJobDirectUrl(job)
+                };
+            } catch (e) {
+                // Fallback: Still generate the JobPosting even if any detail computation errors
+                const nowIso = new Date().toISOString();
+                return {
+                    "@type": "JobPosting",
+                    "title": job.title || "Government Recruitment Notification",
+                    "description": job.details || job.qualification || job.title || "Official recruitment notification and application details.",
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "name": "EMPLOYMENT EXPRESS",
+                        "value": String(job.id || Date.now())
+                    },
+                    "hiringOrganization": {
+                        "@type": "Organization",
+                        "name": job.department || "Government Recruitment Board"
+                    },
+                    "jobLocation": {
+                        "@type": "Place",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "Department Head Office",
+                            "addressLocality": "Chandigarh",
+                            "addressRegion": "Punjab",
+                            "postalCode": "160001",
+                            "addressCountry": "IN"
+                        }
+                    },
+                    "datePosted": nowIso,
+                    "validThrough": new Date(Date.now() + 30 * 86400000).toISOString(),
+                    "url": getJobDirectUrl(job)
+                };
+            }
         }
 
         // Google Jobs SEO: Inject Schema.org JobPosting / ItemList JSON-LD
@@ -2699,7 +2733,7 @@
             if (existing) existing.remove();
 
             const jobs = jobDatabase;
-            const jobPostings = jobs.map(buildJobPostingSchema);
+            const jobPostings = jobs.map(buildJobPostingSchema).filter(Boolean);
 
             const schema = {
                 "@context": "https://schema.org",

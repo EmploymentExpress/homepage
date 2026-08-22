@@ -157,6 +157,9 @@ Whenever job structured data, `index.html` schema functions, curated vacancy dat
    - `employmentType`: `"FULL_TIME"`, `"CONTRACTOR"`, `"TEMPORARY"`, `"PART_TIME"`, or `"INTERN"`.
 6. **Automated Verification:**
    - Every change must pass `tests/test_job_posting_schema.py` and the complete test suite (`python -m unittest discover tests/ -v`).
+7. **Resilience & Fallbacks (Always Post the Job Details):**
+   - If any specific or optional detail (such as exact salary figures, detailed street address, or explicit application opening/closing dates) is not found in the official notification, **the job details MUST STILL be published on the homepage, table, feeds, and structured data**.
+   - Never skip, drop, withhold, or fail to publish a job alert solely due to missing optional details — use safe, standard fallbacks (`See Notification`, official board headquarters address, standard pay scale defaults) so the job is always visible to applicants and search engines.
 
 ## 📐 Canonical section order (do not reorder)
 
