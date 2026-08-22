@@ -83,6 +83,38 @@ number, vacancy count, dates, `pdfLink`, `applyLink` — you must complete this 
 `test_agents_rules_require_official_page_source_verification`). The judgement half — actually
 opening the source before you type — is on you.
 
+## 🤖 Workflow automation page-source rule (mandatory, runs on every workflow run)
+
+The scheduled monitor (`.github/workflows/update-job-alerts.yml` →
+`scripts/update_jobs.py`) enforces the same source-of-truth rule mechanically:
+
+1. **Check the official website listing** of every enabled source.
+2. **If no new job notification is found** in the listing, **check the raw page
+   source of that official website** (`page_source_fallback_candidates` in
+   `scripts/update_jobs.py`): it re-reads the page's raw HTML — including
+   `<noscript>` fallback blocks, `<iframe>`/`<embed>` PDF embeds, `<area>`
+   maps, `data-*` hooks and bare URLs in scripts/JSON — and publishes only
+   links found there that classify as a supported notice. This runs on **every
+   workflow run**, not just the first.
+
+**This rule applies automatically to every official website link** — existing
+or added later, with **no extra configuration**:
+
+- every source in `automation/sources.json` (set `"enabled": true` and the
+  monitor handles the rest),
+- every approved organisation in `automation/official-organizations.json`
+  (when a discovery headline names it, the monitor verifies against the
+  official listing first and falls back to the official page source),
+- every user-added link in `data/notification-source-links.json`
+  (`additional_link_sources()` turns it into a normal source).
+
+When you add a new official website link to any of these files, you do **not**
+need to write any new scanning code or flags — the page-source check is part
+of the shared pipeline every source goes through. Never remove, weaken, or
+bypass this fallback; if the official site is unreachable, the monitor keeps
+existing data and says so (it never invents links). Keep the rule's guard
+tests in `tests/test_update_jobs.py` green when touching this pipeline.
+
 ## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:

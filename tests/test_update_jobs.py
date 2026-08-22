@@ -1480,6 +1480,242 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(cleaned["website"], "")
         self.assertEqual(cleaned["notification"], "https://example.gov.in/notice.pdf")
 
+    # ------------------------------------------------------------------
+    # Page-source rule: after checking the official website, if no new job
+    # notification is found, check the raw page source of the official
+    # website on every workflow run.
+    # ------------------------------------------------------------------
+    def _page_source_source(self):
+        return {
+            "id": "example-board",
+            "name": "Example Board",
+            "department": "Example Government Recruitment Board",
+            "url": "https://example.gov.in/notices",
+            "type": "central",
+            "categorySlug": "central",
+            "location": "All India",
+            "noticeTypes": ["recruitment", "result", "corrigendum"],
+            "includeKeywords": ["advt", "advt."],
+        }
+
+    def test_page_source_scan_finds_notices_the_listing_parser_misses(self):
+        """The raw page source exposes notices hidden from the visible listing:
+        <noscript> fallback links, <iframe> PDF embeds, <area> maps and bare
+        URLs inside scripts. The normal listing parser sees none of them."""
+        markup = """<html><head><title>Official Notices</title></head><body>
+        <nav>Home | Careers | Contact</nav>
+        <noscript>
+          <a href="/files/advt-2026-04.pdf"></a>
+        </noscript>
+        <iframe src="/uploads/recruitment-notification-2026.pdf"></iframe>
+        <map name="m"><area href="/vacancy-notice-2026.pdf" shape="rect" coords="0,0,10,10"></map>
+        <script>var n = { url: "https://example.gov.in/recruitment/advt-05-2026.html" };</script>
+        <a href="https://example.gov.in/recruitment/advt-06-2026.pdf">Recruitment Advertisement No 06/2026</a>
+        </body></html>"""
+        download = monitor.Download(
+            url="https://example.gov.in/notices",
+            content_type="text/html",
+            data=markup.encode("utf-8"),
+        )
+        source = self._page_source_source()
+        listing, _ = monitor.parse_html(markup, "https://example.gov.in/notices")
+        listed_urls = {monitor.canonical_url(candidate.url) for candidate in listing}
+        raw = monitor.page_source_candidates(download, source)
+        raw_urls = {monitor.canonical_url(candidate.url) for candidate in raw}
+        for hidden in (
+            "https://example.gov.in/files/advt-2026-04.pdf",  # noscript, no label
+            "https://example.gov.in/uploads/recruitment-notification-2026.pdf",  # iframe
+            "https://example.gov.in/vacancy-notice-2026.pdf",  # area
+            "https://example.gov.in/recruitment/advt-05-2026.html",  # script config
+        ):
+            with self.subTest(url=hidden):
+                self.assertNotIn(hidden, listed_urls, "listing parser must miss it")
+                self.assertIn(hidden, raw_urls, "raw page source must find it")
+        # A visible anchor stays a single candidate (same URL, same title).
+        self.assertIn("https://example.gov.in/recruitment/advt-06-2026.pdf", raw_urls)
+
+    def test_page_source_scan_skips_assets_and_aggregator_hosts(self):
+        """Static assets, same-page anchors and aggregator links never become
+        page-source candidates."""
+        markup = """<html><body>
+        <a href="/style.css">Styles</a>
+        <a href="/script.js">Script</a>
+        <img src="/banner.png" alt="banner">
+        <a href="#recruitment">Same page</a>
+        <a href="https://linkingsky.com/government-exams/government-jobs-in-punjab.html">Aggregator</a>
+        <a href="https://onlineforms.in/wp-content/uploads/2026/08/notice.pdf">Portal</a>
+        <a href="https://example.gov.in/recruitment/advt-06-2026.pdf">Recruitment Advertisement No 06/2026</a>
+        </body></html>"""
+        download = monitor.Download(
+            url="https://example.gov.in/notices",
+            content_type="text/html",
+            data=markup.encode("utf-8"),
+        )
+        raw = monitor.page_source_candidates(download, self._page_source_source())
+        urls = {monitor.canonical_url(candidate.url) for candidate in raw}
+        self.assertEqual(
+            urls, {"https://example.gov.in/recruitment/advt-06-2026.pdf"}
+        )
+
+    def test_page_source_fallback_only_fires_when_listing_found_nothing(self):
+        """The fallback returns raw-source candidates only when they are not
+        already listed, not already seen, and the page is HTML (not a feed)."""
+        markup = """<html><body>
+        <noscript><a href="/files/advt-2026-07.pdf"></a></noscript>
+        <a href="https://example.gov.in/recruitment/advt-07-2026.pdf">Recruitment Advertisement No 07/2026</a>
+        </body></html>"""
+        download = monitor.Download(
+            url="https://example.gov.in/notices",
+            content_type="text/html",
+            data=markup.encode("utf-8"),
+        )
+        source = self._page_source_source()
+        hidden = monitor.Candidate(
+            "advt-2026-07", "https://example.gov.in/files/advt-2026-07.pdf"
+        )
+        visible = monitor.Candidate(
+            "Recruitment Advertisement No 07/2026",
+            "https://example.gov.in/recruitment/advt-07-2026.pdf",
+        )
+        # Nothing known, nothing listed -> the raw source surfaces the hidden
+        # notice as well as the visible anchor (both are new to the monitor).
+        extras = monitor.page_source_fallback_candidates(download, [], set(), source)
+        self.assertEqual(
+            [monitor.canonical_url(candidate.url) for candidate in extras],
+            [
+                "https://example.gov.in/files/advt-2026-07.pdf",
+                "https://example.gov.in/recruitment/advt-07-2026.pdf",
+            ],
+        )
+        # Already listed -> only the hidden notice is extra, not duplicated.
+        extras = monitor.page_source_fallback_candidates(
+            download, [visible], set(), source
+        )
+        self.assertEqual(
+            [monitor.canonical_url(candidate.url) for candidate in extras],
+            ["https://example.gov.in/files/advt-2026-07.pdf"],
+        )
+        # Already seen -> nothing is republished.
+        extras = monitor.page_source_fallback_candidates(
+            download,
+            [],
+            {monitor.fingerprint(hidden), monitor.fingerprint(visible)},
+            source,
+        )
+        self.assertEqual(extras, [])
+        # Feeds are fully parsed by the listing step; the raw scan is skipped.
+        feed = monitor.Download(
+            url="https://example.gov.in/feed.xml",
+            content_type="application/rss+xml",
+            data=b'<rss version="2.0"><channel><title>t</title><item>'
+            b"<title>Recruitment</title><link>https://example.gov.in/advt.pdf</link>"
+            b"</item></channel></rss>",
+        )
+        self.assertEqual(monitor.page_source_fallback_candidates(feed, [], set(), source), [])
+
+    def test_every_enabled_official_source_is_covered_by_the_page_source_rule(self):
+        """The page-source rule lives in the shared per-source pipeline, so it
+        applies automatically to every official website link — the configured
+        sources, the approved organisations and user-added notification links —
+        existing or added later, with no extra configuration."""
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        enabled = [source for source in config["sources"] if source.get("enabled", True)]
+        self.assertGreaterEqual(len(enabled), 10)
+        for source in enabled:
+            with self.subTest(source=source.get("id")):
+                url = monitor.canonical_url(source.get("url", ""))
+                self.assertTrue(url, "every enabled source needs an official URL")
+                self.assertFalse(monitor.is_discovery_host(url))
+        # The fallback is a shared function: a brand-new source gets it with
+        # zero per-source configuration.
+        source = self._page_source_source()
+        markup = "<html><body><noscript><a href='/files/advt-2026-09.pdf'></a></noscript></body></html>"
+        download = monitor.Download(
+            url="https://example.gov.in/notices",
+            content_type="text/html",
+            data=markup.encode("utf-8"),
+        )
+        extras = monitor.page_source_fallback_candidates(download, [], set(), source)
+        self.assertEqual(len(extras), 1)
+        self.assertEqual(
+            monitor.canonical_url(extras[0].url),
+            "https://example.gov.in/files/advt-2026-09.pdf",
+        )
+
+    def test_run_checks_page_source_when_listing_shows_no_new_notification(self):
+        """Integration of the rule: on a later workflow run the official page's
+        visible listing has no new notification, so run() re-reads the raw page
+        source and publishes the notice it finds there."""
+        page = (
+            b"<html><body>\n"
+            b"<noscript><a href=\"/advt-02-2026.pdf\"></a></noscript>\n"
+            b"<a href=\"/advt-01-2026.pdf\">Advertisement No. 1/2026 for recruitment of 10 Clerk posts</a>\n"
+            b"</body></html>"
+        )
+        source = {
+            "id": "example",
+            "name": "Example",
+            "department": "Example Board",
+            "url": "https://example.gov.in/jobs",
+            "type": "central",
+            "categorySlug": "central",
+            "enrichDetails": False,
+            "bootstrapCount": 1,
+            "maxNewPerRun": 5,
+            "includeKeywords": ["advt", "advt."],
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(json.dumps({"sources": [source]}), encoding="utf-8")
+            download = monitor.Download("https://example.gov.in/jobs", "text/html", page)
+            with patch.object(monitor, "fetch_url", return_value=download):
+                monitor.run(config, output, state)
+            first = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(first["jobs"]), 1, "bootstrap publishes only the visible notice")
+
+            # Second run: the listing has no new notification (the visible
+            # notice is already known) -> the raw page source must be checked
+            # and the hidden noscript notice published.
+            with patch.object(monitor, "fetch_url", return_value=download):
+                monitor.run(config, output, state)
+            second = json.loads(output.read_text(encoding="utf-8"))
+            pdfs = {monitor.canonical_url(job["pdfLink"]) for job in second["jobs"]}
+            self.assertIn("https://example.gov.in/advt-01-2026.pdf", pdfs)
+            self.assertIn(
+                "https://example.gov.in/advt-02-2026.pdf",
+                pdfs,
+                "page-source fallback must publish the notice found in the raw source",
+            )
+
+    def test_page_source_rule_is_documented_in_workflow_and_agent_rules(self):
+        """The page-source rule is part of the workflow automation: the monitor
+        script the scheduled workflow runs enforces it, and AGENTS.md documents
+        it so future runs and future contributors keep it."""
+        workflow = (
+            Path(__file__).resolve().parents[1] / ".github" / "workflows" / "update-job-alerts.yml"
+        ).read_text(encoding="utf-8")
+        # The scheduled workflow drives the monitor that enforces the rule.
+        self.assertIn("python scripts/update_jobs.py", workflow)
+        agents = " ".join(
+            (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8").split()
+        )
+        self.assertIn("Workflow automation page-source rule", agents)
+        self.assertIn("If no new job notification is found", agents)
+        self.assertIn("check the raw page source of that official website", agents)
+        self.assertIn("applies automatically to every official website link", agents)
+        # The monitor code enforces it (not just the docs).
+        script = (Path(__file__).resolve().parents[1] / "scripts" / "update_jobs.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("page_source_fallback_candidates", script)
+
 
 if __name__ == "__main__":
     unittest.main()
