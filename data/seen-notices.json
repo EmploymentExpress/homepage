@@ -141,6 +141,36 @@
         "d5981b47fc72b745c237cde476d16b76b03ef237415aca433be57a0d8db10686",
         "1975d92077b97c615240b6ae701b8c6720d9f43c0b0ace5c8fcc123c9a8ef8fd"
       ]
+    },
+    "haryanajobs": {
+      "initializedAt": "2026-08-22T03:11:19Z",
+      "fingerprints": [
+        "c7ea5b7e8bcf111c2a258b9dd36656b9c9031095ef31f1d723892027592a71fd",
+        "1d556aee337034f2ed22928f7da5d90d04e4b10ea594e9837e988f69e580637c",
+        "8b4766f90ee9c25c506203d170edb0e4ea7aa956d7a158cf5898d84f7b67fa7d",
+        "21baf8d627991e147511380876c2a2851a6611754450e5cbeba1e5b0511d0ab6",
+        "099a36f428c1f53a0ca91906e15aa633486ba80f9e9a9d9f596a1da8aae95a90",
+        "3cfb83daf7ffe3cb939d2209adb23fb9b2b3a6adf8227b99dcd605398785a98a",
+        "12ac4e553515f7e8f6795678400df8abf952004a782e5e3346faa5aa67c6cedd",
+        "720a1d92f781c6810ca04dc6a852f8c7715e9500576736bbe36b53f61f50991c",
+        "eeb40cd3a8392e9199b317322eaad024edf851675f78d7f02bf1b5e9a0757654",
+        "88693a01c869dc5ca5794051dde72589eb4c5974ee25e40c51ba02535979d713",
+        "defbeecc0064fcea41826eb25d7e385c897668c051c92f38e620346a216e05dd",
+        "a473aca1963668bade0fbb1a83b5352ecd9d1dfc4eb8e6632c0ee2fc0b0d2dd8",
+        "f6873f4a92efef02cbca64b1e5fe46c51b970be77317b09f030413114886e074",
+        "582299349f6f25452b51f22012522ab1e09432dcc4af93d30698d7f04096592f",
+        "91152cb52c8742e9e8acaa01d672b7759dcb5dc3f93af8a8c9160b2a986fba63",
+        "91ef91d985db911b84e51868d4ec34bbbcbffda324b912515106c6d2f14cd28f",
+        "b75d0f547927f22d476d7ae9a912cf903cb47b25d124aed2b4ffc20ad49cf56d",
+        "834e5769829ce20577f23206e033c7ee67fc2aa2ab0c1820469a4c3f17a26b07",
+        "8ddc65cf8eca0f57847657217b1148683f6208858125281df8d462519b6376cc",
+        "bece01abdfbaf76e82684ca4501734e3cc2e2bacc8c438460893ff1f3eb4dad7",
+        "d6654c1b88aeeb025b2e88cffdae90d4e59ece5014bef56ef03aee34eba1ffc4",
+        "58cde1b0fc091fdd78214f5449ebba4485b4495e5fffef14e53840d568522db7",
+        "c121117ff6b96017e6ea1ea613bfaab6556f8d0daeb71c4a9320b4271967017d",
+        "6bfcf0b129f3e9eaa337037a454ffbab6506a17a654205c9fb5a048014523913",
+        "55506c1fab20ee2f0b8f5b660cb6f6691fe8d54906d7d577d8db9d1c06d696f0"
+      ]
     }
   },
   "offlinePageDocuments": {
@@ -5359,7 +5389,7 @@
       "pageTitle": "India Post Gramin Dak Sevak GDS Recruitment 2026 | 10th Pass Job 2026"
     },
     "https://www.speedjob.in/delhi-sahitya-akademi-recruitment-2026/": {
-      "form": "https://sahitya-akademi.gov.in/",
+      "form": "https://www.speedjob.in/wp-content/uploads/2026/08/Delhi-Sahitya-Akademi-Recruitment-2026-Short-Notice.webp",
       "notification": "https://www.speedjob.in/wp-content/uploads/2026/08/Delhi-Sahitya-Akademi-Recruitment-2026-Short-Notice.webp",
       "website": "",
       "applyMode": "offline",
@@ -5367,6 +5397,16 @@
       "startDate": "22-08-2026",
       "lastDate": "21-09-2026",
       "pageTitle": "Delhi Sahitya Akademi Recruitment 2026 | Sahitya Akademi Vacancy 2026"
+    },
+    "https://www.speedjob.in/wp-content/uploads/2026/08/Delhi-Sahitya-Akademi-Recruitment-2026-Short-Notice.webp": {
+      "form": "",
+      "notification": "",
+      "website": "",
+      "applyMode": "",
+      "department": "",
+      "startDate": "",
+      "lastDate": "",
+      "pageTitle": ""
     }
   }
 }
