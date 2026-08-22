@@ -276,6 +276,22 @@
         "sgpc education directorate",
         "shiromani gurdwara parbandhak committee education"
       ]
+    },
+    {
+      "id": "prsc",
+      "name": "PRSC",
+      "department": "Punjab Remote Sensing Centre (PRSC), Ludhiana",
+      "url": "https://prsc.punjab.gov.in/Recruitment.aspx",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "prsc",
+        "punjab remote sensing centre",
+        "punjab remote sensing centre ludhiana",
+        "prsc ludhiana"
+      ]
     }
   ]
 }

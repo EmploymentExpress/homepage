@@ -810,6 +810,47 @@
       "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
+    },
+    {
+      "id": "prsc",
+      "enabled": true,
+      "name": "PRSC Recruitment",
+      "department": "Punjab Remote Sensing Centre (PRSC), Ludhiana",
+      "url": "https://prsc.punjab.gov.in/Recruitment.aspx",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ],
+      "includeKeywords": [
+        "applications are invited",
+        "application invited",
+        "recruitment",
+        "vacancy",
+        "vacancies",
+        "advertisement",
+        "advt",
+        "post of",
+        "posts of",
+        "walk-in",
+        "walk in interview",
+        "engagement of"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 35,
+      "detailTimeout": 25
     }
   ]
 }

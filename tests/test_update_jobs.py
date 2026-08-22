@@ -200,6 +200,54 @@ class JobMonitorTests(unittest.TestCase):
         self.assertFalse(monitor.is_discovery_host(home[0]["url"]))
         self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
 
+    def test_prsc_official_site_is_monitored(self):
+        """PRSC (Punjab Remote Sensing Centre) recruitment page must be an
+        enabled automation source, and the page-source rule applies to it."""
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        prsc = [
+            source
+            for source in config["sources"]
+            if "prsc.punjab.gov.in" in source["url"]
+        ]
+        self.assertTrue(prsc, "PRSC must be configured as an automation source")
+        self.assertEqual(
+            [monitor.canonical_url(source["url"]) for source in prsc],
+            ["https://prsc.punjab.gov.in/Recruitment.aspx"],
+        )
+        self.assertTrue(prsc[0]["enabled"])
+        self.assertEqual(
+            prsc[0]["department"], "Punjab Remote Sensing Centre (PRSC), Ludhiana"
+        )
+        self.assertEqual(prsc[0]["type"], "punjab")
+        self.assertFalse(monitor.is_discovery_host(prsc[0]["url"]))
+        self.assertEqual(len({source["id"] for source in config["sources"]}), len(config["sources"]))
+        # PRSC is also an approved official organisation for discovery headlines.
+        orgs = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "official-organizations.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        org_ids = {org["id"] for org in orgs.get("organizations", [])}
+        self.assertIn("prsc", org_ids)
+
+    def test_discovery_feeds_include_haryanajobs(self):
+        """HaryanaJobs must be configured as a discovery headline scanner and
+        never be treated as a publishable source."""
+        feeds = monitor.load_discovery_feeds()
+        ids = {feed["id"] for feed in feeds}
+        self.assertIn("haryanajobs", ids)
+        haryanajobs = next(feed for feed in feeds if feed["id"] == "haryanajobs")
+        self.assertEqual(
+            monitor.canonical_url(haryanajobs["url"]), "https://haryanajobs.in/"
+        )
+        self.assertTrue(monitor.is_discovery_host(haryanajobs["url"]))
+        self.assertGreaterEqual(haryanajobs["maxNewPerRun"], 1)
+        self.assertGreaterEqual(haryanajobs["maxHeadlines"], 1)
+
     def test_agents_rules_require_official_page_source_verification(self):
         raw = (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8")
         # Compare on a single line so re-wrapping the rule text cannot break the guard.
