@@ -1,3 +1,17 @@
+# Scheduled official-website monitor.
+#
+# Page-source rule (mandatory, runs on EVERY run of this workflow):
+# the "Check official websites for new alerts" step (scripts/update_jobs.py)
+# first checks each enabled official website listing; if no new job
+# notification is found there, it re-reads the RAW page source of that
+# official website (noscript blocks, iframe/embed PDF embeds, area maps,
+# data-* hooks, bare URLs in scripts/JSON) and publishes only links found
+# there. The rule applies automatically to every official website link in
+# automation/sources.json, automation/official-organizations.json and
+# data/notification-source-links.json — existing or added later — with no
+# extra configuration. Do not remove or bypass that step; details are in
+# AGENTS.md ("Workflow automation page-source rule") and the guard tests in
+# tests/test_update_jobs.py.
 name: Update job alerts
 
 on:
