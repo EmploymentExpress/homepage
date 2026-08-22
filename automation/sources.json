@@ -851,6 +851,53 @@
       "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
+    },
+    {
+      "id": "chandigarh-administration-public-notices",
+      "enabled": true,
+      "name": "Chandigarh Administration Public Notices",
+      "department": "Chandigarh Administration",
+      "url": "https://chandigarh.gov.in/public-notice",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ],
+      "includeKeywords": [
+        "applications are invited",
+        "inviting applications",
+        "engagement of human resources",
+        "hiring of manpower",
+        "filling up of",
+        "recruitment",
+        "vacancy",
+        "vacancies",
+        "post of",
+        "posts of",
+        "walk-in interview",
+        "walk in interview",
+        "deputation basis"
+      ],
+      "excludeKeywords": [
+        "draft recruitment rules",
+        "amendment in recruitment rules",
+        "inviting comments",
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest",
+        "auction"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 0,
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 45,
+      "detailTimeout": 45
     }
   ]
 }

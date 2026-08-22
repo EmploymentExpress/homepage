@@ -915,7 +915,15 @@ def _is_attachment_label(title: str) -> bool:
 
 
 def _row_notice_title(row: dict[str, Any]) -> str:
-    """Longest descriptive cell in a notice-table row (the notice subject)."""
+    """Longest descriptive subject in a notice-table row.
+
+    Most boards print the subject as plain text and keep attachment links in a
+    separate download column. Some official tables (including Chandigarh
+    Administration Public Notices) put the complete subject inside the PDF
+    anchor itself and leave no plain-text subject cell. In that layout the
+    longest non-attachment link label is the notice title, not the shorter
+    department column.
+    """
     best = ""
     for cell in row.get("cells", []):
         # A download column carries its text inside the anchors, so judging cells by
@@ -929,6 +937,14 @@ def _row_notice_title(row: dict[str, Any]) -> str:
             continue
         if len(text) > len(best):
             best = text
+    for _, label in row.get("links", []):
+        linked_title = clean_title(label)
+        if (
+            len(linked_title) > len(best)
+            and not _is_attachment_label(linked_title)
+            and not is_junk_job_title(linked_title)
+        ):
+            best = linked_title
     return clean_title(best)
 
 
