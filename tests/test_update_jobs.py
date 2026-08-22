@@ -682,7 +682,6 @@ class JobMonitorTests(unittest.TestCase):
                     self.assertNotIn("onlineforms", job[field].lower())
 
     def test_offline_form_link_attached_to_existing_offline_job(self):
-        forms = monitor.load_offline_forms()
         existing = {
             "id": 999,
             "title": "Air Force Non-Combatant Recruitment 2026 - apply offline",
