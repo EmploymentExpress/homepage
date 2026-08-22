@@ -128,6 +128,39 @@ Whenever new job details are added or published through automation:
 
 Every published job title must visibly contain the full recruiting department/organisation name and the actual post or vacancy subject. Convert action-only labels such as `Application for Clerk` into a specific title such as `Punjab State Legal Services Authority (PULSA) — Clerk Recruitment`; reject navigation/link labels such as `Other Links`, `Close menu`, or `work Recruitments`. Generic source labels such as `Official Recruitment Notice` are never valid department names.
 
+## 📋 Google Jobs & Search Console Schema Standard (Mandatory)
+
+Whenever job structured data, `index.html` schema functions, curated vacancy datasets, or automation scripts are created or modified, all Schema.org `JobPosting` structured data must strictly satisfy **all Google Search Console critical and non-critical requirements**:
+
+1. **`datePosted` (Critical / Required):**
+   - Must ALWAYS be present as a valid ISO 8601 string (`YYYY-MM-DD` or `YYYY-MM-DDTHH:mm:ssZ`).
+   - Parsed from `job.publishedAt`, `job.startDate`, `job.discoveredAt`, or derived from `job.lastDate`, with a fallback to the current date. Never emit an empty, null, or missing `datePosted`.
+2. **`validThrough` (Recommended / Non-critical):**
+   - Must ALWAYS be present as a valid ISO 8601 string at the end of the deadline date (`23:59:59`).
+   - Parsed from `job.extendedLastDate` or `job.lastDate`. If "See Notification" or unparseable, set to a 30-day validity window from `datePosted`.
+3. **`jobLocation.address` (Required / Non-critical subfields):**
+   - Must be a `PostalAddress` object with all five fields populated:
+     - `streetAddress`: Post/department campus, office, or district complex.
+     - `addressLocality`: City or district (e.g. Chandigarh, Ludhiana, Amritsar, SAS Nagar Mohali, Patiala, Jalandhar, Bathinda, New Delhi, etc.).
+     - `addressRegion`: State or UT (e.g. Punjab, Chandigarh, Delhi, Haryana, Karnataka, Tamil Nadu).
+     - `postalCode`: Valid 6-digit Indian PIN code (e.g. 160001, 141004, 143005, 160017, 110001).
+     - `addressCountry`: `"IN"`.
+4. **`baseSalary` (Recommended / Non-critical):**
+   - Must be structured as a `MonetaryAmount` in currency `"INR"` with a `QuantitativeValue` (`unitText: "MONTH"`).
+   - Value must be numeric (single `value` or `minValue`/`maxValue` range), extracted from parsed remuneration / pay scale or mapped to standard 7th CPC entry pay levels (10th/12th: Level 2, Diploma/ITI: Level 4, Graduate/Officer: Level 6-7).
+5. **Required Core Fields:**
+   - `title`: Specific post title naming the department.
+   - `description`: Rich textual description combining details, qualification, vacancies, age criteria, and how-to-apply steps.
+   - `hiringOrganization`: `@type: "Organization"` with non-empty `name` and valid `sameAs` / `url`.
+   - `identifier`: `@type: "PropertyValue"`, `name: "EMPLOYMENT EXPRESS"`, `value: String(job.id)`.
+   - `url`: Direct deep link (`getJobDirectUrl(job)`).
+   - `employmentType`: `"FULL_TIME"`, `"CONTRACTOR"`, `"TEMPORARY"`, `"PART_TIME"`, or `"INTERN"`.
+6. **Automated Verification:**
+   - Every change must pass `tests/test_job_posting_schema.py` and the complete test suite (`python -m unittest discover tests/ -v`).
+7. **Resilience & Fallbacks (Always Post the Job Details):**
+   - If any specific or optional detail (such as exact salary figures, detailed street address, or explicit application opening/closing dates) is not found in the official notification, **the job details MUST STILL be published on the homepage, table, feeds, and structured data**.
+   - Never skip, drop, withhold, or fail to publish a job alert solely due to missing optional details — use safe, standard fallbacks (`See Notification`, official board headquarters address, standard pay scale defaults) so the job is always visible to applicants and search engines.
+
 ## 📐 Canonical section order (do not reorder)
 
 Inside `<main>` of `index.html`:

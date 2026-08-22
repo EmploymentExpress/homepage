@@ -2395,6 +2395,337 @@
             }
         }
 
+        // Helper to parse ISO strings or DD-MM-YYYY dates safely
+        function parseIsoOrDate(str) {
+            if (!str || typeof str !== 'string') return null;
+            const trimmed = str.trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+                const d = new Date(trimmed);
+                if (!isNaN(d.getTime())) return d;
+            }
+            const match = trimmed.match(/(\d{1,2})-(\d{1,2})-(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+            if (match) {
+                const day = Number(match[1]);
+                const month = Number(match[2]);
+                const year = Number(match[3]);
+                const hour = match[4] != null ? Number(match[4]) : 0;
+                const min = match[5] != null ? Number(match[5]) : 0;
+                if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 1970) {
+                    const d = new Date(year, month - 1, day, hour, min, 0);
+                    if (!isNaN(d.getTime())) return d;
+                }
+            }
+            return null;
+        }
+
+        function getSchemaDatePosted(job) {
+            const parsed = parseIsoOrDate(job.publishedAt) || parseIsoOrDate(job.startDate) || parseIsoOrDate(job.discoveredAt);
+            if (parsed) return parsed.toISOString();
+            const lastD = parseIsoOrDate(job.lastDate);
+            if (lastD) {
+                const est = new Date(lastD.getTime() - 14 * 24 * 60 * 60 * 1000);
+                return est.toISOString();
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return today.toISOString();
+        }
+
+        function getSchemaValidThrough(job, datePostedIso) {
+            const deadline = parseIsoOrDate(job.extendedLastDate) || parseIsoOrDate(job.lastDate);
+            if (deadline) {
+                deadline.setHours(23, 59, 59, 999);
+                return deadline.toISOString();
+            }
+            const base = datePostedIso ? new Date(datePostedIso) : new Date();
+            const expiry = new Date(base.getTime() + 30 * 24 * 60 * 60 * 1000);
+            expiry.setHours(23, 59, 59, 999);
+            return expiry.toISOString();
+        }
+
+        function getSchemaJobLocation(job) {
+            const loc = ((job.location || '') + ' ' + (job.department || '') + ' ' + (job.title || '')).toLowerCase();
+            let locality = 'Chandigarh';
+            let region = 'Punjab';
+            let postalCode = '160001';
+            let streetAddress = 'Department Head Office / District Offices';
+
+            if (loc.includes('ludhiana') || loc.includes('pau')) {
+                locality = 'Ludhiana';
+                region = 'Punjab';
+                postalCode = '141004';
+                streetAddress = (loc.includes('pau') || loc.includes('agricultural'))
+                    ? 'Punjab Agricultural University Campus, Ferozepur Road'
+                    : 'District Administrative Complex, Ludhiana';
+            } else if (loc.includes('amritsar') || loc.includes('gndu')) {
+                locality = 'Amritsar';
+                region = 'Punjab';
+                postalCode = '143005';
+                streetAddress = loc.includes('gndu')
+                    ? 'Guru Nanak Dev University, Grand Trunk Road'
+                    : 'District Administrative Complex, Amritsar';
+            } else if (loc.includes('patiala') || loc.includes('pspcl') || loc.includes('pup')) {
+                locality = 'Patiala';
+                region = 'Punjab';
+                postalCode = '147001';
+                streetAddress = loc.includes('pspcl')
+                    ? 'PSEB Head Office, The Mall'
+                    : 'District Administrative Complex, Patiala';
+            } else if (loc.includes('jalandhar')) {
+                locality = 'Jalandhar';
+                region = 'Punjab';
+                postalCode = '144001';
+                streetAddress = 'District Administrative Complex, Jalandhar';
+            } else if (loc.includes('bathinda') || loc.includes('bhatinda')) {
+                locality = 'Bathinda';
+                region = 'Punjab';
+                postalCode = '151001';
+                streetAddress = 'District Administrative Complex, Bathinda';
+            } else if (loc.includes('mohali') || loc.includes('sas nagar') || loc.includes('sssb')) {
+                locality = 'SAS Nagar (Mohali)';
+                region = 'Punjab';
+                postalCode = '160062';
+                streetAddress = loc.includes('sssb')
+                    ? 'Forest Complex, Sector 68'
+                    : 'Sector 62, SAS Nagar Mohali';
+            } else if (loc.includes('hoshiarpur') || loc.includes('grau')) {
+                locality = 'Hoshiarpur';
+                region = 'Punjab';
+                postalCode = '146001';
+                streetAddress = loc.includes('grau')
+                    ? 'GRAU Campus, VPO Kharkan, Una Road'
+                    : 'District Administrative Complex, Hoshiarpur';
+            } else if (loc.includes('chandigarh') || loc.includes('u.t.') || loc.includes('nvs')) {
+                locality = 'Chandigarh';
+                region = 'Chandigarh';
+                postalCode = '160017';
+                streetAddress = loc.includes('industries')
+                    ? 'District Industries Centre, Plot No. 39, Industrial Area Phase II'
+                    : ((loc.includes('abdm') || loc.includes('health'))
+                        ? 'Health Department, Sector 22'
+                        : 'Deluxe Building, Sector 9, U.T. Secretariat');
+            } else if (loc.includes('delhi') || loc.includes('sahitya akademi') || loc.includes('ssc') || loc.includes('upsc')) {
+                locality = 'New Delhi';
+                region = 'Delhi';
+                postalCode = '110001';
+                streetAddress = loc.includes('sahitya akademi')
+                    ? 'Rabindra Bhavan, 35 Ferozeshah Road'
+                    : 'Central Secretariat / Department Headquarters';
+            } else if (loc.includes('bangalore') || loc.includes('bengaluru') || loc.includes('nal') || loc.includes('asc centre')) {
+                locality = 'Bengaluru';
+                region = 'Karnataka';
+                postalCode = '560007';
+                streetAddress = loc.includes('nal')
+                    ? 'HAL Airport Road, Kodihalli'
+                    : 'ASC Centre (South) - 2 ATC, Agram Post';
+            } else if (loc.includes('chennai') || loc.includes('siddha') || loc.includes('ccrs')) {
+                locality = 'Chennai';
+                region = 'Tamil Nadu';
+                postalCode = '600106';
+                streetAddress = loc.includes('ccrs')
+                    ? 'SCRI Building, Anna Govt. Hospital Campus, Arumbakkam'
+                    : 'Head Office / Regional Centre';
+            } else if (loc.includes('rohtak') || loc.includes('haryana')) {
+                locality = 'Rohtak';
+                region = 'Haryana';
+                postalCode = '124001';
+                streetAddress = 'College Campus / Administrative Office, Rohtak';
+            } else if (job.type === 'punjab') {
+                locality = 'Chandigarh';
+                region = 'Punjab';
+                postalCode = '160001';
+                streetAddress = 'Punjab Civil Secretariat / Department Offices';
+            } else {
+                locality = 'New Delhi';
+                region = 'Delhi';
+                postalCode = '110001';
+                streetAddress = 'Recruitment Division, All India Vacancies';
+            }
+
+            return {
+                "@type": "Place",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": streetAddress,
+                    "addressLocality": locality,
+                    "addressRegion": region,
+                    "postalCode": postalCode,
+                    "addressCountry": "IN"
+                }
+            };
+        }
+
+        function getSchemaBaseSalary(job) {
+            const text = (job.details || '') + ' ' + (job.qualification || '');
+            const rangeMatch = text.match(/(?:Rs\.?|INR|₹|Pay\s*Scale|Scale\s*of\s*Pay)\s*:?\s*([0-9,]{4,8})\s*(?:-|to)\s*([0-9,]{4,8})/i);
+            if (rangeMatch) {
+                const minVal = Number(rangeMatch[1].replace(/,/g, ''));
+                const maxVal = Number(rangeMatch[2].replace(/,/g, ''));
+                if (minVal >= 5000 && maxVal >= minVal && maxVal <= 500000) {
+                    return {
+                        "@type": "MonetaryAmount",
+                        "currency": "INR",
+                        "value": {
+                            "@type": "QuantitativeValue",
+                            "minValue": minVal,
+                            "maxValue": maxVal,
+                            "unitText": "MONTH"
+                        }
+                    };
+                }
+            }
+            const singleMatch = text.match(/(?:remuneration|salary|stipend|consolidated\s*pay|pay|pm|per\s*month)?\s*(?:is\s*)?(?:Rs\.?|INR|₹)\s*([0-9,]{5,8})(?:\s*\/?\s*(?:month|pm|p\.m\.))?/i);
+            if (singleMatch) {
+                const val = Number(singleMatch[1].replace(/,/g, ''));
+                if (val >= 10000 && val <= 500000) {
+                    return {
+                        "@type": "MonetaryAmount",
+                        "currency": "INR",
+                        "value": {
+                            "@type": "QuantitativeValue",
+                            "value": val,
+                            "unitText": "MONTH"
+                        }
+                    };
+                }
+            }
+            const qual = (job.qualCategory || job.qualification || '').toLowerCase();
+            let minValue = 21700;
+            let maxValue = 69100;
+            if (qual.includes('10th') || qual.includes('12th')) {
+                minValue = 19900;
+                maxValue = 63200;
+            } else if (qual.includes('diploma') || qual.includes('iti')) {
+                minValue = 25500;
+                maxValue = 81100;
+            } else if (qual.includes('graduate') || qual.includes('degree') || qual.includes('master') || qual.includes('officer')) {
+                minValue = 35400;
+                maxValue = 112400;
+            }
+            return {
+                "@type": "MonetaryAmount",
+                "currency": "INR",
+                "value": {
+                    "@type": "QuantitativeValue",
+                    "minValue": minValue,
+                    "maxValue": maxValue,
+                    "unitText": "MONTH"
+                }
+            };
+        }
+
+        function getSchemaDescription(job) {
+            const parts = [];
+            if (job.details) parts.push(job.details);
+            if (job.qualification && job.qualification !== 'See Official Notification') {
+                parts.push(`Qualification: ${job.qualification}`);
+            }
+            if (job.vacancies && job.vacancies !== 'See Notification') {
+                parts.push(`Total Vacancies: ${job.vacancies}`);
+            }
+            if (job.age && job.age !== 'See Official Notification') {
+                parts.push(`Age Limit: ${job.age}`);
+            }
+            if (job.lastDate && job.lastDate !== 'See Notification') {
+                parts.push(`Last Date to Apply: ${job.lastDate}`);
+            }
+            if (Array.isArray(job.howToApply) && job.howToApply.length > 0) {
+                parts.push(`How to Apply: ${job.howToApply.join(' ')}`);
+            }
+            return parts.join('\n\n') || job.title || 'Government recruitment notification and application details.';
+        }
+
+        function getSchemaEmploymentType(job) {
+            const text = ((job.details || '') + ' ' + (job.title || '') + ' ' + (job.applyMode || '')).toLowerCase();
+            if (text.includes('contract') || text.includes('contractual') || text.includes('deputation')) {
+                return 'CONTRACTOR';
+            }
+            if (text.includes('temporary')) {
+                return 'TEMPORARY';
+            }
+            if (text.includes('part time') || text.includes('part-time')) {
+                return 'PART_TIME';
+            }
+            if (text.includes('intern') || text.includes('apprentice')) {
+                return 'INTERN';
+            }
+            return 'FULL_TIME';
+        }
+
+        function buildJobPostingSchema(job) {
+            if (!job || typeof job !== 'object') return null;
+            try {
+                const datePosted = getSchemaDatePosted(job);
+                const validThrough = getSchemaValidThrough(job, datePosted);
+                const jobLocation = getSchemaJobLocation(job);
+                const baseSalary = getSchemaBaseSalary(job);
+                const description = getSchemaDescription(job);
+                const employmentType = getSchemaEmploymentType(job);
+                const sameAs = (job.pdfLink && job.pdfLink !== '#' && /^https?:\/\//i.test(job.pdfLink))
+                    ? job.pdfLink
+                    : "https://employmentexpress.github.io/homepage/";
+
+                return {
+                    "@type": "JobPosting",
+                    "title": job.title || "Government Recruitment Notification",
+                    "description": description,
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "name": "EMPLOYMENT EXPRESS",
+                        "value": String(job.id || Date.now())
+                    },
+                    "hiringOrganization": {
+                        "@type": "Organization",
+                        "name": job.department || "Government Recruitment Board",
+                        "sameAs": sameAs,
+                        "url": sameAs
+                    },
+                    "jobLocation": jobLocation,
+                    "baseSalary": baseSalary,
+                    "employmentType": employmentType,
+                    "datePosted": datePosted,
+                    "validThrough": validThrough,
+                    "applicantLocationRequirements": {
+                        "@type": "Country",
+                        "name": "India"
+                    },
+                    "directApply": Boolean(job.applyLink && job.applyLink !== '#'),
+                    "url": getJobDirectUrl(job)
+                };
+            } catch (e) {
+                // Fallback: Still generate the JobPosting even if any detail computation errors
+                const nowIso = new Date().toISOString();
+                return {
+                    "@type": "JobPosting",
+                    "title": job.title || "Government Recruitment Notification",
+                    "description": job.details || job.qualification || job.title || "Official recruitment notification and application details.",
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "name": "EMPLOYMENT EXPRESS",
+                        "value": String(job.id || Date.now())
+                    },
+                    "hiringOrganization": {
+                        "@type": "Organization",
+                        "name": job.department || "Government Recruitment Board"
+                    },
+                    "jobLocation": {
+                        "@type": "Place",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "Department Head Office",
+                            "addressLocality": "Chandigarh",
+                            "addressRegion": "Punjab",
+                            "postalCode": "160001",
+                            "addressCountry": "IN"
+                        }
+                    },
+                    "datePosted": nowIso,
+                    "validThrough": new Date(Date.now() + 30 * 86400000).toISOString(),
+                    "url": getJobDirectUrl(job)
+                };
+            }
+        }
+
         // Google Jobs SEO: Inject Schema.org JobPosting / ItemList JSON-LD
         function injectJobPostingSchema() {
             // Remove any previously injected schema
@@ -2402,39 +2733,7 @@
             if (existing) existing.remove();
 
             const jobs = jobDatabase;
-            const jobPostings = jobs.map(job => {
-                const lastDateParsed = parseLastDate(job.lastDate);
-                const validThrough = lastDateParsed ? lastDateParsed.toISOString() : '';
-                const startDateParsed = parseLastDate(job.startDate);
-                const datePosted = startDateParsed ? startDateParsed.toISOString() : '';
-                return {
-                    "@type": "JobPosting",
-                    "title": job.title,
-                    "description": job.details || job.qualification || '',
-                    "identifier": {
-                        "@type": "PropertyValue",
-                        "name": "EMPLOYMENT EXPRESS",
-                        "value": String(job.id)
-                    },
-                    "hiringOrganization": {
-                        "@type": "Organization",
-                        "name": job.department,
-                        "sameAs": safeExternalUrl(job.pdfLink)
-                    },
-                    "jobLocation": {
-                        "@type": "Place",
-                        "address": {
-                            "@type": "PostalAddress",
-                            "addressLocality": job.location || (job.type === 'punjab' ? 'Punjab' : 'India'),
-                            "addressCountry": "IN"
-                        }
-                    },
-                    "employmentType": "FULL_TIME",
-                    ...(datePosted ? { "datePosted": datePosted } : {}),
-                    ...(validThrough ? { "validThrough": validThrough } : {}),
-                    "url": getJobDirectUrl(job)
-                };
-            });
+            const jobPostings = jobs.map(buildJobPostingSchema).filter(Boolean);
 
             const schema = {
                 "@context": "https://schema.org",
