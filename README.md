@@ -35,7 +35,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 - **Admit Card & Results columns** — direct “Get” / “NEW” pulses with toast feedback including NVS Chandigarh & JNVST lists
 - **Syllabus & Official Portals widgets** + direct links to Navodaya Vidyalaya Samiti RO Chandigarh (`https://navodaya.gov.in/nvs/ro/Chandigarh/en/home/`)
 - **Floating Telegram/WhatsApp/YouTube buttons** + footer disclaimer (YouTube with headline “Subscribe YouTube Channel”)
-- **SEO:** canonical, Open Graph, Twitter Card, Organization + WebSite JSON-LD, `robots.txt` + `sitemap.xml` (lastmod 2026-08-17), Google Search Console verification meta tag (`google-site-verification`)
+- **SEO & Google Jobs Schema:** canonical, Open Graph, Twitter Card, Organization + WebSite JSON-LD, fully compliant Schema.org `JobPosting` / `ItemList` structured data (with mandatory `datePosted`, `validThrough`, `jobLocation` including `streetAddress`/`addressRegion`/`postalCode`, and structured `baseSalary` in INR with `QuantitativeValue`), `robots.txt` + `sitemap.xml` (lastmod 2026-08-17), Google Search Console verification meta tag (`google-site-verification`)
 - **A11y & Performance:** semantic headings (`sr-only` H1), ARIA, keyboard `Esc` to close modal, focus rings, custom scrollbar, `preconnect` hints
 
 ---
@@ -56,6 +56,7 @@ Get instant notifications for new vacancies, admit cards, results & answer keys:
 │   └── seen-notices.json                    # Generated de-duplication state
 ├── redirect.html                            # Client-side token resolver for offline forms (no external URL shown)
 ├── scripts/update_jobs.py                   # Generic HTML/RSS/PDF monitor
+├── tests/test_job_posting_schema.py         # Google Search Console JobPosting schema guard tests
 ├── tests/test_update_jobs.py                # Parser and de-duplication tests
 ├── index.html                               # Single-page, data-driven homepage
 ├── assets/logo.png                          # Favicon / brand logo
