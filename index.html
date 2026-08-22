@@ -248,7 +248,7 @@
                 <div class="flex flex-wrap items-center">
                     <a href="#" class="px-3.5 py-2.5 bg-brand-900 text-white font-bold border-b-2 border-accent-orange"><i class="fas fa-home mr-1"></i> Home</a>
                     <a href="#punjab-jobs" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Punjab Jobs</a>
-                    <a href="#police-jobs" class="px-3.5 py-2.5 hover:bg-brand-700 transition"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>Punjab Police</a>
+                    <a href="javascript:void(0)" onclick="filterByCategory('punjab-police')" class="px-3.5 py-2.5 hover:bg-brand-700 transition"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>Punjab Police</a>
                     <a href="#central-jobs" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Central &amp; NVS</a>
                     <a href="#admission-courses" class="px-3.5 py-2.5 hover:bg-brand-700 transition"><span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1"></span>Admission &amp; Courses</a>
                     <a href="#admit-cards" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Admit Card</a>
@@ -329,7 +329,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#offline-forms" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Offline Forms</a>
+                    <a href="javascript:void(0)" onclick="filterOfflineJobs()" class="px-3.5 py-2.5 hover:bg-brand-700 transition">Offline Forms</a>
                 </div>
             </div>
         </nav>
@@ -555,7 +555,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             
             <!-- Syllabus Download Card -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div id="syllabus" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between scroll-mt-28">
                 <div>
                     <div class="flex items-center gap-2 text-brand-700 font-bold text-sm mb-2">
                         <i class="fas fa-book-open"></i> Punjab &amp; Central Exam Syllabus 2026
@@ -2181,6 +2181,14 @@
             // Smooth scroll to table
             document.getElementById('master-table-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
             showToast(`Filtered by selected department/category!`);
+        }
+
+        function filterOfflineJobs() {
+            const filtered = jobDatabase.filter(j =>
+                String(j.applyMode || '').toLowerCase().includes('offline') || j.offlineFormLink);
+            renderMasterTable(filtered.length > 0 ? filtered : jobDatabase);
+            document.getElementById('master-table-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showToast('Showing offline application form vacancies!');
         }
 
         function resetFilter() {
