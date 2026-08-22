@@ -292,6 +292,28 @@
         "punjab remote sensing centre ludhiana",
         "prsc ludhiana"
       ]
+    },
+    {
+      "id": "chandigarh-administration",
+      "name": "Chandigarh Administration",
+      "department": "Chandigarh Administration",
+      "url": "https://chandigarh.gov.in/public-notice",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "chandigarh administration",
+        "ut chandigarh administration",
+        "u.t. chandigarh administration",
+        "chandigarh health department",
+        "chandigarh department of industries",
+        "department of industries ut chandigarh",
+        "chandigarh institute for transformation",
+        "planning and evaluation organization chandigarh",
+        "chandigarh local audit department",
+        "local audit department chandigarh"
+      ]
     }
   ]
 }

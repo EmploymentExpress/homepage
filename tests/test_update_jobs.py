@@ -234,6 +234,71 @@ class JobMonitorTests(unittest.TestCase):
         org_ids = {org["id"] for org in orgs.get("organizations", [])}
         self.assertIn("prsc", org_ids)
 
+    def test_chandigarh_administration_public_notices_are_monitored(self):
+        """The direct Chandigarh Public Notice listing is an enabled source."""
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        source = next(
+            item
+            for item in config["sources"]
+            if item["id"] == "chandigarh-administration-public-notices"
+        )
+        self.assertTrue(source["enabled"])
+        self.assertEqual(
+            monitor.canonical_url(source["url"]),
+            "https://chandigarh.gov.in/public-notice",
+        )
+        self.assertEqual(source["department"], "Chandigarh Administration")
+        self.assertEqual(source["location"], "Chandigarh")
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+
+        org_config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "official-organizations.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        chandigarh = next(
+            org
+            for org in org_config["organizations"]
+            if org["id"] == "chandigarh-administration"
+        )
+        self.assertEqual(chandigarh["url"], source["url"])
+        self.assertIn("chandigarh administration", chandigarh["aliases"])
+
+    def test_chandigarh_linked_subject_rows_keep_title_department_and_date(self):
+        """Chandigarh puts its full notice subject inside the PDF anchor."""
+        markup = """
+        <table><tbody>
+          <tr><td>1</td>
+              <td><a href="/cadmin/uploads/industry.pdf">Terms of Reference (ToR) for engagement of human resources under Policy Implementation Unit in the Department of Industries U.T. Chandigarh</a></td>
+              <td>Industries</td><td>21/08/2026</td><td>pdf</td></tr>
+          <tr><td>2</td>
+              <td><a href="/cadmin/uploads/health.pdf">Ayushman Bharat Digital Mission (ABDM), Health Department U.T. Chandigarh is inviting applications for various posts</a></td>
+              <td>Health</td><td>21/08/2026</td><td>pdf</td></tr>
+        </tbody></table>
+        """
+        source = {
+            "noticeTypes": ["recruitment", "result", "corrigendum"],
+            "includeKeywords": [
+                "engagement of human resources",
+                "inviting applications",
+            ],
+            "defaultNoticeType": "recruitment",
+        }
+        candidates, _ = monitor.parse_html(markup, "https://chandigarh.gov.in/public-notice")
+        notices = [candidate for candidate in candidates if monitor.looks_like_notice(candidate, source)]
+        self.assertEqual(len(notices), 2)
+        self.assertIn("Department of Industries", notices[0].title)
+        self.assertIn("Ayushman Bharat Digital Mission", notices[1].title)
+        self.assertEqual([notice.notice_date for notice in notices], ["21-08-2026", "21-08-2026"])
+        self.assertEqual(
+            notices[0].url,
+            "https://chandigarh.gov.in/cadmin/uploads/industry.pdf",
+        )
+
     def test_discovery_feeds_include_haryanajobs(self):
         """HaryanaJobs must be configured as a discovery headline scanner and
         never be treated as a publishable source."""
