@@ -42,7 +42,9 @@
       ],
       "defaultNoticeType": "corrigendum",
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12
     },
     {
       "id": "psssb-results",
@@ -319,6 +321,8 @@
       "defaultNoticeType": "recruitment",
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -333,7 +337,9 @@
       "location": "All India",
       "noticeTypes": ["recruitment", "admission", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12
     },
     {
       "id": "dsssb",
@@ -373,7 +379,9 @@
       "location": "All India",
       "noticeTypes": ["recruitment", "admission", "result", "answer-key", "corrigendum"],
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12
     },
     {
       "id": "onlineforms-offline-forms",
@@ -437,6 +445,8 @@
       ],
       "bootstrapCount": 2,
       "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 45,
       "detailTimeout": 30
     },
@@ -466,6 +476,8 @@
       "defaultNoticeType": "recruitment",
       "bootstrapCount": 2,
       "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 45,
       "detailTimeout": 30
     },
@@ -501,6 +513,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -534,6 +548,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -571,6 +587,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -608,6 +626,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -641,6 +661,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -674,6 +696,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -709,6 +733,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -744,6 +770,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     },
@@ -778,6 +806,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 25
     }

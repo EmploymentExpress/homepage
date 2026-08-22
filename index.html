@@ -1417,6 +1417,8 @@
             const trimmed = value.trim();
             if (trimmed.startsWith('#')) return trimmed;
             if (trimmed.toLowerCase().endsWith('/undefined') || trimmed.toLowerCase().endsWith('undefined')) return '#';
+            // Keep offline-form tokens relative so they resolve on /homepage/ and preview hosts.
+            if (/^redirect\.html\?f=[0-9a-f]{12}$/i.test(trimmed)) return trimmed;
             try {
                 const url = new URL(trimmed, window.location.href);
                 return ['http:', 'https:'].includes(url.protocol) ? url.href : '#';
