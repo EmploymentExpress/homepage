@@ -2022,11 +2022,14 @@
                         <div class="flex items-start gap-2">
                             ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : ''}
                             <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
-                            <div>
-                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition block text-xs sm:text-sm">
+                            <div class="min-w-0 flex-1">
+                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                                     ${escapeHtml(job.title)}
                                 </a>
-                                <span class="text-[11px] text-slate-500 font-medium">${escapeHtml(job.department)}</span>
+                                <div class="flex items-center gap-1.5 mt-0.5 flex-nowrap">
+                                    <i class="fas fa-landmark text-slate-400 text-[10px] shrink-0"></i>
+                                    <span class="text-[11px] text-slate-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${escapeHtml(job.department)}</span>
+                                </div>
                                 ${job.offlineFormLink ? `<a href="${escapeHtml(safeExternalUrl(job.offlineFormLink))}" target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded hover:bg-emerald-100"><i class="fas fa-file-alt mr-1"></i>Offline Application Form</a>` : ''}
                             </div>
                         </div>
