@@ -55,6 +55,7 @@ DEPARTMENT_SHORT_FORMS = [
     (r"ministry of defence", "Ministry of Defence"),
     (r"directorate general of quality assurance", "DGQA"),
     (r"central council for research in siddha", "CCRS"),
+    (r"central university of punjab", "CUPB"),
     (r"local audit department", "Local Audit Dept."),
     (r"department of industries", "Industries Dept."),
 ]

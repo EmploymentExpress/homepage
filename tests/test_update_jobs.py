@@ -234,6 +234,27 @@ class JobMonitorTests(unittest.TestCase):
         org_ids = {org["id"] for org in orgs.get("organizations", [])}
         self.assertIn("prsc", org_ids)
 
+    def test_cup_official_site_is_monitored(self):
+        """Central University of Punjab is an enabled official source and a
+        discovery-approved organisation, using the university's CUPB wording."""
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "cup")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(source["url"], "https://cup.edu.in/")
+        self.assertEqual(source["department"], "Central University of Punjab (CUPB), Bathinda")
+        self.assertEqual(source["type"], "central")
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "cup")
+        self.assertEqual(org["url"], source["url"])
+        self.assertIn("central university of punjab", org["aliases"])
+        self.assertIn("cupb", org["aliases"])
+
     def test_chandigarh_administration_public_notices_are_monitored(self):
         """The direct Chandigarh Public Notice listing is an enabled source."""
         config = json.loads(
