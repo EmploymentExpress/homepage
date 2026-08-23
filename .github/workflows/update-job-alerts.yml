@@ -35,12 +35,13 @@ jobs:
 
     steps:
       - name: Check out website
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
@@ -58,15 +59,12 @@ jobs:
       - name: Commit newly discovered alerts
         shell: bash
         run: |
-          # actions/checkout leaves a detached HEAD. Switch to the real branch so
-          # that `git pull --rebase`/`git push` operate on a branch rather than a
-          # detached HEAD (a detached HEAD is what made the step fail with exit 128).
-          git checkout "${GITHUB_REF_NAME}"
-
           # The monitor may also refresh data/offline-redirects.json (offline
           # application-form links), so commit that alongside the alerts.
           DATA_FILES="data/auto-jobs.json data/seen-notices.json data/offline-redirects.json"
-          if git diff --quiet -- $DATA_FILES; then
+
+          # Detect both modified tracked files and newly created untracked files
+          if [ -z "$(git status --porcelain $DATA_FILES)" ]; then
             echo "No new recruitment notices were found."
             exit 0
           fi
