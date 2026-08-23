@@ -225,7 +225,9 @@ notification** — never the raw portal link text and never a full sentence.
 - 🚫 Never guess the notice type. If the official wording gives no cue, use `Online Form` for a
   vacancy notice and the alert type's default otherwise.
 - 🛠 **Use the shared implementation, don't re-invent it:** `scripts/short_headlines.py`
-  (`short_job_headline(title, department, alert_type, vacancies, apply_mode)`) and its JS mirror.
+  (`short_job_headline(title, department, alert_type, vacancies, apply_mode)`) and its JS mirror in
+  `index.html` (`shortJobHeadline()` / `jobDisplayHeadline(job)`, used by the grid cards, the master
+  table and Last Date Reminders; both implementations must produce identical output).
   Regenerate the before/after demo with `python scripts/preview_short_headlines.py`
   (writes `docs/short-headline-demo.html` / `.md`). Guard tests live in
   `tests/test_short_headlines.py` and must stay green.

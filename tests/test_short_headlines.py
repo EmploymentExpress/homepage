@@ -178,6 +178,33 @@ class ShortHeadlineFormatTests(unittest.TestCase):
                 self.assertGreaterEqual(len(title.split()), 2)
 
 
+class IndexHeadlineWiringTests(unittest.TestCase):
+    """index.html renders the short heading but keeps the full title as data."""
+
+    def test_index_defines_the_shared_headline_helpers(self):
+        for helper in ("function shortJobHeadline(", "function jobDisplayHeadline(",
+                       "function shortDepartment(", "function noticeType(",
+                       "function headlineSuffix(", "function vacancyCount("):
+            with self.subTest(helper=helper):
+                self.assertIn(helper, INDEX)
+
+    def test_index_headline_vocabulary_matches_the_python_implementation(self):
+        for suffix in NOTICE_SUFFIXES.values():
+            with self.subTest(suffix=suffix):
+                self.assertIn(suffix, INDEX)
+        self.assertIn("SHORT_HEADLINE_MAX = 72", INDEX)
+
+    def test_card_table_and_reminder_headings_use_the_short_headline(self):
+        self.assertGreaterEqual(INDEX.count("escapeHtml(jobDisplayHeadline(job))"), 3)
+        # Every rendered heading keeps the full official title as a tooltip.
+        self.assertGreaterEqual(INDEX.count('title="${escapeHtml(job.title)}"'), 3)
+
+    def test_full_title_is_still_used_for_details_search_and_schema(self):
+        self.assertIn("document.getElementById('modalTitle').innerText = job.title;", INDEX)
+        self.assertIn('"title": job.title || "Government Recruitment Notification"', INDEX)
+        self.assertIn("navigator.share({ title: job.title", INDEX)
+
+
 class AgentsRuleTests(unittest.TestCase):
     def test_agents_documents_the_short_headline_rule(self):
         self.assertIn("Short job-details headline rule", AGENTS)

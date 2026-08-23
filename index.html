@@ -1486,6 +1486,319 @@
             return `${authority} — ${specificSubject}`;
         }
 
+        // Short job-details headline generator (JS mirror of scripts/short_headlines.py).
+        // See AGENTS.md -> "Short job-details headline rule".
+        const SHORT_HEADLINE_MAX = 72;
+        const SHORT_DEPARTMENT_MAX = 34;
+        const HEADLINE_STATES = ['Punjab', 'Haryana', 'Himachal Pradesh', 'Chandigarh', 'Delhi', 'Rajasthan',
+            'Uttar Pradesh', 'Madhya Pradesh', 'Gujarat', 'Bihar', 'Maharashtra', 'Karnataka',
+            'Tamil Nadu', 'Kerala', 'Odisha', 'Assam'];
+        const DEPARTMENT_SHORT_FORMS = [
+            [/navodaya vidyalaya samiti/i, 'NVS'],
+            [/punjab state power corporation/i, 'PSPCL'],
+            [/punjab public service commission/i, 'PPSC'],
+            [/punjab police recruitment board|punjab police/i, 'Punjab Police'],
+            [/department of school education,? punjab|punjab school education board/i, 'PSEB'],
+            [/staff selection commission/i, 'SSC'],
+            [/railway recruitment board/i, 'RRB'],
+            [/rail coach factory/i, 'RCF'],
+            [/(join )?indian army/i, 'Indian Army'],
+            [/indian air force/i, 'IAF'],
+            [/ministry of defence/i, 'Ministry of Defence'],
+            [/directorate general of quality assurance/i, 'DGQA'],
+            [/central council for research in siddha/i, 'CCRS'],
+            [/local audit department/i, 'Local Audit Dept.'],
+            [/department of industries/i, 'Industries Dept.']
+        ];
+        const HEADLINE_WORD_ABBREVIATIONS = [
+            [/\bDepartment\b/gi, 'Dept.'], [/\bUniversity\b/gi, 'Univ.'], [/\bInstitute\b/gi, 'Inst.'],
+            [/\bOrganization\b|\bOrganisation\b/gi, 'Org.'], [/\bAdministration\b/gi, 'Admin.'],
+            [/\bGovernment\b|\bGovt\.?\b/gi, 'Govt.']
+        ];
+        const NOTICE_TYPE_RULES = [
+            ['Corrigendum', /\bcorrigend(um|a)\b/i],
+            ['Addendum', /\bad+end(um|a)\b/i],
+            ['Cancelled', /\bcancel(l?ed|lation|ling)?\b|\bwithdraw(n|al)\b/i],
+            ['Postponed', /\bpostpon(ed|ement)\b|\bdeferred\b|\breschedul(ed|ing)\b/i],
+            ['Date Extended', /\bextension\b|\bextended\b|\bre-?open(ed|ing)?\b/i],
+            ['Shortlisted', /\bshort-?list(ed|ing)?\b|\bempanel(ment|led)\b|\beligible candidates\b/i],
+            ['Exam Date', /\bexam(ination)? (date|schedule|city|centre|center)\b|\bdate ?sheet\b/i],
+            ['Admit Card', /\badmit card\b|\bcall letter\b|\broll ?(no|number)\b|\bhall ticket\b/i],
+            ['Answer Key', /\banswer key\b|\bresponse sheet\b|\bobjection\b/i],
+            ['Waiting List', /\bwaiting list\b|\bwait-?list\b/i],
+            ['Merit List', /\bmerit list\b|\bselection list\b|\bfinal selection\b/i],
+            ['Result', /\bresults?\b|\bcut-?off\b|\bscorecard\b/i],
+            ['Posting Orders', /\bposting orders?\b|\bappointment orders?\b/i],
+            ['Walk-in Interview', /\bwalk-?in(-?interview)?\b/i],
+            ['Admission', /\badmission\b|\bentrance test\b|\bprospectus\b|\bcounsel?ling\b/i],
+            ['Notice', /\bpublic notice\b|\bimportant notice\b/i]
+        ];
+        const NOTICE_SUFFIXES = {
+            'Recruitment': 'Online Form', 'Corrigendum': 'Corrigendum Notice', 'Addendum': 'Addendum Notice',
+            'Cancelled': 'Vacancy Cancelled', 'Postponed': 'Exam Postponed', 'Date Extended': 'Last Date Extended',
+            'Shortlisted': 'Shortlisted Candidates', 'Exam Date': 'Exam Date', 'Admit Card': 'Admit Card',
+            'Answer Key': 'Answer Key', 'Waiting List': 'Waiting List', 'Merit List': 'Merit List',
+            'Result': 'Result', 'Posting Orders': 'Posting Orders', 'Walk-in Interview': 'Walk in Interview',
+            'Admission': 'Admission Form', 'Notice': 'Public Notice'
+        };
+        const ALERT_TYPE_DEFAULTS = {
+            'result': 'Result', 'answer-key': 'Answer Key', 'corrigendum': 'Corrigendum',
+            'admission': 'Admission', 'recruitment': 'Recruitment'
+        };
+        const HEADLINE_NOISE = [
+            /\bPDF\s*\d+(\.\d+)?\s*(KB|MB)\b/gi, /-?\s*opens? in a new window/gi, /\bclick here\b/gi,
+            /\bdownload\b/gi, /\bview\b/gi, /\bapplication form\b/gi, /\bonline form\b/gi,
+            /\bapply online\b/gi, /\bofficial notification\b/gi, /\bnotification\b/gi,
+            /\badvertisement\b/gi, /\blast date\b/gi, /\bregarding\b/gi, /\bapply (for|online)\b/gi, /\bapply\b/gi
+        ];
+        const HEADLINE_AUTHORITY_FILLERS = new Set(['board', 'boards', 'department', 'dept', 'dept.', 'commission',
+            'recruitment', 'authority', 'corporation', 'university', 'samiti', 'office', 'of', 'the']);
+        const HEADLINE_GENERIC_POSTS = new Set(['various post', 'various posts', 'other posts', 'more', 'post',
+            'posts', 'various', 'various faculty posts', 'misc']);
+        const BRACKET_DATE_BLURB = /\([^)]*\b(last date|submission of application|interview|apply|upto|up to|selection committee|\d{1,2}[-./]\d{1,2}[-./]\d{2,4})[^)]*\)?/gi;
+        const OFFICE_TAIL = /\s*[-–—]\s*[^-–—]*\b(College|Department|Dept\.?|Institute|School|Centre|Center|Office|Division|Directorate|University|Faculty|Campus|Station|Wing)\b.*$/i;
+
+        function headlineClean(value) {
+            return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
+        }
+
+        function escapeRegExp(value) {
+            return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function stripDateBlurbs(text) {
+            return headlineClean(headlineClean(text).replace(BRACKET_DATE_BLURB, ' '));
+        }
+
+        function shortDepartment(department, title) {
+            let dept = headlineClean(department);
+            if (!dept) dept = headlineClean(headlineClean(title).split('—')[0]);
+            if (!dept) return '';
+
+            let mapped = '';
+            for (const [pattern, shortForm] of DEPARTMENT_SHORT_FORMS) {
+                if (pattern.test(dept)) { mapped = shortForm; break; }
+            }
+            let acronym = mapped;
+            if (!mapped) {
+                const matches = dept.match(/\(([^)]{2,14})\)/g) || [];
+                for (const raw of matches) {
+                    const token = raw.slice(1, -1).trim();
+                    const letters = token.replace(/[^A-Za-z]/g, '');
+                    const uppers = token.replace(/[^A-Z]/g, '');
+                    if (uppers.length >= 2 && letters.length && uppers.length / letters.length >= 0.75) {
+                        acronym = headlineClean(token);
+                        break;
+                    }
+                }
+            }
+            let short;
+            if (acronym) {
+                short = acronym;
+            } else {
+                let head = dept.split(/[,–—]| - /)[0].trim().replace(/\([^)]*\)/g, ' ');
+                short = headlineClean(head);
+                if (short.length > SHORT_DEPARTMENT_MAX) {
+                    for (const [pattern, replacement] of HEADLINE_WORD_ABBREVIATIONS) short = short.replace(pattern, replacement);
+                    short = headlineClean(short);
+                }
+                if (short.length > SHORT_DEPARTMENT_MAX) {
+                    short = short.slice(0, SHORT_DEPARTMENT_MAX).replace(/\s+\S*$/, '').replace(/[\s,-]+$/, '');
+                }
+            }
+            short = short.replace(/\s+(for|of|and|the|in|&)$/i, '').replace(/[\s,-]+$/, '');
+            for (const state of HEADLINE_STATES) {
+                if (new RegExp('^' + escapeRegExp(state) + '\\b', 'i').test(dept)
+                    && !short.toLowerCase().includes(state.toLowerCase())
+                    && !short.toUpperCase().startsWith(state[0].toUpperCase())) {
+                    short = `${state} ${short}`;
+                    break;
+                }
+            }
+            if (/\b(U\.?T\.?\s*Chandigarh|Chandigarh Administration)\b/i.test(dept) && !short.toLowerCase().includes('chandigarh')) {
+                short = `${short} Chandigarh`;
+            }
+            return headlineClean(short);
+        }
+
+        function noticeType(title, alertType) {
+            const text = stripDateBlurbs(title);
+            for (const [label, pattern] of NOTICE_TYPE_RULES) {
+                if (pattern.test(text)) return label;
+            }
+            return ALERT_TYPE_DEFAULTS[alertType] || 'Recruitment';
+        }
+
+        function headlineSuffix(kind, title, applyMode) {
+            const suffix = NOTICE_SUFFIXES[kind] || kind;
+            if (kind === 'Recruitment' && /offline|by post|by hand|walk/i.test(`${applyMode || ''} ${title || ''}`)) return 'Offline Form';
+            if (kind === 'Postponed' && /interview/i.test(title || '')) return 'Interview Postponed';
+            if (kind === 'Cancelled' && /exam/i.test(title || '')) return 'Exam Cancelled';
+            if (kind === 'Answer Key' && /exam/i.test(title || '')) return 'Exam Answer Key';
+            return suffix;
+        }
+
+        function vacancyCount(vacancies) {
+            const text = headlineClean(vacancies);
+            if (!text || /see notification|various|as per/i.test(text)) return '';
+            const match = text.match(/^\D{0,12}?(\d[\d,]{0,8})/);
+            if (!match) return '';
+            const number = parseInt(match[1].replace(/,/g, ''), 10);
+            if (!Number.isFinite(number) || number < 2) return '';
+            return number.toLocaleString('en-US');
+        }
+
+        function departmentAliasList(department, title) {
+            const dept = headlineClean(department);
+            const aliases = new Set([dept, shortDepartment(dept, title), dept.split(/[,–—]| - /)[0].trim()]);
+            const bracket = dept.match(/\(([^)]+)\)/);
+            if (bracket) {
+                aliases.add(bracket[1].trim());
+                aliases.add(dept.slice(0, dept.indexOf(bracket[0])).trim());
+            }
+            aliases.add(dept.replace(/\([^)]*\)/g, ' ').trim());
+            return [...aliases].map(headlineClean).filter(Boolean).sort((a, b) => b.length - a.length);
+        }
+
+        function stripLeadingAuthorityWords(subject, department) {
+            const deptWords = new Set(headlineClean(department).toLowerCase().split(/\W+/).filter(Boolean));
+            const words = headlineClean(subject).split(' ').filter(Boolean);
+            let removed = 0;
+            while (words.length && removed < 5) {
+                const candidate = words[0].toLowerCase().replace(/^[.,()]+|[.,()]+$/g, '');
+                if (candidate && (deptWords.has(candidate) || HEADLINE_AUTHORITY_FILLERS.has(candidate))) {
+                    words.shift();
+                    removed += 1;
+                    continue;
+                }
+                break;
+            }
+            return headlineClean(words.join(' ')) || headlineClean(subject);
+        }
+
+        function splitPosts(subject) {
+            const protectedParts = [];
+            const masked = subject.replace(/\([^)]*\)/g, match => {
+                protectedParts.push(match);
+                return `\u0001${protectedParts.length - 1}\u0001`;
+            });
+            return masked.split(/\s*(?:,|&|\band\b)\s*/)
+                .map(part => headlineClean(part.replace(/\u0001(\d+)\u0001/g, (m, i) => protectedParts[Number(i)])))
+                .filter(Boolean);
+        }
+
+        function shortSubject(title, department) {
+            let subject = stripDateBlurbs(title);
+            for (const alias of departmentAliasList(department, title)) {
+                const escaped = escapeRegExp(alias);
+                subject = subject.replace(new RegExp(`^\\s*${escaped}\\s*[,;:–—|-]*\\s*`, 'i'), '').trim();
+                subject = subject.replace(new RegExp(`\\b${escaped}\\b`, 'gi'), ' ');
+            }
+            subject = subject.replace(/\((selection of [^)]*|[^)]*category)\)/gi, ' ');
+            subject = stripLeadingAuthorityWords(subject, department);
+
+            const postMatch = subject.match(/\bposts?\s+of\s+(.+)$/i);
+            if (postMatch) subject = postMatch[1];
+            subject = subject.replace(/^\s*post\s+of\s+/i, '');
+
+            subject = subject.replace(OFFICE_TAIL, '');
+            const dashSplit = subject.split(/\s+[–—]\s+|\s+-\s+/).map(headlineClean).filter(Boolean);
+            if (dashSplit.length > 1) {
+                const meaningful = dashSplit.filter(segment => (segment.match(/[A-Za-z]{3,}/g) || []).length >= 1);
+                subject = (meaningful.length ? meaningful : dashSplit)[0];
+            }
+            for (const pattern of HEADLINE_NOISE) subject = subject.replace(pattern, ' ');
+            subject = subject.replace(/\b(19|20)\d{2}(\s*[-/]\s*\d{2,4})?\b/g, ' ');
+            subject = subject.replace(/\((\s*|Advt\.?[^)]*)\)/gi, ' ');
+            subject = subject.replace(/\b(Advt\.?|Advertisement)\s*No\.?\s*[\w/-]+/gi, ' ');
+            subject = headlineClean(subject).replace(/^[\s,;:|–—-]+|[\s,;:|–—-]+$/g, '');
+            subject = subject.replace(/\s*\bforms?\b\s*$/i, '');
+            subject = headlineClean(subject).replace(/^[\s,;:|–—-]+|[\s,;:|–—-]+$/g, '');
+
+            subject = subject.replace(/^\s*\d+\s*(posts?|vacancies)?\s*/i, '');
+            const deptWords = new Set((headlineClean(department).match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase()));
+            let parts = splitPosts(subject).filter(part => {
+                const words = (part.match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase());
+                return !(deptWords.size && words.length && words.every(word => deptWords.has(word)));
+            }).filter(part => /[A-Za-z]{2,}/.test(part));
+            const kept = parts.filter(part => !HEADLINE_GENERIC_POSTS.has(part.toLowerCase()))
+                .map(part => headlineClean(part).replace(/^[\s,;:|–—&-]+|[\s,;:|–—&-]+$/g, ''))
+                .filter(Boolean);
+            const truncated = kept.length > 2 || kept.length !== parts.length;
+            if (kept.length) {
+                subject = kept.slice(0, 2).join(', ');
+                if (truncated) subject = `${subject} & Various Post`;
+            }
+            return headlineClean(subject).replace(/^[\s,;:|–—-]+|[\s,;:|–—-]+$/g, '');
+        }
+
+        function shortJobHeadline(title, department, alertType, vacancies, applyMode) {
+            const rawTitle = headlineClean(title);
+            if (!rawTitle) return '';
+            const dept = shortDepartment(department, rawTitle);
+            const kind = noticeType(rawTitle, alertType);
+            let subject = shortSubject(rawTitle, department);
+
+            const cueWords = [kind, 'Recruitment', 'Result', 'Public Notice', 'Notice', 'Postponement', 'Postponed',
+                'Corrigendum', 'Addendum', 'Cancellation', 'Shortlisted', 'Admission', 'Walk-?in-?Interview',
+                'Interview', 'Posting Orders', 'Re-?Open(ed|ing)?', 'Extension', 'Extended', 'Cancell?ation',
+                'Cancell?ed', 'Exam Date', 'Admit Card', 'Answer Key', 'Merit List', 'Waiting List', 'Date Extended']
+                .map(word => escapeRegExp(word).replace(/\\\?/g, '?').replace(/\\\(/g, '(').replace(/\\\)/g, ')').replace(/\\\|/g, '|'))
+                .join('|');
+            subject = subject.replace(new RegExp(`\\b(?:${cueWords})\\b`, 'gi'), ' ');
+            subject = headlineClean(subject).replace(/\s*\bforms?\b\s*$/i, '');
+            subject = headlineClean(subject).replace(/^[\s,;:|–—&-]+|[\s,;:|–—&-]+$/g, '');
+
+            const suffix = headlineSuffix(kind, rawTitle, applyMode);
+            let count = vacancyCount(vacancies);
+            if (count && new RegExp(`\\b${escapeRegExp(count)}\\b`).test(subject)) count = '';
+
+            let prefix = '';
+            if (dept && !new RegExp(`\\b${escapeRegExp(dept)}\\b`, 'i').test(subject)) prefix = `${dept} `;
+            if (count) prefix = `${prefix}${count} `;
+
+            let headline = headlineClean(subject ? `${prefix}${subject} ${suffix}` : `${prefix}${suffix}`);
+
+            if (headline.length > SHORT_HEADLINE_MAX) {
+                const posts = subject.split(/,\s*/).map(headlineClean).filter(Boolean);
+                const extra = (/& Various Post$/.test(subject) || posts.length > 1) ? ' & Various Post' : '';
+                const first = posts.length ? posts[0] : '';
+                const firstPlain = headlineClean(first.replace(/\([^)]*\)/g, ' ')).replace(/^[\s,;:|–—&-]+|[\s,;:|–—&-]+$/g, '');
+                const candidates = [
+                    subject,
+                    headlineClean(subject.replace(/\([^)]*\)/g, ' ').replace(/\s+,/g, ',')),
+                    `${first}${extra}`,
+                    `${firstPlain}${extra}`,
+                    firstPlain
+                ];
+                headline = '';
+                for (let body of candidates) {
+                    body = headlineClean(body).replace(/^[\s,;:|–—&-]+|[\s,;:|–—&-]+$/g, '');
+                    if (!body) continue;
+                    const attempt = headlineClean(`${prefix}${body} ${suffix}`);
+                    if (attempt.length <= SHORT_HEADLINE_MAX) { headline = attempt; break; }
+                }
+                if (!headline) {
+                    const budget = SHORT_HEADLINE_MAX - prefix.length - suffix.length - 1;
+                    let body = firstPlain || subject;
+                    if (budget > 12 && body) {
+                        if (body.length > budget) body = body.slice(0, budget).replace(/\s+\S*$/, '');
+                        body = body.replace(/^[\s,;:|–—&-]+|[\s,;:|–—&-]+$/g, '');
+                        headline = headlineClean(`${prefix}${body} ${suffix}`);
+                    } else {
+                        headline = headlineClean(`${prefix}${suffix}`);
+                    }
+                }
+            }
+            return headlineClean(headline.replace(/\s+,/g, ','));
+        }
+
+        function jobDisplayHeadline(job) {
+            if (!job || typeof job !== 'object') return '';
+            const headline = shortJobHeadline(job.title, job.department, job.alertType, job.vacancies, job.applyMode);
+            return headline || headlineClean(job.title);
+        }
+
         function normalizeAutomaticJob(raw, index) {
             if (!raw || typeof raw !== 'object') return null;
             const text = (value, fallback = '', max = 900) => {
@@ -1685,7 +1998,7 @@
                                 <span class="text-[10px] font-bold text-slate-500">${escapeHtml(job.vacancies)} • Last date ${escapeHtml(job.lastDate)}</span>
                                 <span class="text-[10px] font-black ${countdownClasses} px-2 py-0.5 rounded tabular-nums" data-deadline="${deadline.getTime()}">${formatCountdown(remaining)}</span>
                             </div>
-                            <h3 class="font-extrabold text-sm text-slate-900">${escapeHtml(job.title)}</h3>
+                            <h3 class="font-extrabold text-sm text-slate-900" title="${escapeHtml(job.title)}">${escapeHtml(jobDisplayHeadline(job))}</h3>
                             ${extended ? `
                                 <p class="text-[11px] font-semibold text-emerald-700 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                                     <span><i class="fas fa-circle-info mr-1"></i>Last date extended:</span>
@@ -1912,7 +2225,7 @@
                             <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">${escapeHtml(job.vacancies)}</span>
                             <span class="text-[10px] font-bold border px-2 py-0.5 rounded ${statusClass}">${escapeHtml(info.status)}</span>
                         </div>
-                        <h3 class="font-extrabold text-sm text-slate-900 hover:text-${color}-700 leading-snug">${escapeHtml(job.title)}</h3>
+                        <h3 class="font-extrabold text-sm text-slate-900 hover:text-${color}-700 leading-snug" title="${escapeHtml(job.title)}">${escapeHtml(jobDisplayHeadline(job))}</h3>
                         <p class="text-[11px] font-semibold text-slate-500">${escapeHtml(job.department)}</p>
                         ${shortDetail ? `<p class="text-[10px] text-slate-400 leading-relaxed truncate">${escapeHtml(shortDetail)}…</p>` : ''}
                         <div class="flex items-center justify-between mt-0.5">
@@ -2030,8 +2343,8 @@
                             ${job.isJustIn ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5 badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : ''}
                             <span class="${job.badgeColor} text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase shrink-0 mt-0.5">${job.isNewNotice ? '🔥 ' : ''}${escapeHtml(job.badge)}</span>
                             <div class="min-w-0 flex-1">
-                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition text-xs sm:text-sm leading-snug line-clamp-3">
-                                    ${escapeHtml(job.title)}
+                                <a href="javascript:void(0)" onclick="openJobDetail(${job.id})" class="font-bold text-slate-900 group-hover:text-brand-600 transition text-xs sm:text-sm leading-snug line-clamp-3" title="${escapeHtml(job.title)}">
+                                    ${escapeHtml(jobDisplayHeadline(job))}
                                 </a>
                                 <div class="flex items-center gap-1.5 mt-1 flex-nowrap">
                                     <i class="fas fa-landmark text-slate-400 text-[10px] shrink-0"></i>
