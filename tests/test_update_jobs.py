@@ -320,6 +320,24 @@ class JobMonitorTests(unittest.TestCase):
             "https://chandigarh.gov.in/cadmin/uploads/industry.pdf",
         )
 
+    def test_discovery_table_rows_keep_organisation_and_post_for_matching(self):
+        """Listing feeds may put the authority in a link and the post in plain text."""
+        markup = """
+        <table><tbody>
+          <tr><td>22-08-2026</td>
+              <td><a href="https://linkingsky.com/Docs/CSIO-13-2026.pdf">Central Scientific Instruments Organisation (CSIO)</a></td>
+              <td>1 Project Associate I</td><td>Engineers</td><td>Fresher</td><td>02-09-2026</td></tr>
+        </tbody></table>
+        """
+        candidates, _ = monitor.parse_html(
+            markup, "https://linkingsky.com/government-exams/government-jobs-in-punjab.html"
+        )
+        self.assertEqual(len(candidates), 1)
+        candidate = candidates[0]
+        self.assertIn("Central Scientific Instruments Organisation", candidate.title)
+        self.assertIn("Project Associate I", candidate.title)
+        self.assertTrue(monitor.looks_like_discovery_headline(candidate))
+
     def test_discovery_feeds_include_haryanajobs(self):
         """HaryanaJobs must be configured as a discovery headline scanner and
         never be treated as a publishable source."""
