@@ -115,6 +115,14 @@ bypass this fallback; if the official site is unreachable, the monitor keeps
 existing data and says so (it never invents links). Keep the rule's guard
 tests in `tests/test_update_jobs.py` green when touching this pipeline.
 
+**Discovery feeds (`automation/discovery-feeds.json`).** A feed may be hosted on a headline
+aggregator (`linkingsky.com`, `punjabjobalert.com`, `haryanajobs.in`) **or** on an offline-form
+portal (`onlineforms.in`, `speedjob.in`). Either way a feed supplies **leads only**: the notice
+must still be matched to an approved organisation and verified on the recruiting board's own
+listing/page source before anything is published, and the feed host's URLs and branding are never
+shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
+is the key `load_discovery_feeds()` reads.
+
 ## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:

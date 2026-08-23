@@ -313,6 +313,49 @@ class JobMonitorTests(unittest.TestCase):
         self.assertGreaterEqual(haryanajobs["maxNewPerRun"], 1)
         self.assertGreaterEqual(haryanajobs["maxHeadlines"], 1)
 
+    def test_discovery_feeds_include_offline_form_portals(self):
+        """onlineforms.in and speedjob.in are registered discovery feeds, are
+        still recognised as offline-form portals, and can never be published."""
+        feeds = monitor.load_discovery_feeds()
+        by_id = {feed["id"]: feed for feed in feeds}
+        self.assertIn("onlineforms-latest", by_id)
+        self.assertIn("speedjob-latest", by_id)
+        self.assertEqual(
+            monitor.canonical_url(by_id["onlineforms-latest"]["url"]),
+            "https://onlineforms.in/latest-offline-forms/",
+        )
+        self.assertEqual(
+            monitor.canonical_url(by_id["speedjob-latest"]["url"]),
+            "https://www.speedjob.in/latest-job/",
+        )
+        for feed_id in ("onlineforms-latest", "speedjob-latest"):
+            feed = by_id[feed_id]
+            with self.subTest(feed=feed_id):
+                self.assertTrue(monitor.is_offline_form_url(feed["url"]))
+                self.assertGreaterEqual(feed["maxNewPerRun"], 1)
+                self.assertGreaterEqual(feed["maxHeadlines"], 1)
+
+    def test_every_discovery_feed_has_an_effective_new_per_run_limit(self):
+        """Each feed must use the key the monitor reads (maxNewPerRun)."""
+        registry = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "discovery-feeds.json")
+            .read_text(encoding="utf-8")
+        )
+        for entry in registry["feeds"]:
+            with self.subTest(feed=entry["id"]):
+                self.assertNotIn("maxNewPerFeed", entry)
+                self.assertGreaterEqual(int(entry["maxNewPerRun"]), 1)
+
+    def test_offline_portal_branding_never_survives_a_headline(self):
+        for value in (
+            "OnlineForms.in CSIR NAL Multi-Tasking Staff Recruitment 2026",
+            "Speed Job | Army ASC Centre South MTS Recruitment 2026",
+        ):
+            with self.subTest(value=value):
+                cleaned = monitor.strip_discovery_branding(value).lower()
+                for term in ("onlineforms", "speedjob", "speed job", "online forms"):
+                    self.assertNotIn(term, cleaned)
+
     def test_agents_rules_require_official_page_source_verification(self):
         raw = (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8")
         # Compare on a single line so re-wrapping the rule text cannot break the guard.

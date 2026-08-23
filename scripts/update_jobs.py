@@ -769,7 +769,7 @@ def is_discovery_host(url: str) -> bool:
 
 def strip_discovery_branding(value: str) -> str:
     text = clean_text(value)
-    for term in DISCOVERY_BRAND_TERMS:
+    for term in DISCOVERY_BRAND_TERMS + OFFLINE_BRAND_TERMS:
         text = re.sub(rf"(?i)\b{re.escape(term)}\b", " ", text)
     return re.sub(r"\s+", " ", text).strip(" -|:–—")
 
@@ -2316,7 +2316,12 @@ def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str,
             continue
         url = canonical_url(entry.get("url", ""))
         feed_id = clean_text(entry.get("id"))
-        if not url or not feed_id or not is_discovery_host(url):
+        # Discovery feeds may live on a headline aggregator host or on one of
+        # the offline-form portals (onlineforms.in / speedjob.in). Either way a
+        # feed only ever supplies leads: the notice must still be verified on the
+        # recruiting board's own website before anything is published, and the
+        # portal's own URLs/branding are never shown on the homepage.
+        if not url or not feed_id or not (is_discovery_host(url) or is_offline_form_url(url)):
             continue
         feeds.append({
             "id": feed_id,
@@ -2458,7 +2463,10 @@ def process_discovery_feeds(
                 except Exception as exc:
                     print(f"  Could not build official job from {official_candidate.url}: {exc}", file=sys.stderr)
                     continue
-                if any(is_discovery_host(str(job.get(field, ""))) for field in ("pdfLink", "applyLink", "sourceUrl")):
+                if any(
+                    is_discovery_host(str(job.get(field, ""))) or is_offline_form_url(str(job.get(field, "")))
+                    for field in ("pdfLink", "applyLink", "sourceUrl")
+                ):
                     print(f"  Dropped job that still pointed at a discovery host: {job.get('title')}")
                     continue
                 if offline_vacancy_covered_by_portal(job, offline_pool):
