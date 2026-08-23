@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-23T07:52:07Z",
+  "updatedAt": "2026-08-23T14:12:11Z",
   "jobs": [
     {
       "id": 111612545230690,
@@ -668,8 +668,8 @@
       "location": "Ludhiana, Punjab",
       "applyMode": "Offline",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "advtNo": "See Official Notice",
@@ -937,7 +937,7 @@
     },
     {
       "id": 222167597830746,
-      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South MTS, Cook, Cleaner, Fireman, Tradesman & Various Post",
+      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South Recruitment 2026 Offline Application Form",
       "department": "Ministry of Defence, ASC Centre (South), Bangalore",
       "vacancies": "62 Posts",
       "qualification": "10th Pass / Diploma in Catering / HMV Licence with Experience",
