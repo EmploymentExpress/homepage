@@ -234,6 +234,27 @@ class JobMonitorTests(unittest.TestCase):
         org_ids = {org["id"] for org in orgs.get("organizations", [])}
         self.assertIn("prsc", org_ids)
 
+    def test_cup_official_site_is_monitored(self):
+        """Central University of Punjab is an enabled official source and a
+        discovery-approved organisation, using the university's CUPB wording."""
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "cup")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(source["url"], "https://cup.edu.in/")
+        self.assertEqual(source["department"], "Central University of Punjab (CUPB), Bathinda")
+        self.assertEqual(source["type"], "central")
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "cup")
+        self.assertEqual(org["url"], source["url"])
+        self.assertIn("central university of punjab", org["aliases"])
+        self.assertIn("cupb", org["aliases"])
+
     def test_chandigarh_administration_public_notices_are_monitored(self):
         """The direct Chandigarh Public Notice listing is an enabled source."""
         config = json.loads(
@@ -298,6 +319,24 @@ class JobMonitorTests(unittest.TestCase):
             notices[0].url,
             "https://chandigarh.gov.in/cadmin/uploads/industry.pdf",
         )
+
+    def test_discovery_table_rows_keep_organisation_and_post_for_matching(self):
+        """Listing feeds may put the authority in a link and the post in plain text."""
+        markup = """
+        <table><tbody>
+          <tr><td>22-08-2026</td>
+              <td><a href="https://linkingsky.com/Docs/CSIO-13-2026.pdf">Central Scientific Instruments Organisation (CSIO)</a></td>
+              <td>1 Project Associate I</td><td>Engineers</td><td>Fresher</td><td>02-09-2026</td></tr>
+        </tbody></table>
+        """
+        candidates, _ = monitor.parse_html(
+            markup, "https://linkingsky.com/government-exams/government-jobs-in-punjab.html"
+        )
+        self.assertEqual(len(candidates), 1)
+        candidate = candidates[0]
+        self.assertIn("Central Scientific Instruments Organisation", candidate.title)
+        self.assertIn("Project Associate I", candidate.title)
+        self.assertTrue(monitor.looks_like_discovery_headline(candidate))
 
     def test_discovery_feeds_include_haryanajobs(self):
         """HaryanaJobs must be configured as a discovery headline scanner and

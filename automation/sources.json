@@ -898,6 +898,43 @@
       "maxCatchUpPerRun": 12,
       "timeout": 45,
       "detailTimeout": 45
+    },
+    {
+      "id": "cup",
+      "enabled": true,
+      "name": "Central University of Punjab Recruitment",
+      "department": "Central University of Punjab (CUPB), Bathinda",
+      "url": "https://cup.edu.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Bathinda, Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": [
+        "recruitment",
+        "advertisement",
+        "advt",
+        "application",
+        "walk-in interview",
+        "project staff",
+        "teaching positions",
+        "non-teaching positions",
+        "answer key",
+        "result"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "tenders",
+        "eoi",
+        "expression of interest",
+        "procurement",
+        "gem bid"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 35,
+      "detailTimeout": 30
     }
   ]
 }

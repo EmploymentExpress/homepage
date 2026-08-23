@@ -167,6 +167,7 @@ The monitor currently has these official recruitment sources enabled:
 14. **Directorate of Education, SGPC (DESGPC)** — `https://www.desgpc.org/`
 15. **Punjab Remote Sensing Centre (PRSC)** — `https://prsc.punjab.gov.in/Recruitment.aspx`
 16. **Chandigarh Administration Public Notices** — `https://chandigarh.gov.in/public-notice`
+17. **Central University of Punjab (CUPB), Bathinda** — `https://cup.edu.in/`
 
 The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are additionally enabled under the special `offline-forms` role. All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. The discovery headline feeds (LinkingSky, Punjab Job Alert, HaryanaJobs) run as **headline scanners only** (`automation/discovery-feeds.json`) — they are never published sources. To enable another board, set its `enabled` flag to `true`; to add a discovery feed, append its object to `automation/discovery-feeds.json`. District court / eCourts pages are not monitored.
 

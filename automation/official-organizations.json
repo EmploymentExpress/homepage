@@ -314,6 +314,23 @@
         "chandigarh local audit department",
         "local audit department chandigarh"
       ]
+    },
+    {
+      "id": "cup",
+      "name": "Central University of Punjab",
+      "department": "Central University of Punjab (CUPB), Bathinda",
+      "url": "https://cup.edu.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Bathinda, Punjab",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": [
+        "central university of punjab",
+        "central university of punjab bathinda",
+        "central university of punjab (cupb)",
+        "cupb",
+        "cu punjab"
+      ]
     }
   ]
 }

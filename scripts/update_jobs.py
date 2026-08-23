@@ -956,14 +956,25 @@ def _row_notice_title(row: dict[str, Any]) -> str:
             continue
         if len(text) > len(best):
             best = text
-    for _, label in row.get("links", []):
-        linked_title = clean_title(label)
-        if (
-            len(linked_title) > len(best)
-            and not _is_attachment_label(linked_title)
-            and not is_junk_job_title(linked_title)
-        ):
-            best = linked_title
+    # Discovery-feed tables often put the recruiting organisation in an anchor
+    # and the actual post name in a neighbouring plain-text cell. Do not let the
+    # longer organisation label replace the post name (which made LinkingSky
+    # rows look like bare department names and caused every row to be skipped).
+    linked_titles = [
+        clean_title(label)
+        for _, label in row.get("links", [])
+        if not _is_attachment_label(label)
+        and not is_junk_job_title(label)
+        and len(clean_title(label)) >= 8
+    ]
+    if best and linked_titles:
+        different = [label for label in linked_titles if label.lower() != best.lower()]
+        if different:
+            best = f"{different[0]} — {best}"
+    else:
+        for linked_title in linked_titles:
+            if len(linked_title) > len(best):
+                best = linked_title
     return clean_title(best)
 
 
@@ -2324,7 +2335,11 @@ def looks_like_discovery_headline(candidate: Candidate) -> bool:
     hints = RECRUITMENT_TERMS + ADMISSION_TERMS + ANSWER_KEY_TERMS + RESULT_TERMS + UPDATE_TERMS + (
         "jobs", "job ", " vacancy", "notification", "advt", "advertisement"
     )
-    return any(term in lowered for term in hints)
+    # Job-listing feeds such as LinkingSky often put the organisation and post
+    # in separate table cells and omit words like "recruitment" entirely. The
+    # row parser preserves the date cell; in a discovery feed that date plus a
+    # non-generic title is sufficient evidence that this is a job lead.
+    return bool(candidate.notice_date) or any(term in lowered for term in hints)
 
 
 def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str, Any]]:

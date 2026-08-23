@@ -40,6 +40,9 @@ class ShortHeadlineFormatTests(unittest.TestCase):
         self.assertEqual(
             short_department("Punjab Agricultural University (PAU), Ludhiana"), "PAU"
         )
+        self.assertEqual(
+            short_department("Central University of Punjab (CUPB), Bathinda"), "CUPB"
+        )
 
     def test_department_keeps_state_visible_when_acronym_hides_it(self):
         self.assertEqual(
