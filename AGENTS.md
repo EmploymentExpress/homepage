@@ -123,6 +123,32 @@ listing/page source before anything is published, and the feed host's URLs and b
 shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
 is the key `load_discovery_feeds()` reads.
 
+## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
+
+Notification pages on the discovery feeds print an **"Official Website"** row beside their
+notification/apply rows. On every run the monitor reads that row and, when it holds a genuine
+official website, **registers it automatically** as an official website link for the automation
+workflow:
+
+1. `official_website_links()` reads the label from the row/section context (the anchor text itself
+   is generic — "Visit Now", "Click Here"), for both table-row and inline layouts.
+2. `looks_like_official_website()` accepts the URL only when it is a real official domain
+   (`.gov.in`, `.nic.in`, `.gov`, `.mil.in`, `.ac.in`, `.edu.in`, `.edu`, `.res.in`, `.org.in`,
+   `.co.in`, `.in`, `.org`) and rejects PDFs, discovery/offline-portal hosts, job blogs and
+   aggregators (`NON_OFFICIAL_WEBSITE_HOSTS`), social/Telegram/WhatsApp links and shorteners.
+3. `register_official_website_link()` appends it to **`data/notification-source-links.json`**
+   with `addedBy: "discovery-official-website"` and an `addedAt` timestamp. Registration is
+   idempotent (never duplicates a link already configured in `automation/sources.json` or already
+   stored) and is skipped entirely on `--dry-run`.
+4. `additional_link_sources()` turns that stored link into a normal monitor source on the next
+   run, so the official listing — and, when it shows nothing new, its **raw page source** — is
+   checked automatically. No manual configuration is needed for a newly seen board.
+
+This never changes what may be published: notices still come only from the official website, and
+the discovery/portal URL is never published or displayed. Do not weaken the host checks — the
+guard tests in `tests/test_update_jobs.py` (`test_official_website_*`,
+`test_discovery_article_official_website_is_registered`) must stay green.
+
 ## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:

@@ -52,6 +52,25 @@ REDIRECT_PAGE = "redirect.html"
 # updates; see AGENTS.md and tests/test_layout_order.py before editing index.html.
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
 DISCOVERY_HOSTS = {"haryanajobs.in", "linkingsky.com", "punjabjobalert.com", "rozgarnews.com"}
+# Job blogs / aggregators, social platforms and shorteners: an "Official Website"
+# row pointing at one of these is never an official website and is never
+# auto-registered as a monitor source.
+NON_OFFICIAL_WEBSITE_HOSTS = {
+    "freejobalert.com", "sarkariresult.com", "sarkariresult.info", "mysarkarinaukri.com",
+    "dailyjobalert.in", "punjabjobalert.com", "haryanajobs.in", "linkingsky.com",
+    "rozgarnews.com", "testbook.com", "adda247.com", "pw.live", "jagranjosh.com",
+    "careerpower.in", "oliveboard.in", "gradeup.co", "byjus.com", "indgovtjobs.in",
+    "sarkarijobfind.com", "rojgarresult.com", "sarkarialert.com",
+    "facebook.com", "twitter.com", "x.com", "instagram.com", "youtube.com",
+    "t.me", "telegram.me", "whatsapp.com", "chat.whatsapp.com", "linkedin.com",
+    "bit.ly", "tinyurl.com", "goo.gl",
+}
+# Domain endings a genuine Indian recruiting board / PSU / institute uses.
+OFFICIAL_WEBSITE_DOMAIN_SUFFIXES = (
+    ".gov.in", ".nic.in", ".gov", ".mil.in", ".ac.in", ".edu.in", ".res.in",
+    ".org.in", ".net.in", ".co.in", ".edu", ".org", ".in",
+)
+
 DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "punjabjobalert", "punjab job alert", "punjabjobalert.com", "rozgarnews", "rozgar news")
 # Aggregator branding that must never surface in a published alert title or
 # source name (the offline-form portals host the forms but are never credited).
@@ -2370,6 +2389,7 @@ def process_discovery_feeds(
     official_cache: dict[str, list[Candidate]] = {}
     official_downloads: dict[str, Download] = {}
     official_raw_cache: dict[str, list[Candidate]] = {}
+    registered_websites: set[str] = set()
 
     for feed in load_discovery_feeds():
         print(f"Checking discovery feed {feed['name']}: {feed['url']}")
@@ -2406,6 +2426,13 @@ def process_discovery_feeds(
 
         published_this_feed = 0
         for headline in selected:
+            # Official-website auto-registration: the article behind a discovery
+            # headline prints an "Official Website" row next to its notification
+            # links. Whenever that row holds a real official domain, register it
+            # so the monitor starts checking that official website directly.
+            register_official_website_from_article(
+                headline.url, now=now, dry_run=dry_run, seen=registered_websites
+            )
             official = match_official_organization(headline.title, organizations)
             if official is None:
                 print(f"  Skipped unmatched headline: {headline.title[:90]}")
@@ -2573,6 +2600,52 @@ def _offline_page_department(page_text: str) -> str:
     return ""
 
 
+# Bumped whenever the article extractor learns a new field, so pages cached by
+# an older run are re-read once (v2 added the "Official Website" row).
+OFFLINE_EXTRACTOR_VERSION = 2
+
+OFFICIAL_WEBSITE_LABEL_RE = re.compile(
+    r"official\s+(?:web\s*site|website|portal|site)|department\s+website|board\s+website",
+    re.IGNORECASE,
+)
+
+
+def official_website_links(html_text: str, base_url: str = "") -> list[str]:
+    """Return the links published in a page's "Official Website" section.
+
+    Portals print the official website in a table row ("Official Website" in one
+    cell, a "Visit Now"/"Click Here" anchor in the next) or as a labelled line.
+    Both layouts are read here, because the anchor's own text never contains the
+    label. Only links that pass ``looks_like_official_website()`` are returned.
+    """
+    text = html_text or ""
+    found: list[str] = []
+
+    def collect(block: str) -> None:
+        for match in re.finditer(r"<a\b[^>]*?href\s*=\s*[\"']([^\"'#]+)[\"']", block, re.IGNORECASE):
+            url = canonical_url(urllib.parse.urljoin(base_url, match.group(1)))
+            if looks_like_official_website(url) and url not in found:
+                found.append(url)
+
+    # 1) Table rows / list items whose visible text carries the label.
+    for block_match in re.finditer(
+        r"<(tr|li|p|div)\b[^>]*>(.*?)</\1>", text, re.IGNORECASE | re.DOTALL
+    ):
+        block = block_match.group(2)
+        if len(block) > 4000:
+            continue
+        visible = re.sub(r"<[^>]+>", " ", block)
+        if OFFICIAL_WEBSITE_LABEL_RE.search(visible):
+            collect(block)
+
+    # 2) Fallback: an anchor that follows the label within the same text run.
+    if not found:
+        for label_match in OFFICIAL_WEBSITE_LABEL_RE.finditer(text):
+            collect(text[label_match.end(): label_match.end() + 400])
+
+    return found
+
+
 def offline_page_documents(
     page_url: str, download: Download | None = None
 ) -> dict[str, str]:
@@ -2668,7 +2741,14 @@ def offline_page_documents(
         apply_mode = "offline"
     else:
         apply_mode = ""
+    # The "Official Website" row/section of the page: its anchor text is generic
+    # ("Visit Now"/"Click Here"), so the label is read from the row context.
+    website_candidates.extend(
+        url for url in official_website_links(text, download.url)
+        if url not in website_candidates
+    )
     return {
+        "extractorVersion": OFFLINE_EXTRACTOR_VERSION,
         "form": _pick_offline_document(form_candidates),
         "notification": _pick_offline_document(notification_candidates),
         "website": _pick_offline_document(website_candidates, allow_homepage=True),
@@ -2965,7 +3045,10 @@ def _dated_notice_is_active(last_date: str, now: datetime) -> bool | None:
 
 def _sanitize_offline_documents(documents: dict[str, Any]) -> dict[str, str]:
     """Drop portal homepages and site roots that slipped into cached documents."""
-    cleaned = {str(key): str(value or "") for key, value in documents.items()}
+    cleaned: dict[str, Any] = {
+        str(key): (value if key == "extractorVersion" else str(value or ""))
+        for key, value in documents.items()
+    }
     website = canonical_url(cleaned.get("website") or "")
     if website and is_offline_form_url(website):
         cleaned["website"] = ""
@@ -2983,7 +3066,17 @@ def _sanitize_offline_documents(documents: dict[str, Any]) -> dict[str, str]:
 
 
 def _offline_documents_need_refresh(documents: dict[str, Any]) -> bool:
-    """True when a cached extraction used a homepage as the application form."""
+    """True when a cached extraction is stale and the page must be re-read.
+
+    Stale means the cached form link is a site homepage, or the entry was cached
+    by an older extractor that did not yet read the "Official Website" row.
+    """
+    try:
+        cached_version = int(documents.get("extractorVersion", 1))
+    except (TypeError, ValueError):
+        cached_version = 1
+    if cached_version < OFFLINE_EXTRACTOR_VERSION:
+        return True
     form = canonical_url(documents.get("form") or "")
     return bool(form and is_generic_homepage(form))
 
@@ -3029,6 +3122,34 @@ def process_offline_forms(
         state["offlinePageDocuments"] = page_cache
     cache_before = len(page_cache)
 
+    # Official-website auto-registration: every notification page read here is
+    # checked for its "Official Website" row. When that row points at a genuine
+    # official domain, the link is stored in data/notification-source-links.json
+    # so the monitor starts checking that official website (and, when its listing
+    # shows nothing new, its raw page source) from the next run — no manual
+    # configuration needed.
+    configured_source_urls = {
+        canonical_url(source.get("url", ""))
+        for source in (config.get("sources") or [])
+        if isinstance(source, dict)
+    }
+    seen_official_websites: set[str] = set()
+
+    def note_official_website(documents: dict[str, Any]) -> None:
+        website = canonical_url(documents.get("website", "") if isinstance(documents, dict) else "")
+        if not website or website in seen_official_websites:
+            return
+        seen_official_websites.add(website)
+        try:
+            register_official_websites_from_documents(
+                documents,
+                config_urls=configured_source_urls,
+                now=now,
+                dry_run=dry_run,
+            )
+        except Exception as exc:  # never let registration break a monitoring run
+            print(f"  Could not register official website {website}: {exc}", file=sys.stderr)
+
     def page_documents(page_url: str) -> dict[str, str]:
         key = canonical_url(page_url)
         cached = page_cache.get(key)
@@ -3038,7 +3159,9 @@ def process_offline_forms(
             and required_fields.issubset(cached)
             and not _offline_documents_need_refresh(cached)
         ):
-            return _sanitize_offline_documents(cached)
+            documents = _sanitize_offline_documents(cached)
+            note_official_website(documents)
+            return documents
         try:
             documents = _sanitize_offline_documents(offline_page_documents(key))
         except Exception as exc:
@@ -3049,10 +3172,12 @@ def process_offline_forms(
             if isinstance(cached, dict):
                 return _sanitize_offline_documents(cached)
             return {
+                "extractorVersion": OFFLINE_EXTRACTOR_VERSION,
                 "form": "", "notification": "", "website": "", "applyMode": "",
                 "department": "", "startDate": "", "lastDate": "", "pageTitle": "",
             }
         page_cache[key] = documents
+        note_official_website(documents)
         return dict(documents)
 
     added = 0
@@ -3307,8 +3432,147 @@ def process_offline_forms(
     return added, changed
 
 
-def additional_link_sources(path: Path = ROOT / "data" / "notification-source-links.json") -> list[dict[str, Any]]:
-    """Turn user-added notification URLs into monitor sources automatically.
+NOTIFICATION_SOURCE_LINKS = ROOT / "data" / "notification-source-links.json"
+
+
+def looks_like_official_website(url: str) -> bool:
+    """True when a URL found in an article's "Official Website" row is usable.
+
+    Discovery-feed / offline-form article pages publish a table row labelled
+    "Official Website". That row is the recruiting board's own site, so it may be
+    registered as a monitor source — but only when it is a real official domain
+    and not another job blog, a social/telegram link, a shortener or the portal
+    itself.
+    """
+    normalized = canonical_url(url)
+    if not normalized or is_pdf_url(normalized):
+        return False
+    if is_discovery_host(normalized) or is_offline_form_url(normalized):
+        return False
+    host = host_name(normalized)
+    if not host or host in NON_OFFICIAL_WEBSITE_HOSTS:
+        return False
+    if any(host == blocked or host.endswith(f".{blocked}") for blocked in NON_OFFICIAL_WEBSITE_HOSTS):
+        return False
+    return host.endswith(OFFICIAL_WEBSITE_DOMAIN_SUFFIXES)
+
+
+def register_official_website_link(
+    url: str,
+    name: str = "",
+    department: str = "",
+    *,
+    path: Path | None = None,
+    config_urls: set[str] | None = None,
+    now: datetime | None = None,
+    dry_run: bool = False,
+) -> bool:
+    """Add an official website found on a discovery article as a monitor source.
+
+    The link is appended to data/notification-source-links.json, which
+    ``additional_link_sources()`` turns into a normal source on the next run — so
+    the official listing (and, when it shows nothing new, its raw page source) is
+    checked automatically from then on. Returns True when a new link was stored.
+    """
+    path = path or NOTIFICATION_SOURCE_LINKS
+    normalized = canonical_url(url)
+    if not looks_like_official_website(normalized):
+        return False
+    if config_urls and normalized in config_urls:
+        return False
+
+    registry = read_json(path, {"version": 1, "links": []})
+    if not isinstance(registry, dict) or not isinstance(registry.get("links"), list):
+        registry = {"version": 1, "links": []}
+    known = {
+        canonical_url(entry.get("url", "")) if isinstance(entry, dict) else canonical_url(entry)
+        for entry in registry["links"]
+    }
+    if normalized in known:
+        return False
+
+    host = host_name(normalized)
+    label = strip_discovery_branding(clean_text(name)) or host
+    org = strip_discovery_branding(clean_text(department)) or label
+    registry["links"].append({
+        "url": normalized,
+        "name": label,
+        "department": org,
+        "type": "central",
+        "categorySlug": "central",
+        "location": "All India",
+        "noticeTypes": sorted(DEFAULT_NOTICE_TYPES),
+        "addedBy": "discovery-official-website",
+        "addedAt": (now or datetime.now(timezone.utc)).replace(microsecond=0)
+        .isoformat().replace("+00:00", "Z"),
+    })
+    print(f"  Registered official website from the notification page: {normalized}")
+    if not dry_run:
+        write_json(path, registry)
+    return True
+
+
+def register_official_websites_from_documents(
+    documents: dict[str, Any],
+    *,
+    path: Path | None = None,
+    config_urls: set[str] | None = None,
+    now: datetime | None = None,
+    dry_run: bool = False,
+) -> bool:
+    """Register the "Official Website" link extracted from an article page."""
+    if not isinstance(documents, dict):
+        return False
+    return register_official_website_link(
+        documents.get("website", ""),
+        name=documents.get("pageTitle", ""),
+        department=documents.get("department", ""),
+        path=path,
+        config_urls=config_urls,
+        now=now,
+        dry_run=dry_run,
+    )
+
+
+def register_official_website_from_article(
+    article_url: str,
+    *,
+    now: datetime | None = None,
+    dry_run: bool = False,
+    seen: set[str] | None = None,
+    config_urls: set[str] | None = None,
+) -> bool:
+    """Read a discovery-feed article and register its "Official Website" link.
+
+    Discovery articles publish the recruiting board's own website next to the
+    notification/apply rows. Reading it here means a board that is not yet
+    configured becomes a monitored official source automatically — the notices
+    themselves are still only ever published from that official website.
+    """
+    url = canonical_url(article_url)
+    if not url or (seen is not None and url in seen):
+        return False
+    if seen is not None:
+        seen.add(url)
+    if not (is_discovery_host(url) or is_offline_form_url(url)) or is_pdf_url(url):
+        return False
+    try:
+        download = fetch_url(url, timeout=20)
+        websites = official_website_links(decode_document(download), download.url)
+    except Exception as exc:
+        print(f"  Could not read the article for its official website ({url}): {exc}", file=sys.stderr)
+        return False
+    registered = False
+    for website in websites:
+        if register_official_website_link(
+            website, name=host_name(website), now=now, dry_run=dry_run, config_urls=config_urls
+        ):
+            registered = True
+    return registered
+
+
+def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
+    """Turn user-added and auto-discovered notification URLs into monitor sources.
 
     Each generated source goes through the same per-source pipeline as the
     configured sources, so the page-source rule (after checking the official
@@ -3316,6 +3580,7 @@ def additional_link_sources(path: Path = ROOT / "data" / "notification-source-li
     that official website) applies to user-added links too, with no extra
     configuration.
     """
+    path = path or NOTIFICATION_SOURCE_LINKS
     registry = read_json(path, {"links": []})
     links = registry.get("links", []) if isinstance(registry, dict) else []
     generated: list[dict[str, Any]] = []

@@ -814,6 +814,207 @@ class JobMonitorTests(unittest.TestCase):
         self.assertNotIn("onlineforms", target["offlineFormLink"])
         self.assertEqual(target["applyLabel"], "Download Offline Application Form")
 
+    def test_discovery_article_official_website_is_registered(self):
+        """A discovery headline's article registers its Official Website row."""
+        article = monitor.Download(
+            "https://punjabjobalert.com/ngel-engineer-and-executive-recruitment-2026/",
+            "text/html",
+            b"""
+            <html><body><h1>NGEL Engineer/ Executive Vacancy Online Form</h1>
+              <table>
+                <tr><td>Source Title</td><td>Issue Date</td><td>Source Link</td></tr>
+                <tr><td>Fill Online Form</td><td>18/08/2026</td>
+                    <td><a href="https://careers.ngel.co.in/apply">Apply Now</a></td></tr>
+                <tr><td>Full Notification</td><td>18/08/2026</td>
+                    <td><a href="https://www.ngel.co.in/advt-18-2026.pdf">Download</a></td></tr>
+                <tr><td>Official Website</td><td>18/08/2026</td>
+                    <td><a href="https://www.ngel.co.in/">Visit Now</a></td></tr>
+                <tr><td>Telegram</td><td>-</td>
+                    <td><a href="https://telegram.me/punjabjobalert">Join Now</a></td></tr>
+              </table>
+            </body></html>
+            """,
+        )
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "links.json"
+            with patch.object(monitor, "NOTIFICATION_SOURCE_LINKS", path), \
+                 patch.object(monitor, "fetch_url", return_value=article):
+                seen: set = set()
+                self.assertTrue(
+                    monitor.register_official_website_from_article(
+                        article.url, now=now, seen=seen
+                    )
+                )
+                # A second sighting of the same article does not re-fetch/duplicate.
+                self.assertFalse(
+                    monitor.register_official_website_from_article(
+                        article.url, now=now, seen=seen
+                    )
+                )
+            urls = {entry["url"] for entry in json.loads(path.read_text(encoding="utf-8"))["links"]}
+            self.assertEqual(urls, {"https://www.ngel.co.in/"})
+
+    def test_official_website_links_reads_row_and_inline_labels(self):
+        html = """
+        <table>
+          <tr><td>Official Website</td><td><a href="https://exampleboard.gov.in/">Visit Now</a></td></tr>
+          <tr><td>Answer Key</td><td><a href="https://someblog.example/key">Click Here</a></td></tr>
+        </table>
+        <p>Official Web Site <a href="https://ssc.gov.in/notice-board">Click Here</a></p>
+        <p>Official Website: <a href="https://punjabjobalert.com/">Visit</a></p>
+        """
+        links = monitor.official_website_links(html, "https://onlineforms.in/x/")
+        self.assertIn("https://exampleboard.gov.in/", links)
+        self.assertIn("https://ssc.gov.in/notice-board", links)
+        self.assertNotIn("https://punjabjobalert.com/", links)
+        self.assertNotIn("https://someblog.example/key", links)
+
+    def test_official_website_row_is_recognised_only_for_official_domains(self):
+        for url in (
+            "https://indianarmy.nic.in/",
+            "https://ssc.gov.in/notice-board",
+            "https://pau.edu/index.php",
+            "https://rcf.indianrailways.gov.in/",
+            "https://hal-india.co.in/careers",
+        ):
+            with self.subTest(url=url):
+                self.assertTrue(monitor.looks_like_official_website(url))
+        for url in (
+            "",
+            "https://punjabjobalert.com/ngel-engineer-and-executive-recruitment-2026/",
+            "https://onlineforms.in/latest-offline-forms/",
+            "https://www.speedjob.in/latest-job/",
+            "https://telegram.me/speedjobs",
+            "https://chat.whatsapp.com/abc",
+            "https://www.sarkariresult.com/",
+            "https://testbook.com/delhi-police-constable",
+            "https://bit.ly/3xyz",
+            "https://example.gov.in/notice.pdf",
+        ):
+            with self.subTest(url=url):
+                self.assertFalse(monitor.looks_like_official_website(url))
+
+    def test_official_website_link_is_registered_as_a_monitor_source(self):
+        """An 'Official Website' row on a notification page becomes a source."""
+        documents = {
+            "website": "https://indianarmy.nic.in/",
+            "pageTitle": "Indian Army CDM Recruitment 2026 - OnlineForms.in",
+            "department": "College of Defence Management",
+        }
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "notification-source-links.json"
+            self.assertTrue(
+                monitor.register_official_websites_from_documents(documents, path=path, now=now)
+            )
+            stored = json.loads(path.read_text(encoding="utf-8"))["links"]
+            self.assertEqual(len(stored), 1)
+            entry = stored[0]
+            self.assertEqual(entry["url"], "https://indianarmy.nic.in/")
+            self.assertEqual(entry["department"], "College of Defence Management")
+            self.assertEqual(entry["addedBy"], "discovery-official-website")
+            self.assertTrue(entry["addedAt"].endswith("Z"))
+            # Portal branding never leaks into the stored source name.
+            for term in ("onlineforms", "speedjob", "punjabjobalert"):
+                self.assertNotIn(term, entry["name"].lower())
+            # Idempotent: a second sighting does not duplicate the source.
+            self.assertFalse(
+                monitor.register_official_websites_from_documents(documents, path=path, now=now)
+            )
+            self.assertEqual(len(json.loads(path.read_text(encoding="utf-8"))["links"]), 1)
+            # The stored link becomes a normal monitor source on the next run.
+            sources = monitor.additional_link_sources(path)
+            self.assertEqual(len(sources), 1)
+            self.assertEqual(sources[0]["url"], "https://indianarmy.nic.in/")
+            self.assertTrue(sources[0]["id"].startswith("custom-"))
+
+    def test_official_website_registration_skips_blogs_portals_and_known_sources(self):
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "links.json"
+            for website in (
+                "https://onlineforms.in/latest-offline-forms/",
+                "https://punjabjobalert.com/",
+                "https://telegram.me/speedjobs",
+            ):
+                with self.subTest(website=website):
+                    self.assertFalse(
+                        monitor.register_official_websites_from_documents(
+                            {"website": website}, path=path, now=now
+                        )
+                    )
+            self.assertFalse(path.exists())
+            # Already configured official sources are not duplicated.
+            self.assertFalse(
+                monitor.register_official_websites_from_documents(
+                    {"website": "https://ssc.gov.in/notice-board"},
+                    path=path,
+                    config_urls={"https://ssc.gov.in/notice-board"},
+                    now=now,
+                )
+            )
+
+    def test_dry_run_never_writes_the_registered_official_website(self):
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "links.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://indianarmy.nic.in/", path=path, now=now, dry_run=True
+                )
+            )
+            self.assertFalse(path.exists())
+
+    def test_offline_run_registers_the_official_website_from_the_page(self):
+        """End to end: reading a notification page stores its official website."""
+        page = monitor.Download(
+            "https://onlineforms.in/example-board-recruitment/",
+            "text/html",
+            b"""
+            <html><head><title>Example Board Clerk Recruitment 2026</title></head><body>
+              <p>Example Government Recruitment Board invites applications to fill Clerk
+                 vacancies through offline application form.</p>
+              <table>
+                <tr><td>Department/ Organization</td><td>Example Government Recruitment Board</td></tr>
+                <tr><td>Application Form Submission Last Date</td><td>30 September 2026</td></tr>
+                <tr><td>Download Application Form</td>
+                    <td><a href="https://onlineforms.in/wp-content/uploads/form.pdf">Download</a></td></tr>
+                <tr><td>Official Website</td>
+                    <td><a href="https://exampleboard.gov.in/recruitment">Visit Now</a></td></tr>
+              </table>
+            </body></html>
+            """,
+        )
+        config = {"sources": [{
+            "id": "offline", "role": "offline-forms", "enabled": True,
+            "url": "https://onlineforms.in/latest-offline-forms/", "timeout": 5,
+        }]}
+        pool = [{
+            "url": page.url,
+            "title": "Example Board Clerk Recruitment 2026",
+            "department": "Example Government Recruitment Board",
+            "lastDate": "30-09-2026",
+            "location": "All India",
+            "type": "central",
+            "categorySlug": "central",
+            "qualification": "See Official Notification",
+            "vacancies": "See Notification",
+        }]
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            links_path = Path(folder) / "notification-source-links.json"
+            redirect_path = Path(folder) / "offline-redirects.json"
+            with patch.object(monitor, "NOTIFICATION_SOURCE_LINKS", links_path), \
+                 patch.object(monitor, "DEFAULT_OFFLINE_REDIRECTS", redirect_path), \
+                 patch.object(monitor, "fetch_url", return_value=page):
+                monitor.process_offline_forms(config, [], {"sources": {}}, now, pool=pool)
+            self.assertTrue(links_path.exists(), "official website must be registered")
+            stored = json.loads(links_path.read_text(encoding="utf-8"))["links"]
+            urls = {entry["url"] for entry in stored}
+            self.assertIn("https://exampleboard.gov.in/recruitment", urls)
+            self.assertFalse(any(monitor.is_offline_form_url(url) for url in urls))
+
     def test_offline_page_documents_extracts_form_and_notification_pdfs(self):
         page = monitor.Download(
             "https://onlineforms.in/indian-army-cdm-recruitment/",
@@ -968,6 +1169,7 @@ class JobMonitorTests(unittest.TestCase):
             self.assertEqual(redirects[form_token], form_pdf)
             self.assertEqual(redirects[notification_token], notification_pdf)
             self.assertEqual(state["offlinePageDocuments"][article], {
+            "extractorVersion": monitor.OFFLINE_EXTRACTOR_VERSION,
                 "form": form_pdf,
                 "notification": notification_pdf,
                 "website": "",
