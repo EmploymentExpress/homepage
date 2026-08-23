@@ -8,7 +8,7 @@
       "name": "LinkingSky - Punjab & All-India Government Jobs",
       "url": "https://linkingsky.com/government-exams/government-jobs-in-punjab.html",
       "maxHeadlines": 40,
-      "maxNewPerFeed": 8
+      "maxNewPerRun": 8
     },
     {
       "id": "punjabjobalert",
@@ -21,6 +21,20 @@
       "id": "haryanajobs",
       "name": "HaryanaJobs - Haryana & Punjab Government Jobs",
       "url": "https://haryanajobs.in/",
+      "maxHeadlines": 40,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "onlineforms-latest",
+      "name": "Latest Offline Application Forms",
+      "url": "https://onlineforms.in/latest-offline-forms/",
+      "maxHeadlines": 40,
+      "maxNewPerRun": 8
+    },
+    {
+      "id": "speedjob-latest",
+      "name": "Latest Recruitment Headlines",
+      "url": "https://www.speedjob.in/latest-job/",
       "maxHeadlines": 40,
       "maxNewPerRun": 8
     }

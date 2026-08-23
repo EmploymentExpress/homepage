@@ -115,6 +115,40 @@ bypass this fallback; if the official site is unreachable, the monitor keeps
 existing data and says so (it never invents links). Keep the rule's guard
 tests in `tests/test_update_jobs.py` green when touching this pipeline.
 
+**Discovery feeds (`automation/discovery-feeds.json`).** A feed may be hosted on a headline
+aggregator (`linkingsky.com`, `punjabjobalert.com`, `haryanajobs.in`) **or** on an offline-form
+portal (`onlineforms.in`, `speedjob.in`). Either way a feed supplies **leads only**: the notice
+must still be matched to an approved organisation and verified on the recruiting board's own
+listing/page source before anything is published, and the feed host's URLs and branding are never
+shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
+is the key `load_discovery_feeds()` reads.
+
+## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
+
+Notification pages on the discovery feeds print an **"Official Website"** row beside their
+notification/apply rows. On every run the monitor reads that row and, when it holds a genuine
+official website, **registers it automatically** as an official website link for the automation
+workflow:
+
+1. `official_website_links()` reads the label from the row/section context (the anchor text itself
+   is generic — "Visit Now", "Click Here"), for both table-row and inline layouts.
+2. `looks_like_official_website()` accepts the URL only when it is a real official domain
+   (`.gov.in`, `.nic.in`, `.gov`, `.mil.in`, `.ac.in`, `.edu.in`, `.edu`, `.res.in`, `.org.in`,
+   `.co.in`, `.in`, `.org`) and rejects PDFs, discovery/offline-portal hosts, job blogs and
+   aggregators (`NON_OFFICIAL_WEBSITE_HOSTS`), social/Telegram/WhatsApp links and shorteners.
+3. `register_official_website_link()` appends it to **`data/notification-source-links.json`**
+   with `addedBy: "discovery-official-website"` and an `addedAt` timestamp. Registration is
+   idempotent (never duplicates a link already configured in `automation/sources.json` or already
+   stored) and is skipped entirely on `--dry-run`.
+4. `additional_link_sources()` turns that stored link into a normal monitor source on the next
+   run, so the official listing — and, when it shows nothing new, its **raw page source** — is
+   checked automatically. No manual configuration is needed for a newly seen board.
+
+This never changes what may be published: notices still come only from the official website, and
+the discovery/portal URL is never published or displayed. Do not weaken the host checks — the
+guard tests in `tests/test_update_jobs.py` (`test_official_website_*`,
+`test_discovery_article_official_website_is_registered`) must stay green.
+
 ## ⏱️ "Just In" Badge, newest-first order & 48-Hour Auto-Removal Rule
 
 Whenever new job details are added or published through automation:
@@ -127,6 +161,76 @@ Whenever new job details are added or published through automation:
 ## 🏛️ Specific recruiting-department title rule
 
 Every published job title must visibly contain the full recruiting department/organisation name and the actual post or vacancy subject. Convert action-only labels such as `Application for Clerk` into a specific title such as `Punjab State Legal Services Authority (PULSA) — Clerk Recruitment`; reject navigation/link labels such as `Other Links`, `Close menu`, or `work Recruitments`. Generic source labels such as `Official Recruitment Notice` are never valid department names.
+
+## 📰 Short job-details headline rule (Mandatory)
+
+Every job-details **heading** published on the site (grid cards, Last Date Reminders, the master
+vacancy table, admission cards) must be a **short, scannable headline generated from the official
+notification** — never the raw portal link text and never a full sentence.
+
+**Format (fixed word order, no em dash, no year):**
+
+```
+<Department short name> <Total posts> <Post name(s)> <What the notice is about>
+```
+
+- **Department short name** — the board's own bracketed acronym when it publishes one
+  (`Punjab State Legal Services Authority (PULSA)` → `PULSA`,
+  `Punjab Agricultural University (PAU), Ludhiana` → `PAU`), otherwise the leading segment of the
+  official name, abbreviated and capped at 34 characters (`Local Audit Department, Chandigarh
+  Administration` → `Local Audit Dept.`). Keep the state/UT visible when the acronym hides it
+  (`Haryana WCD`, `ABDM Chandigarh`). Never invent an acronym the board does not use.
+- **Total posts** — the numeric vacancy count when the notice states one (`681`, `4,161`).
+  Omit it for `See Notification` / `Various` / single-post notices.
+- **Post name(s)** — the actual post(s), taken from the notice's own wording. List at most two,
+  comma separated, and append `& Various Post` when more exist
+  (`Clerk, Typist & Various Post`). Strip portal noise (`View`, `PDF 383 KB - opens in a new
+  window`, `Click Here`, `Apply Online`, `Application Form`, `Notification`), bracketed
+  `(Last date … / interview on …)` blurbs, advertisement numbers, years, and trailing
+  office/college/department qualifiers.
+- **What the notice is about** — detected from the board's own wording, using exactly this
+  vocabulary:
+
+  | Notice says | Headline ends with |
+  | --- | --- |
+  | new vacancy, apply online | `Online Form` |
+  | apply offline / by post / walk-in application | `Offline Form` |
+  | corrigendum | `Corrigendum Notice` |
+  | addendum | `Addendum Notice` |
+  | cancellation / withdrawal of vacancy | `Vacancy Cancelled` (exam → `Exam Cancelled`) |
+  | postponement / rescheduling | `Exam Postponed` (interview → `Interview Postponed`) |
+  | extension / re-opening of last date | `Last Date Extended` |
+  | shortlisted / empanelled candidates | `Shortlisted Candidates` |
+  | exam date / schedule / exam city | `Exam Date` |
+  | admit card / call letter / roll no. | `Admit Card` |
+  | answer key / objections | `Answer Key` (exam → `Exam Answer Key`) |
+  | merit / selection list | `Merit List` |
+  | waiting list | `Waiting List` |
+  | result / cut-off | `Result` |
+  | posting / appointment orders | `Posting Orders` |
+  | walk-in interview | `Walk in Interview` |
+  | admission / entrance | `Admission Form` |
+  | public notice | `Public Notice` |
+
+**Hard rules:**
+
+- ⏳ **72-character cap.** Shorten by dropping extra posts (`& Various Post`), then brackets —
+  never by cutting a word in half or dropping the notice type.
+- 🧾 **Headline ≠ data.** Shortening applies to the displayed heading only. The full official
+  title, advertisement number, dates and links stay in the job-details modal, the description and
+  the `JobPosting` structured data — nothing is deleted from the dataset.
+- 🏛️ **The department and the post must both still be visible** (the specific
+  recruiting-department title rule above still applies); never publish a bare
+  `Result` / `Online Form` heading with no department.
+- 🚫 Never guess the notice type. If the official wording gives no cue, use `Online Form` for a
+  vacancy notice and the alert type's default otherwise.
+- 🛠 **Use the shared implementation, don't re-invent it:** `scripts/short_headlines.py`
+  (`short_job_headline(title, department, alert_type, vacancies, apply_mode)`) and its JS mirror in
+  `index.html` (`shortJobHeadline()` / `jobDisplayHeadline(job)`, used by the grid cards, the master
+  table and Last Date Reminders; both implementations must produce identical output).
+  Regenerate the before/after demo with `python scripts/preview_short_headlines.py`
+  (writes `docs/short-headline-demo.html` / `.md`). Guard tests live in
+  `tests/test_short_headlines.py` and must stay green.
 
 ## 📋 Google Jobs & Search Console Schema Standard (Mandatory)
 
