@@ -105,7 +105,15 @@
         "c0f92e6df51aa97d0c669c1977208342e1c35e432e671051dfd0a89d8a48d37f",
         "0d916e286422e811bff9fe8b63627c58d2792164c34970c1bd108792b12973a2",
         "a8ce4e142e4051cd6f3a090697ea04f76dbc7c614e73fb3257482d6bb1e50ed7",
-        "b9a2a64ad92c50689fdfecd118f2ec4c73d9375c3ee1214028ae8ec67a4ff65f"
+        "b9a2a64ad92c50689fdfecd118f2ec4c73d9375c3ee1214028ae8ec67a4ff65f",
+        "066b06d1e24f97f80752cc024175ad1d14c9e6cb527c0a41e4cc8cfddc3c80e9",
+        "ff171bc40ce2bf0650a6ebf3d2eb766ff209a4fc2edae47e0c42172b40e799c0",
+        "68377fa0ba4bf13f194298cabf1e8923600dfbcb7d77b1ea7959402faf0ddcaa",
+        "452c70bc07d6877fa8931bbbf3cf6284337d8d75776049f437090de204b622f9",
+        "849a5fc34dd2512efc8631a6cfcce425b8df4bbdb93aa37b42c7aa0ef187d075",
+        "bcd4b56dfaf87e4a8365f2c5d04dd7dfdb87624bc9c40fd008c036a30e5f3f7a",
+        "8ca85bb7e2aaa6cd63ed4754c23f47cfc021d87d492718ca54510cbcde4b19c7",
+        "490e4081baba070abac3661477963cfe89ee725afcd5a53fad612946a82248d5"
       ]
     },
     "punjabjobalert": {
@@ -194,7 +202,8 @@
         "58cde1b0fc091fdd78214f5449ebba4485b4495e5fffef14e53840d568522db7",
         "c121117ff6b96017e6ea1ea613bfaab6556f8d0daeb71c4a9320b4271967017d",
         "6bfcf0b129f3e9eaa337037a454ffbab6506a17a654205c9fb5a048014523913",
-        "55506c1fab20ee2f0b8f5b660cb6f6691fe8d54906d7d577d8db9d1c06d696f0"
+        "55506c1fab20ee2f0b8f5b660cb6f6691fe8d54906d7d577d8db9d1c06d696f0",
+        "e40a20c9eee73098b60bf13df14f06bc4ed995d33e90bfb98a6dde70f3eb700b"
       ]
     },
     "cup": {
@@ -268,7 +277,8 @@
       "initializedAt": "2026-08-24T08:31:29Z",
       "fingerprints": [
         "3972314ac8ab89aa76dbd2bc7777041210081137884799ee5422d66dd9f4a1ef",
-        "9d2b31ec11a91de74cafad380598e25581d461bf0ed805014e128dc0fde48504"
+        "9d2b31ec11a91de74cafad380598e25581d461bf0ed805014e128dc0fde48504",
+        "a93e57212dd938ef53645be79675a13e8a62647136b881c0d36f508ef57d7db9"
       ]
     },
     "custom-f7c439e515ec": {
@@ -6076,6 +6086,17 @@
       "startDate": "26-08-2026",
       "lastDate": "15-09-2026",
       "pageTitle": "RRC East Central Railway (ECR) Apprentice Recruitment 2026"
+    },
+    "https://www.speedjob.in/cpcb-deo-field-assistant-various-post-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://cpcb.gov.in/openpdffile.php?id=Q2FyZWVyRmlsZXMvMjU1XzE3ODcyMjg1MzlfbWVkaWFwaG90bzg3MDYucGRm",
+      "website": "",
+      "applyMode": "online",
+      "department": "Central Pollution Control Board, Delhi",
+      "startDate": "24-08-2026",
+      "lastDate": "07-09-2026",
+      "pageTitle": "CPCB - DEO, Field Assistant & Various Post Recruitment 2026"
     }
   }
 }

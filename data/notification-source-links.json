@@ -568,6 +568,23 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://sssb.punjab.gov.in/",
+      "name": "sssb.punjab.gov.in",
+      "department": "sssb.punjab.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T14:27:46Z"
     }
   ]
 }
