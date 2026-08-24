@@ -83,7 +83,8 @@
         "141d250e47102cf81a6b60b8a59de30bab554abb75851800fd62dba264e404b9",
         "9a2ff217f0956469b9d355fda1314336d66ca42158eb63d7537718be0e222de8",
         "770071ddefa33ac4092fec62f624dfb294dbd1dbe58faea523a6eff551a1bb6c",
-        "28d7d21aa6917442302f0fbd832bf1aad9346ed5ac0c516bdf4b2d7e0da50094"
+        "28d7d21aa6917442302f0fbd832bf1aad9346ed5ac0c516bdf4b2d7e0da50094",
+        "e5e38fb9e20fb53125944f9dc4fa2504d5e5ea0b35af9c05be3bcaf59e55e0ec"
       ]
     },
     "linkingsky-punjab-jobs": {
@@ -96,7 +97,15 @@
         "bc7b452e43fadeff047b413424e6a7f5d60965281a0e190c99219eb9297e0e60",
         "3f745e4abdbdb58f0b1ec1732aef3cc25de843bd047e1a894ade5dc5b8fe04f5",
         "b8b3cbb08b591184346fa68af2a81d276468f1c280a438841502bbb9dc46df40",
-        "cd341c652de753ad08a0f28974cd14b3bc10a09caed84c5863fdcb514eda4b3d"
+        "cd341c652de753ad08a0f28974cd14b3bc10a09caed84c5863fdcb514eda4b3d",
+        "745e5e887e53594b8de8359175bbfea6712c0e4dc8e34ac51a352cde17e73db5",
+        "c28e1edb15f726e9cb48c614e1cf3ed30b5201e257c61e6b980b8bfc390ebfa8",
+        "6bb6d3b9f3a05dfa1b1a1c4494cda722f49b346455aa090d7ab95c0052962eba",
+        "4038dab48455cdf0693b422cf793c188a376f19effacf964e3072ae6f11e7e8a",
+        "c0f92e6df51aa97d0c669c1977208342e1c35e432e671051dfd0a89d8a48d37f",
+        "0d916e286422e811bff9fe8b63627c58d2792164c34970c1bd108792b12973a2",
+        "a8ce4e142e4051cd6f3a090697ea04f76dbc7c614e73fb3257482d6bb1e50ed7",
+        "b9a2a64ad92c50689fdfecd118f2ec4c73d9375c3ee1214028ae8ec67a4ff65f"
       ]
     },
     "punjabjobalert": {
@@ -234,6 +243,74 @@
     "speedjob-latest": {
       "initializedAt": "2026-08-24T06:07:19Z",
       "fingerprints": []
+    },
+    "custom-4a87424b8eeb": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "0ae2f09684fa6bb87553e69ece322a3c2b4c52be9580758ed8045b1881ddc69a",
+        "8497031ffb8ce7ae5f709c0977e8a1fd0e225dc2f061b968fb5e27a8edfeaf25"
+      ]
+    },
+    "custom-1603115d4a87": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "82628a1e04bd33738395088ca92263c381c982fe40943669de0fef9a11e887f3",
+        "27a229c3c807d59065cbba6e21b374c288074b477c3910431e84c62ff0afee11",
+        "5854a037e678dd57ddaf79f12a7c6bd87463aaadd7297dc0bf949f739fcd3e79",
+        "fb32782f637b83fc6ea42a1ac1bc865d39c222535a08ac8b0474165f5c8a9277"
+      ]
+    },
+    "custom-a9fa10170a90": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": []
+    },
+    "custom-4006d3b0101b": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "3972314ac8ab89aa76dbd2bc7777041210081137884799ee5422d66dd9f4a1ef",
+        "9d2b31ec11a91de74cafad380598e25581d461bf0ed805014e128dc0fde48504"
+      ]
+    },
+    "custom-f7c439e515ec": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "7d429529655d406fe72f61a031f9fb9ddd901c9a9754cfebc0fc603e1ba3403e",
+        "6e9dcd8bc7d3b119fdbf187812f6fe0c039d047b36c9c608bac04b3bf4b4f114",
+        "310a8ae2f55eb3cbb4faf7ec1d161d87b7c23934cd52f04d3f78dcd393e8dd55",
+        "096c0442770ac1eed9758f2712fcc063bb7569e769f0a976f67d7ab6d27ce95a",
+        "178c2bd8c1288e56676ba54fa9f221a3d99b8176e431daf68c52fced67f0d8a2",
+        "ea3da212d736d44c6f17f7d4e517bd88af7d6edf5ea345dbc48df99e42a60319",
+        "aa00b51356d49f3581cf8dc6e11c444e7ef7729b5be770e0a62f14a474f7c20e"
+      ]
+    },
+    "custom-2be7d60af96d": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "dfb1c517929094a5bfb40a8b339eef0fad3f665de1abfcd6e53468aa0e9dc00a",
+        "e9c49448d189fdaaaaec8890b748d8557d94c90f2bd00aa786e9e032b06e4db4"
+      ]
+    },
+    "custom-c8770f2e6b8f": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "ff9c4d141126c09394ed068247bfea42ae6184f1906191e0b5e2897a122c0ef0"
+      ]
+    },
+    "custom-f12474453dfd": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": []
+    },
+    "custom-7f34a04f79b4": {
+      "initializedAt": "2026-08-24T08:31:29Z",
+      "fingerprints": [
+        "9383480ee909fd98ab14b2f241f1005244f81e83c1693429dc692d6e8706800c",
+        "c85bd1a26ab1f4c761b4d8ab79349f35c9a36eea5b6dc866f9ea48d1bca7afe3",
+        "7be9fff3b8f89a6c6ee69011e9ebd611a3c0045fe02c57f50d0054e0a4852229",
+        "f16b3dd2947c72a5c10b19c7b945e3157402344e2ff839300de1fad04930bfc0",
+        "a07c7bac8e997260597ec7e3b4443b502bbbd9e8b7043e37e4128663bea9ed15",
+        "dcef80f7760c6c4979abdb03f3358337cfc3c546b84a3382c153c430d9a00fcc",
+        "eccbdf457ee190d2c2efb4451f7ee1ea71e2f12e94b6755cfcb38ef9ed41a909"
+      ]
     }
   },
   "offlinePageDocuments": {
@@ -5988,6 +6065,17 @@
       "startDate": "",
       "lastDate": "",
       "pageTitle": ""
+    },
+    "https://www.speedjob.in/rrc-ecor-apprentice-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "",
+      "website": "",
+      "applyMode": "online",
+      "department": "Railway Recruitment Cell (RRC), East Central Railway (ECR)",
+      "startDate": "26-08-2026",
+      "lastDate": "15-09-2026",
+      "pageTitle": "RRC East Central Railway (ECR) Apprentice Recruitment 2026"
     }
   }
 }
