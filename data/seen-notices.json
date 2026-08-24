@@ -113,7 +113,8 @@
         "849a5fc34dd2512efc8631a6cfcce425b8df4bbdb93aa37b42c7aa0ef187d075",
         "bcd4b56dfaf87e4a8365f2c5d04dd7dfdb87624bc9c40fd008c036a30e5f3f7a",
         "8ca85bb7e2aaa6cd63ed4754c23f47cfc021d87d492718ca54510cbcde4b19c7",
-        "490e4081baba070abac3661477963cfe89ee725afcd5a53fad612946a82248d5"
+        "490e4081baba070abac3661477963cfe89ee725afcd5a53fad612946a82248d5",
+        "37c53b28ff1226857b4c4f949fb56ba3475a9c6bd36da9bef8228f7cadbd8c75"
       ]
     },
     "punjabjobalert": {
@@ -321,6 +322,20 @@
         "dcef80f7760c6c4979abdb03f3358337cfc3c546b84a3382c153c430d9a00fcc",
         "eccbdf457ee190d2c2efb4451f7ee1ea71e2f12e94b6755cfcb38ef9ed41a909"
       ]
+    },
+    "custom-3df1532f0e08": {
+      "initializedAt": "2026-08-24T19:48:13Z",
+      "fingerprints": []
+    },
+    "custom-48fb363bf153": {
+      "initializedAt": "2026-08-24T19:48:13Z",
+      "fingerprints": [
+        "2db18020d60d880781aeddacf752b07ada17ab0c432c6218e0db1dfcb5cf5646"
+      ]
+    },
+    "custom-a4634bb37126": {
+      "initializedAt": "2026-08-24T19:48:13Z",
+      "fingerprints": []
     }
   },
   "offlinePageDocuments": {
