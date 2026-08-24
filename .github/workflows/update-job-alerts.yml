@@ -35,13 +35,13 @@ jobs:
 
     steps:
       - name: Check out website
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
@@ -58,28 +58,40 @@ jobs:
 
       - name: Commit newly discovered alerts
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # The monitor may also refresh data/offline-redirects.json (offline
+          # application-form links), so commit that alongside the alerts.
           DATA_FILES="data/auto-jobs.json data/seen-notices.json data/offline-redirects.json"
 
-          # Detect both modified tracked files and newly created untracked files
-          if [ -z "$(git status --porcelain $DATA_FILES)" ]; then
+          # Check if there are actual modifications in the target alert files
+          if [ -z "$(git status --porcelain -- $DATA_FILES)" ]; then
             echo "No new recruitment notices were found."
             exit 0
           fi
 
           git config user.name "employment-express-alert-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add $DATA_FILES
-          git commit -m "chore: publish automatic job alerts"
 
-          # Rebase onto any concurrent commits and push, retrying transient failures
+          # Stage only the intended alert files and commit
+          git add --ignore-missing -- $DATA_FILES
+          git commit -m "chore: publish automatic job alerts [skip ci]"
+
+          # Clear leftover unstaged/untracked temp files to eliminate rebase blocking
+          git reset --hard
+          git clean -fd
+
+          # Authenticate and rebase-push
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+
           for attempt in 1 2 3; do
-            if git pull --rebase origin "${GITHUB_REF_NAME}" \
-                && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}"; then
               echo "Published new alerts successfully."
               exit 0
             fi
-            echo "Commit/push attempt ${attempt} failed; retrying in 15s..."
+            echo "Commit/push attempt ${attempt} failed; aborting rebase and retrying in 15s..."
+            git rebase --abort 2>/dev/null || true
             sleep 15
           done
           exit 1
