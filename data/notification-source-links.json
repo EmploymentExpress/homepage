@@ -8,7 +8,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Amritsar, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
@@ -17,7 +21,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Ludhiana, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://pmidc.punjab.gov.in/recruitment/",
@@ -26,7 +34,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "SAS Nagar (Mohali), Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://health.punjab.gov.in/?q=node/952",
@@ -35,7 +47,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://chdsw.gov.in/index.php/recruitments/index",
@@ -44,7 +60,11 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Chandigarh",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://pilbs.punjab.gov.in/en/",
@@ -53,7 +73,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "SAS Nagar (Mohali), Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://pbsports.punjab.gov.in/",
@@ -62,7 +86,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://tmc.gov.in/postmaster/Careers",
@@ -71,7 +99,11 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Mumbai, Maharashtra",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://bfuhs.ggsmch.org/",
@@ -80,7 +112,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Faridkot, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://graupunjab.org/jobs/",
@@ -89,7 +125,11 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Hoshiarpur, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
     },
     {
       "url": "https://www.desgpc.org/",
@@ -98,7 +138,436 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"]
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "corrigendum"
+      ]
+    },
+    {
+      "url": "https://www.nal.res.in/",
+      "name": "CSIR NAL Multi-Tasking Staff Recruitment 2026 Application Form",
+      "department": "CSIR–National Aerospace Laboratories (CSIR–NAL)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://ccrs.ayush.gov.in/",
+      "name": "CCRS Recruitment 2026 Apply for Clerk & Social Worker",
+      "department": "Central Council for Research in Siddha (CCRS)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://iafrecruitment.edcil.co.in/",
+      "name": "Air Force Non-Combatant Recruitment 2026 Offline Form",
+      "department": "Indian Air Force (IAF)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.ddpmod.gov.in/",
+      "name": "DGQA Technician Recruitment 2026 Application Form",
+      "department": "Directorate General of Quality Assurance (DGQA)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.joinindianarmy.nic.in/",
+      "name": "Indian Army Sports Quota Recruitment 2026 | Havildar & Naib Subedar",
+      "department": "Indian Army (Ministry of Defence) Notification No. 06/ 2026",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://indianairforce.nic.in/",
+      "name": "Indian Air Force MTS Recruitment 2026 Application Form PDF",
+      "department": "Indian Air Force (IAF) Command HQ Maintenance Command, IAF",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://bro.gov.in/",
+      "name": "BRO GREF Recruitment 2026 Apply Offline 899 Vacancies",
+      "department": "Border Roads Organisation (BRO)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://balangir.dcourts.gov.in/",
+      "name": "District Court Ludhiana Recruitment 2026 Apply for 56 Clerk Vacancies",
+      "department": "District Court, Ludhiana (Punjab)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://wcdhry.gov.in/",
+      "name": "Haryana Anganwadi Recruitment 2026 Apply for 7183 Vacancies",
+      "department": "Women and Child Development Department Haryana (Haryana WCD)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://munitionsindia.in/",
+      "name": "Ordnance Factory Chanda Recruitment 2026 | 140 Vacancies",
+      "department": "Ordnance Factory Chanda (Ministry of Defence)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.maavaishnodevi.org/",
+      "name": "SMVDSB Recruitment 2026 Apply for 105 Vacancies",
+      "department": "Shri Mata Vaishno Devi Shrine Board (SMVDSB), Jammu & Kashmir",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.echs.gov.in/",
+      "name": "ECHS Meerut Recruitment 2026 Clerk, Peon, Driver & Others",
+      "department": "Ex-Servicemen Contributory Health Scheme (ECHS), Meerut",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.sainikschoolamaravathinagar.edu.in/",
+      "name": "Sainik School Amaravathinagar Recruitment 2026 Apply Offline",
+      "department": "Sainik School, Amaravathinagar (Tamil Nadu)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://indianarmy.nic.in/",
+      "name": "Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS & Steno",
+      "department": "College of Defence Management (CDM)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://yamunanagar.dcourts.gov.in/",
+      "name": "Yamunanagar Court Recruitment 2026 Apply for Peon",
+      "department": "District & Session Judge, Jagadhri (Yamuna Nagar)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.sainikschoolnalanda.edu.in/",
+      "name": "Sainik School Nalanda Recruitment 2026 Application Form",
+      "department": "Sainik School Nalanda (Bihar)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://ids.nic.in/",
+      "name": "Defence Services Staff College Recruitment 2026 | LDC, MTS, Driver, Steno, etc.",
+      "department": "Defence Services Staff College (DSSC) Notification No. CBC10111/11/0001/2627, EN 08/11",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.idsj.org/",
+      "name": "IDS Jaipur Recruitment 2026 Apply for Non-Faculty Posts",
+      "department": "Institute of Development Studies (IDS)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://gonda.kvk4.in/",
+      "name": "Gonda KVK Recruitment 2026 Apply for Driver, Assistant, Steno & Other",
+      "department": "Deendayal Research Institute LBS Krishi Vigyan Kendra, Gonda (UP)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://rampur.nic.in/",
+      "name": "Rampur Raza Library Recruitment 2026 Apply for Library Attendant",
+      "department": "Rampur Raza Library (Uttar Pradesh)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://www.sainikschoolpunglwa.nic.in/",
+      "name": "Sainik School Punglwa Recruitment 2026 Application Form",
+      "department": "Sainik School Punglwa (Nagaland)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://dgfscdhg.gov.in/uttrakhand-0",
+      "name": "Uttarakhand Home Guard Recruitment 2026 | 920 Vacancy",
+      "department": "Office of District Commandant, Homeguards (Uttarakhand)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://kanpurnagar.dcourts.gov.in/",
+      "name": "District Court Kanpur Nagar Recruitment 2026 Apply for Sweeper",
+      "department": "District & Sessions Court, Kanpur Nagar (Uttar Pradesh)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://ambala.dcourts.gov.in/",
+      "name": "Ambala District Court Recruitment 2026 Apply Offline for Clerk",
+      "department": "District & Sessions Judge, Ambala (Haryana)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
+    },
+    {
+      "url": "https://ssghorakhal.org/",
+      "name": "Sainik School Ghorakhal Recruitment 2026 Application Form",
+      "department": "Sainik School Ghorakhal (Uttarakhand)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-24T06:07:19Z"
     }
   ]
 }
