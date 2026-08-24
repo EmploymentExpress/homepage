@@ -2038,6 +2038,7 @@
                 resultsList = [
                     ...resultAlerts.map(alert => ({
                         title: alert.title,
+                        headline: jobDisplayHeadline(alert),
                         score: alert.alertType === 'answer-key'
                             ? `Official Answer Key • ${alert.sourceName}`
                             : `Official Result • ${alert.sourceName}`,
@@ -2278,7 +2279,7 @@
             list.innerHTML = renderedResultsList.map((item, index) => `
                 <div class="p-3 hover:bg-rose-50/60 transition cursor-pointer flex items-center justify-between" onclick="openResultItem(${index})">
                     <div>
-                        <div class="font-bold text-xs text-slate-800 hover:text-rose-700">${escapeHtml(item.title)}</div>
+                        <div class="font-bold text-xs text-slate-800 hover:text-rose-700" title="${escapeHtml(item.title)}">${escapeHtml(item.headline || item.title)}</div>
                         <div class="text-[10px] text-slate-500 mt-0.5"><span class="text-rose-600 font-semibold">${escapeHtml(item.score)}</span></div>
                         <div class="text-[10px] text-slate-500 mt-1"><i class="far fa-calendar-check mr-1 text-rose-500"></i><strong>Result/update date:</strong> ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'See official notice')}</div>
                         <div class="text-[9px] text-slate-400 mt-0.5">Application last date: Not applicable to results / answer keys</div>
