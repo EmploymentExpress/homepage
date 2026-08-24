@@ -35,13 +35,13 @@ jobs:
 
     steps:
       - name: Check out website
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -59,8 +59,6 @@ jobs:
       - name: Commit newly discovered alerts
         shell: bash
         run: |
-          # The monitor may also refresh data/offline-redirects.json (offline
-          # application-form links), so commit that alongside the alerts.
           DATA_FILES="data/auto-jobs.json data/seen-notices.json data/offline-redirects.json"
 
           # Detect both modified tracked files and newly created untracked files
@@ -74,8 +72,7 @@ jobs:
           git add $DATA_FILES
           git commit -m "chore: publish automatic job alerts"
 
-          # Rebase onto any concurrent commits and push, retrying transient
-          # fetch/push failures instead of failing the whole run once.
+          # Rebase onto any concurrent commits and push, retrying transient failures
           for attempt in 1 2 3; do
             if git pull --rebase origin "${GITHUB_REF_NAME}" \
                 && git push origin "HEAD:${GITHUB_REF_NAME}"; then
