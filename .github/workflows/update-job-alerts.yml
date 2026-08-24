@@ -30,143 +30,160 @@ name: Update job alerts
 
 on:
 
-schedule:
+  schedule:
 
-# Check once every six hours (cron uses UTC; GitHub may start it a little late).
+    # Check once every six hours (cron uses UTC; GitHub may start it a little late).
 
-- cron: "17 */6 * * *"
+    - cron: "17 */6 * * *"
 
-workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
 
-contents: write
+  contents: write
 
 concurrency:
 
-group: automatic-job-alerts-${{ github.ref }}
+  group: automatic-job-alerts-${{ github.ref }}
 
-cancel-in-progress: false
+  cancel-in-progress: false
 
 jobs:
 
-update:
+  update:
 
-if: github.repository == 'EmploymentExpress/homepage'
+    if: github.repository == 'EmploymentExpress/homepage'
 
-runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-timeout-minutes: 90
+    timeout-minutes: 90
 
-steps:
+    steps:
 
-- name: Check out website
+      - name: Check out website
 
-uses: actions/checkout@v5
+        uses: actions/checkout@v5
 
-with:
+        with:
 
-ref: ${{ github.ref_name }}
+          ref: ${{ github.ref_name }}
 
-fetch-depth: 0
+          fetch-depth: 0
 
-- name: Set up Python
+      - name: Set up Python
 
-uses: actions/setup-python@v6
+        uses: actions/setup-python@v6
 
-with:
+        with:
 
-python-version: "3.12"
+          python-version: "3.12"
 
-cache: pip
+          cache: pip
 
-cache-dependency-path: automation/requirements.txt
+          cache-dependency-path: automation/requirements.txt
 
-- name: Install PDF reader
+      - name: Install PDF reader
 
-run: python -m pip install --disable-pip-version-check -r automation/requirements.txt
+        run: python -m pip install --disable-pip-version-check -r automation/requirements.txt
 
-- name: Test alert parser
+      - name: Test alert parser
 
-run: python -m unittest discover -s tests -v
+        run: python -m unittest discover -s tests -v
 
-- name: Check official websites for new alerts
+      - name: Check official websites for new alerts
 
-run: python scripts/update_jobs.py
+        run: python scripts/update_jobs.py
 
-- name: Commit newly discovered alerts
+      - name: Commit newly discovered alerts
 
-shell: bash
+        shell: bash
 
-run: |
+        run: |
 
-# actions/checkout can leave the worktree on a detached HEAD. Make
+          # actions/checkout can leave the worktree on a detached HEAD. Make
 
-# sure the commit is attached to the branch that triggered this run;
+          # sure the commit is attached to the branch that triggered this run;
 
-# otherwise `git pull --rebase` exits with 128 before the push.
+          # otherwise `git pull --rebase` exits with 128 before the push.
 
-git checkout "${GITHUB_REF_NAME}"
+          git checkout "${GITHUB_REF_NAME}"
 
-# The monitor may also register newly discovered official websites in
+          # The monitor may also register newly discovered official websites in
 
-# data/notification-source-links.json. Keep that registry in the same
+          # data/notification-source-links.json. Keep that registry in the same
 
-# commit; leaving it unstaged makes the later rebase fail with
+          # commit; leaving it unstaged makes the later rebase fail with
 
-# "cannot pull with rebase: You have unstaged changes".
+          # "cannot pull with rebase: You have unstaged changes".
 
-DATA_FILES=(
+          DATA_FILES=(
 
-data/auto-jobs.json
+            data/auto-jobs.json
 
-data/seen-notices.json
+            data/seen-notices.json
 
-data/offline-redirects.json
+            data/offline-redirects.json
 
-data/notification-source-links.json
+            data/notification-source-links.json
 
-)
+          )
 
-# Check if there are actual modifications in the generated data files.
+          # Check if there are actual modifications in the generated data files.
 
-if [ -z "$(git status --porcelain -- "${DATA_FILES[@]}")" ]; then
+          if [ -z "$(git status --porcelain -- "${DATA_FILES[@]}")" ]; then
 
-echo "No new recruitment notices were found."
+            echo "No new recruitment notices were found."
 
-exit 0
+            exit 0
 
-fi
+          fi
 
-git config user.name "employment-express-alert-bot"
+          git config user.name "employment-express-alert-bot"
 
-git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-# Stage only the generated data files, never the protected homepage.
+          # Stage only the generated data files, never the protected homepage.
 
-git add -- "${DATA_FILES[@]}"
+          git add -- "${DATA_FILES[@]}"
 
-git commit -m "chore: publish automatic job alerts [skip ci]"
+          git commit -m "chore: publish automatic job alerts [skip ci]"
 
-# The parser is data-only. Fail clearly instead of allowing an
+          # The parser is data-only. Fail clearly instead of allowing an
 
-# unexpected unstaged change to break `git pull --rebase` opaquely.
+          # unexpected unstaged change to break `git pull --rebase` opaquely.
 
-if [ -n "$(git status --porcelain)" ]; then
+          if [ -n "$(git status --porcelain)" ]; then
 
-echo "Unexpected unstaged changes remain after publishing alert data:" >&2
+            echo "Unexpected unstaged changes remain after publishing alert data:" >&2
 
-git status --short >&2
+            git status --short >&2
 
-exit 1
+            exit 1
 
-fi
+          fi
 
-# checkout persists the workflow token in the local credential helper.
+          # checkout persists the workflow token in the local credential helper.
 
-# Rebase onto concurrent alert commits, then push the resulting branch.
+          # Rebase onto concurrent alert commits, then push the resulting branch.
 
-for attempt in 1 2 3; do
+          for attempt in 1 2 3; do
 
-if git pull --re
+            if git pull --rebase && git push; then
 
+              exit 0
+
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+
+              echo "Rebase/push attempt $attempt failed; retrying in 5 seconds..." >&2
+
+              sleep 5
+
+            fi
+
+          done
+
+          echo "Failed to rebase and push after 3 attempts" >&2
+
+          exit 1
