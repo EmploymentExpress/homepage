@@ -585,6 +585,40 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-24T14:27:46Z"
+    },
+    {
+      "url": "https://bceceboard.bihar.gov.in/BSFCIndex.php",
+      "name": "bceceboard.bihar.gov.in",
+      "department": "bceceboard.bihar.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-25T08:23:52Z"
+    },
+    {
+      "url": "https://www.iob.bank.in/en/Careers",
+      "name": "iob.bank.in",
+      "department": "iob.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-25T08:23:52Z"
     }
   ]
 }
