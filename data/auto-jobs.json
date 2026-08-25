@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-25T14:31:28Z",
+  "updatedAt": "2026-08-25T19:49:23Z",
   "jobs": [
     {
       "id": 221539002174884,
@@ -91,8 +91,8 @@
       "location": "All India",
       "applyMode": "Offline",
       "alertType": "recruitment",
-      "badge": "OFFLINE FORM",
-      "badgeColor": "bg-slate-700",
+      "badge": "NEW JOB ALERT",
+      "badgeColor": "bg-red-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -3186,7 +3186,7 @@
     },
     {
       "id": 222167597830746,
-      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South MTS, Cook, Cleaner, Fireman, Tradesman & Various Post",
+      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South Recruitment 2026 Offline Application Form",
       "department": "Ministry of Defence, ASC Centre (South), Bangalore",
       "vacancies": "62 Posts",
       "qualification": "10th Pass / Diploma in Catering / HMV Licence with Experience",
