@@ -345,6 +345,53 @@
     "custom-8652751e6280": {
       "initializedAt": "2026-08-25T03:27:49Z",
       "fingerprints": []
+    },
+    "custom-09b7c46162c2": {
+      "initializedAt": "2026-08-25T14:31:28Z",
+      "fingerprints": [
+        "065bff7117f3c0e6d3ee084d381a24a3e0e063a6d747fa3c4eb9a9970209f5e2",
+        "7c7773f545a0c8b70c517a9681f92745fa671a489f45fa92cb4ba8b8b70c10af"
+      ]
+    },
+    "custom-aefc6db87072": {
+      "initializedAt": "2026-08-25T14:31:28Z",
+      "fingerprints": [
+        "117485dd789c10c1b8e6d294ece10d9f8210d6d944696c6a120c9717f9556c9f",
+        "11140f61e6b489e16a966e797da63e492982bcea5bdbabc68d95f81cf2a5794d",
+        "26834b033f8ebabcfb85cd78a21fe90d8c5c051d0b3e590a085acd682755c8fb",
+        "275a56316a86f6a46b15b16acbb2ec2323165eb4b0d7a5efb7c3f9f75f4fb702",
+        "c2d20cbbb5e204bdc9a2175e0773a7a9f1850bd2d38d093c6cbe93d215ad5ebb",
+        "81eca13de0aa191a61381a18a45eae199f9d82dd0503f586f8caac6f1d06595b",
+        "16adbf33d6438e5add5b093ce866a88d8e9695de35b8315cbbd7d674cc568fe2",
+        "27fd6573f5fc00dc65d9453ba109ecc0b9f392674372d017d3e887221914291b",
+        "da9b06853f8a8c9da4a48772c76c2597750a606023fb67aa1456cb6b543a93ed",
+        "75d6c0341b6a3974e053b09bf6136b50de751d648d023136c090fdd2ed26370c",
+        "1f20a31277fc63b3afe2fe9274201ebc9f68f8c2231ce397ff5db2b5711dbc8e",
+        "f1b5ecf2daa5e805dc7cbedd6e22672bd5f59189033d39a25e361a84c47d3a15",
+        "05a993762ff89479e4e707e9f671e532e0a7b34fb114640e13be3e77838ced7e",
+        "28cac11a0518f9040d17f8be32c042e5fdb0cb7d117eb7d3d1414e8a86dc981e",
+        "07a9d1df4578986d9d3f9260f2a9776bcd231bb2a8ae01f2bd1c7698cee2774b",
+        "90b2afffea8b95cc22a3bbd4c6ed332a638d7789a823ce1f0a78515a0c9703c1",
+        "328daa7c24000101d9460c09fbc8397c7c24775813624f547db850c4e79dcec1",
+        "600561577f227c4e2ca5bfb95e164aee888772cc0adac5133726d0b2b2b04f92",
+        "e4b30236c9f2c3fb0ec9c797e5f065efdd8cae191de694f9b2515bd1ee19552c",
+        "d20a4c6eb285fdb08d9803a2fe032933561bd4b5d593a12a4fefdbe340275343",
+        "da43029a5a0bf2403e4956bec62df047484c7fbb50f8dbbd64807495eefa3a77",
+        "6e3af18364580e9ae518f75761ab0cf677c43afd5c657bd560d59731cfcb101a",
+        "4ee1724092beae296bf0f3164e09bf244c62d408db988c7bf51488758decbc2d",
+        "3eddaa823d52ec4006ad3a5521f2bbef99cf31a7014f613eccae5cdb97af5138",
+        "518f371e1eb1672fc33da3fd66bfaa77273f6abfc36fe3335f29162278f6c334",
+        "a7a80af9b212c9136a387fefc68d65be0ecc30653912f9fb5f11f4493c11b6b2",
+        "9838f80d06fea206de90415ea54bd358135a69ec1a01e86bae106d376cec670c",
+        "1e62936cb25d646d2a844ca97cc04b793161e28d43c505b7fccdcceb0ec412c3",
+        "ccbcd25db97c217e6874f57d8f964d35262b86b62b8066f66588e67d10af7f4f",
+        "65dd29923e2d962e3548e16f17ee8744368378c447f573fbe0f0dabc1a16ddc1",
+        "ccb985ff80bbfd16f2efe3e0a781c0f38c7126f849e1d6734ba4ad106e00cd25",
+        "7601257cff3fba49ef1cd8ea9b32247e89919e924f3b15deca8719082a739770",
+        "3df43a452c8ca8224befb06b74dbe45c783eac09a06116525332a61cd93cdca2",
+        "6a3eaab443ca1d19fd37fe2508ec5c17f7ae50ff5e11b888d4f389430aff6140",
+        "25176f03509ff099c18de82272460e46cb965d7d949d40d87aa998d2fd822b93"
+      ]
     }
   },
   "offlinePageDocuments": {
@@ -6121,6 +6168,17 @@
       "startDate": "24-08-2026",
       "lastDate": "07-09-2026",
       "pageTitle": "CPCB - DEO, Field Assistant & Various Post Recruitment 2026"
+    },
+    "https://www.speedjob.in/delhi-pollution-control-committee-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/important-news/details_group-a_dpcc_1%29.pdf",
+      "notification": "https://dpcc.delhi.gov.in/sites/default/files/DPCC/important-news/details_group-a_dpcc_1%29.pdf",
+      "website": "",
+      "applyMode": "offline",
+      "department": "Delhi Pollution Control Committee (DPCC)",
+      "startDate": "29-08-2026",
+      "lastDate": "18-09-2026",
+      "pageTitle": "Delhi Pollution Control Committee Recruitment 2026 | DPCC Vacancy 2026"
     }
   }
 }
