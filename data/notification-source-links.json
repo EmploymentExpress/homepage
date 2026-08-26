@@ -619,6 +619,23 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-25T08:23:52Z"
+    },
+    {
+      "url": "https://www.iitbhu.ac.in/recruitment_nf",
+      "name": "iitbhu.ac.in",
+      "department": "iitbhu.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-26T08:24:49Z"
     }
   ]
 }
