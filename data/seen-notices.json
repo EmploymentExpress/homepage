@@ -86,7 +86,10 @@
         "28d7d21aa6917442302f0fbd832bf1aad9346ed5ac0c516bdf4b2d7e0da50094",
         "e5e38fb9e20fb53125944f9dc4fa2504d5e5ea0b35af9c05be3bcaf59e55e0ec",
         "7b6533377a5c394787cad192fd23d5f3d32dea48a4174a34101684728b4b93ba",
-        "39d0d2a78c39df673df1c25b420fecb3316264c25864ca046fbc4d6ec1e8ee1e"
+        "39d0d2a78c39df673df1c25b420fecb3316264c25864ca046fbc4d6ec1e8ee1e",
+        "6df97aca52f8f09b9b63cbb8cede813063d1ef2855005de6e2c7d66a188fa9de",
+        "34912c94ce1c461dbfc90ec2244d03cf175f0f05b85bc9129fd1da52e6465876",
+        "885a0b2c0d7cac549b1780c98d014a8fdf52e44f536036cd4b9b704085cd4471"
       ]
     },
     "linkingsky-punjab-jobs": {
@@ -394,6 +397,14 @@
         "3df43a452c8ca8224befb06b74dbe45c783eac09a06116525332a61cd93cdca2",
         "6a3eaab443ca1d19fd37fe2508ec5c17f7ae50ff5e11b888d4f389430aff6140",
         "25176f03509ff099c18de82272460e46cb965d7d949d40d87aa998d2fd822b93"
+      ]
+    },
+    "custom-af52ded81a0a": {
+      "initializedAt": "2026-08-26T14:30:12Z",
+      "fingerprints": [
+        "afafaa810f9e296b85d76770a9ee89e4af37fc587a69118d157d39bb17c6ea04",
+        "5ebca71524222a7ef2172aa0002dd7d31f17fbf5f28459d50270d176b20fa4bb",
+        "c1f1a242c5c0a12a52d35d86b31e80bd932e537bda84b0ddfb8caf55e8fd05ee"
       ]
     }
   },
