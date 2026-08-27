@@ -41,32 +41,33 @@ STATES = [
 STOP_WORDS = {"of", "for", "and", "in", "the", "&", "at", "on", "cum", "a"}
 
 # Well-known recruiting bodies whose short form should be fixed, not guessed.
+# Always in capital letters per headline rule.
 DEPARTMENT_SHORT_FORMS = [
     (r"navodaya vidyalaya samiti", "NVS"),
     (r"punjab state power corporation", "PSPCL"),
     (r"punjab public service commission", "PPSC"),
-    (r"punjab police recruitment board|punjab police", "Punjab Police"),
+    (r"punjab police recruitment board|punjab police", "PUNJAB POLICE"),
     (r"department of school education,? punjab|punjab school education board", "PSEB"),
     (r"staff selection commission", "SSC"),
     (r"railway recruitment board", "RRB"),
     (r"rail coach factory", "RCF"),
-    (r"(join )?indian army", "Indian Army"),
+    (r"(join )?indian army", "INDIAN ARMY"),
     (r"indian air force", "IAF"),
-    (r"ministry of defence", "Ministry of Defence"),
+    (r"ministry of defence", "MINISTRY OF DEFENCE"),
     (r"directorate general of quality assurance", "DGQA"),
     (r"central council for research in siddha", "CCRS"),
     (r"central university of punjab", "CUPB"),
-    (r"local audit department", "Local Audit Dept."),
-    (r"department of industries", "Industries Dept."),
+    (r"local audit department", "LOCAL AUDIT DEPT."),
+    (r"department of industries", "INDUSTRIES DEPT."),
 ]
 
 WORD_ABBREVIATIONS = [
-    (r"\bDepartment\b", "Dept."),
-    (r"\bUniversity\b", "Univ."),
-    (r"\bInstitute\b", "Inst."),
-    (r"\bOrganization\b|\bOrganisation\b", "Org."),
-    (r"\bAdministration\b", "Admin."),
-    (r"\bGovernment\b|\bGovt\.?\b", "Govt."),
+    (r"\bDepartment\b", "DEPT."),
+    (r"\bUniversity\b", "UNIV."),
+    (r"\bInstitute\b", "INST."),
+    (r"\bOrganization\b|\bOrganisation\b", "ORG."),
+    (r"\bAdministration\b", "ADMIN."),
+    (r"\bGovernment\b|\bGovt\.?\b", "GOVT."),
 ]
 
 # Ordered notice-type rules: (label, regex tested against the cleaned title).
@@ -202,7 +203,7 @@ def short_department(department: str, title: str = "") -> str:
     if re.search(r"\b(?:U\.?T\.?\s*Chandigarh|Chandigarh Administration)\b", dept, re.IGNORECASE) \
             and "chandigarh" not in short.lower():
         short = f"{short} Chandigarh"
-    return _clean(short)
+    return _clean(short).upper()
 
 
 def notice_type(title: str, alert_type: str = "") -> str:
@@ -367,8 +368,14 @@ def short_job_headline(title: str, department: str = "", alert_type: str = "",
         count = ""
 
     prefix = ""
-    if dept and not re.search(rf"\b{re.escape(dept)}\b", subject, re.IGNORECASE):
-        prefix = f"{dept} "
+    if dept:
+        lead = r"\b" if re.match(r"^\w", dept) else ""
+        trail = r"\b" if re.search(r"\w$", dept) else r"(?!\w)"
+        dept_pattern = rf"{lead}{re.escape(dept)}{trail}"
+        if re.search(dept_pattern, subject, re.IGNORECASE):
+            subject = re.sub(dept_pattern, dept, subject, flags=re.IGNORECASE)
+        else:
+            prefix = f"{dept} "
     if count:
         prefix = f"{prefix}{count} "
 

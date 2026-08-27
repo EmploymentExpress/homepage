@@ -79,6 +79,25 @@ class InlineScriptSyntaxTest(unittest.TestCase):
             self.assertIn(f"'{bad_label}'", self.html)
         self.assertIn("'official recruitment notice'", self.html)
 
+    def test_extended_deadlines_are_excluded_from_last_date_reminders(self):
+        self.assertIn(".filter(job => job.lastDateExtended !== true)", self.html)
+
+    def test_extended_deadline_tag_is_in_relevant_vacancy_columns(self):
+        self.assertIn("Last Date Extended", self.html)
+        self.assertIn("renderJobSectionCard(job,", self.html)
+        self.assertIn("job.originalLastDate", self.html)
+        self.assertIn("job.extensionNoticeUrl", self.html)
+
+    def test_extended_deadline_tag_is_in_job_details_modal_only_when_extended(self):
+        self.assertIn("modalExtendedBadge", self.html)
+        self.assertIn("modalLastDateExtendedTag", self.html)
+        self.assertIn("modalEndDateExtendedTag", self.html)
+        self.assertIn("modalExtensionNoticeBanner", self.html)
+        self.assertIn("const isExtended = Boolean(job && job.lastDateExtended === true);", self.html)
+
+    def test_headline_department_name_is_always_in_capital_letter(self):
+        self.assertIn("return headlineClean(short).toUpperCase();", self.html)
+
     @unittest.skipUnless(shutil.which("node"), "node executable not available")
     def test_inline_scripts_parse_with_node(self):
         for index, script in enumerate(self.scripts):

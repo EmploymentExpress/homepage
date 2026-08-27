@@ -174,12 +174,12 @@ notification** — never the raw portal link text and never a full sentence.
 <Department short name> <Total posts> <Post name(s)> <What the notice is about>
 ```
 
-- **Department short name** — the board's own bracketed acronym when it publishes one
+- **Department short name** — always in **capital letters** (uppercase). Use the board's own bracketed acronym when it publishes one
   (`Punjab State Legal Services Authority (PULSA)` → `PULSA`,
   `Punjab Agricultural University (PAU), Ludhiana` → `PAU`), otherwise the leading segment of the
-  official name, abbreviated and capped at 34 characters (`Local Audit Department, Chandigarh
-  Administration` → `Local Audit Dept.`). Keep the state/UT visible when the acronym hides it
-  (`Haryana WCD`, `ABDM Chandigarh`). Never invent an acronym the board does not use.
+  official name in capital letters, abbreviated and capped at 34 characters (`Local Audit Department, Chandigarh
+  Administration` → `LOCAL AUDIT DEPT.`). Keep the state/UT visible when the acronym hides it
+  (`HARYANA WCD`, `ABDM CHANDIGARH`). Never invent an acronym the board does not use.
 - **Total posts** — the numeric vacancy count when the notice states one (`681`, `4,161`).
   Omit it for `See Notification` / `Various` / single-post notices.
 - **Post name(s)** — the actual post(s), taken from the notice's own wording. List at most two,

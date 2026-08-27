@@ -47,13 +47,27 @@ class ShortHeadlineFormatTests(unittest.TestCase):
     def test_department_keeps_state_visible_when_acronym_hides_it(self):
         self.assertEqual(
             short_department("Haryana Women and Child Development Department (WCD), Panchkula"),
-            "Haryana WCD",
+            "HARYANA WCD",
         )
         self.assertTrue(
             short_department("Local Audit Department, Chandigarh Administration")
-            .lower()
-            .endswith("chandigarh")
+            .endswith("CHANDIGARH")
         )
+
+    def test_department_name_is_always_in_capital_letters(self):
+        cases = [
+            ("Punjab Police Constable", "Punjab Police", "PUNJAB POLICE"),
+            ("Join Indian Army Rally", "Indian Army", "INDIAN ARMY"),
+            ("Ministry of Defence ASC", "Ministry of Defence", "MINISTRY OF DEFENCE"),
+            ("Local Audit Department", "Local Audit Department", "LOCAL AUDIT DEPT."),
+            ("Department of Industries", "Department of Industries", "INDUSTRIES DEPT."),
+            ("Sainik School Recruitment", "Sainik School", "SAINIK SCHOOL"),
+        ]
+        for title, dept, expected in cases:
+            with self.subTest(dept=dept):
+                short = short_department(dept, title)
+                self.assertEqual(short, expected)
+                self.assertEqual(short, short.upper())
 
     def test_department_short_form_is_length_capped(self):
         short = short_department(
