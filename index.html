@@ -673,7 +673,10 @@
             <!-- Modal Header -->
             <div class="bg-brand-900 text-white p-4 sm:p-5 flex items-start justify-between">
                 <div>
-                    <span id="modalCategory" class="text-[10px] bg-brand-700 text-blue-200 font-bold px-2 py-0.5 rounded tracking-wide uppercase">Recruitment Notice</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span id="modalCategory" class="text-[10px] bg-brand-700 text-blue-200 font-bold px-2 py-0.5 rounded tracking-wide uppercase">Recruitment Notice</span>
+                        <span id="modalExtendedBadge" class="hidden text-[10px] bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded tracking-wide uppercase">Last Date Extended</span>
+                    </div>
                     <h2 id="modalTitle" class="text-base sm:text-lg font-extrabold mt-1 text-white leading-tight">Punjab Police Recruitment 2026</h2>
                     <p id="modalSub" class="text-xs text-blue-200 mt-0.5">Advertisement No: 02/2026</p>
                 </div>
@@ -701,7 +704,18 @@
                     <div>
                         <div class="text-[11px] text-slate-400 font-bold uppercase">Last Date</div>
                         <div id="modalLastDate" class="font-extrabold text-red-600">15 Sep 2026</div>
+                        <div id="modalLastDateExtendedTag" class="hidden mt-1 text-[10px] font-extrabold text-emerald-800"></div>
                     </div>
+                </div>
+
+                <!-- Official Extension Corrigendum Notice (shown only when last date is extended) -->
+                <div id="modalExtensionNoticeBanner" class="hidden bg-emerald-50 border border-emerald-300 rounded-lg p-3 text-xs text-emerald-950">
+                    <div class="font-extrabold mb-1 flex items-center gap-1.5 text-emerald-800">
+                        <span class="bg-emerald-600 text-white px-2 py-0.5 rounded uppercase tracking-wide text-[10px]">Last Date Extended</span>
+                        <span>Official Deadline Extension Notice</span>
+                    </div>
+                    <p id="modalExtensionNoticeText" class="text-slate-700 leading-relaxed"></p>
+                    <div id="modalExtensionNoticeLinkContainer" class="mt-1.5"></div>
                 </div>
 
                 <!-- Important Dates & Application Fees -->
@@ -712,7 +726,13 @@
                         </div>
                         <ul class="space-y-1.5 text-xs text-slate-600" id="modalDatesList">
                             <li class="flex justify-between"><span>Starting Date:</span> <strong id="modalStartDate">12 Aug 2026</strong></li>
-                            <li class="flex justify-between"><span>Last Date to Apply:</span> <strong id="modalEndDate">15 Sep 2026</strong></li>
+                            <li class="flex justify-between items-start">
+                                <span>Last Date to Apply:</span>
+                                <div class="text-right">
+                                    <strong id="modalEndDate" class="text-red-600">15 Sep 2026</strong>
+                                    <div id="modalEndDateExtendedTag" class="hidden text-[10px] font-semibold text-emerald-700 mt-0.5"></div>
+                                </div>
+                            </li>
                             <li class="flex justify-between"><span>Exam / Interview:</span> <strong id="modalExamDate">Oct/Nov 2026</strong></li>
                         </ul>
                     </div>
@@ -921,6 +941,44 @@
 
         // Curated dataset, extended at page load by data/auto-jobs.json.
         let jobDatabase = [
+            {
+                id: 17,
+                title: "Punjab Subordinate Services Selection Board (PSSSB) — Group D Recruitment 2026 Re-Opened (Advt No. 04/2026)",
+                department: "Punjab Subordinate Services Selection Board (PSSSB)",
+                vacancies: "1,401 Posts",
+                qualification: "Matriculation (10th Pass) with Punjabi",
+                qualCategory: "8th/10th",
+                lastDate: "04-09-2026",
+                startDate: "25-08-2026",
+                publishedAt: "2026-08-25T00:00:00+05:30",
+                lastDateExtended: true,
+                originalLastDate: "20-03-2026",
+                extendedLastDate: "04-09-2026",
+                extensionNoticeTitle: "Reopening of Advt 04 of 2026 (Group D 1,401 Posts) — official notice on sssb.punjab.gov.in",
+                extensionNoticeUrl: "https://sssb.punjab.gov.in/",
+                examDate: "See Official Notification",
+                location: "Punjab State",
+                applyMode: "Online",
+                badge: "APPLY WINDOW RE-OPENED",
+                badgeColor: "bg-amber-600",
+                type: "punjab",
+                categorySlug: "psssb",
+                advtNo: "Advt No. 04/2026",
+                feeGen: "₹1000/-",
+                feeSC: "₹250/- (SC/BC/EWS: ₹250/-, ESM: ₹200/-, PwD: ₹500/-)",
+                feeMode: "Online (Net Banking/Debit Card/UPI)",
+                age: "18 to 37 Years as on 01-01-2026; relaxations as per Punjab Govt rules",
+                details: "The Subordinate Services Selection Board, Punjab (PSSSB) has officially re-opened the online application portal under Advertisement No. 04/2026 for 1,401 Group D posts (including Sewadar, Chowkidar, Safai Sewak, Peon, Mali, Attendant and various other support posts across Punjab Government departments). Applications originally closed on 20 March 2026 and have been re-opened from 25 August 2026 to 04 September 2026 per official board notice. Candidates who have passed Matriculation with Punjabi can apply online on sssb.punjab.gov.in.",
+                howToApply: [
+                    "Visit the official PSSSB recruitment portal at sssb.punjab.gov.in.",
+                    "Go to Current Openings / Online Applications and select Advertisement No. 04/2026 (Group D Recruitment).",
+                    "Register with basic personal details, mobile number and email ID, or log in if already registered.",
+                    "Fill in educational qualifications, personal details, category and preferences accurately.",
+                    "Upload scanned photograph, signature and required certificates, pay the application fee online, and submit before 04-09-2026."
+                ],
+                pdfLink: "https://sssb.punjab.gov.in/",
+                applyLink: "https://sssb.punjab.gov.in/"
+            },
             {
                 id: 16,
                 title: "Punjab Subordinate Services Selection Board (PSSSB) — Craft Instructor Recruitment 2026 Re-Opened (Advt No. 03/2026)",
@@ -1463,24 +1521,24 @@
             [/navodaya vidyalaya samiti/i, 'NVS'],
             [/punjab state power corporation/i, 'PSPCL'],
             [/punjab public service commission/i, 'PPSC'],
-            [/punjab police recruitment board|punjab police/i, 'Punjab Police'],
+            [/punjab police recruitment board|punjab police/i, 'PUNJAB POLICE'],
             [/department of school education,? punjab|punjab school education board/i, 'PSEB'],
             [/staff selection commission/i, 'SSC'],
             [/railway recruitment board/i, 'RRB'],
             [/rail coach factory/i, 'RCF'],
-            [/(join )?indian army/i, 'Indian Army'],
+            [/(join )?indian army/i, 'INDIAN ARMY'],
             [/indian air force/i, 'IAF'],
-            [/ministry of defence/i, 'Ministry of Defence'],
+            [/ministry of defence/i, 'MINISTRY OF DEFENCE'],
             [/directorate general of quality assurance/i, 'DGQA'],
             [/central council for research in siddha/i, 'CCRS'],
             [/central university of punjab/i, 'CUPB'],
-            [/local audit department/i, 'Local Audit Dept.'],
-            [/department of industries/i, 'Industries Dept.']
+            [/local audit department/i, 'LOCAL AUDIT DEPT.'],
+            [/department of industries/i, 'INDUSTRIES DEPT.']
         ];
         const HEADLINE_WORD_ABBREVIATIONS = [
-            [/\bDepartment\b/gi, 'Dept.'], [/\bUniversity\b/gi, 'Univ.'], [/\bInstitute\b/gi, 'Inst.'],
-            [/\bOrganization\b|\bOrganisation\b/gi, 'Org.'], [/\bAdministration\b/gi, 'Admin.'],
-            [/\bGovernment\b|\bGovt\.?\b/gi, 'Govt.']
+            [/\bDepartment\b/gi, 'DEPT.'], [/\bUniversity\b/gi, 'UNIV.'], [/\bInstitute\b/gi, 'INST.'],
+            [/\bOrganization\b|\bOrganisation\b/gi, 'ORG.'], [/\bAdministration\b/gi, 'ADMIN.'],
+            [/\bGovernment\b|\bGovt\.?\b/gi, 'GOVT.']
         ];
         const NOTICE_TYPE_RULES = [
             ['Corrigendum', /\bcorrigend(um|a)\b/i],
@@ -1585,7 +1643,7 @@
             if (/\b(U\.?T\.?\s*Chandigarh|Chandigarh Administration)\b/i.test(dept) && !short.toLowerCase().includes('chandigarh')) {
                 short = `${short} Chandigarh`;
             }
-            return headlineClean(short);
+            return headlineClean(short).toUpperCase();
         }
 
         function noticeType(title, alertType) {
@@ -1721,7 +1779,16 @@
             if (count && new RegExp(`\\b${escapeRegExp(count)}\\b`).test(subject)) count = '';
 
             let prefix = '';
-            if (dept && !new RegExp(`\\b${escapeRegExp(dept)}\\b`, 'i').test(subject)) prefix = `${dept} `;
+            if (dept) {
+                const lead = /^\w/.test(dept) ? '\\b' : '';
+                const trail = /\w$/.test(dept) ? '\\b' : '(?=\\W|$)';
+                const deptRegex = new RegExp(`${lead}${escapeRegExp(dept)}${trail}`, 'gi');
+                if (deptRegex.test(subject)) {
+                    subject = subject.replace(deptRegex, dept);
+                } else {
+                    prefix = `${dept} `;
+                }
+            }
             if (count) prefix = `${prefix}${count} `;
 
             let headline = headlineClean(subject ? `${prefix}${subject} ${suffix}` : `${prefix}${suffix}`);
@@ -1871,8 +1938,9 @@
             }
         }
 
-        // Last Date Reminders: shows every job whose application deadline falls within the
-        // next 48 hours (2 days), each with a live countdown timer that updates every second.
+        // Last Date Reminders: shows every non-extended job whose application deadline falls
+        // within the next 48 hours (2 days), each with a live countdown timer. Extended jobs
+        // stay in their relevant vacancy/admission columns with a Last Date Extended tag.
         const LAST_DATE_REMINDER_HOURS = 48;
 
         function parseLastDate(value) {
@@ -1905,6 +1973,7 @@
             const now = Date.now();
             const windowMs = LAST_DATE_REMINDER_HOURS * 60 * 60 * 1000;
             return [...jobDatabase, ...admissionDatabase]
+                .filter(job => job.lastDateExtended !== true)
                 .map(job => ({ job, deadline: parseLastDate(job.lastDate) }))
                 .filter(item => item.deadline !== null)
                 .map(item => ({ ...item, remaining: item.deadline.getTime() - now }))
@@ -1942,39 +2011,22 @@
                 const job = item.job;
                 const deadline = item.deadline;
                 const remaining = item.remaining;
-                const extended = job.lastDateExtended === true;
-                const originalDate = extended ? (job.originalLastDate || '—') : '';
-                const urgencyLabel = extended
-                    ? 'Last Date Extended'
-                    : (remaining <= 86400000 ? 'Last Date Today' : (remaining <= 172800000 ? 'Closes Tomorrow' : 'Closes in 2 Days'));
+                const urgencyLabel = remaining <= 86400000 ? 'Last Date Today' : (remaining <= 172800000 ? 'Closes Tomorrow' : 'Closes in 2 Days');
                 const applyUrl = safeExternalUrl(job.applyLink);
                 const detailText = job.details ? String(job.details).replace(/<[^>]*>/g, '').slice(0, 140) : '';
                 const shortDesc = job.qualification && job.qualification !== 'See Official Notification'
                     ? `${job.qualification}${detailText ? ' • ' + detailText : ''}`
                     : detailText;
-                const badgeClasses = extended ? 'bg-emerald-600' : 'bg-red-600';
-                const countdownClasses = extended
-                    ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
-                    : 'text-red-700 bg-red-50 border border-red-200';
                 return `
                     <article class="p-4 hover:bg-red-50/40 transition grid grid-cols-1 lg:grid-cols-[2.2rem_minmax(0,1fr)_auto] gap-3 lg:items-center">
                         <div class="hidden lg:flex w-9 h-9 rounded-full bg-red-100 text-red-700 font-black text-xs items-center justify-center">${String(index + 1).padStart(2, '0')}</div>
                         <div>
                             <div class="flex flex-wrap items-center gap-2 mb-1">
-                                <span class="text-[10px] font-extrabold ${badgeClasses} text-white px-2 py-0.5 rounded uppercase">${urgencyLabel}</span>
+                                <span class="text-[10px] font-extrabold bg-red-600 text-white px-2 py-0.5 rounded uppercase">${urgencyLabel}</span>
                                 <span class="text-[10px] font-bold text-slate-500">${escapeHtml(job.vacancies)} • Last date ${escapeHtml(job.lastDate)}</span>
-                                <span class="text-[10px] font-black ${countdownClasses} px-2 py-0.5 rounded tabular-nums" data-deadline="${deadline.getTime()}">${formatCountdown(remaining)}</span>
+                                <span class="text-[10px] font-black text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded tabular-nums" data-deadline="${deadline.getTime()}">${formatCountdown(remaining)}</span>
                             </div>
                             <h3 class="font-extrabold text-sm text-slate-900" title="${escapeHtml(job.title)}">${escapeHtml(jobDisplayHeadline(job))}</h3>
-                            ${extended ? `
-                                <p class="text-[11px] font-semibold text-emerald-700 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                    <span><i class="fas fa-circle-info mr-1"></i>Last date extended:</span>
-                                    <span class="line-through text-slate-400">${escapeHtml(originalDate)}</span>
-                                    <i class="fas fa-arrow-right text-[10px] text-slate-400"></i>
-                                    <strong>${escapeHtml(job.lastDate)}</strong>
-                                    ${job.extensionNoticeUrl && job.extensionNoticeUrl !== '#' ? `<a href="${job.extensionNoticeUrl}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-800 hover:text-emerald-600">View notice</a>` : ''}
-                                </p>
-                            ` : ''}
                             ${shortDesc ? `<p class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHtml(shortDesc)}</p>` : ''}
                         </div>
                         <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" onclick="if(this.getAttribute('href')==='#'){openJobDetail(${job.id});return false;}" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition whitespace-nowrap">
@@ -2203,7 +2255,13 @@
                                 <span class="text-[10px] font-extrabold text-${color}-700 bg-${color}-50 border border-${color}-200 px-2 py-0.5 rounded hover:bg-${color}-100">View Details →</span>
                             </div>
                         </div>
-                        ${job.lastDateExtended ? `<p class="text-[10px] font-bold text-emerald-700"><i class="fas fa-circle-info mr-1"></i>Extended to ${escapeHtml(job.lastDate)}</p>` : ''}
+                        ${job.lastDateExtended === true ? `
+                            <p class="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] font-bold text-emerald-800">
+                                <span class="bg-emerald-600 text-white px-2 py-0.5 rounded uppercase tracking-wide">Last Date Extended</span>
+                                ${job.originalLastDate ? `<span class="line-through text-slate-400">${escapeHtml(job.originalLastDate)}</span><i class="fas fa-arrow-right text-[9px] text-slate-400"></i>` : ''}
+                                <span>${escapeHtml(job.lastDate)}</span>
+                                ${job.extensionNoticeUrl && job.extensionNoticeUrl !== '#' ? `<a href="${escapeHtml(job.extensionNoticeUrl)}" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-600" onclick="event.stopPropagation()">View notice</a>` : ''}
+                            </p>` : ''}
                         ${job.offlineFormLink ? `<a href="${escapeHtml(safeExternalUrl(job.offlineFormLink))}" target="_blank" rel="noopener noreferrer" class="mt-1 text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded hover:bg-emerald-100 inline-flex items-center gap-1.5"><i class="fas fa-file-alt"></i> Offline Application Form</a>` : ''}
                     </div>
                 </article>`;
@@ -2329,7 +2387,15 @@
                         ${escapeHtml(job.vacancies)}
                     </td>
                     <td class="p-3.5 text-xs font-bold text-red-600 whitespace-nowrap">
-                        <i class="far fa-calendar-check mr-1 text-slate-400"></i>${escapeHtml(job.lastDate)}
+                        <div class="flex flex-col gap-1 items-start">
+                            <div><i class="far fa-calendar-check mr-1 text-slate-400"></i>${escapeHtml(job.lastDate)}</div>
+                            ${job.lastDateExtended === true ? `
+                                <div class="flex flex-wrap items-center gap-1 text-[10px] font-extrabold text-emerald-800">
+                                    <span class="bg-emerald-600 text-white px-2 py-0.5 rounded uppercase tracking-wide">Last Date Extended</span>
+                                    ${job.originalLastDate ? `<span class="line-through text-slate-400 font-bold">${escapeHtml(job.originalLastDate)}</span>` : ''}
+                                    ${job.extensionNoticeUrl && job.extensionNoticeUrl !== '#' ? `<a href="${escapeHtml(job.extensionNoticeUrl)}" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-600">View notice</a>` : ''}
+                                </div>` : ''}
+                        </div>
                     </td>
                     <td class="p-3.5 text-center">
                         <div class="flex items-center justify-center gap-1.5 mx-auto whitespace-nowrap">
@@ -2534,6 +2600,65 @@
             ];
             document.getElementById('modalApplySteps').innerHTML = (job.howToApply || defaultApplySteps)
                 .map(step => `<li>${escapeHtml(step)}</li>`).join('');
+
+            // Last Date Extended tag handling: strictly show only for jobs whose last date is extended
+            const isExtended = Boolean(job && job.lastDateExtended === true);
+            const extBadge = document.getElementById('modalExtendedBadge');
+            const extTag = document.getElementById('modalLastDateExtendedTag');
+            const extEndDateTag = document.getElementById('modalEndDateExtendedTag');
+            const extBanner = document.getElementById('modalExtensionNoticeBanner');
+            const extBannerText = document.getElementById('modalExtensionNoticeText');
+            const extBannerLink = document.getElementById('modalExtensionNoticeLinkContainer');
+
+            if (extBadge) {
+                if (isExtended) extBadge.classList.remove('hidden');
+                else extBadge.classList.add('hidden');
+            }
+            if (extTag) {
+                if (isExtended) {
+                    extTag.innerHTML = `
+                        <span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded uppercase text-[9px] font-extrabold tracking-wide">Last Date Extended</span>
+                        ${job.originalLastDate ? `<div class="text-[10px] text-slate-500 font-bold mt-0.5">Old: <span class="line-through">${escapeHtml(job.originalLastDate)}</span></div>` : ''}
+                    `;
+                    extTag.classList.remove('hidden');
+                } else {
+                    extTag.innerHTML = '';
+                    extTag.classList.add('hidden');
+                }
+            }
+            if (extEndDateTag) {
+                if (isExtended) {
+                    extEndDateTag.innerHTML = `
+                        <span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded uppercase text-[9px] font-extrabold">Extended</span>
+                        ${job.originalLastDate ? `<span class="line-through text-slate-400 font-semibold mr-1">${escapeHtml(job.originalLastDate)}</span>` : ''}
+                        ${job.extensionNoticeUrl && job.extensionNoticeUrl !== '#' ? `<a href="${escapeHtml(job.extensionNoticeUrl)}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-800 hover:text-emerald-600 font-bold block mt-0.5" onclick="event.stopPropagation()">View official notice</a>` : ''}
+                    `;
+                    extEndDateTag.classList.remove('hidden');
+                } else {
+                    extEndDateTag.innerHTML = '';
+                    extEndDateTag.classList.add('hidden');
+                }
+            }
+            if (extBanner) {
+                if (isExtended) {
+                    const orig = job.originalLastDate ? `from ${job.originalLastDate} ` : '';
+                    if (extBannerText) {
+                        extBannerText.textContent = `The recruiting authority has extended the application deadline ${orig}to ${job.lastDate}. Candidates can submit their applications up to the revised closing date.`;
+                    }
+                    if (extBannerLink) {
+                        if (job.extensionNoticeUrl && job.extensionNoticeUrl !== '#') {
+                            extBannerLink.innerHTML = `<a href="${escapeHtml(job.extensionNoticeUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-emerald-800 font-extrabold underline hover:text-emerald-600"><i class="fas fa-file-pdf"></i> View Official Extension Corrigendum Notice</a>`;
+                        } else {
+                            extBannerLink.innerHTML = '';
+                        }
+                    }
+                    extBanner.classList.remove('hidden');
+                } else {
+                    extBanner.classList.add('hidden');
+                    if (extBannerText) extBannerText.textContent = '';
+                    if (extBannerLink) extBannerLink.innerHTML = '';
+                }
+            }
 
             const modal = document.getElementById('jobModal');
             const container = document.getElementById('modalContainer');
