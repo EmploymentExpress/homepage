@@ -89,7 +89,8 @@
         "39d0d2a78c39df673df1c25b420fecb3316264c25864ca046fbc4d6ec1e8ee1e",
         "6df97aca52f8f09b9b63cbb8cede813063d1ef2855005de6e2c7d66a188fa9de",
         "34912c94ce1c461dbfc90ec2244d03cf175f0f05b85bc9129fd1da52e6465876",
-        "885a0b2c0d7cac549b1780c98d014a8fdf52e44f536036cd4b9b704085cd4471"
+        "885a0b2c0d7cac549b1780c98d014a8fdf52e44f536036cd4b9b704085cd4471",
+        "d0a4395139dcf9ef83b03eedb768c4f126e5589fa5d67769250efe79f6849c9e"
       ]
     },
     "linkingsky-punjab-jobs": {
@@ -404,7 +405,8 @@
         "7601257cff3fba49ef1cd8ea9b32247e89919e924f3b15deca8719082a739770",
         "3df43a452c8ca8224befb06b74dbe45c783eac09a06116525332a61cd93cdca2",
         "6a3eaab443ca1d19fd37fe2508ec5c17f7ae50ff5e11b888d4f389430aff6140",
-        "25176f03509ff099c18de82272460e46cb965d7d949d40d87aa998d2fd822b93"
+        "25176f03509ff099c18de82272460e46cb965d7d949d40d87aa998d2fd822b93",
+        "94cfd58016ffcfab03bbcdfe9137459ba38c63a4bbd9813fa7548e8572c5fde8"
       ]
     },
     "custom-af52ded81a0a": {
@@ -6289,12 +6291,45 @@
       "startDate": "25-08-2026",
       "lastDate": "14-09-2026",
       "pageTitle": "UKPSC Veterinary Officer Recruitment 2026"
+    },
+    "https://www.speedjob.in/indian-overseas-bank-specialist-officer-so-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.iob.bank.in/documents/d/guest/Revised-FINAL-Web-Ad-Recruitment-Gen-Spl-2026-27",
+      "website": "",
+      "applyMode": "online",
+      "department": "Indian Overseas Bank (IOB)",
+      "startDate": "29-08-2026",
+      "lastDate": "15-09-2026",
+      "pageTitle": "Indian Overseas Bank Specialist Officer (SO) Recruitment 2026"
+    },
+    "https://www.speedjob.in/rrc-wr-sports-quota-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.rrc-wr.com/rrwc/Files/aac5b3f0-87da-456c-ba00-a5db3041a436.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Northeast Frontier Railway (NFR), Maligaon, Guwahati",
+      "startDate": "01-09-2026",
+      "lastDate": "30-09-2026",
+      "pageTitle": "RRC WR Sports Quota Recruitment 2026"
+    },
+    "https://www.speedjob.in/ccs-hau-hisar-apprentice-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.speedjob.in/wp-content/uploads/2026/08/CCS-HAU-Hisar-Apprentice-Recruitment-2026.webp",
+      "website": "",
+      "applyMode": "online",
+      "department": "Chaudhary Charan Singh Haryana Agriculture University (CCSHAU), Hisar",
+      "startDate": "01-09-2026",
+      "lastDate": "13-09-2026",
+      "pageTitle": "CCS HAU Hisar Apprentice Recruitment 2026 | HAU Hisar Apprentice Vacancy 2026"
     }
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -6318,28 +6353,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -6359,13 +6394,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -6381,13 +6416,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -6395,13 +6430,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -6409,8 +6444,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -6434,13 +6469,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -6448,8 +6483,8 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
@@ -6469,18 +6504,18 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -6500,8 +6535,8 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-28T21:56:47Z",
       "lastError": "<urlopen error timed out>"
     }
   }
