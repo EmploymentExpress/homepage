@@ -134,6 +134,7 @@
     },
     {
       "id": "pmidc",
+      "proxyFallback": true,
       "name": "PMIDC",
       "department": "Punjab Municipal Infrastructure Development Company (PMIDC), Department of Local Government, Punjab",
       "url": "https://pmidc.punjab.gov.in/recruitment/",
@@ -149,6 +150,7 @@
     },
     {
       "id": "punjab-health",
+      "proxyFallback": true,
       "name": "Punjab Health Department",
       "department": "Department of Health and Family Welfare, Government of Punjab",
       "url": "https://health.punjab.gov.in/?q=node/952",
@@ -166,6 +168,7 @@
     },
     {
       "id": "chdsw",
+      "proxyFallback": true,
       "name": "CHDSW",
       "department": "Department of Social Welfare, Women & Child Development, Chandigarh Administration",
       "url": "https://chdsw.gov.in/index.php/recruitments/index",
@@ -183,6 +186,7 @@
     },
     {
       "id": "pilbs",
+      "proxyFallback": true,
       "name": "PILBS",
       "department": "Punjab Institute of Liver and Biliary Sciences (PILBS), SAS Nagar (Mohali)",
       "url": "https://pilbs.punjab.gov.in/en/",
@@ -198,6 +202,7 @@
     },
     {
       "id": "punjab-sports",
+      "proxyFallback": true,
       "name": "Punjab Sports Department",
       "department": "Department of Sports, Government of Punjab",
       "url": "https://pbsports.punjab.gov.in/",
@@ -230,6 +235,7 @@
     },
     {
       "id": "bfuhs",
+      "proxyFallback": true,
       "name": "BFUHS",
       "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
       "url": "https://bfuhs.ggsmch.org/",
@@ -262,6 +268,7 @@
     },
     {
       "id": "desgpc",
+      "proxyFallback": true,
       "name": "DESGPC",
       "department": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
       "url": "https://www.desgpc.org/",
@@ -279,6 +286,7 @@
     },
     {
       "id": "prsc",
+      "proxyFallback": true,
       "name": "PRSC",
       "department": "Punjab Remote Sensing Centre (PRSC), Ludhiana",
       "url": "https://prsc.punjab.gov.in/Recruitment.aspx",

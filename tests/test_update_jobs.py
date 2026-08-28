@@ -3,6 +3,7 @@ import json
 import re
 import tempfile
 import unittest
+import urllib.error
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -1261,7 +1262,7 @@ class JobMonitorTests(unittest.TestCase):
             "url": "https://onlineforms.in/latest-offline-forms/", "timeout": 5,
         }]}
 
-        def fake_fetch(url, timeout=25, retries=2):
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
             if url == article:
                 return monitor.Download(article, "text/html", page_html.encode("utf-8"))
             raise RuntimeError("no network")
@@ -1483,7 +1484,7 @@ class JobMonitorTests(unittest.TestCase):
             b"<html><body><p>can apply through online mode.</p></body></html>",
         )
 
-        def fake_fetch(url, timeout=25, retries=2):
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
             if url == "https://onlineforms.in/latest-offline-forms/":
                 return listing
             if url == "https://onlineforms.in/some-offline-job-recruitment/":
@@ -1526,7 +1527,7 @@ class JobMonitorTests(unittest.TestCase):
         }]
         now = datetime(2026, 8, 18, 12, 0, 0, tzinfo=timezone.utc)
 
-        def fake_fetch(url, timeout=25, retries=2):
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
             if url == "https://onlineforms.in/some-online-job-recruitment/":
                 return online_article
             raise RuntimeError("no network")
@@ -2195,3 +2196,215 @@ class JobMonitorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SourceResilienceTests(unittest.TestCase):
+    """Coverage for silent-source-failure fixes (reachability + bootstrap quality)."""
+
+    def _fake_mirror_response(self, data=b"<html>" + b"x" * 400 + b"</html>", content_type="text/html"):
+        class FakeHeaders(dict):
+            def get_content_type(self):
+                return self.get("Content-Type", "")
+
+        class FakeResponse:
+            status = 200
+
+            def __init__(self):
+                self.headers = FakeHeaders({"Content-Type": content_type})
+                self._data = data
+
+            def geturl(self):
+                return "https://api.allorigins.win/raw?url=proxied"
+
+            def read(self, amount=-1):
+                return self._data
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        return FakeResponse()
+
+    def test_fetch_url_mirror_fallback_preserves_official_url(self):
+        target = "https://www.desgpc.org/"
+        requested = []
+        with patch.object(monitor, "_download_direct", side_effect=urllib.error.URLError("TLS handshake killed")), \
+             patch.object(monitor.time, "sleep"), \
+             patch.object(
+                 monitor.urllib.request,
+                 "urlopen",
+                 side_effect=lambda request, timeout=None: (
+                     requested.append(request.full_url),
+                     self._fake_mirror_response(),
+                 )[1],
+             ):
+            download = monitor.fetch_url(target, timeout=5, retries=1, proxy_fallback=True)
+        self.assertEqual(download.url, target)
+        self.assertTrue(requested)
+        self.assertTrue(any("allorigins" in url or "r.jina.ai" in url for url in requested))
+
+    def test_fetch_url_does_not_mirror_hard_404s(self):
+        with patch.object(
+            monitor,
+            "_download_direct",
+            side_effect=urllib.error.HTTPError("https://www.desgpc.org/gone.pdf", 404, "Not Found", None, None),
+        ), patch.object(monitor.time, "sleep"), patch.object(
+            monitor.urllib.request, "urlopen"
+        ) as urlopen:
+            with self.assertRaises(RuntimeError):
+                monitor.fetch_url("https://www.desgpc.org/gone.pdf", timeout=5, retries=1, proxy_fallback=True)
+        urlopen.assert_not_called()
+
+    def test_fetch_url_direct_success_never_touches_mirror(self):
+        direct = monitor.Download(url="https://www.desgpc.org/", content_type="text/html", data=b"<html></html>")
+        with patch.object(monitor, "_download_direct", return_value=direct), patch.object(
+            monitor.urllib.request, "urlopen"
+        ) as urlopen:
+            download = monitor.fetch_url("https://www.desgpc.org/", timeout=5, retries=2, proxy_fallback=True)
+        self.assertEqual(download.url, "https://www.desgpc.org/")
+        urlopen.assert_not_called()
+
+    def test_bootstrap_selection_prefers_active_same_host_notice_over_portal_link(self):
+        now = datetime(2026, 8, 28, tzinfo=timezone.utc)
+        source = {
+            "id": "desgpc",
+            "name": "DESGPC Recruitment",
+            "url": "https://www.desgpc.org/",
+            "noticeTypes": ["recruitment", "result", "corrigendum"],
+        }
+        portal_link = monitor.Candidate(
+            title="Apply Online (Recruitment Portal)",
+            url="https://desgpc.softelsolutions.in/",
+        )
+        active_notice = monitor.Candidate(
+            title=(
+                "Recruitment for the Post of Teaching & Non-Teaching Staff (on Contract basis) "
+                "in Guru Nanab College (Advt. 405/2026) Last Date for Apply: 12-09-2026"
+            ),
+            url="https://www.desgpc.org/uploads/files/gnc-dkc-teaching-contract.pdf",
+        )
+        expired_notice = monitor.Candidate(
+            title=(
+                "Recruitment for the Post of Principal in various SGPC Schools (Advt. 404/2026) "
+                "Last date of Apply: 12-08-2026"
+            ),
+            url="https://www.desgpc.org/uploads/files/principal-404.pdf",
+        )
+        ranked = monitor.select_bootstrap_candidates(
+            [portal_link, expired_notice, active_notice], source, now
+        )
+        self.assertEqual(ranked[0].url, active_notice.url)
+        self.assertEqual(ranked[-1].url, portal_link.url)
+        self.assertEqual(
+            monitor.select_bootstrap_candidates([portal_link], source, now)[0].url,
+            portal_link.url,
+        )
+
+    def test_source_health_records_failures_then_recovers(self):
+        now = datetime(2026, 8, 28, 6, 0, tzinfo=timezone.utc)
+        state = {"version": 1, "sources": {}}
+
+        self.assertTrue(monitor.record_source_failure(state, "desgpc", now, "TLS handshake killed"))
+        self.assertTrue(monitor.record_source_failure(state, "desgpc", now, "timed out"))
+        entry = state["sourceHealth"]["desgpc"]
+        self.assertEqual(entry["consecutiveFailures"], 2)
+        self.assertIn("timed out", entry["lastError"])
+
+        later = datetime(2026, 8, 28, 12, 0, tzinfo=timezone.utc)
+        self.assertTrue(monitor.record_source_success(state, "desgpc", later))
+        entry = state["sourceHealth"]["desgpc"]
+        self.assertEqual(entry["consecutiveFailures"], 0)
+        self.assertNotIn("lastError", entry)
+
+        self.assertFalse(monitor.record_source_success(state, "desgpc", later))
+
+    def test_sources_json_desgpc_opts_into_mirror_fallback(self):
+        config_path = Path(__file__).resolve().parents[1] / "automation" / "sources.json"
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        desgpc = next(s for s in config["sources"] if s.get("id") == "desgpc")
+        self.assertTrue(desgpc.get("proxyFallback"))
+        self.assertTrue(desgpc.get("enabled"))
+        self.assertIn("desgpc.org", desgpc.get("url", ""))
+
+
+class ProxyFallbackWiringTests(unittest.TestCase):
+    """The proxyFallback flag must reach every fetch path, and the config files
+    must carry it for the sources proven (or suspected) to block the runner."""
+
+    def test_discovery_feed_fetch_honors_proxy_fallback(self):
+        calls = []
+        empty = monitor.Download(url="https://feed.example/", content_type="text/html", data=b"<html></html>")
+
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
+            calls.append({"url": url, "proxy_fallback": proxy_fallback})
+            return empty
+
+        feed = {
+            "id": "example-feed",
+            "name": "Example Feed",
+            "url": "https://feed.example/",
+            "maxHeadlines": 5,
+            "proxyFallback": True,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            state_path = Path(directory) / "state.json"
+            state_path.write_text(json.dumps({"version": 1, "sources": {}}), encoding="utf-8")
+            with patch.object(monitor, "load_discovery_feeds", return_value=[feed]), \
+                 patch.object(monitor, "fetch_url", side_effect=fake_fetch), \
+                 patch.object(monitor, "DEFAULT_STATE", state_path):
+                monitor.process_discovery_feeds([], {}, datetime.now(timezone.utc), dry_run=True)
+        self.assertTrue(calls)
+        self.assertTrue(all(call["proxy_fallback"] for call in calls))
+
+    def test_offline_page_documents_passes_proxy_flag(self):
+        calls = []
+        empty = monitor.Download(url="https://portal.example/job/", content_type="text/html", data=b"<html></html>")
+
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
+            calls.append({"url": url, "proxy_fallback": proxy_fallback})
+            return empty
+
+        with patch.object(monitor, "fetch_url", side_effect=fake_fetch):
+            monitor.offline_page_documents("https://portal.example/job/", proxy_fallback=True)
+        self.assertEqual(calls, [{"url": "https://portal.example/job/", "proxy_fallback": True}])
+
+    def test_offline_portal_listing_fetch_honors_proxy_fallback(self):
+        calls = []
+        empty = monitor.Download(url="https://portal.example/latest/", content_type="text/html", data=b"<html></html>")
+
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
+            calls.append({"url": url, "proxy_fallback": proxy_fallback})
+            return empty
+
+        config = {"sources": [{
+            "id": "portal", "role": "offline-forms", "enabled": True,
+            "url": "https://portal.example/latest/", "proxyFallback": True,
+        }]}
+        with patch.object(monitor, "fetch_url", side_effect=fake_fetch), \
+             patch.object(monitor, "load_offline_forms", return_value=[]):
+            pool = monitor.gather_offline_forms_pool(config)
+        self.assertEqual(pool, [])
+        self.assertTrue(calls and calls[0]["proxy_fallback"])
+
+    def test_config_files_enable_proxy_fallback_for_blocked_sources(self):
+        root = Path(__file__).resolve().parents[1]
+        sources = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))["sources"]
+        by_id = {s.get("id"): s for s in sources}
+        expected_sources = {
+            "desgpc", "psssb-home", "pmidc", "punjab-health",
+            "chdsw", "pilbs", "punjab-sports", "bfuhs", "prsc",
+        }
+        for sid in expected_sources:
+            self.assertTrue(by_id[sid].get("proxyFallback"), f"sources.json:{sid} needs proxyFallback")
+            self.assertTrue(by_id[sid].get("enabled", True), f"sources.json:{sid} must stay enabled")
+
+        orgs = json.loads((root / "automation" / "official-organizations.json").read_text(encoding="utf-8"))["organizations"]
+        org_ids = {o.get("id") for o in orgs if o.get("proxyFallback")}
+        for oid in {"desgpc", "pmidc", "punjab-health", "chdsw", "pilbs", "punjab-sports", "bfuhs", "prsc"}:
+            self.assertIn(oid, org_ids, f"official-organizations.json:{oid} needs proxyFallback")
+
+        feeds = json.loads((root / "automation" / "discovery-feeds.json").read_text(encoding="utf-8"))["feeds"]
+        feed_ids = {f.get("id") for f in feeds if f.get("proxyFallback")}
+        self.assertIn("punjabjobalert", feed_ids)

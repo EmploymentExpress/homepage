@@ -22,6 +22,7 @@
     {
       "id": "psssb-home",
       "enabled": true,
+      "proxyFallback": true,
       "name": "PSSSB Latest Announcements",
       "department": "Punjab Subordinate Services Selection Board (PSSSB)",
       "url": "https://sssb.punjab.gov.in/",
@@ -484,6 +485,7 @@
     {
       "id": "pmidc",
       "enabled": true,
+      "proxyFallback": true,
       "name": "PMIDC Recruitment",
       "department": "Punjab Municipal Infrastructure Development Company (PMIDC), Department of Local Government, Punjab",
       "url": "https://pmidc.punjab.gov.in/recruitment/",
@@ -521,6 +523,7 @@
     {
       "id": "punjab-health",
       "enabled": true,
+      "proxyFallback": true,
       "name": "Punjab Health Department Recruitment",
       "department": "Department of Health and Family Welfare, Government of Punjab",
       "url": "https://health.punjab.gov.in/?q=node/952",
@@ -556,6 +559,7 @@
     {
       "id": "chdsw",
       "enabled": true,
+      "proxyFallback": true,
       "name": "Chandigarh Social Welfare Recruitment",
       "department": "Department of Social Welfare, Women & Child Development, Chandigarh Administration",
       "url": "https://chdsw.gov.in/index.php/recruitments/index",
@@ -595,6 +599,7 @@
     {
       "id": "pilbs",
       "enabled": true,
+      "proxyFallback": true,
       "name": "PILBS Recruitment",
       "department": "Punjab Institute of Liver and Biliary Sciences (PILBS), SAS Nagar (Mohali)",
       "url": "https://pilbs.punjab.gov.in/en/",
@@ -634,6 +639,7 @@
     {
       "id": "punjab-sports",
       "enabled": true,
+      "proxyFallback": true,
       "name": "Punjab Sports Department Recruitment",
       "department": "Department of Sports, Government of Punjab",
       "url": "https://pbsports.punjab.gov.in/",
@@ -704,6 +710,7 @@
     {
       "id": "bfuhs",
       "enabled": true,
+      "proxyFallback": true,
       "name": "BFUHS Recruitment",
       "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
       "url": "https://bfuhs.ggsmch.org/",
@@ -778,6 +785,7 @@
     {
       "id": "desgpc",
       "enabled": true,
+      "proxyFallback": true,
       "name": "DESGPC Recruitment",
       "department": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
       "url": "https://www.desgpc.org/",
@@ -814,6 +822,7 @@
     {
       "id": "prsc",
       "enabled": true,
+      "proxyFallback": true,
       "name": "PRSC Recruitment",
       "department": "Punjab Remote Sensing Centre (PRSC), Ludhiana",
       "url": "https://prsc.punjab.gov.in/Recruitment.aspx",
