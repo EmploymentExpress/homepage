@@ -798,35 +798,102 @@ def fingerprint(candidate: Candidate) -> str:
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 
-def fetch_url(url: str, timeout: int = 25, retries: int = 2) -> Download:
+def _download_direct(url: str, timeout: int) -> Download:
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml,application/rss+xml,application/atom+xml,application/pdf;q=0.9,*/*;q=0.5",
+            "Accept-Language": "en-IN,en;q=0.8",
+            "Accept-Encoding": "identity",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        length = response.headers.get("Content-Length")
+        if length and int(length) > MAX_DOWNLOAD_BYTES:
+            raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
+        data = response.read(MAX_DOWNLOAD_BYTES + 1)
+        if len(data) > MAX_DOWNLOAD_BYTES:
+            raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
+        return Download(
+            url=response.geturl(),
+            content_type=(response.headers.get_content_type() or "").lower(),
+            data=data,
+        )
+
+
+# Read-only text mirrors used only when a source refuses direct connections
+# (for example a firewall that drops datacenter IPs mid-TLS-handshake). They
+# relay the exact public page content; the parsed result is always attributed
+# to the original official URL, never to the mirror.
+SOURCE_MIRRORS = (
+    "https://api.allorigins.win/raw?url={quoted}",
+    "https://r.jina.ai/{url}",
+)
+
+
+def _download_via_mirror(url: str, timeout: int) -> Download:
     last_error: Exception | None = None
-    for attempt in range(retries):
+    for template in SOURCE_MIRRORS:
+        mirror_url = template.format(quoted=urllib.parse.quote(url, safe=""), url=url)
         try:
             request = urllib.request.Request(
-                url,
+                mirror_url,
                 headers={
                     "User-Agent": USER_AGENT,
-                    "Accept": "text/html,application/xhtml+xml,application/rss+xml,application/atom+xml,application/pdf;q=0.9,*/*;q=0.5",
+                    "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.5",
                     "Accept-Language": "en-IN,en;q=0.8",
-                    "Accept-Encoding": "identity",
+                    "X-Return-Format": "html",
                 },
             )
             with urllib.request.urlopen(request, timeout=timeout) as response:
-                length = response.headers.get("Content-Length")
-                if length and int(length) > MAX_DOWNLOAD_BYTES:
-                    raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
                 data = response.read(MAX_DOWNLOAD_BYTES + 1)
                 if len(data) > MAX_DOWNLOAD_BYTES:
                     raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
+                if response.status != 200 or len(data) < 256:
+                    raise ValueError("mirror returned an unusable response")
                 return Download(
-                    url=response.geturl(),
+                    # Keep the OFFICIAL url so every downstream link/fingerprint
+                    # continues to point at the source, not at the mirror.
+                    url=url,
                     content_type=(response.headers.get_content_type() or "").lower(),
                     data=data,
                 )
         except (OSError, ValueError, urllib.error.URLError) as exc:
             last_error = exc
+    raise RuntimeError(f"mirror fetch failed: {last_error}")
+
+
+def _should_try_mirror(error: Exception | None) -> bool:
+    """Only connection-level/refusal errors justify a mirror fetch.
+
+    A 404/410 means the notice page is genuinely gone — a mirror would serve
+    the same emptiness. Refusals (TLS handshake kills, resets, timeouts, 403
+    WAF blocks, 5xx) may succeed from a different network path.
+    """
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code in (403, 408, 425, 429) or error.code >= 500
+    if isinstance(error, (OSError, urllib.error.URLError)):
+        return True
+    return False
+
+
+def fetch_url(url: str, timeout: int = 25, retries: int = 2, proxy_fallback: bool = False) -> Download:
+    last_error: Exception | None = None
+    for attempt in range(retries):
+        try:
+            return _download_direct(url, timeout)
+        except (OSError, ValueError, urllib.error.URLError) as exc:
+            last_error = exc
             if attempt + 1 < retries:
                 time.sleep(1.2 * (attempt + 1))
+    if proxy_fallback and _should_try_mirror(last_error):
+        try:
+            download = _download_via_mirror(url, timeout)
+            print(f"  Fetched via mirror after direct failure: {url}", file=sys.stderr)
+            return download
+        except (OSError, ValueError, urllib.error.URLError, RuntimeError) as exc:
+            last_error = exc
     raise RuntimeError(str(last_error or "download failed"))
 
 
@@ -1556,7 +1623,12 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
         return combined, description_source, apply_url, pdf_url
 
     try:
-        download = fetch_url(candidate.url, timeout=int(source.get("detailTimeout", 20)), retries=1)
+        download = fetch_url(
+            candidate.url,
+            timeout=int(source.get("detailTimeout", 20)),
+            retries=1,
+            proxy_fallback=bool(source.get("proxyFallback")),
+        )
     except RuntimeError as exc:
         print(f"  Could not enrich {candidate.url}: {exc}", file=sys.stderr)
         return combined, description_source, apply_url, pdf_url
@@ -2165,6 +2237,82 @@ def publish_unpublished_seen_notices(
     if pending:
         print(f"  Catch-up published {added}/{min(len(pending), limit)} previously skipped notice(s)")
     return added
+
+
+def _bootstrap_candidate_score(candidate: Candidate, source: dict[str, Any], now: datetime) -> int:
+    """Rank first-scan candidates so `bootstrapCount` publishes real notices.
+
+    The first successful scan marks every listing link as seen and publishes
+    only the top `bootstrapCount`. Taking them in raw page order once published
+    a navigation/portal link ("Apply Online (Recruitment Portal)") instead of
+    the actual vacancy advertisements, so rank substantive, current, same-host
+    notices first.
+    """
+    score = 0
+    text = f"{candidate.title} {candidate.summary}"
+    deadline = find_labelled_date(text, LAST_DATE_LABELS)
+    activity = _dated_notice_is_active(deadline, now)
+    if activity is True:
+        score += 6
+    elif activity is None:
+        score += 2
+    url = canonical_url(candidate.url)
+    candidate_host = host_name(url)
+    source_host = host_name(canonical_url(source.get("url", "")))
+    if candidate_host and candidate_host == source_host:
+        score += 2
+    if url.lower().endswith(".pdf"):
+        score += 1
+    title = clean_title(candidate.title)
+    if re.search(r"(?i)\b(?:recruitment|vacanc|admission|posts?\s+of|applications?|apply)\b", title):
+        score += 1
+    if is_junk_job_title(title):
+        score -= 8
+    if is_generic_homepage(url):
+        score -= 8
+    return score
+
+
+def select_bootstrap_candidates(
+    unseen: list[Candidate],
+    source: dict[str, Any],
+    now: datetime,
+) -> list[Candidate]:
+    """First-scan candidates ordered so the published ones are real notices."""
+    return sorted(unseen, key=lambda candidate: _bootstrap_candidate_score(candidate, source, now), reverse=True)
+
+
+def record_source_success(state: dict[str, Any], source_id: str, now: datetime) -> bool:
+    """Track per-source reachability in seen-notices.json (committed data).
+
+    Only writes on a meaningful transition so a healthy run never dirties the
+    data files (the workflow commits only when a data file actually changed).
+    """
+    health = state.setdefault("sourceHealth", {})
+    entry = health.get(source_id)
+    if entry is None:
+        health[source_id] = {
+            "lastSuccessAt": now.isoformat().replace("+00:00", "Z"),
+            "consecutiveFailures": 0,
+        }
+        return True
+    failures = int(entry.get("consecutiveFailures") or 0)
+    if failures or entry.get("lastSuccessAt") is None:
+        entry["lastSuccessAt"] = now.isoformat().replace("+00:00", "Z")
+        entry["consecutiveFailures"] = 0
+        entry.pop("lastFailureAt", None)
+        entry.pop("lastError", None)
+        return True
+    return False
+
+
+def record_source_failure(state: dict[str, Any], source_id: str, now: datetime, error: str) -> bool:
+    health = state.setdefault("sourceHealth", {})
+    entry = health.setdefault(source_id, {"consecutiveFailures": 0})
+    entry["consecutiveFailures"] = int(entry.get("consecutiveFailures") or 0) + 1
+    entry["lastFailureAt"] = now.isoformat().replace("+00:00", "Z")
+    entry["lastError"] = clean_text(error)[:300]
+    return True
 
 
 def read_json(path: Path, fallback: Any) -> Any:
@@ -3670,18 +3818,40 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             print("Skipping a source without a valid id/url", file=sys.stderr)
             continue
         print(f"Checking {source.get('name', source_id)}: {source_url}")
+        proxy_fallback = bool(source.get("proxyFallback"))
         try:
-            download = fetch_url(source_url, timeout=int(source.get("timeout", 25)))
+            download = fetch_url(
+                source_url,
+                timeout=int(source.get("timeout", 25)),
+                proxy_fallback=proxy_fallback,
+            )
             discovered = deduplicate_candidates(
                 candidate
                 for candidate in source_candidates(download)[: int(source.get("maxLinks", 600))]
                 if looks_like_notice(candidate, source)
             )
         except Exception as exc:
-            print(f"  Source unavailable; keeping existing data: {exc}", file=sys.stderr)
+            if record_source_failure(state, source_id, now, str(exc)):
+                state_changed = True
+            failures_in_a_row = int(
+                (state.get("sourceHealth", {}).get(source_id, {}) or {}).get("consecutiveFailures") or 0
+            )
+            print(
+                f"  Source unavailable; keeping existing data "
+                f"({failures_in_a_row} consecutive failed run(s)): {exc}",
+                file=sys.stderr,
+            )
+            if failures_in_a_row >= 2:
+                print(
+                    f"  WARNING: {source.get('name', source_id)} has been unreachable for "
+                    f"{failures_in_a_row} consecutive runs — its alerts are not being updated. "
+                    f"Recorded in data/seen-notices.json (sourceHealth)."
+                )
             continue
 
         successful_sources += 1
+        if record_source_success(state, source_id, now):
+            state_changed = True
         source_state = state_sources.setdefault(source_id, {"initializedAt": None, "fingerprints": []})
         known = set(source_state.get("fingerprints") or [])
         unseen = [candidate for candidate in discovered if fingerprint(candidate) not in known]
@@ -3708,7 +3878,8 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
                 ]
         first_success = not source_state.get("initializedAt")
         if first_success:
-            selected = unseen[: max(0, int(source.get("bootstrapCount", 1)))]
+            ranked = select_bootstrap_candidates(unseen, source, now)
+            selected = ranked[: max(0, int(source.get("bootstrapCount", 1)))]
             source_state["fingerprints"] = [fingerprint(candidate) for candidate in discovered][-2000:]
             source_state["initializedAt"] = now.isoformat().replace("+00:00", "Z")
             state_changed = True
@@ -3731,6 +3902,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             jobs.append(job)
             added += 1
             jobs_changed = True
+            print(f"  Published: {clean_text(job.get('title', ''))[:90]}")
 
         if not first_success:
             if refresh_published_source_jobs(jobs, discovered, known, source, now):

@@ -778,6 +778,7 @@
     {
       "id": "desgpc",
       "enabled": true,
+      "proxyFallback": true,
       "name": "DESGPC Recruitment",
       "department": "Directorate of Education, Shiromani Gurdwara Parbandhak Committee (SGPC), Patiala",
       "url": "https://www.desgpc.org/",

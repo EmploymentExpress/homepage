@@ -123,6 +123,30 @@ listing/page source before anything is published, and the feed host's URLs and b
 shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
 is the key `load_discovery_feeds()` reads.
 
+## 📡 Source reachability, mirrors & first-scan quality (mandatory behaviour)
+
+Three safeguards keep an official source from silently going stale — do not remove them:
+
+1. **Reachability tracking (`sourceHealth`).** When a source fetch fails, the run records
+   `consecutiveFailures`, `lastFailureAt` and `lastError` under `sourceHealth` in
+   `data/seen-notices.json` (one of the four data files the workflow commits), and prints a
+   loud warning from the second consecutive failure onward. A healthy run records
+   `lastSuccessAt` once. This is how "the workflow stopped updating source X" becomes visible
+   in git instead of hiding in job logs.
+2. **Mirror fallback (opt-in per source).** A site that refuses datacenter connections
+   (TLS handshake dropped mid-handshake, 403 WAF block, 5xx) can be fetched through the
+   read-only text mirrors in `SOURCE_MIRRORS` when the source sets
+   `"proxyFallback": true` (currently `desgpc`). The fallback fires **only** for
+   refusal/connection errors — never for clean 404/410s — and every parsed link keeps the
+   **official URL**: mirrors are transport only, never a source of truth, and their URLs must
+   never appear in published data.
+3. **First-scan (`bootstrapCount`) ranking.** The first successful scan marks the whole listing
+   as seen and publishes only the top `bootstrapCount` links; `select_bootstrap_candidates()`
+   ranks them so **real, current, same-host notices** (readable unexpired last date, direct
+   PDF) win over navigation/portal links such as "Apply Online (Recruitment Portal)". Never
+   revert to raw page order — that is exactly how a portal link was once published as a
+   "vacancy" with placeholder details.
+
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 
 Notification pages on the discovery feeds print an **"Official Website"** row beside their
