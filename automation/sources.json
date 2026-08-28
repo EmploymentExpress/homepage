@@ -935,6 +935,40 @@
       "maxCatchUpPerRun": 12,
       "timeout": 35,
       "detailTimeout": 30
+    },
+    {
+      "id": "indiapost-gds",
+      "enabled": true,
+      "name": "India Post GDS Online Engagement",
+      "department": "Department of Posts (India Post)",
+      "url": "https://indiapost.gov.in/gdsonlineengagement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "includeKeywords": [
+        "gramin dak sevak",
+        "gds",
+        "online engagement",
+        "engagement schedule",
+        "descriptive notification",
+        "merit list",
+        "provisional engagement",
+        "shortlisted candidates"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest",
+        "procurement"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5,
+      "maxRefreshPerRun": 8,
+      "maxCatchUpPerRun": 8,
+      "timeout": 35,
+      "detailTimeout": 30
     }
   ]
 }

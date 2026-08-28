@@ -255,6 +255,86 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("central university of punjab", org["aliases"])
         self.assertIn("cupb", org["aliases"])
 
+    def test_indiapost_gds_official_site_is_monitored(self):
+        """India Post's GDS online engagement page is an enabled official source and
+        a discovery-approved organisation, so its notices are verified on the
+        department's own page (and raw page source) instead of a job blog."""
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "indiapost-gds")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(
+            monitor.canonical_url(source["url"]),
+            "https://indiapost.gov.in/gdsonlineengagement",
+        )
+        self.assertEqual(source["department"], "Department of Posts (India Post)")
+        self.assertEqual(source["type"], "central")
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertTrue(monitor.looks_like_official_website(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "indiapost-gds")
+        self.assertEqual(org["url"], source["url"])
+        self.assertIn("india post", org["aliases"])
+        self.assertIn("gramin dak sevak", org["aliases"])
+        # A headline naming the post resolves to the approved India Post organisation.
+        match = monitor.match_official_organization(
+            "India Post 28636 - GDS 4th Merit List 2026", org_config["organizations"]
+        )
+        self.assertIsNotNone(match)
+        self.assertEqual(match["id"], "indiapost-gds")
+
+    def test_curated_indiapost_gds_entry_follows_title_and_link_rules(self):
+        """The curated India Post GDS entry keeps the same title, department and
+        direct official notification/portal links the notice itself publishes."""
+        html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+        entry = re.search(r"\{\s*id: 18,.*?applyLabel: \"[^\"]*\"\s*\}", html, re.S)
+        self.assertIsNotNone(entry, "Curated India Post GDS entry is missing")
+        block = entry.group(0)
+
+        def field(name):
+            match = re.search(rf"{name}: \"((?:[^\"\\]|\\.)*)\"", block)
+            self.assertIsNotNone(match, f"{name} missing from the curated entry")
+            return match.group(1)
+
+        title = field("title")
+        department = field("department")
+        self.assertEqual(monitor.official_job_title(title, department), title)
+        self.assertFalse(monitor.is_junk_job_title(title))
+        self.assertTrue(monitor.title_mentions_department(title, department))
+        self.assertIn("Gramin Dak Sevak", title)
+        # AGENTS.md link rule: direct notice/portal links, never a bare root homepage.
+        self.assertEqual(
+            monitor.canonical_url(field("pdfLink")),
+            "https://indiapost.gov.in/gdsonlineengagement/pdf/descriptive-notification.pdf",
+        )
+        self.assertEqual(
+            monitor.canonical_url(field("applyLink")),
+            "https://app.indiapost.gov.in/gdscandidate",
+        )
+        for url in (field("pdfLink"), field("applyLink")):
+            with self.subTest(link=url):
+                self.assertTrue(monitor.canonical_url(url))
+                self.assertFalse(monitor.is_discovery_host(url))
+                # AGENTS.md link rule: never the generic root homepage of the site.
+                self.assertNotIn(
+                    monitor.canonical_url(url),
+                    {
+                        "https://indiapost.gov.in",
+                        "https://indiapost.gov.in/",
+                        "https://www.indiapost.gov.in/",
+                    },
+                )
+        # Every newly published detail carries a timestamp for the 48-hour "Just In" badge.
+        self.assertRegex(field("publishedAt"), r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
+        # Deadlines must be readable dates, never "See Notification" when notified.
+        for name in ("startDate", "lastDate"):
+            with self.subTest(field=name):
+                self.assertRegex(field(name), r"^\d{2}-\d{2}-\d{4}$")
+
     def test_chandigarh_administration_public_notices_are_monitored(self):
         """The direct Chandigarh Public Notice listing is an enabled source."""
         config = json.loads(
