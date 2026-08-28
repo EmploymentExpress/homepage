@@ -636,6 +636,23 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-26T08:24:49Z"
+    },
+    {
+      "url": "https://rewari.dcourts.gov.in/",
+      "name": "rewari.dcourts.gov.in",
+      "department": "rewari.dcourts.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-28T01:47:01Z"
     }
   ]
 }

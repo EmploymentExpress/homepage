@@ -121,7 +121,8 @@
         "490e4081baba070abac3661477963cfe89ee725afcd5a53fad612946a82248d5",
         "37c53b28ff1226857b4c4f949fb56ba3475a9c6bd36da9bef8228f7cadbd8c75",
         "5c93529de4133cc89abd789ad239d8ec1afd7dadfcf5d051cc7e120d4a2a80a6",
-        "330524f05c64099bdd0fdbe748b61d691abe8258e1e87d2bdd1ce3d37a478591"
+        "330524f05c64099bdd0fdbe748b61d691abe8258e1e87d2bdd1ce3d37a478591",
+        "624760f250fa99b094911be1ef167dc687daaf83b0e0a00d76c42acde9e5ab9f"
       ]
     },
     "punjabjobalert": {
@@ -215,7 +216,9 @@
         "4824141cae96ce4ac2a10bc2bcc144a1700abe0baddfd92655dc04f9a93c72a9",
         "76b5e400c3ddfc521b4809464a2f9739d75134a11fba7a520394e8da066346a1",
         "2611e40f0afed7e68ba0139a6a898c2d4befcbb4860c3f54cea634e68d29e2d4",
-        "204ac60d8344bdb7883ecb465d175448f12362bac5719905e2a7ed6584234a95"
+        "204ac60d8344bdb7883ecb465d175448f12362bac5719905e2a7ed6584234a95",
+        "f9b8c441b957b56c2044ad1c41b614b20c8964bfbdf1e9f8a4ec44fddf1ef4fb",
+        "f7f3e4c743ddde11970939d05725c3d6e2a21446806fca16ef20cfcdb9064996"
       ]
     },
     "cup": {
@@ -404,7 +407,19 @@
       "fingerprints": [
         "afafaa810f9e296b85d76770a9ee89e4af37fc587a69118d157d39bb17c6ea04",
         "5ebca71524222a7ef2172aa0002dd7d31f17fbf5f28459d50270d176b20fa4bb",
-        "c1f1a242c5c0a12a52d35d86b31e80bd932e537bda84b0ddfb8caf55e8fd05ee"
+        "c1f1a242c5c0a12a52d35d86b31e80bd932e537bda84b0ddfb8caf55e8fd05ee",
+        "c0721a43f5a9b457d5292119203c9f0512cec67d2365d3f709f3f7bed3479747",
+        "911745755c19b86c8c26dfbed0b04fdf33a34e3e71a025e8fb03f62e483ff350",
+        "c56ef76dfcdbae64e7e7c04fea33d29f1fb2996263a2b543dbaacd1ac4d56f9e",
+        "70b6da4edee51b9df6608f0e7cba02a3c3b2a8da96e85704cd686417290797e6",
+        "cab5df107b3b616be29c2c0aff621ad12b23d1aec7f2b5710e8c12864adc8b12",
+        "ec71ee9684616812354ba965bf5e352f38d1db3d31d7c0b2f546766777bb47ea"
+      ]
+    },
+    "custom-4b18267cf52d": {
+      "initializedAt": "2026-08-28T01:47:01Z",
+      "fingerprints": [
+        "1d165e8a0250ef705940afc858b488d19f00910ae925bc8ff21ec244d5731780"
       ]
     }
   },
@@ -6193,6 +6208,72 @@
       "startDate": "29-08-2026",
       "lastDate": "18-09-2026",
       "pageTitle": "Delhi Pollution Control Committee Recruitment 2026 | DPCC Vacancy 2026"
+    },
+    "https://www.speedjob.in/rewari-court-stenographer-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "https://www.speedjob.in/wp-content/uploads/2026/08/2026082752.pdf",
+      "notification": "https://www.speedjob.in/wp-content/uploads/2026/08/2026082752.pdf",
+      "website": "",
+      "applyMode": "offline",
+      "department": "Office of The District and Session Judge, Rewari",
+      "startDate": "27-08-2026",
+      "lastDate": "17-09-2026",
+      "pageTitle": "Rewari Court Stenographer Recruitment 2026"
+    },
+    "https://www.speedjob.in/isro-icrb-scientist-engineer-vacancy-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.isro.gov.in/media_isro/pdf/recruitmentNotice/2026/August/Bilingual_Advertisement_27082026.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Indian Space Research Organisation (ISRO), ISRO Centralised Recruitment Board (ICRB)",
+      "startDate": "27-08-2026",
+      "lastDate": "16-09-2026",
+      "pageTitle": "ISRO ICRB Scientist Engineer Vacancy 2026"
+    },
+    "https://www.speedjob.in/aaryan-college-of-education-rohtak-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "https://www.speedjob.in/wp-content/uploads/2026/08/Aaryan-College-of-Education-Rohtak-Application-Form.pdf",
+      "notification": "https://theaaryaninstitutions.com/?p=448",
+      "website": "",
+      "applyMode": "offline",
+      "department": "University, Rohtak",
+      "startDate": "",
+      "lastDate": "14-09-2026",
+      "pageTitle": "Aaryan College Of Education Rohtak Recruitment 2026"
+    },
+    "https://www.speedjob.in/indian-overseas-bank-iob-security-guard-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.iob.bank.in/documents/d/guest/recruitment-of-security-guards_advertisement",
+      "website": "",
+      "applyMode": "online",
+      "department": "Indian Overseas Bank (IOB)",
+      "startDate": "25-08-2026",
+      "lastDate": "14-09-2026",
+      "pageTitle": "Indian Overseas Bank IOB Security Guard Recruitment 2026"
+    },
+    "https://www.speedjob.in/dr-rmlims-lucknow-non-teaching-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.drrmlims.ac.in/Assets/pages/recruitment/Final_Advt_2026_GROUP_B_C_D_1.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Ram Manohar Lohia Institute of Medical Science, Vibhuti Khand, Gomtinagar, Lucknow",
+      "startDate": "",
+      "lastDate": "",
+      "pageTitle": "Dr RMLIMS Lucknow Non Teaching Recruitment 2026"
+    },
+    "https://www.speedjob.in/ukpsc-veterinary-officer-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.speedjob.in/wp-content/uploads/2026/08/1339347899.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Uttarakhand Public Service Commission (UKPSC)",
+      "startDate": "25-08-2026",
+      "lastDate": "14-09-2026",
+      "pageTitle": "UKPSC Veterinary Officer Recruitment 2026"
     }
   }
 }
