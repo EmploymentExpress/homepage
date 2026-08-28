@@ -12,6 +12,7 @@
     },
     {
       "id": "punjabjobalert",
+      "proxyFallback": true,
       "name": "Punjab Job Alert - Punjab & Sarkari Jobs",
       "url": "https://punjabjobalert.com/",
       "maxHeadlines": 40,

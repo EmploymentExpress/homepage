@@ -134,12 +134,19 @@ Three safeguards keep an official source from silently going stale — do not re
    `lastSuccessAt` once. This is how "the workflow stopped updating source X" becomes visible
    in git instead of hiding in job logs.
 2. **Mirror fallback (opt-in per source).** A site that refuses datacenter connections
-   (TLS handshake dropped mid-handshake, 403 WAF block, 5xx) can be fetched through the
-   read-only text mirrors in `SOURCE_MIRRORS` when the source sets
-   `"proxyFallback": true` (currently `desgpc`). The fallback fires **only** for
-   refusal/connection errors — never for clean 404/410s — and every parsed link keeps the
-   **official URL**: mirrors are transport only, never a source of truth, and their URLs must
-   never appear in published data.
+   (TLS handshake dropped mid-handshake, 403 WAF block, 5xx anti-bot challenge) can be
+   fetched through the read-only text mirrors in `SOURCE_MIRRORS` when the config sets
+   `"proxyFallback": true`. The flag is honoured on **every fetch path**: the official
+   listing check (`automation/sources.json`), per-notice detail/PDF enrichment, discovery
+   feed fetches (`automation/discovery-feeds.json`), the official-website verification of
+   discovery headlines (`automation/official-organizations.json`), the offline-form portal
+   listing and its vacancy pages, and discovery-article registration. The fallback fires
+   **only** for refusal/connection errors — never for clean 404/410s — and every parsed
+   link keeps the **official URL**: mirrors are transport only, never a source of truth,
+   and their URLs must never appear in published data. Sites that block **non-Indian**
+   visitors entirely (several `*.punjab.gov.in` hosts) defeat mirrors too; their
+   `sourceHealth` entries make the gap visible and an India-egress runner would be the
+   real fix.
 3. **First-scan (`bootstrapCount`) ranking.** The first successful scan marks the whole listing
    as seen and publishes only the top `bootstrapCount` links; `select_bootstrap_candidates()`
    ranks them so **real, current, same-host notices** (readable unexpired last date, direct

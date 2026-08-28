@@ -2557,7 +2557,11 @@ def process_discovery_feeds(
     for feed in load_discovery_feeds():
         print(f"Checking discovery feed {feed['name']}: {feed['url']}")
         try:
-            download = fetch_url(feed["url"], timeout=25)
+            download = fetch_url(
+                feed["url"],
+                timeout=25,
+                proxy_fallback=bool(feed.get("proxyFallback")),
+            )
             headlines = deduplicate_candidates(
                 candidate
                 for candidate in source_candidates(download)[: feed["maxHeadlines"]]
@@ -2594,7 +2598,8 @@ def process_discovery_feeds(
             # links. Whenever that row holds a real official domain, register it
             # so the monitor starts checking that official website directly.
             register_official_website_from_article(
-                headline.url, now=now, dry_run=dry_run, seen=registered_websites
+                headline.url, now=now, dry_run=dry_run, seen=registered_websites,
+                proxy_fallback=bool(feed.get("proxyFallback")),
             )
             official = match_official_organization(headline.title, organizations)
             if official is None:
@@ -2606,7 +2611,11 @@ def process_discovery_feeds(
                 continue
             if official_url not in official_cache:
                 try:
-                    official_download = fetch_url(official_url, timeout=int(official.get("timeout", 25)))
+                    official_download = fetch_url(
+                        official_url,
+                        timeout=int(official.get("timeout", 25)),
+                        proxy_fallback=bool(official.get("proxyFallback")),
+                    )
                     official_downloads[official_url] = official_download
                     official_cache[official_url] = deduplicate_candidates(
                         candidate
@@ -2810,7 +2819,7 @@ def official_website_links(html_text: str, base_url: str = "") -> list[str]:
 
 
 def offline_page_documents(
-    page_url: str, download: Download | None = None
+    page_url: str, download: Download | None = None, proxy_fallback: bool = False
 ) -> dict[str, str]:
     """Read an offline vacancy page and extract verifiable publishing details.
 
@@ -2820,7 +2829,7 @@ def offline_page_documents(
     the publisher reject expired archives and avoid generic feed-link titles.
     """
     if download is None:
-        download = fetch_url(page_url, timeout=25)
+        download = fetch_url(page_url, timeout=25, proxy_fallback=proxy_fallback)
     text = decode_document(download)
     _, parser = parse_html(text, download.url)
     form_candidates: list[str] = []
@@ -3148,7 +3157,11 @@ def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
         if not source_url:
             continue
         try:
-            download = fetch_url(source_url, timeout=int(source.get("timeout", 25)))
+            download = fetch_url(
+                source_url,
+                timeout=int(source.get("timeout", 25)),
+                proxy_fallback=bool(source.get("proxyFallback")),
+            )
             for cand in source_candidates(download)[: int(source.get("maxLinks", 600))]:
                 cand_url = canonical_url(cand.url)
                 if not cand_url or not is_offline_form_url(cand_url):
@@ -3268,6 +3281,13 @@ def process_offline_forms(
         pool = gather_offline_forms_pool(config)
     if not pool:
         return 0, False
+    # Any configured offline-form portal may opt into mirror-fetching its
+    # listing and vacancy pages when the portal refuses direct connections.
+    offline_proxy_fallback = any(
+        bool(source.get("proxyFallback"))
+        for source in config.get("sources", [])
+        if source.get("role") == "offline-forms" and source.get("enabled", True)
+    )
     existing_redirects = read_json(DEFAULT_OFFLINE_REDIRECTS, {})
     existing_map = (
         existing_redirects.get("redirects", {})
@@ -3326,7 +3346,9 @@ def process_offline_forms(
             note_official_website(documents)
             return documents
         try:
-            documents = _sanitize_offline_documents(offline_page_documents(key))
+            documents = _sanitize_offline_documents(
+                offline_page_documents(key, proxy_fallback=offline_proxy_fallback)
+            )
         except Exception as exc:
             print(
                 f"  Offline page document extraction failed ({key}): {exc}",
@@ -3704,6 +3726,7 @@ def register_official_website_from_article(
     dry_run: bool = False,
     seen: set[str] | None = None,
     config_urls: set[str] | None = None,
+    proxy_fallback: bool = False,
 ) -> bool:
     """Read a discovery-feed article and register its "Official Website" link.
 
@@ -3720,7 +3743,7 @@ def register_official_website_from_article(
     if not (is_discovery_host(url) or is_offline_form_url(url)) or is_pdf_url(url):
         return False
     try:
-        download = fetch_url(url, timeout=20)
+        download = fetch_url(url, timeout=20, proxy_fallback=proxy_fallback)
         websites = official_website_links(decode_document(download), download.url)
     except Exception as exc:
         print(f"  Could not read the article for its official website ({url}): {exc}", file=sys.stderr)
