@@ -122,7 +122,9 @@
         "37c53b28ff1226857b4c4f949fb56ba3475a9c6bd36da9bef8228f7cadbd8c75",
         "5c93529de4133cc89abd789ad239d8ec1afd7dadfcf5d051cc7e120d4a2a80a6",
         "330524f05c64099bdd0fdbe748b61d691abe8258e1e87d2bdd1ce3d37a478591",
-        "624760f250fa99b094911be1ef167dc687daaf83b0e0a00d76c42acde9e5ab9f"
+        "624760f250fa99b094911be1ef167dc687daaf83b0e0a00d76c42acde9e5ab9f",
+        "ab6096d984cb52a94bfa486e8d582def425bbd550c687927222038703f817102",
+        "e570cf87ab6ae5d7961c2d944f04a30794a03268ad17241326ee60aae3691ccc"
       ]
     },
     "punjabjobalert": {
@@ -181,7 +183,9 @@
         "3553a441e36f2097f92af0e6770a0a2f67e299dbd9119ecf603922337551346f",
         "6cb6df5c3151c840b1ce06a94139fbae0f3423318c2eb312532346143c12ecf1",
         "d5981b47fc72b745c237cde476d16b76b03ef237415aca433be57a0d8db10686",
-        "1975d92077b97c615240b6ae701b8c6720d9f43c0b0ace5c8fcc123c9a8ef8fd"
+        "1975d92077b97c615240b6ae701b8c6720d9f43c0b0ace5c8fcc123c9a8ef8fd",
+        "88bd77ae7ea5e7d968684980df51ab8d18b4ffa3007d2fac491c81012be6a8cd",
+        "4d4a83fe9c10deac3245b77085d83007d1f5053cf3563c32c7f309bfed19c7ab"
       ]
     },
     "haryanajobs": {
@@ -272,7 +276,8 @@
       "initializedAt": "2026-08-24T08:31:29Z",
       "fingerprints": [
         "0ae2f09684fa6bb87553e69ece322a3c2b4c52be9580758ed8045b1881ddc69a",
-        "8497031ffb8ce7ae5f709c0977e8a1fd0e225dc2f061b968fb5e27a8edfeaf25"
+        "8497031ffb8ce7ae5f709c0977e8a1fd0e225dc2f061b968fb5e27a8edfeaf25",
+        "3ddd479ba9cb64e419c65214e3b526fe1790cdf5248c3bf75e1da3c30e325b55"
       ]
     },
     "custom-1603115d4a87": {
@@ -420,6 +425,16 @@
       "initializedAt": "2026-08-28T01:47:01Z",
       "fingerprints": [
         "1d165e8a0250ef705940afc858b488d19f00910ae925bc8ff21ec244d5731780"
+      ]
+    },
+    "bfuhs": {
+      "initializedAt": "2026-08-28T08:15:00Z",
+      "fingerprints": []
+    },
+    "indiapost-gds": {
+      "initializedAt": "2026-08-28T08:15:00Z",
+      "fingerprints": [
+        "43c40776ab2d5568f3c4bec60dd2c8a58fd1418a68b1ba5b5ea7712bd7c24950"
       ]
     }
   },
@@ -6274,6 +6289,220 @@
       "startDate": "25-08-2026",
       "lastDate": "14-09-2026",
       "pageTitle": "UKPSC Veterinary Officer Recruitment 2026"
+    }
+  },
+  "sourceHealth": {
+    "psssb-home": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "punjab-legal-services-authority": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "aiims-exams": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "aiims-exams-courses": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "gndu-recruitment": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "pau-recruitment": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "pmidc": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "punjab-health": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "chdsw": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "pilbs": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "punjab-sports": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "tmc": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "bfuhs": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "grau": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "desgpc": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "prsc": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
+    },
+    "chandigarh-administration-public-notices": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
+    },
+    "cup": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "indiapost-gds": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-4a87424b8eeb": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-7a1583c5d69f": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-9b9dd7237940": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "HTTP Error 403: Forbidden"
+    },
+    "custom-3df1532f0e08": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-e676dd16cfa5": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-106092d473e9": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-48fb363bf153": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-129b32e84d14": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-1603115d4a87": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-8652751e6280": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-a9fa10170a90": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-4006d3b0101b": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-f7c439e515ec": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-f2289426aa8f": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error [Errno 111] Connection refused>"
+    },
+    "custom-2700aab06e21": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-2be7d60af96d": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-3c7cb10343cc": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-c8770f2e6b8f": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-f12474453dfd": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-a4634bb37126": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-4b18267cf52d": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-d34a36e0adff": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-b0104cf2acf3": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-bd7b73fbad8f": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
+    },
+    "custom-7f34a04f79b4": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-09b7c46162c2": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-aefc6db87072": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-af52ded81a0a": {
+      "lastSuccessAt": "2026-08-28T08:15:00Z",
+      "consecutiveFailures": 0
+    },
+    "custom-1b6f1f840915": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-28T08:15:00Z",
+      "lastError": "<urlopen error timed out>"
     }
   }
 }
