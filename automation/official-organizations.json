@@ -331,6 +331,26 @@
         "cupb",
         "cu punjab"
       ]
+    },
+    {
+      "id": "indiapost-gds",
+      "name": "India Post GDS Online Engagement",
+      "department": "Department of Posts (India Post)",
+      "url": "https://indiapost.gov.in/gdsonlineengagement",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "aliases": [
+        "india post",
+        "indiapost",
+        "department of posts",
+        "department of posts india post",
+        "gramin dak sevak",
+        "gds",
+        "india post gds",
+        "gds online engagement"
+      ]
     }
   ]
 }
