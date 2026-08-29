@@ -359,6 +359,27 @@
         "india post gds",
         "gds online engagement"
       ]
+    },
+    {
+      "id": "punjab-haryana-high-court",
+      "name": "Punjab and Haryana High Court",
+      "department": "High Court of Punjab and Haryana at Chandigarh",
+      "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh, Punjab and Haryana",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "aliases": [
+        "punjab and haryana high court",
+        "punjab & haryana high court",
+        "punjab haryana high court",
+        "phhc",
+        "phhc chandigarh",
+        "chandigarh high court",
+        "high court chandigarh",
+        "high court of punjab and haryana",
+        "highcourtchd.gov.in"
+      ]
     }
   ]
 }
