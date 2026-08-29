@@ -978,6 +978,52 @@
       "maxCatchUpPerRun": 8,
       "timeout": 35,
       "detailTimeout": 30
+    },
+    {
+      "id": "punjab-haryana-high-court-staff",
+      "enabled": true,
+      "proxyFallback": true,
+      "name": "Punjab and Haryana High Court Recruitments — Administrative Staff",
+      "department": "High Court of Punjab and Haryana at Chandigarh",
+      "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh, Punjab and Haryana",
+      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "includeKeywords": [
+        "safai sewak",
+        "mali",
+        "driver",
+        "frash",
+        "faraash",
+        "peon",
+        "clerk",
+        "stenographer",
+        "steno typist",
+        "assistant librarian",
+        "employment notice",
+        "recruitment",
+        "vacancy",
+        "advertisement",
+        "advt",
+        "final result",
+        "roll number",
+        "interview"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest",
+        "judicial officer"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 3,
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 45,
+      "detailTimeout": 30
     }
   ]
 }

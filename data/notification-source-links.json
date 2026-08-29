@@ -689,18 +689,17 @@
       "addedAt": "2026-08-29T06:18:36Z"
     },
     {
-      "url": "https://highcourtchd.gov.in/?mod=recr_staff&mtype=jo",
-      "name": "highcourtchd.gov.in",
-      "department": "highcourtchd.gov.in",
+      "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
+      "name": "Punjab and Haryana High Court Recruitments — Administrative Staff",
+      "department": "High Court of Punjab and Haryana at Chandigarh",
       "type": "central",
       "categorySlug": "central",
-      "location": "All India",
+      "location": "Chandigarh, Punjab and Haryana",
       "noticeTypes": [
-        "admission",
-        "answer-key",
-        "corrigendum",
         "recruitment",
-        "result"
+        "result",
+        "answer-key",
+        "corrigendum"
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-29T06:18:36Z"
