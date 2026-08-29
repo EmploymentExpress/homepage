@@ -653,6 +653,57 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-28T01:47:01Z"
+    },
+    {
+      "url": "https://www.indianarmy.nic.in/",
+      "name": "indianarmy.nic.in",
+      "department": "indianarmy.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-29T06:18:36Z"
+    },
+    {
+      "url": "https://www.iob.bank.in/en/careers",
+      "name": "iob.bank.in",
+      "department": "iob.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-29T06:18:36Z"
+    },
+    {
+      "url": "https://highcourtchd.gov.in/?mod=recr_staff&mtype=jo",
+      "name": "highcourtchd.gov.in",
+      "department": "highcourtchd.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-29T06:18:36Z"
     }
   ]
 }
