@@ -551,7 +551,8 @@
         "4c13c2471c4e88e8b0a36b8e63bf61c01657b1242f9ca4bcfbd891553f9ae037",
         "9045da2a57e649443be43d04f378c2a2cbc6fdb15a29f580c93c65e175b4bec0",
         "9a8fa525d0d48cca3db3851bcdeb4b35bdaacc33b7480043743d9abd86411424",
-        "986a7200c2fe6671f58adba536b916ff505a582839767262d5d9ee026528fdc9"
+        "986a7200c2fe6671f58adba536b916ff505a582839767262d5d9ee026528fdc9",
+        "d24b72f00c1e1ca599ba22ecb7c3157db716b3462d03f35eea7ae96abc1e65fb"
       ]
     },
     "custom-49bf338af839": {
@@ -685,7 +686,8 @@
         "73ef5ac1e354d7290ee54d0dfd86668c8f2cd8c78f20e37cc3752980ccd1f3ed",
         "7c37d0fea8c212eeff5cdc7718a4216c429b819467209e719bc75490da0eaa9a",
         "5b0f99494db01254298b1b029a83f8c4757f3058e7cc90c2930f360ea123d266",
-        "4e2a398e88e85b24eee6676577b4d4a448bfd221e832f3784e1b2af2c92a1bc9"
+        "4e2a398e88e85b24eee6676577b4d4a448bfd221e832f3784e1b2af2c92a1bc9",
+        "a96f674cbdf78e6f3bf503e411b5382e2f83900bfaa901fe5504e1f0cf93448b"
       ]
     }
   },
@@ -6621,8 +6623,8 @@
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -6646,28 +6648,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -6687,13 +6689,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -6706,18 +6708,18 @@
     },
     "custom-4a87424b8eeb": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error [Errno -3] Temporary failure in name resolution>"
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -6725,13 +6727,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -6739,8 +6741,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -6764,13 +6766,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -6778,20 +6780,20 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
       "lastSuccessAt": "2026-08-29T12:18:37Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-f12474453dfd": {
       "lastSuccessAt": "2026-08-29T12:18:37Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-a4634bb37126": {
@@ -6803,18 +6805,18 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -6834,18 +6836,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -6861,8 +6863,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-29T18:18:37Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-30T00:18:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
