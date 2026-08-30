@@ -57,6 +57,7 @@ DEPARTMENT_SHORT_FORMS = [
     (r"directorate general of quality assurance", "DGQA"),
     (r"central council for research in siddha", "CCRS"),
     (r"central university of punjab", "CUPB"),
+    (r"high court of punjab and haryana|punjab and haryana high court", "PHHC"),
     (r"local audit department", "LOCAL AUDIT DEPT."),
     (r"department of industries", "INDUSTRIES DEPT."),
 ]
