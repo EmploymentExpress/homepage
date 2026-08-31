@@ -248,7 +248,8 @@
         "0940209f3d75da80dc1230623604383ea948eb5a7c87211381d63756fd950003",
         "ef416d04cbd73f34b9890797509fd751a676883769c500284589dd661c82433a",
         "56f434377427807f2def6f34f491e68830642eee71edc4cdef8bb71a8ae87f5d",
-        "fbfe9eab2d462935fa9a59f96db5d3e63db760ce5bd00f9f185f05933863e8d4"
+        "fbfe9eab2d462935fa9a59f96db5d3e63db760ce5bd00f9f185f05933863e8d4",
+        "01283039d056139e9187b57393e4ef9bdd22c64a2f414800d358f170d4dbd84f"
       ]
     },
     "cup": {
@@ -303,7 +304,8 @@
       "fingerprints": [
         "0ae2f09684fa6bb87553e69ece322a3c2b4c52be9580758ed8045b1881ddc69a",
         "8497031ffb8ce7ae5f709c0977e8a1fd0e225dc2f061b968fb5e27a8edfeaf25",
-        "3ddd479ba9cb64e419c65214e3b526fe1790cdf5248c3bf75e1da3c30e325b55"
+        "3ddd479ba9cb64e419c65214e3b526fe1790cdf5248c3bf75e1da3c30e325b55",
+        "39cff5acd0cee6c8456d1d1fafa93fc66ffff4485dae12122a4dccab7a71c23a"
       ]
     },
     "custom-1603115d4a87": {
@@ -1062,10 +1064,15 @@
       "pageTitle": "Army ASC Centre South - Civilian Catering Instructor, MTS, Civilian Motor Driver, Cleaner, Cook, Tradesman, Fire Engine Driver, Fireman And Leading Fireman Recruitment 2026"
     },
     "https://www.speedjob.in/date-sheet/": {
+      "extractorVersion": 2,
       "form": "",
-      "notification": "https://mdu.ac.in/UpFiles/UpPdfFiles/2026/May/4_05-27-2026_14-47-09_Notification%2003%20Engg.Course.pdf",
+      "notification": "",
       "website": "",
-      "applyMode": ""
+      "applyMode": "",
+      "department": "Southern Railway",
+      "startDate": "",
+      "lastDate": "",
+      "pageTitle": "MDU Mercy Chance Date Sheet, Admit Card"
     },
     "https://www.speedjob.in/other-links/": {
       "form": "",
@@ -6653,12 +6660,23 @@
       "startDate": "01-09-2026",
       "lastDate": "21-09-2026",
       "pageTitle": "IBPS RRB XV Recruitment 2026 Clerk, PO Vacancy"
+    },
+    "https://www.speedjob.in/southern-railway-apprentice-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://sronline.etrpindia.com/rrcchennaiapprentice26/notifications/Act%20Apprentices%20Notification%202026-27%20with%20enclosures.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Southern Railway",
+      "startDate": "28-08-2026",
+      "lastDate": "27-09-2026",
+      "pageTitle": "Southern Railway Apprentice Recruitment 2026"
     }
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -6682,28 +6700,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -6723,13 +6741,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -6741,19 +6759,17 @@
       "consecutiveFailures": 0
     },
     "custom-4a87424b8eeb": {
-      "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
-      "lastError": "<urlopen error [Errno -3] Temporary failure in name resolution>"
+      "lastSuccessAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -6761,13 +6777,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -6775,8 +6791,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -6800,13 +6816,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -6814,21 +6830,17 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
-      "lastSuccessAt": "2026-08-30T06:18:33Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
-      "lastError": "<urlopen error timed out>"
+      "lastSuccessAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 0
     },
     "custom-f12474453dfd": {
-      "lastSuccessAt": "2026-08-30T06:18:33Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
-      "lastError": "<urlopen error timed out>"
+      "lastSuccessAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 0
     },
     "custom-a4634bb37126": {
       "lastSuccessAt": "2026-08-30T12:18:38Z",
@@ -6836,23 +6848,23 @@
     },
     "custom-4b18267cf52d": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 4,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 5,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1010)>"
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -6872,18 +6884,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -6899,13 +6911,28 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-08-31T06:18:29Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
       "lastSuccessAt": "2026-08-29T18:18:37Z",
       "consecutiveFailures": 0
+    },
+    "custom-ac818ccf7e1c": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "lastError": "HTTP Error 403: Forbidden"
+    },
+    "custom-1c5eb2ad0b22": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "lastError": "<urlopen error [Errno 104] Connection reset by peer>"
+    },
+    "custom-b97daddda9af": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     }
   }
 }

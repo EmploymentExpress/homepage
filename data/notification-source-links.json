@@ -822,6 +822,23 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-31T06:18:29Z"
+    },
+    {
+      "url": "https://www.bgss.in/careers/all",
+      "name": "bgss.in",
+      "department": "bgss.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-08-31T12:18:34Z"
     }
   ]
 }
