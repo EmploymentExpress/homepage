@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-30T18:18:32Z",
+  "updatedAt": "2026-08-31T00:18:31Z",
   "jobs": [
     {
       "id": 189289989401696,
@@ -3314,46 +3314,6 @@
       "discoveredAt": "2026-08-19T19:36:11Z",
       "automated": true,
       "noticeUrl": "https://cdnbbsr.s3waas.gov.in/s34c144c47ecba6f8318128703ca9e2601/uploads/2026/08/20260804697336976.pdf"
-    },
-    {
-      "id": 179842552630974,
-      "title": "Indian Air Force LDC",
-      "department": "Indian Air Force",
-      "vacancies": "See Notification",
-      "qualification": "See Official Notification",
-      "qualCategory": "Graduate",
-      "lastDate": "30-08-2026",
-      "startDate": "01-08-2026",
-      "examDate": "See Official Notification",
-      "location": "All India",
-      "applyMode": "Offline",
-      "alertType": "recruitment",
-      "badge": "JOB NOTICE",
-      "badgeColor": "bg-blue-600",
-      "type": "central",
-      "categorySlug": "central",
-      "advtNo": "See Official Notice",
-      "feeGen": "See Official Notification",
-      "feeSC": "See Official Notification",
-      "feeMode": "As Notified",
-      "age": "See Official Notification",
-      "details": "Offline application vacancy for Indian Air Force LDC. Download the offline application form and apply before the last date notified by the recruiting authority.",
-      "howToApply": [
-        "Download the offline application form using the link below.",
-        "Read the official notification for eligibility, fee, documents and the address to send the form.",
-        "Fill the form, attach the required self-attested documents and a recent photograph.",
-        "Send the completed application to the notified address before the last date."
-      ],
-      "pdfLink": "redirect.html?f=cd086976a147",
-      "applyLink": "redirect.html?f=f01620a58f56",
-      "applyLabel": "Download Offline Application Form",
-      "offlineFormLink": "redirect.html?f=f01620a58f56",
-      "offlineFormName": "Download Offline Application Form (PDF)",
-      "sourceName": "Indian Air Force",
-      "sourceUrl": "https://www.speedjob.in/indian-air-force-ldc-recruitment-2026/",
-      "publishedAt": "",
-      "discoveredAt": "2026-08-19T19:36:11Z",
-      "automated": true
     },
     {
       "id": 165682863023091,
