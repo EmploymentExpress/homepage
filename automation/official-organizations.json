@@ -9,7 +9,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Amritsar, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "gndu",
         "guru nanak dev university",
@@ -25,7 +32,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Ludhiana, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "pau",
         "punjab agricultural university",
@@ -41,8 +55,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "aliases": ["upsc", "union public service commission"]
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "upsc",
+        "union public service commission"
+      ]
     },
     {
       "id": "ssc",
@@ -52,8 +76,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "aliases": ["ssc", "staff selection commission"]
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "ssc",
+        "staff selection commission"
+      ]
     },
     {
       "id": "dsssb",
@@ -63,8 +97,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Delhi",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
-      "aliases": ["dsssb", "delhi subordinate services selection board"]
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "dsssb",
+        "delhi subordinate services selection board"
+      ]
     },
     {
       "id": "rajasthan-lsg",
@@ -74,7 +118,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Rajasthan",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "rajasthan local self government",
         "lsg rajasthan",
@@ -90,7 +141,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Haryana",
-      "aliases": ["hssc", "haryana staff selection commission"]
+      "aliases": [
+        "hssc",
+        "haryana staff selection commission"
+      ],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     },
     {
       "id": "hpsc",
@@ -100,7 +162,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Haryana",
-      "aliases": ["hpsc", "haryana public service commission"]
+      "aliases": [
+        "hpsc",
+        "haryana public service commission"
+      ],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     },
     {
       "id": "haryana-police",
@@ -110,7 +183,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Haryana",
-      "aliases": ["haryana police", "haryana police recruitment"]
+      "aliases": [
+        "haryana police",
+        "haryana police recruitment"
+      ],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     },
     {
       "id": "uhbvn",
@@ -120,7 +204,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Haryana",
-      "aliases": ["uhbvn", "uttar haryana bijli vitran nigam"]
+      "aliases": [
+        "uhbvn",
+        "uttar haryana bijli vitran nigam"
+      ],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     },
     {
       "id": "dhbvn",
@@ -130,7 +225,18 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Haryana",
-      "aliases": ["dhbvn", "dakshin haryana bijli vitran nigam"]
+      "aliases": [
+        "dhbvn",
+        "dakshin haryana bijli vitran nigam"
+      ],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     },
     {
       "id": "pmidc",
@@ -141,7 +247,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "SAS Nagar (Mohali), Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "pmidc",
         "punjab municipal infrastructure development company",
@@ -157,7 +270,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "punjab health department",
         "department of health and family welfare",
@@ -175,7 +295,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Chandigarh",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "chdsw",
         "social welfare chandigarh",
@@ -193,7 +320,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "SAS Nagar (Mohali), Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "pilbs",
         "punjab institute of liver and biliary sciences",
@@ -209,7 +343,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "punjab sports department",
         "department of sports punjab",
@@ -220,12 +361,19 @@
     {
       "id": "tmc",
       "name": "Tata Memorial Centre",
-      "department": "Tata Memorial Centre (TMC), Mumbai — Department of Atomic Energy, Government of India",
+      "department": "Tata Memorial Centre (TMC), Mumbai \u2014 Department of Atomic Energy, Government of India",
       "url": "https://tmc.gov.in/postmaster/Careers",
       "type": "central",
       "categorySlug": "central",
       "location": "Mumbai, Maharashtra",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "tmc",
         "tata memorial centre",
@@ -242,7 +390,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Faridkot, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "bfuhs",
         "baba farid university of health sciences",
@@ -258,7 +413,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Hoshiarpur, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "grau",
         "guru ravidas ayurved university",
@@ -275,7 +437,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "desgpc",
         "directorate of education sgpc",
@@ -293,7 +462,14 @@
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "location": "Ludhiana, Punjab",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "prsc",
         "punjab remote sensing centre",
@@ -309,7 +485,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Chandigarh",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "chandigarh administration",
         "ut chandigarh administration",
@@ -331,7 +514,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Bathinda, Punjab",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "central university of punjab",
         "central university of punjab bathinda",
@@ -348,7 +538,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
-      "noticeTypes": ["recruitment", "result", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "india post",
         "indiapost",
@@ -368,7 +565,14 @@
       "type": "central",
       "categorySlug": "central",
       "location": "Chandigarh, Punjab and Haryana",
-      "noticeTypes": ["recruitment", "result", "answer-key", "corrigendum"],
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
       "aliases": [
         "punjab and haryana high court",
         "punjab & haryana high court",
@@ -379,6 +583,31 @@
         "high court chandigarh",
         "high court of punjab and haryana",
         "highcourtchd.gov.in"
+      ]
+    },
+    {
+      "id": "union-bank",
+      "name": "Union Bank of India",
+      "department": "Union Bank of India (UBI)",
+      "url": "https://www.unionbankofindia.bank.in/en/common/recruitment",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "union bank",
+        "union bank of india",
+        "ubi",
+        "union bank so",
+        "union bank specialist officer",
+        "union bank specialist officers"
       ]
     }
   ]

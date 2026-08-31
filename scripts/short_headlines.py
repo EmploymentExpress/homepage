@@ -118,6 +118,7 @@ ALERT_TYPE_DEFAULTS = {
     "answer-key": "Answer Key",
     "corrigendum": "Corrigendum",
     "admission": "Admission",
+    "admit-card": "Admit Card",
     "recruitment": "Recruitment",
 }
 
