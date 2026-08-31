@@ -249,7 +249,8 @@
         "ef416d04cbd73f34b9890797509fd751a676883769c500284589dd661c82433a",
         "56f434377427807f2def6f34f491e68830642eee71edc4cdef8bb71a8ae87f5d",
         "fbfe9eab2d462935fa9a59f96db5d3e63db760ce5bd00f9f185f05933863e8d4",
-        "01283039d056139e9187b57393e4ef9bdd22c64a2f414800d358f170d4dbd84f"
+        "01283039d056139e9187b57393e4ef9bdd22c64a2f414800d358f170d4dbd84f",
+        "50c37c5eceb73b3a53944fb9226a705d645ad3daa1d02d5df7005517b4918366"
       ]
     },
     "cup": {
@@ -6671,12 +6672,23 @@
       "startDate": "28-08-2026",
       "lastDate": "27-09-2026",
       "pageTitle": "Southern Railway Apprentice Recruitment 2026"
+    },
+    "https://www.speedjob.in/west-bengal-sikkim-income-tax-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "https://www.speedjob.in/wp-content/uploads/2026/08/English-Version-with-Annexures-1.pdf",
+      "notification": "https://www.incometaxindia.gov.in/documents/d/pune/notification-for-recruitment-of-meritorious-sports-persons-new-1-pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Office of the Principal Chief Commissioner of Income Tax, West Bengal & Sikkim, Kolkata",
+      "startDate": "27-08-2026",
+      "lastDate": "30-09-2026",
+      "pageTitle": "West Bengal Sikkim Income Tax Recruitment 2026"
     }
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -6700,28 +6712,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -6741,13 +6753,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -6763,13 +6775,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -6777,13 +6789,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -6791,8 +6803,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -6816,13 +6828,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -6830,8 +6842,8 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
@@ -6848,23 +6860,23 @@
     },
     "custom-4b18267cf52d": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 5,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 6,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1010)>"
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -6884,18 +6896,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 9,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 10,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 9,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 10,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -6911,8 +6923,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
@@ -6920,19 +6932,24 @@
       "consecutiveFailures": 0
     },
     "custom-ac818ccf7e1c": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-1c5eb2ad0b22": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [Errno 104] Connection reset by peer>"
     },
     "custom-b97daddda9af": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-08-31T12:18:34Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
+    },
+    "custom-501ebf7f4ad9": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-08-31T18:18:53Z",
+      "lastError": "HTTP Error 403: Forbidden"
     }
   }
 }
