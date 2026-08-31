@@ -287,6 +287,7 @@ RECRUITMENT_TERMS = (
 )
 ADMISSION_TERMS = (
     "admission",
+    "admissions",
     "admission notice",
     "admission notification",
     "admission form",
@@ -296,18 +297,71 @@ ADMISSION_TERMS = (
     "selection test",
     "jnvst",
     "lateral entry admission",
+    "lateral entry",
+    "entrance test",
+    "entrance exam",
+    "counselling",
+    "counseling",
+    "seat allotment",
+    "prospectus",
 )
-ANSWER_KEY_TERMS = ("answer key", "response key", "provisional key", "final key")
+ANSWER_KEY_TERMS = (
+    "answer key",
+    "answer keys",
+    "response key",
+    "response keys",
+    "provisional key",
+    "final key",
+    "master answer key",
+    "tentative answer key",
+    "objection tracker",
+    "question paper and key",
+)
 RESULT_TERMS = (
     "final result",
     "written test result",
-    "result for",
+    "cbt result",
+    "exam result",
     "result of",
+    "result for",
+    "result declared",
+    "result declaration",
+    "declaration of result",
+    "score card",
+    "scorecard",
+    "cut-off",
+    "cutoff",
     "merit list",
     "selection list",
     "selected candidates",
     "shortlisted candidates",
+    "shortlist",
+    "short listing",
     "recommendation list",
+    "marks list",
+    "marks scored",
+    "qualified candidates",
+    "provisional result",
+    "result",
+    "results",
+)
+ADMIT_CARD_TERMS = (
+    "admit card",
+    "admit cards",
+    "call letter",
+    "call letters",
+    "hall ticket",
+    "hall tickets",
+    "e-call letter",
+    "city intimation",
+    "city intimation slip",
+    "exam city slip",
+    "exam city",
+    "city slip",
+    "roll number slip",
+    "roll no slip",
+    "exam date and city",
+    "city status",
 )
 UPDATE_TERMS = ("corrigendum", "addendum")
 # Phrases used by official corrigenda/addenda when the application deadline is
@@ -343,19 +397,24 @@ RECRUITMENT_CONTEXT_TERMS = RECRUITMENT_TERMS + (
     "cen ",
 )
 EXCLUDED_TERMS = (
-    "admit card",
-    "examination schedule",
-    "exam schedule",
-    "interview schedule",
-    "objection notice",
     "tender",
     "auction",
     "seniority list",
     "transfer order",
     "promotion order",
     "syllabus",
+    "quotation",
+    "eoi",
+    "expression of interest",
 )
-DEFAULT_NOTICE_TYPES = {"recruitment", "admission", "answer-key", "result", "corrigendum"}
+DEFAULT_NOTICE_TYPES = {
+    "recruitment",
+    "admission",
+    "answer-key",
+    "result",
+    "admit-card",
+    "corrigendum",
+}
 GENERIC_TITLES = {
     "recruitment",
     "recruitments",
@@ -1368,6 +1427,8 @@ def classify_notice(candidate: Candidate, source: dict[str, Any]) -> str | None:
         notice_type = "answer-key"
     elif any(term in lowered for term in RESULT_TERMS):
         notice_type = "result"
+    elif any(term in lowered for term in ADMIT_CARD_TERMS):
+        notice_type = "admit-card"
     elif any(term in lowered for term in UPDATE_TERMS) and any(
         term in lowered for term in ADMISSION_TERMS
     ):
@@ -1585,6 +1646,7 @@ def useful_summary(text: str, title: str, source_name: str, notice_type: str) ->
         "admission": "admission notice",
         "answer-key": "answer key",
         "result": "result notice",
+        "admit-card": "admit card / exam notice",
         "corrigendum": "recruitment corrigendum/addendum",
     }
     return (
@@ -1712,6 +1774,11 @@ NOTICE_PRESENTATION = {
         "newColor": "bg-rose-600", "oldColor": "bg-rose-600",
         "applyLabel": "Open Official Result",
     },
+    "admit-card": {
+        "newBadge": "NEW ADMIT CARD", "oldBadge": "ADMIT CARD",
+        "newColor": "bg-emerald-600", "oldColor": "bg-emerald-600",
+        "applyLabel": "Download Admit Card",
+    },
     "corrigendum": {
         "newBadge": "NEW UPDATE", "oldBadge": "RECRUITMENT UPDATE",
         "newColor": "bg-amber-600", "oldColor": "bg-amber-600",
@@ -1732,6 +1799,18 @@ def notice_steps(notice_type: str) -> list[str]:
             "Open the official result or answer-key link below.",
             "Match the post, advertisement number, examination date and set/category carefully.",
             "Download the official file and retain it for reference."
+        ]
+    if notice_type == "admit-card":
+        return [
+            "Open the official admit card or call letter portal link below.",
+            "Log in using your registration credentials, roll number, and date of birth.",
+            "Download and print the official admit card / hall ticket."
+        ]
+    if notice_type == "admission":
+        return [
+            "Open the official admission notification and review eligible courses, criteria and dates.",
+            "Fill the online or offline admission form with required student and parent details.",
+            "Submit the registration and save the acknowledgement receipt."
         ]
     if notice_type == "corrigendum":
         return [

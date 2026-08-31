@@ -67,6 +67,9 @@ class JobMonitorTests(unittest.TestCase):
             "Online admission form for JNVST Class VI selection test": "admission",
             "Provisional answer key for Clerk written examination": "answer-key",
             "Merit list and final result for Junior Engineer posts": "result",
+            "DSSSB Various Post Code Result, Marks & Cut-Off 2026": "result",
+            "Union Bank Specialist Officer Admit Card / Call Letter 2026": "admit-card",
+            "SSC Stenographer 2026 Exam City Intimation Slip": "admit-card",
             "Corrigendum to Advertisement No. 4/2026 for recruitment of Clerks": "corrigendum",
             "Addendum regarding vacancies under Advt No. 7/2026": "corrigendum",
         }

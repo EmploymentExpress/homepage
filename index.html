@@ -425,7 +425,7 @@
                     </h2>
                     <div class="text-right">
                         <span class="text-[10px] bg-emerald-900 px-2 py-0.5 rounded text-emerald-100 font-bold">Direct Link</span>
-                        <div id="admit-section-meta" class="text-[10px] text-emerald-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                        <div id="admit-section-meta" class="text-[10px] text-emerald-100 font-semibold mt-1">Updated: 31 Aug 2026</div>
                     </div>
                 </div>
                 <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="admit-cards-list">
@@ -444,7 +444,7 @@
                     </h2>
                     <div class="text-right">
                         <span class="text-[10px] bg-rose-900 px-2 py-0.5 rounded text-rose-100 font-bold">Updated</span>
-                        <div id="results-section-meta" class="text-[10px] text-rose-100 font-semibold mt-1">Updated: 18 Aug 2026</div>
+                        <div id="results-section-meta" class="text-[10px] text-rose-100 font-semibold mt-1">Updated: 31 Aug 2026</div>
                     </div>
                 </div>
                 <div class="divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[460px] custom-scrollbar" id="results-list">
@@ -2143,6 +2143,7 @@
                 const resultAlerts = automaticAlerts.filter(alert =>
                     ['result', 'answer-key'].includes(alert.alertType)
                 );
+                const admitAlerts = automaticAlerts.filter(alert => alert.alertType === 'admit-card');
 
                 const automaticTitles = new Set(tableAlerts.map(alert => alert.title.toLowerCase()));
                 jobDatabase = [
@@ -2171,6 +2172,21 @@
                     })),
                     ...resultsList.filter(item => !resourceTitles.has(item.title.toLowerCase()))
                 ];
+
+                const admitTitles = new Set(admitAlerts.map(alert => alert.title.toLowerCase()));
+                admitCards = [
+                    ...admitAlerts.map(alert => ({
+                        title: alert.title,
+                        headline: jobDisplayHeadline(alert),
+                        date: alert.examDate && alert.examDate !== 'See Official Notification' ? alert.examDate : (alert.startDate || 'Download Active'),
+                        source: alert.sourceName || alert.department,
+                        isNew: alert.isNewNotice,
+                        isJustIn: alert.isJustIn === true,
+                        updatedAt: alert.publishedAt || alert.discoveredAt,
+                        link: alert.applyLink !== '#' && alert.applyLink ? alert.applyLink : alert.pdfLink
+                    })),
+                    ...admitCards.filter(item => !admitTitles.has(item.title.toLowerCase()))
+                ];
                 updateBreakingNews(automaticAlerts);
             } catch (error) {
                 console.warn('Automatic alerts could not be loaded; showing curated alerts.', error);
@@ -2179,7 +2195,37 @@
 
         // Admit Cards Dataset. Link only to the recruiting authority's official page;
         // never republish a third-party download or intermediary article URL.
-        const admitCards = [
+        let admitCards = [
+            {
+                title: "Union Bank SO 395 Posts Call Letter / Admit Card 2026",
+                date: "Exam: 06 Sep 2026 • Download Active",
+                source: "Union Bank of India (IBPS Portal)",
+                link: "https://ibpsreg.ibps.in/ubijul26/oecla_aug26/login.php?appid=e86e69203d8c7f71a2897baeeb2fcd5c",
+                updatedAt: "2026-08-31T18:06:00+05:30",
+                publishedAt: "2026-08-31T18:06:00+05:30",
+                isJustIn: true,
+                isNew: true
+            },
+            {
+                title: "SSC Stenographer Grade C & D 2026 Exam City Intimation Slip",
+                date: "CBT: 09–12 Sep 2026 • City Status Active",
+                source: "Staff Selection Commission (SSC)",
+                link: "https://ssc.gov.in/login",
+                updatedAt: "2026-08-31T18:57:00+05:30",
+                publishedAt: "2026-08-31T18:57:00+05:30",
+                isJustIn: true,
+                isNew: true
+            },
+            {
+                title: "SSC JHT (Junior Hindi Translator) 2026 Exam City Intimation Slip",
+                date: "Paper-I CBT: 08 Sep 2026 • City Status Active",
+                source: "Staff Selection Commission (SSC)",
+                link: "https://ssc.gov.in/login",
+                updatedAt: "2026-08-31T18:57:00+05:30",
+                publishedAt: "2026-08-31T18:57:00+05:30",
+                isJustIn: true,
+                isNew: true
+            },
             {
                 title: "RRB Group D (Level-1) E-Call Letter 2026",
                 date: "Available exam-date-wise • CBT: 3–25 Aug 2026",
@@ -2198,6 +2244,16 @@
 
         // Results Dataset
         let resultsList = [
+            {
+                title: "Delhi Subordinate Services Selection Board (DSSSB) — Various Post Code Result, Marks & Cut-Off 2026",
+                headline: "DSSSB Various Post Result & Cut-Off",
+                score: "Official Result & Score Card PDF • DSSSB",
+                link: "https://dsssb.delhi.gov.in/doit/dsssb/latest-result",
+                updatedAt: "2026-08-31T17:46:00+05:30",
+                publishedAt: "2026-08-31T17:46:00+05:30",
+                isJustIn: true,
+                isNew: true
+            },
             { title: "NVS Chandigarh Teaching/Non-Teaching Shortlist 2026", score: "Empanelment Merit PDF", isNew: true },
             { title: "JNVST Class 6th Selection Test Merit List 2026", score: "District-wise List PDF", isNew: true },
             { title: "Punjab Police Head Constable Final Merit List 2024-25", score: "Selected List PDF", isNew: true },
@@ -2374,7 +2430,10 @@
                         ${item.source ? `<div class="text-[10px] text-brand-700 font-semibold mt-0.5"><i class="fas fa-landmark mr-1"></i>${escapeHtml(item.source)}</div>` : ''}
                         <div class="text-[9px] text-slate-400 mt-1">Application last date: Not applicable to admit cards</div>
                     </div>
-                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200 shrink-0">Get</span>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        ${item.isJustIn ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wide badge-pulse inline-flex items-center gap-1">Just In<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span></span></span>' : ''}
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-bold hover:bg-emerald-200">Get</span>
+                    </div>
                 </div>
             `).join('');
         }
