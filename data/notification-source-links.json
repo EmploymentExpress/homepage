@@ -116,7 +116,7 @@
     {
       "url": "https://tmc.gov.in/postmaster/Careers",
       "name": "Tata Memorial Centre Careers",
-      "department": "Tata Memorial Centre (TMC), Mumbai \u2014 Department of Atomic Energy, Government of India",
+      "department": "Tata Memorial Centre (TMC), Mumbai — Department of Atomic Energy, Government of India",
       "type": "central",
       "categorySlug": "central",
       "location": "Mumbai, Maharashtra",
@@ -180,7 +180,7 @@
     {
       "url": "https://www.nal.res.in/",
       "name": "CSIR NAL Multi-Tasking Staff Recruitment 2026 Application Form",
-      "department": "CSIR\u2013National Aerospace Laboratories (CSIR\u2013NAL)",
+      "department": "CSIR–National Aerospace Laboratories (CSIR–NAL)",
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
@@ -755,7 +755,7 @@
     },
     {
       "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
-      "name": "Punjab and Haryana High Court Recruitments \u2014 Administrative Staff",
+      "name": "Punjab and Haryana High Court Recruitments — Administrative Staff",
       "department": "High Court of Punjab and Haryana at Chandigarh",
       "type": "central",
       "categorySlug": "central",
@@ -947,6 +947,24 @@
         "corrigendum",
         "admit-card"
       ]
+    },
+    {
+      "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/home.jsp",
+      "name": "pgimer.edu.in",
+      "department": "pgimer.edu.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-01T12:30:31Z"
     }
   ]
 }
