@@ -94,7 +94,11 @@ jobs:
 
         run: python scripts/update_jobs.py
 
-      - name: Commit newly discovered alerts
+      - name: Build social-share pages & thumbnails
+
+        run: python scripts/build_share_pages.py
+
+      - name: Commit newly discovered alerts and generated assets
 
         shell: bash
 
@@ -128,11 +132,19 @@ jobs:
 
           )
 
-          # Check if there are actual modifications in the generated data files.
+          ASSET_DIRS=(
 
-          if [ -z "$(git status --porcelain -- "${DATA_FILES[@]}")" ]; then
+            share/
 
-            echo "No new recruitment notices were found."
+            assets/thumbnails/
+
+          )
+
+          # Check if there are actual modifications in the generated data files or assets.
+
+          if [ -z "$(git status --porcelain -- "${DATA_FILES[@]}" "${ASSET_DIRS[@]}")" ]; then
+
+            echo "No new recruitment notices or assets were found."
 
             exit 0
 
@@ -142,13 +154,13 @@ jobs:
 
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage only the generated data files, never the protected homepage.
+          # Stage only the generated data files and assets, never the protected homepage.
 
-          git add -- "${DATA_FILES[@]}"
+          git add -- "${DATA_FILES[@]}" "${ASSET_DIRS[@]}"
 
-          git commit -m "chore: publish automatic job alerts [skip ci]"
+          git commit -m "chore: publish automatic job alerts with social-share assets [skip ci]"
 
-          # The parser is data-only. Fail clearly instead of allowing an
+          # The parser and asset generator are data-only. Fail clearly instead of allowing an
 
           # unexpected unstaged change to break `git pull --rebase` opaquely.
 
@@ -187,3 +199,4 @@ jobs:
           echo "Failed to rebase and push after 3 attempts" >&2
 
           exit 1
+
