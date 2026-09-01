@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 .venv/
 venv/
+
+# Generated assets (committed only by workflow)
+share/
+assets/thumbnails/
