@@ -28,14 +28,20 @@
     <meta property="og:title" content="EMPLOYMENT EXPRESS | Punjab Govt Jobs &amp; Chandigarh High Court Recruitment 2026">
     <meta property="og:description" content="Verified Punjab, Chandigarh and Central Government job alerts, including Punjab &amp; Haryana High Court Driver, Frash, Safai Sewak and Mali recruitment updates, admit cards and results.">
     <meta property="og:url" content="https://employmentexpress.github.io/homepage/">
-    <meta property="og:image" content="https://employmentexpress.github.io/homepage/assets/logo.png">
+    <meta property="og:image" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta property="og:image:secure_url" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="EMPLOYMENT EXPRESS - Punjab, Chandigarh & Central Govt Jobs, Results, Admit Cards & Answer Keys 2026">
     <meta property="og:locale" content="en_IN">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="EMPLOYMENT EXPRESS | Punjab Govt Jobs &amp; Chandigarh High Court Recruitment 2026">
     <meta name="twitter:description" content="Verified Punjab, Chandigarh and Central recruitment alerts, including Punjab &amp; Haryana High Court Driver, Frash, Safai Sewak and Mali updates.">
-    <meta name="twitter:image" content="https://employmentexpress.github.io/homepage/assets/logo.png">
+    <meta name="twitter:image" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta name="twitter:image:alt" content="EMPLOYMENT EXPRESS - Latest Govt Jobs, Results, Admit Cards & Answer Keys">
 
     <!-- Structured Data: Organization + WebSite -->
     <script type="application/ld+json">
@@ -2160,6 +2166,7 @@
                 const resourceTitles = new Set(resultAlerts.map(alert => alert.title.toLowerCase()));
                 resultsList = [
                     ...resultAlerts.map(alert => ({
+                        id: alert.id,
                         title: alert.title,
                         headline: jobDisplayHeadline(alert),
                         score: alert.alertType === 'answer-key'
@@ -2176,6 +2183,7 @@
                 const admitTitles = new Set(admitAlerts.map(alert => alert.title.toLowerCase()));
                 admitCards = [
                     ...admitAlerts.map(alert => ({
+                        id: alert.id,
                         title: alert.title,
                         headline: jobDisplayHeadline(alert),
                         date: alert.examDate && alert.examDate !== 'See Official Notification' ? alert.examDate : (alert.startDate || 'Download Active'),
@@ -2853,6 +2861,16 @@
         }
 
         function getJobDirectUrl(job) {
+            // Share a dedicated per-alert page (share/job-<id>.html) so WhatsApp /
+            // Facebook / Telegram scrapers show THAT alert's custom 1200x630 card.
+            // The page instantly redirects visitors here and deep-links the modal.
+            // Falls back to the ?job= deep link if the share page is unavailable.
+            const dir = window.location.pathname.replace(/\/[^/]*$/, '/');
+            return `${window.location.origin}${dir}share/job-${job.id}.html`;
+        }
+
+        function getJobDeepUrl(job) {
+            // In-app deep link used by redirects / direct open (same SPA page).
             const base = window.location.origin + window.location.pathname;
             return `${base}?job=${job.id}`;
         }
@@ -2925,6 +2943,25 @@
                         // Clean URL without reloading
                         const cleanUrl = window.location.origin + window.location.pathname;
                         history.replaceState({}, document.title, cleanUrl);
+                        return;
+                    }
+                    // Result / answer-key alerts.
+                    const rIdx = (renderedResultsList || []).findIndex(it => it && it.id === id);
+                    if (rIdx >= 0) {
+                        const section = document.getElementById('results-list');
+                        if (section) section.closest('section,div[id]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        openResultItem(rIdx);  // opens the official result/answer-key link
+                        history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+                        return;
+                    }
+                    // Admit-card / exam-city alerts.
+                    const aIdx = (renderedAdmitCards || []).findIndex(it => it && it.id === id);
+                    if (aIdx >= 0) {
+                        const section2 = document.getElementById('admit-cards-list');
+                        if (section2) section2.closest('section,div[id]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        openAdmitCardItem(aIdx);  // opens the official admit-card link
+                        history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+                        return;
                     }
                 }
             }
