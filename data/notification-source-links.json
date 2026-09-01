@@ -965,6 +965,42 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-01T12:30:31Z"
+    },
+    {
+      "url": "https://esb.mp.gov.in/e_default.html",
+      "name": "esb.mp.gov.in",
+      "department": "esb.mp.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-01T18:28:20Z"
+    },
+    {
+      "url": "https://jkssb.nic.in/Whatsnew.html",
+      "name": "jkssb.nic.in",
+      "department": "jkssb.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-01T18:28:20Z"
     }
   ]
 }
