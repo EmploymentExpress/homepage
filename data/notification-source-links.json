@@ -931,6 +931,22 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-31T18:18:53Z"
+    },
+    {
+      "url": "https://sangrur.dcourts.gov.in/notice-category/recruitments/",
+      "name": "Sangrur District Court Recruitments",
+      "department": "District & Sessions Judge / District Legal Services Authority (DLSA), Sangrur",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Sangrur, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ]
     }
   ]
 }
