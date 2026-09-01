@@ -79,6 +79,48 @@ class InlineScriptSyntaxTest(unittest.TestCase):
             self.assertIn(f"'{bad_label}'", self.html)
         self.assertIn("'official recruitment notice'", self.html)
 
+    def test_frontend_never_uses_website_link_as_department_or_headline(self):
+        # The inline headline generator must strip website links.
+        self.assertIn("function isWebsiteDomain(value)", self.html)
+        self.assertIn("function stripWebsiteDomains(value)", self.html)
+        self.assertIn("department = stripWebsiteDomains(department);", self.html)
+        self.assertIn("const rawTitle = stripWebsiteDomains(headlineClean(title));", self.html)
+
+    @unittest.skipUnless(shutil.which("node"), "node executable not available")
+    def test_strip_website_domains_in_frontend(self):
+        # Extract the helper functions and exercise them under node.
+        big = max(self.scripts, key=len)
+        snippet = "\n".join(line for line in big.splitlines() if not line.strip().startswith("//"))
+        harness = """
+        %s
+        const cases = [
+          ["sbi.gov.in announced result for PO posts", true],
+          ["https://iitbhu.ac.in latest vacancy", true],
+          ["State Bank of India (SBI) — Result", false],
+          ["Craft Instructor 2026 Re-Opened (Advt No. 03/2026)", false],
+        ];
+        for (const [text, shouldStrip] of cases) {
+          const out = stripWebsiteDomains(text);
+          if (/\\b(?:https?:\\/\\/)?(?:www\\.)?[a-z0-9-]+(?:\\.[a-z0-9-]+)+\\b/i.test(out)) {
+            throw new Error("domain leaked into: " + out);
+          }
+        }
+        if (isWebsiteDomain("sbi.gov.in") !== true) throw new Error("sbi domain not detected");
+        if (isWebsiteDomain("State Bank of India (SBI)") !== false) throw new Error("false domain");
+        if (!stripWebsiteDomains("Craft Instructor (Advt No. 03/2026)").includes("(Advt No. 03/2026)"))
+          throw new Error("bracketed advt number was stripped");
+        """
+        # Provide the function bodies: pull from WEBSITE_DOMAIN_RE through stripWebsiteDomains.
+        start = snippet.index("const WEBSITE_DOMAIN_RE")
+        end = snippet.index("function escapeRegExp")
+        helpers = snippet[start:end]
+        script = helpers + "\nfunction headlineClean(v){return String(v==null?'':v).replace(/\\s+/g,' ').trim();}\n" + (harness % "")
+        result = subprocess.run(["node", "--check"], input=script.encode("utf-8"),
+                                capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        run = subprocess.run(["node", "-e", script], capture_output=True, timeout=30)
+        self.assertEqual(run.returncode, 0, run.stderr.decode("utf-8", "replace"))
+
     def test_extended_deadlines_are_excluded_from_last_date_reminders(self):
         self.assertIn(".filter(job => job.lastDateExtended !== true)", self.html)
 

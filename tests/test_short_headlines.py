@@ -222,6 +222,50 @@ class IndexHeadlineWiringTests(unittest.TestCase):
         self.assertIn("navigator.share({ title: job.title", INDEX)
 
 
+class WebsiteDomainRuleTests(unittest.TestCase):
+    """A website link must never be a department name or headline text."""
+
+    def test_detects_bare_domains(self):
+        from short_headlines import is_website_domain
+        for value in ("sbi.gov.in", "https://iitbhu.ac.in", "www.hau.ac.in/",
+                      "iitbhu.aci.in", "http://bceceboard.bihar.gov.in/rec"):
+            with self.subTest(value=value):
+                self.assertTrue(is_website_domain(value))
+        # Real authority names / text must NOT be treated as domains.
+        for value in ("State Bank of India (SBI)", "Dr. B.R. Ambedkar University",
+                      "Sahitya Akademi, New Delhi", "Punjab Subordinate Services Board"):
+            with self.subTest(value=value):
+                self.assertFalse(is_website_domain(value))
+
+    def test_strips_domain_from_department(self):
+        from short_headlines import strip_website_domains
+        self.assertEqual(
+            strip_website_domains("sbi.gov.in announced result"),
+            "announced result",
+        )
+        # Bracketed year tails must survive.
+        self.assertIn("(Advt No. 03/2026)",
+                      strip_website_domains("Recruitment 2026 Re-Opened (Advt No. 03/2026)"))
+
+    def test_department_never_a_domain(self):
+        # A bare-domain department falls back to the title's authority segment.
+        self.assertNotIn("iitbhu.ac.in", short_department("iitbhu.ac.in — alerts shortlisted"))
+        self.assertTrue(short_department("Punjab Subordinate Services Selection Board (PSSSB)"))
+
+    def test_headline_never_contains_a_domain(self):
+        headline = short_job_headline(
+            "sbi.gov.in announced result for PO posts", "sbi.gov.in", "result")
+        self.assertNotIn("sbi.gov.in", headline)
+        self.assertNotIn("iitbhu", short_job_headline(
+            "iitbhu.ac.in alerts shortlisted candidates skill test", "iitbhu.ac.in", "result"))
+        # Normal vacancies still build a proper headline.
+        vacancy = short_job_headline(
+            "Recruitment of 450 Clerk posts 2026", "Example Recruitment Board",
+            "recruitment", "450 Posts")
+        self.assertIn("450", vacancy)
+        self.assertNotIn("example.gov.in", vacancy)
+
+
 class AgentsRuleTests(unittest.TestCase):
     def test_agents_documents_the_short_headline_rule(self):
         self.assertIn("Short job-details headline rule", AGENTS)

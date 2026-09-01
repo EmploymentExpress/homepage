@@ -1663,6 +1663,26 @@
             return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
         }
 
+        // A bare website address must never be a department or headline text
+        // ("sbi.gov.in announced result", "iitbhu.aci.in latest vacancy").
+        // Matches a URL/host ending in an Indian suffix, a gTLD, or a ".in" host
+        // that has at least one label; ordinary words and bracketed years are safe.
+        const WEBSITE_DOMAIN_RE =
+            /(?:https?:\/\/)?(?:www\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.(?:gov\.in|nic\.in|ac\.in|res\.in|edu\.in|org\.in|net\.in|co\.in|mil\.in|gov|ac|edu|org|net|com)(?![a-z])(?:[/?#]\S*)?|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)?in(?![a-z])(?:[/?#]\S*)?)/gi;
+        function isWebsiteDomain(value) {
+            const text = headlineClean(value).replace(/^[-\s.,:;–|()[\]{}'"]+|[-\s.,:;–|()[\]{}'"]+$/g, '').toLowerCase();
+            if (!text) return false;
+            if (new RegExp('^(?:' + WEBSITE_DOMAIN_RE.source + ')$', 'i').test(text)) return true;
+            if (/^(?:https?:\/\/)?(?:www\.)?\S+$/.test(text) && text.includes('.')) {
+                const host = text.replace(/^https?:\/\//, '').split('/')[0];
+                return /\.[a-z]{2,}(?:\.[a-z]{2})?$/.test(host);
+            }
+            return false;
+        }
+        function stripWebsiteDomains(value) {
+            return headlineClean(String(value == null ? '' : value).replace(WEBSITE_DOMAIN_RE, ' ')).replace(/^[-\s.,:;–|'"]+|[-\s.,:;–|'"]+$/g, '');
+        }
+
         function escapeRegExp(value) {
             return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
@@ -1672,9 +1692,13 @@
         }
 
         function shortDepartment(department, title) {
+            // A website link is never a department name.
+            department = stripWebsiteDomains(department);
             let dept = headlineClean(department);
-            if (!dept) dept = headlineClean(headlineClean(title).split('—')[0]);
-            if (!dept) return '';
+            if (!dept || isWebsiteDomain(dept)) {
+                dept = headlineClean(stripWebsiteDomains(headlineClean(title).split('—')[0]));
+            }
+            if (!dept || isWebsiteDomain(dept)) return '';
 
             let mapped = '';
             for (const [pattern, shortForm] of DEPARTMENT_SHORT_FORMS) {
@@ -1834,8 +1858,10 @@
         }
 
         function shortJobHeadline(title, department, alertType, vacancies, applyMode) {
-            const rawTitle = headlineClean(title);
+            // A website link must never appear in the headline or department.
+            const rawTitle = stripWebsiteDomains(headlineClean(title));
             if (!rawTitle) return '';
+            department = stripWebsiteDomains(department);
             const dept = shortDepartment(department, rawTitle);
             const kind = noticeType(rawTitle, alertType);
             let subject = shortSubject(rawTitle, department);
