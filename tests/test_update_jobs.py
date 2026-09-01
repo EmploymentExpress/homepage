@@ -100,6 +100,68 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(old_result["badge"], "RESULT")
         self.assertEqual(old_result["badgeColor"], "bg-rose-600")
 
+    def test_shortlisted_eligible_and_score_card_go_to_result_column(self):
+        # Shortlists / eligible-candidate / score-card lists are RESULTS, never
+        # new vacancies, so they must land in the result column, not the jobs.
+        result_notices = {
+            "GNDU — SOP/Score Card/Short-listing Criteria for Assistant Professor": "result",
+            "Shortlisted candidates for the post of Clerk — Document Verification": "result",
+            "List of eligible candidates for Skill Test / Typing Test": "result",
+            "Provisionally selected candidates list for Steno posts": "result",
+            "Marks sheet / score card list for Junior Engineer exam": "result",
+        }
+        for title, expected in result_notices.items():
+            with self.subTest(title=title):
+                candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
+                self.assertEqual(monitor.classify_notice(candidate, {}), expected)
+
+    def test_written_test_exam_date_announcements_go_to_admit_card_column(self):
+        admit_notices = {
+            "Written test date announced for Clerk recruitment 2026": "admit-card",
+            "Schedule of written examination for Steno posts — exam date": "admit-card",
+            "State Bank of India — tentative date of online written test released": "admit-card",
+        }
+        for title, expected in admit_notices.items():
+            with self.subTest(title=title):
+                candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
+                self.assertEqual(monitor.classify_notice(candidate, {}), expected)
+        # A vacancy ad merely mentioning the selection test stays recruitment.
+        candidate = monitor.Candidate(
+            "Advertisement No. 04/2026 — recruitment of 450 Clerk posts (selection via written test)",
+            "https://example.gov.in/advt.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(candidate, {}), "recruitment")
+
+    def test_website_address_is_never_a_department(self):
+        for value in ("sbi.gov.in", "https://iitbhu.ac.in", "www.hau.ac.in/", "iitbhu.aci.in"):
+            with self.subTest(value=value):
+                self.assertFalse(monitor.is_specific_department(value))
+                self.assertTrue(monitor.is_website_domain(value))
+                self.assertEqual(monitor.sanitize_department(value), "")
+        self.assertEqual(
+            monitor.clean_title("sbi.gov.in announced result for PO posts"),
+            "announced result for PO posts",
+        )
+        self.assertTrue(monitor.is_specific_department("Dr. B.R. Ambedkar University, Agra"))
+        self.assertEqual(
+            monitor.clean_title("Craft Instructor Recruitment 2026 Re-Opened (Advt No. 03/2026)"),
+            "Craft Instructor Recruitment 2026 Re-Opened (Advt No. 03/2026)",
+        )
+        self.assertEqual(
+            monitor.clean_title("Apply Online (Recruitment Portal)"),
+            "Apply Online (Recruitment Portal)",
+        )
+
+    def test_official_host_resolves_to_authority_name(self):
+        self.assertEqual(
+            monitor.department_from_url("https://sbi.bank.in/web/careers/Current-openings"),
+            "State Bank of India (SBI)",
+        )
+        self.assertEqual(
+            monitor.organization_from_host("iitbhu.ac.in"),
+            "Indian Institute of Technology (BHU), Varanasi",
+        )
+
     def test_additional_notification_links_become_sources(self):
         with tempfile.TemporaryDirectory() as folder:
             registry = Path(folder) / "links.json"
