@@ -609,6 +609,26 @@
         "union bank specialist officer",
         "union bank specialist officers"
       ]
+    },
+    {
+      "id": "pesco",
+      "name": "Punjab Ex-Servicemen Corporation",
+      "department": "Punjab Ex-Servicemen Corporation (PESCO), Chandigarh",
+      "url": "https://pesco.punjab.gov.in/en/recruitment/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Chandigarh, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum"
+      ],
+      "aliases": [
+        "pesco",
+        "punjab ex-servicemen corporation",
+        "punjab ex-servicemen corporation chandigarh",
+        "pesco chandigarh",
+        "pesco.punjab.gov.in"
+      ]
     }
   ]
 }
