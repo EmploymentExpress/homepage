@@ -78,8 +78,8 @@ NOTICE_TYPE_RULES = [
     ("Cancelled", r"\bcancel(?:l?ed|lation|ling)?\b|\bwithdraw(?:n|al)\b"),
     ("Postponed", r"\bpostpon(?:ed|ement)\b|\bdeferred\b|\breschedul(?:ed|ing)\b"),
     ("Date Extended", r"\bextension\b|\bextended\b|\bre-?open(?:ed|ing)?\b"),
-    ("Shortlisted", r"\bshort-?list(?:ed|ing)?\b|\bempanel(?:ment|led)\b|\beligible candidates\b"),
-    ("Exam Date", r"\bexam(?:ination)? (?:date|schedule|city|centre|center)\b|\bdate ?sheet\b"),
+    ("Shortlisted", r"\bshort-?list(?:ed|ing)?\b|\bempanel(?:ment|led)\b|\beligible candidates\b|\bprovisionally (?:eligible|selected|shortlisted)\b|\blist of (?:eligible|shortlisted|selected) candidates\b|\bscore ?card list\b"),
+    ("Exam Date", r"\bexam(?:ination)? (?:date|schedule|city|centre|center|timetable|time table)\b|\bdate ?sheet\b|\bwritten (?:test|exam(?:ination)?) (?:date|schedule)\b|\bcbt (?:date|schedule)\b|\bdate of (?:the )?(?:exam|examination|written test)\b"),
     ("Admit Card", r"\badmit card\b|\bcall letter\b|\broll ?(?:no|number)\b|\bhall ticket\b"),
     ("Answer Key", r"\banswer key\b|\bresponse sheet\b|\bobjection\b"),
     ("Waiting List", r"\bwaiting list\b|\bwait-?list\b"),
@@ -149,6 +149,41 @@ def _clean(text: str) -> str:
     return re.sub(r"\s+", " ", str(text or "")).strip()
 
 
+# A bare website address must never appear in a headline or be used as the
+# department ("sbi.gov.in announced result", "iitbhu.aci.in latest vacancy").
+# Matches a URL or host that ends in an Indian suffix / gTLD / a ".in" host with
+# at least one label, while ignoring ordinary words and bracketed year tails.
+_DOMAIN_NAME = (
+    r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?"
+    r"(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*"
+)
+WEBSITE_DOMAIN_RE = re.compile(
+    r"(?i)(?:https?://)?(?:www\.)?"
+    r"(?:" + _DOMAIN_NAME + r"\.(?:gov\.in|nic\.in|ac\.in|res\.in|edu\.in|org\.in|net\.in|co\.in|mil\.in|gov|ac|edu|org|net|com)(?![a-z])"
+    r"|" + _DOMAIN_NAME + r"\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)?in(?![a-z]))"
+    r"(?:[/?#][^\s]*)?"
+)
+
+
+def is_website_domain(value: str) -> bool:
+    """True when the whole value is just a website address (URL or domain)."""
+    text = _clean(value).strip(" .,:;–-|()[]{}\"'").lower()
+    if not text:
+        return False
+    if WEBSITE_DOMAIN_RE.fullmatch(text):
+        return True
+    if re.fullmatch(r"(?:https?://)?(?:www\.)?\S+", text) and "." in text:
+        host = re.sub(r"^https?://", "", text).split("/", 1)[0]
+        return bool(re.search(r"\.[a-z]{2,}(?:\.[a-z]{2})?$", host))
+    return False
+
+
+def strip_website_domains(value: str) -> str:
+    """Remove website URLs/domains from a headline/department, keeping words."""
+    text = WEBSITE_DOMAIN_RE.sub(" ", _clean(value))
+    return re.sub(r"\s+", " ", text).strip(" .,:;–-|'\"")
+
+
 def _strip_date_blurbs(text: str) -> str:
     """Remove bracketed 'last date / interview on ...' blurbs before classifying."""
     return _clean(BRACKET_DATE_BLURB.sub(" ", _clean(text)))
@@ -156,11 +191,14 @@ def _strip_date_blurbs(text: str) -> str:
 
 def short_department(department: str, title: str = "") -> str:
     """Compress an official department name into a short, recognisable label."""
+    # A website link is never a department name.
+    department = strip_website_domains(department)
     dept = _clean(department)
-    if not dept:
-        # Fall back to the part before the em dash of a "Dept — Subject" title.
-        dept = _clean(_clean(title).split("\u2014")[0])
-    if not dept:
+    if not dept or is_website_domain(dept):
+        # Fall back to the part before the em dash of a "Dept — Subject" title,
+        # after stripping any website link from it.
+        dept = _clean(strip_website_domains(_clean(title).split("—")[0]))
+    if not dept or is_website_domain(dept):
         return ""
 
     mapped = ""
@@ -347,7 +385,9 @@ def headline_suffix(kind: str, title: str = "", apply_mode: str = "") -> str:
 def short_job_headline(title: str, department: str = "", alert_type: str = "",
                        vacancies: str = "", apply_mode: str = "") -> str:
     """Build the short, job-portal-style headline used as the job-details heading."""
-    raw_title = _clean(title)
+    # A website link must never appear in the headline ("sbi.gov.in announced...").
+    raw_title = strip_website_domains(_clean(title))
+    department = strip_website_domains(department)
     dept = short_department(department, raw_title)
     kind = notice_type(raw_title, alert_type)
     subject = short_subject(raw_title, department)

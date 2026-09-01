@@ -1,1 +1,7 @@
 pypdf>=5.0,<7.0
+# Social-share thumbnail generation + QR code test (scripts/thumbnail_generator.py,
+# scripts/build_share_pages.py, tests/test_thumbnail_generator.py).
+Pillow>=10.0
+qrcode>=7.4
+numpy>=1.26
+opencv-python-headless>=4.8

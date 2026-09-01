@@ -344,7 +344,38 @@ RESULT_TERMS = (
     "provisional result",
     "result",
     "results",
+    # Selection / score lists are results, never new vacancies — they must land
+    # in the Results column, not the recruitment (job) column.
+    "shortlisted candidate",
+    "short-listed candidate",
+    "short listing",
+    "short-listing",
+    "eligible candidate",
+    "eligibility list",
+    "provisionally selected",
+    "provisionally shortlisted",
+    "provisionally eligible",
+    "list of shortlisted",
+    "list of eligible",
+    "list of selected",
+    "candidates shortlisted",
+    "candidates selected",
+    "candidates called for",
+    "score card list",
+    "marks sheet",
+    "mark sheet",
+    "document verification",
+    "typing test result",
+    "interview result",
+    "final selection",
+    "panel list",
+    "wait list",
+    "waiting list",
 )
+# An exam / written-test schedule announcement is admit-card territory (it tells
+# candidates when/where they appear), not a new vacancy. Kept to multi-word
+# scheduling phrases so recruitment ads that merely mention a selection process
+# are not misrouted; bare "exam date" is an exact cue.
 ADMIT_CARD_TERMS = (
     "admit card",
     "admit cards",
@@ -362,8 +393,48 @@ ADMIT_CARD_TERMS = (
     "roll no slip",
     "exam date and city",
     "city status",
+    "exam date",
+    "exam schedule",
+    "examination schedule",
+    "written test date",
+    "written test schedule",
+    "written examination date",
+    "written exam date",
+    "written exam schedule",
+    "cbt exam date",
+    "cbt schedule",
+    "exam date announced",
+    "examination date announced",
+    "test date announced",
+    "announces exam date",
+    "test scheduled",
+    "date of examination",
+    "date of written test",
+    "exam time table",
+    "exam timetable",
 )
 UPDATE_TERMS = ("corrigendum", "addendum")
+
+_EXAM_SCHEDULE_RE = re.compile(
+    r"(?i)(?:(?:written\s+test|written\s+examination?|online\s+test|online\s+written\s+test|"
+    r"cbt|computer\s+based\s+test|exam(?:ination)?)\b[^.;|]{0,40}?"
+    r"(?:date|schedule|timetable|time\s+table|reschedul\w*|postpon\w*|date\s+sheet|held\s+on|"
+    r"scheduled\s+on|tentative\s+date|announc\w+))"
+    r"|(?:(?:date|schedule|reschedul\w*|postpon\w*)\b[^.;|]{0,30}?"
+    r"(?:written\s+test|written\s+examination?|online\s+test|cbt|exam(?:ination)?)\b)"
+)
+
+
+def _announces_exam_schedule(lowered: str) -> bool:
+    """True when a notice announces/schedules a written test or exam date."""
+    if not _EXAM_SCHEDULE_RE.search(lowered):
+        return False
+    # A vacancy ad merely stating "selection will be by written examination" is
+    # not an exam-date announcement unless it carries a scheduling cue.
+    if "recruitment" in lowered or "vacanc" in lowered:
+        if not re.search(r"\b(date|schedule|reschedul|postpon|timetable|time table|held|scheduled)\b", lowered):
+            return False
+    return True
 # Phrases used by official corrigenda/addenda when the application deadline is
 # pushed back. Detection is deliberately specific so unrelated corrigenda (age,
 # vacancy, syllabus changes) are not mistaken for a last-date extension.
@@ -643,8 +714,81 @@ def clean_text(value: Any) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+# A bare website address must never be used as a recruiting authority/department
+# or left as the headline ("sbi.gov.in announced result" / "iitbhu.ac.in vacancy").
+# A token counts as a domain only when it ends in a recognised Indian suffix
+# (".gov.in", ".ac.in" ...), a non-Indian gTLD (".com" ...) or a ".in" host that is
+# preceded by at least one label, so ordinary words ("Portal)") and year tails
+# ("2026)") can never match.
+_DOMAIN_NAME = (
+    r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?"
+    r"(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*"
+)
+WEBSITE_DOMAIN_RE = re.compile(
+    r"(?i)(?:https?://)?(?:www\.)?"
+    r"(?:" + _DOMAIN_NAME + r"\.(?:gov\.in|nic\.in|ac\.in|res\.in|edu\.in|org\.in|net\.in|co\.in|mil\.in|gov|ac|edu|org|net|com)(?![a-z])"
+    r"|" + _DOMAIN_NAME + r"\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)?in(?![a-z]))"
+    r"(?:[/?#][^\s]*)?"
+)
+
+
+def is_website_domain(value: Any) -> bool:
+    """True when the whole value is just a website address (a URL or domain)."""
+    text = clean_text(value).strip(" .,:;–-|()[]{}\"'").lower()
+    if not text:
+        return False
+    if WEBSITE_DOMAIN_RE.fullmatch(text):
+        return True
+    match = re.fullmatch(r"(?:https?://)?(?:www\.)?\S+", text)
+    if not match or "." not in text:
+        return False
+    host = re.sub(r"^https?://", "", text).split("/", 1)[0]
+    return bool(re.search(r"\.[a-z]{2,}(?:\.[a-z]{2})?$", host))
+
+
+def strip_website_domains(value: Any) -> str:
+    """Remove website URLs/domains from a title or department name."""
+    text = WEBSITE_DOMAIN_RE.sub(" ", clean_text(value))
+    # Collapse whitespace and trim separators, but keep brackets intact (removing
+    # them would corrupt titles such as "(Advt No. 03/2026)").
+    text = re.sub(r"\s+", " ", text).strip(" .,:;–-|'\"")
+    return text
+
+
+# Official recruiting hosts whose feed name is just the domain. Map the host to
+# the real authority name so a department is never published as a website link.
+HOST_ORGANIZATION_NAMES = {
+    "sbi.bank.in": "State Bank of India (SBI)",
+    "uco.bank.in": "UCO Bank",
+    "iob.bank.in": "Indian Overseas Bank (IOB)",
+    "iitbhu.ac.in": "Indian Institute of Technology (BHU), Varanasi",
+    "hau.ac.in": "Chaudhary Charan Singh Haryana Agricultural University (HAU), Hisar",
+    "bceceboard.bihar.gov.in": "Bihar Combined Entrance Competitive Examination Board (BCECEB)",
+}
+
+
+def organization_from_host(url_or_host: str) -> str:
+    """Resolve a bare official host to its authority name, or '' when unknown."""
+    host = host_name(url_or_host) or clean_text(url_or_host).lower()
+    host = host.split(":")[0]
+    if host.startswith("www."):
+        host = host[4:]
+    if host in HOST_ORGANIZATION_NAMES:
+        return HOST_ORGANIZATION_NAMES[host]
+    for known, name in HOST_ORGANIZATION_NAMES.items():
+        if host.endswith("." + known) or host == known:
+            return name
+    return ""
+
+
+def department_from_url(url: str) -> str:
+    """Authority name for a source whose department is a bare domain, else ''."""
+    resolved = organization_from_host(url)
+    return resolved if is_specific_department(resolved) else ""
+
+
 def clean_title(value: str) -> str:
-    title = clean_text(value)
+    title = strip_website_domains(clean_text(value))
     # Strip "NEW" badges ("NEW Advertisement", "!! NEW !!") but never the word
     # inside a place name such as "New Delhi" or "New Town".
     title = re.sub(
@@ -691,10 +835,23 @@ OFFLINE_ROLE_START_RE = re.compile(
 
 def is_specific_department(value: str) -> bool:
     department = clean_text(value)
+    if is_website_domain(department):
+        # A website address (e.g. "sbi.gov.in") is never a recruiting authority.
+        return False
     return bool(
         len(department) >= 3
         and department.lower().strip(" .:-–—") not in GENERIC_RECRUITING_DEPARTMENTS
     )
+
+
+def sanitize_department(value: Any) -> str:
+    """Return a usable authority name, stripping any website address.
+
+    When only a domain was present the result is empty so callers fall back to
+    title inference / host resolution instead of publishing a link as department.
+    """
+    department = strip_website_domains(value)
+    return department if is_specific_department(department) else ""
 
 
 def is_junk_job_title(value: str) -> bool:
@@ -1427,7 +1584,7 @@ def classify_notice(candidate: Candidate, source: dict[str, Any]) -> str | None:
         notice_type = "answer-key"
     elif any(term in lowered for term in RESULT_TERMS):
         notice_type = "result"
-    elif any(term in lowered for term in ADMIT_CARD_TERMS):
+    elif any(term in lowered for term in ADMIT_CARD_TERMS) or _announces_exam_schedule(lowered):
         notice_type = "admit-card"
     elif any(term in lowered for term in UPDATE_TERMS) and any(
         term in lowered for term in ADMISSION_TERMS
@@ -1829,7 +1986,16 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
     source_name = strip_discovery_branding(
         clean_text(source.get("name") or source.get("department") or "Official website")
     )
-    department = clean_text(source.get("department") or source_name)
+    # A bare website address (e.g. "sbi.gov.in") is not an authority; strip it so
+    # the department is inferred from the title or resolved from the official host.
+    department = sanitize_department(source.get("department")) or sanitize_department(source_name)
+    if not department:
+        department = infer_recruiting_department(candidate.title)
+    if not department:
+        department = (
+            department_from_url(str(source.get("url", "")))
+            or department_from_url(candidate.url)
+        )
     title = official_job_title(candidate.title, department)
     if not title:
         raise ValueError("notice has no specific recruiting department and vacancy title")
@@ -2019,6 +2185,68 @@ def strip_internal_job_fields(jobs: list[dict[str, Any]]) -> bool:
             if field in job:
                 job.pop(field, None)
                 changed = True
+    return changed
+
+
+def normalize_stored_departments(jobs: list[dict[str, Any]]) -> bool:
+    """Replace a domain-as-department with the real authority and drop the
+    leading website link from the title (e.g. "sbi.gov.in — Result" -> department
+    becomes "State Bank of India (SBI)" and the title is rebuilt without it)."""
+    changed = False
+    for job in jobs:
+        department = clean_text(job.get("department", ""))
+        if department and not is_website_domain(department):
+            continue
+        resolved = (
+            department_from_url(str(job.get("sourceUrl", "")))
+            or department_from_url(str(job.get("noticeUrl", "")))
+            or department_from_url(str(job.get("pdfLink", "")))
+            or department_from_url(department)
+        )
+        if not resolved:
+            continue
+        raw_title = strip_website_domains(clean_title(job.get("title", ""))).strip(" —–-:")
+        new_title = official_job_title(raw_title, resolved)
+        if not new_title:
+            continue
+        job["department"] = resolved
+        job["title"] = new_title
+        source_name = clean_text(job.get("sourceName", ""))
+        if not is_specific_department(source_name) or is_website_domain(source_name):
+            job["sourceName"] = resolved
+        changed = True
+        print(f"  Resolved domain department -> {resolved}: {new_title[:70]}")
+    return changed
+
+
+def reclassify_stored_jobs(jobs: list[dict[str, Any]]) -> bool:
+    """Re-derive each stored alert's column from its title.
+
+    Classification rules tighten over time (shortlisted/eligible/score-card lists
+    belong in Results; a written-test/exam-date announcement belongs in Admit
+    Card). Stored alerts keep their first-seen badge age but move to the correct
+    column and pick up that column's badge, colour, apply label and steps.
+    Returns True when any job changed.
+    """
+    changed = False
+    for job in jobs:
+        title = clean_title(job.get("title", ""))
+        candidate = Candidate(
+            title,
+            clean_text(job.get("noticeUrl") or job.get("pdfLink") or job.get("applyUrl") or ""),
+        )
+        new_type = classify_notice(candidate, {})
+        if not new_type or new_type == job.get("alertType"):
+            continue
+        is_new = str(job.get("badge", "")).upper().startswith("NEW")
+        badge, badge_color = notice_presentation(new_type, is_new)
+        job["alertType"] = new_type
+        job["badge"] = badge
+        job["badgeColor"] = badge_color
+        job["applyLabel"] = NOTICE_PRESENTATION[new_type]["applyLabel"]
+        job["howToApply"] = notice_steps(new_type)
+        changed = True
+        print(f"  Re-routed notice to '{new_type}': {title[:70]}")
     return changed
 
 
@@ -4053,6 +4281,13 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             state_changed = True
             jobs_changed = True
 
+    # Resolve any stored notice whose department/title still carries a bare
+    # website link ("sbi.gov.in — Result") into the real authority name, and
+    # move stored notices to their correct column as classification tightens.
+    if normalize_stored_departments(jobs):
+        jobs_changed = True
+    if reclassify_stored_jobs(jobs):
+        jobs_changed = True
     if apply_extensions(jobs):
         jobs_changed = True
     if strip_internal_job_fields(jobs):

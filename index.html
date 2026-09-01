@@ -28,14 +28,20 @@
     <meta property="og:title" content="EMPLOYMENT EXPRESS | Punjab Govt Jobs &amp; Chandigarh High Court Recruitment 2026">
     <meta property="og:description" content="Verified Punjab, Chandigarh and Central Government job alerts, including Punjab &amp; Haryana High Court Driver, Frash, Safai Sewak and Mali recruitment updates, admit cards and results.">
     <meta property="og:url" content="https://employmentexpress.github.io/homepage/">
-    <meta property="og:image" content="https://employmentexpress.github.io/homepage/assets/logo.png">
+    <meta property="og:image" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta property="og:image:secure_url" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="EMPLOYMENT EXPRESS - Punjab, Chandigarh & Central Govt Jobs, Results, Admit Cards & Answer Keys 2026">
     <meta property="og:locale" content="en_IN">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="EMPLOYMENT EXPRESS | Punjab Govt Jobs &amp; Chandigarh High Court Recruitment 2026">
     <meta name="twitter:description" content="Verified Punjab, Chandigarh and Central recruitment alerts, including Punjab &amp; Haryana High Court Driver, Frash, Safai Sewak and Mali updates.">
-    <meta name="twitter:image" content="https://employmentexpress.github.io/homepage/assets/logo.png">
+    <meta name="twitter:image" content="https://employmentexpress.github.io/homepage/assets/homepage-og-cover.png">
+    <meta name="twitter:image:alt" content="EMPLOYMENT EXPRESS - Latest Govt Jobs, Results, Admit Cards & Answer Keys">
 
     <!-- Structured Data: Organization + WebSite -->
     <script type="application/ld+json">
@@ -1616,8 +1622,8 @@
             ['Cancelled', /\bcancel(l?ed|lation|ling)?\b|\bwithdraw(n|al)\b/i],
             ['Postponed', /\bpostpon(ed|ement)\b|\bdeferred\b|\breschedul(ed|ing)\b/i],
             ['Date Extended', /\bextension\b|\bextended\b|\bre-?open(ed|ing)?\b/i],
-            ['Shortlisted', /\bshort-?list(ed|ing)?\b|\bempanel(ment|led)\b|\beligible candidates\b/i],
-            ['Exam Date', /\bexam(ination)? (date|schedule|city|centre|center)\b|\bdate ?sheet\b/i],
+            ['Shortlisted', /\bshort-?list(ed|ing)?\b|\bempanel(ment|led)\b|\beligible candidates\b|\bprovisionally (eligible|selected|shortlisted)\b|\blist of (eligible|shortlisted|selected) candidates\b|\bscore ?card list\b/i],
+            ['Exam Date', /\bexam(ination)? (date|schedule|city|centre|center|timetable|time table)\b|\bdate ?sheet\b|\bwritten (test|exam(ination)?) (date|schedule)\b|\bcbt (date|schedule)\b|\bdate of (the )?(exam|examination|written test)\b/i],
             ['Admit Card', /\badmit card\b|\bcall letter\b|\broll ?(no|number)\b|\bhall ticket\b/i],
             ['Answer Key', /\banswer key\b|\bresponse sheet\b|\bobjection\b/i],
             ['Waiting List', /\bwaiting list\b|\bwait-?list\b/i],
@@ -1657,6 +1663,26 @@
             return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
         }
 
+        // A bare website address must never be a department or headline text
+        // ("sbi.gov.in announced result", "iitbhu.aci.in latest vacancy").
+        // Matches a URL/host ending in an Indian suffix, a gTLD, or a ".in" host
+        // that has at least one label; ordinary words and bracketed years are safe.
+        const WEBSITE_DOMAIN_RE =
+            /(?:https?:\/\/)?(?:www\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.(?:gov\.in|nic\.in|ac\.in|res\.in|edu\.in|org\.in|net\.in|co\.in|mil\.in|gov|ac|edu|org|net|com)(?![a-z])(?:[/?#]\S*)?|[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)?in(?![a-z])(?:[/?#]\S*)?)/gi;
+        function isWebsiteDomain(value) {
+            const text = headlineClean(value).replace(/^[-\s.,:;–|()[\]{}'"]+|[-\s.,:;–|()[\]{}'"]+$/g, '').toLowerCase();
+            if (!text) return false;
+            if (new RegExp('^(?:' + WEBSITE_DOMAIN_RE.source + ')$', 'i').test(text)) return true;
+            if (/^(?:https?:\/\/)?(?:www\.)?\S+$/.test(text) && text.includes('.')) {
+                const host = text.replace(/^https?:\/\//, '').split('/')[0];
+                return /\.[a-z]{2,}(?:\.[a-z]{2})?$/.test(host);
+            }
+            return false;
+        }
+        function stripWebsiteDomains(value) {
+            return headlineClean(String(value == null ? '' : value).replace(WEBSITE_DOMAIN_RE, ' ')).replace(/^[-\s.,:;–|'"]+|[-\s.,:;–|'"]+$/g, '');
+        }
+
         function escapeRegExp(value) {
             return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
@@ -1666,9 +1692,13 @@
         }
 
         function shortDepartment(department, title) {
+            // A website link is never a department name.
+            department = stripWebsiteDomains(department);
             let dept = headlineClean(department);
-            if (!dept) dept = headlineClean(headlineClean(title).split('—')[0]);
-            if (!dept) return '';
+            if (!dept || isWebsiteDomain(dept)) {
+                dept = headlineClean(stripWebsiteDomains(headlineClean(title).split('—')[0]));
+            }
+            if (!dept || isWebsiteDomain(dept)) return '';
 
             let mapped = '';
             for (const [pattern, shortForm] of DEPARTMENT_SHORT_FORMS) {
@@ -1828,8 +1858,10 @@
         }
 
         function shortJobHeadline(title, department, alertType, vacancies, applyMode) {
-            const rawTitle = headlineClean(title);
+            // A website link must never appear in the headline or department.
+            const rawTitle = stripWebsiteDomains(headlineClean(title));
             if (!rawTitle) return '';
+            department = stripWebsiteDomains(department);
             const dept = shortDepartment(department, rawTitle);
             const kind = noticeType(rawTitle, alertType);
             let subject = shortSubject(rawTitle, department);
@@ -2160,6 +2192,7 @@
                 const resourceTitles = new Set(resultAlerts.map(alert => alert.title.toLowerCase()));
                 resultsList = [
                     ...resultAlerts.map(alert => ({
+                        id: alert.id,
                         title: alert.title,
                         headline: jobDisplayHeadline(alert),
                         score: alert.alertType === 'answer-key'
@@ -2176,6 +2209,7 @@
                 const admitTitles = new Set(admitAlerts.map(alert => alert.title.toLowerCase()));
                 admitCards = [
                     ...admitAlerts.map(alert => ({
+                        id: alert.id,
                         title: alert.title,
                         headline: jobDisplayHeadline(alert),
                         date: alert.examDate && alert.examDate !== 'See Official Notification' ? alert.examDate : (alert.startDate || 'Download Active'),
@@ -2853,6 +2887,16 @@
         }
 
         function getJobDirectUrl(job) {
+            // Share a dedicated per-alert page (share/job-<id>.html) so WhatsApp /
+            // Facebook / Telegram scrapers show THAT alert's custom 1200x630 card.
+            // The page instantly redirects visitors here and deep-links the modal.
+            // Falls back to the ?job= deep link if the share page is unavailable.
+            const dir = window.location.pathname.replace(/\/[^/]*$/, '/');
+            return `${window.location.origin}${dir}share/job-${job.id}.html`;
+        }
+
+        function getJobDeepUrl(job) {
+            // In-app deep link used by redirects / direct open (same SPA page).
             const base = window.location.origin + window.location.pathname;
             return `${base}?job=${job.id}`;
         }
@@ -2925,6 +2969,25 @@
                         // Clean URL without reloading
                         const cleanUrl = window.location.origin + window.location.pathname;
                         history.replaceState({}, document.title, cleanUrl);
+                        return;
+                    }
+                    // Result / answer-key alerts.
+                    const rIdx = (renderedResultsList || []).findIndex(it => it && it.id === id);
+                    if (rIdx >= 0) {
+                        const section = document.getElementById('results-list');
+                        if (section) section.closest('section,div[id]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        openResultItem(rIdx);  // opens the official result/answer-key link
+                        history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+                        return;
+                    }
+                    // Admit-card / exam-city alerts.
+                    const aIdx = (renderedAdmitCards || []).findIndex(it => it && it.id === id);
+                    if (aIdx >= 0) {
+                        const section2 = document.getElementById('admit-cards-list');
+                        if (section2) section2.closest('section,div[id]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        openAdmitCardItem(aIdx);  // opens the official admit-card link
+                        history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+                        return;
                     }
                 }
             }
