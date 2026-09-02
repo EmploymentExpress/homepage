@@ -2619,3 +2619,52 @@ class IbpsSourceTests(unittest.TestCase):
                         re.match(r"(?i)^https?://[^/]+/?$", url),
                         f"{field} points at a bare site root: {url}",
                     )
+
+
+class PunjabCrossListingTests(unittest.TestCase):
+    """A curation flag in the published store must survive the monitor's own passes.
+
+    ``alsoInPunjab`` lists one all-India alert in the Punjab column as well as in
+    its home Central column. data/auto-jobs.json is rewritten by the scheduled
+    workflow, so if any stored-job pass dropped the flag the cross-listing would
+    silently disappear at the next publish.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parents[1]
+        cls.store = json.loads((root / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        cls.now = datetime.now(timezone.utc)
+
+    @staticmethod
+    def flagged(jobs):
+        return [job for job in jobs if job.get("alsoInPunjab") is True]
+
+    def test_flagged_records_are_all_india_notices_of_a_non_punjab_authority(self):
+        flagged = self.flagged(self.store["jobs"])
+        self.assertTrue(flagged, "expected at least one cross-listed all-India alert")
+        for job in flagged:
+            self.assertEqual(job.get("type"), "central", "the home column stays Central")
+            self.assertNotIn("Punjab", str(job.get("department", "")),
+                            "cross-listing must not relabel the recruiting authority")
+            self.assertTrue(str(job.get("pdfLink", "")).startswith("https://"))
+
+    def test_monitor_passes_never_strip_the_curation_flag(self):
+        jobs = json.loads(json.dumps(self.store["jobs"]))
+        expected = {job["id"] for job in self.flagged(jobs)}
+        monitor.refresh_badges(jobs, self.now, 72)
+        for pass_name in (
+            "normalize_stored_departments", "reclassify_stored_jobs",
+            "apply_extensions", "strip_internal_job_fields",
+        ):
+            self.assertFalse(getattr(monitor, pass_name)(jobs), f"{pass_name} rewrote the store")
+        self.assertFalse(monitor.sanitize_published_jobs(jobs, self.now), "sanitize rewrote the store")
+
+        unique, known = [], set()
+        for job in sorted(jobs, key=lambda item: item.get("discoveredAt", ""), reverse=True):
+            key = (monitor.clean_text(job.get("title")).lower(), monitor.canonical_url(job.get("pdfLink", "")))
+            if key not in known:
+                known.add(key)
+                unique.append(job)
+        self.assertEqual({job["id"] for job in self.flagged(unique)}, expected,
+                         "the published store lost alsoInPunjab while being rewritten")

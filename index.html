@@ -2053,6 +2053,7 @@
                 badge,
                 badgeColor,
                 type,
+                alsoInPunjab: raw.alsoInPunjab === true,
                 categorySlug: text(raw.categorySlug, type === 'punjab' ? 'punjab-jobs' : 'central', 50),
                 advtNo: text(raw.advtNo, 'See Official Notice', 80),
                 feeGen: text(raw.feeGen, 'See Official Notification', 100),
@@ -2392,8 +2393,8 @@
 
         function updateSectionSummaries() {
             const sections = [
-                ['punjab-section-meta', jobDatabase.filter(job => job.type === 'punjab')],
-                ['central-section-meta', jobDatabase.filter(job => job.type === 'central')],
+                ['punjab-section-meta', jobDatabase.filter(job => jobInColumn(job, 'punjab'))],
+                ['central-section-meta', jobDatabase.filter(job => jobInColumn(job, 'central'))],
                 ['admission-section-meta', admissionDatabase]
             ];
             sections.forEach(([id, jobs]) => {
@@ -2499,14 +2500,26 @@
                 </article>`;
         }
 
+        // Column membership. Every notice is authored under one home column
+        // (job.type is the authority that owns the notice). A verified all-India
+        // notice that Punjab candidates can also apply to may carry
+        // "alsoInPunjab": true in data/auto-jobs.json, which lists that one
+        // record in the Punjab column as well. It never moves the record's home
+        // column, its schema address or its detail view, so nothing is claimed
+        // about state-wise vacancies that the notification itself does not say.
+        function jobInColumn(job, column) {
+            if (job.type === column) return true;
+            return column === 'punjab' && job.alsoInPunjab === true;
+        }
+
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => jobInColumn(job, 'punjab'))).map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => jobInColumn(job, 'central'))).map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -2648,6 +2661,8 @@
         function getJobSearchText(job) {
             return [
                 job.title,
+                // A Punjab-listed notice must be findable as a Punjab job.
+                job.alsoInPunjab ? 'punjab' : '',
                 job.department,
                 job.qualification,
                 job.qualCategory,
