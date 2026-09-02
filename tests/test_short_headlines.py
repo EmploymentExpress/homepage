@@ -10,7 +10,10 @@ capped at 72 characters, with the notice type taken from a fixed vocabulary.
 
 import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -210,6 +213,63 @@ class IndexHeadlineWiringTests(unittest.TestCase):
             with self.subTest(suffix=suffix):
                 self.assertIn(suffix, INDEX)
         self.assertIn("SHORT_HEADLINE_MAX = 72", INDEX)
+
+    def test_index_headline_mirror_output_matches_the_python_implementation(self):
+        """AGENTS.md: both implementations must produce identical output.
+
+        Runs index.html's `shortJobHeadline` in node over every published alert
+        (and over the admit-card-with-a-generic-title case that once drifted),
+        so the two copies of the rule cannot diverge silently again.
+        """
+        if not shutil.which("node"):
+            self.skipTest("node executable not available")
+        start = INDEX.index("// Short job-details headline generator (JS mirror")
+        end = INDEX.index("function normalizeAutomaticJob(", start)
+        cases = [{"title": "State Bank of India (SBI) — NOTIFICATION FOR ONLINE WRITTEN TEST: "
+                           "TENTATIVE DATE OF ONLINE WRITTEN TEST: 23.11.2024 FOR ASSISTANT MANAGER (SYSTEM)",
+                  "department": "State Bank of India (SBI)", "alertType": "admit-card",
+                  "vacancies": "15 Posts", "applyMode": "Online / As Notified"}]
+        cases += [
+            {
+                "title": job.get("title", ""),
+                "department": job.get("department", ""),
+                "alertType": job.get("alertType", ""),
+                "vacancies": job.get("vacancies", ""),
+                "applyMode": job.get("applyMode", ""),
+            }
+            for job in AUTO_JOBS.get("jobs", [])
+        ]
+        self.assertTrue(cases)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "mirror.js").write_text(INDEX[start:end], encoding="utf-8")
+            (root / "cases.json").write_text(json.dumps(cases), encoding="utf-8")
+            (root / "run.js").write_text(
+                "const fs=require('fs');\n"
+                "const code=fs.readFileSync(process.argv[2],'utf8');\n"
+                "const cases=JSON.parse(fs.readFileSync(process.argv[3],'utf8'));\n"
+                "const jobDisplayHeadline=new Function(code+'\\nreturn jobDisplayHeadline;')();\n"
+                "process.stdout.write(JSON.stringify(cases.map(jobDisplayHeadline)));\n",
+                encoding="utf-8",
+            )
+            rendered = subprocess.run(
+                ["node", str(root / "run.js"), str(root / "mirror.js"), str(root / "cases.json")],
+                capture_output=True, text=True, timeout=120, check=False,
+            )
+            self.assertEqual(rendered.returncode, 0, f"node failed: {rendered.stderr[-800:]}")
+            js_headlines = json.loads(rendered.stdout)
+        self.assertEqual(len(js_headlines), len(cases))
+        for case, headline in zip(cases, js_headlines):
+            expected = short_job_headline(
+                case["title"], case["department"], case["alertType"],
+                case["vacancies"], case["applyMode"],
+            )
+            with self.subTest(title=case["title"][:60]):
+                self.assertEqual(headline, expected)
+
+    def test_index_admit_card_alert_type_default_is_present(self):
+        """A stored admit-card alert must never be headed as an application form."""
+        self.assertRegex(INDEX, r"ALERT_TYPE_DEFAULTS\s*=\s*\{[^}]*'admit-card':\s*'Admit Card'")
 
     def test_card_table_and_reminder_headings_use_the_short_headline(self):
         self.assertGreaterEqual(INDEX.count("escapeHtml(jobDisplayHeadline(job))"), 3)

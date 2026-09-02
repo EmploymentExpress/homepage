@@ -1710,7 +1710,7 @@
         };
         const ALERT_TYPE_DEFAULTS = {
             'result': 'Result', 'answer-key': 'Answer Key', 'corrigendum': 'Corrigendum',
-            'admission': 'Admission', 'recruitment': 'Recruitment'
+            'admission': 'Admission', 'admit-card': 'Admit Card', 'recruitment': 'Recruitment'
         };
         const HEADLINE_NOISE = [
             /\bPDF\s*\d+(\.\d+)?\s*(KB|MB)\b/gi, /-?\s*opens? in a new window/gi, /\bclick here\b/gi,
@@ -1815,7 +1815,13 @@
         function noticeType(title, alertType) {
             const text = stripDateBlurbs(title);
             for (const [label, pattern] of NOTICE_TYPE_RULES) {
-                if (pattern.test(text)) return label;
+                if (pattern.test(text)) {
+                    // A generic "recruitment" wording cue must not override the
+                    // notice the board actually published (admit card / result /
+                    // corrigendum) — mirrors short_headlines.notice_type().
+                    if (label === 'Recruitment') return ALERT_TYPE_DEFAULTS[alertType] || 'Recruitment';
+                    return label;
+                }
             }
             return ALERT_TYPE_DEFAULTS[alertType] || 'Recruitment';
         }
@@ -2047,6 +2053,7 @@
                 badge,
                 badgeColor,
                 type,
+                alsoInPunjab: raw.alsoInPunjab === true,
                 categorySlug: text(raw.categorySlug, type === 'punjab' ? 'punjab-jobs' : 'central', 50),
                 advtNo: text(raw.advtNo, 'See Official Notice', 80),
                 feeGen: text(raw.feeGen, 'See Official Notification', 100),
@@ -2386,8 +2393,8 @@
 
         function updateSectionSummaries() {
             const sections = [
-                ['punjab-section-meta', jobDatabase.filter(job => job.type === 'punjab')],
-                ['central-section-meta', jobDatabase.filter(job => job.type === 'central')],
+                ['punjab-section-meta', jobDatabase.filter(job => jobInColumn(job, 'punjab'))],
+                ['central-section-meta', jobDatabase.filter(job => jobInColumn(job, 'central'))],
                 ['admission-section-meta', admissionDatabase]
             ];
             sections.forEach(([id, jobs]) => {
@@ -2493,14 +2500,26 @@
                 </article>`;
         }
 
+        // Column membership. Every notice is authored under one home column
+        // (job.type is the authority that owns the notice). A verified all-India
+        // notice that Punjab candidates can also apply to may carry
+        // "alsoInPunjab": true in data/auto-jobs.json, which lists that one
+        // record in the Punjab column as well. It never moves the record's home
+        // column, its schema address or its detail view, so nothing is claimed
+        // about state-wise vacancies that the notification itself does not say.
+        function jobInColumn(job, column) {
+            if (job.type === column) return true;
+            return column === 'punjab' && job.alsoInPunjab === true;
+        }
+
         function renderPunjabColumn() {
             const list = document.getElementById('punjab-jobs-list');
-            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'punjab')).map(job => renderJobSectionCard(job, 'blue')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => jobInColumn(job, 'punjab'))).map(job => renderJobSectionCard(job, 'blue')).join('');
         }
 
         function renderCentralColumn() {
             const list = document.getElementById('central-jobs-list');
-            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => job.type === 'central')).map(job => renderJobSectionCard(job, 'purple')).join('');
+            list.innerHTML = sortNewestPublishedFirst(jobDatabase.filter(job => jobInColumn(job, 'central'))).map(job => renderJobSectionCard(job, 'purple')).join('');
         }
 
         function renderAdmissionSection() {
@@ -2642,6 +2661,8 @@
         function getJobSearchText(job) {
             return [
                 job.title,
+                // A Punjab-listed notice must be findable as a Punjab job.
+                job.alsoInPunjab ? 'punjab' : '',
                 job.department,
                 job.qualification,
                 job.qualCategory,
@@ -3175,11 +3196,11 @@
                 streetAddress = loc.includes('sahitya akademi')
                     ? 'Rabindra Bhavan, 35 Ferozeshah Road'
                     : 'Central Secretariat / Department Headquarters';
-            } else if (loc.includes('bangalore') || loc.includes('bengaluru') || loc.includes('nal') || loc.includes('asc centre')) {
+            } else if (loc.includes('bangalore') || loc.includes('bengaluru') || /\bnal\b/.test(loc) || loc.includes('asc centre')) {
                 locality = 'Bengaluru';
                 region = 'Karnataka';
                 postalCode = '560007';
-                streetAddress = loc.includes('nal')
+                streetAddress = /\bnal\b/.test(loc)
                     ? 'HAL Airport Road, Kodihalli'
                     : 'ASC Centre (South) - 2 ATC, Agram Post';
             } else if (loc.includes('chennai') || loc.includes('siddha') || loc.includes('ccrs')) {
@@ -3194,6 +3215,11 @@
                 region = 'Haryana';
                 postalCode = '124001';
                 streetAddress = 'College Campus / Administrative Office, Rohtak';
+            } else if (loc.includes('mumbai') || loc.includes('kandivali') || loc.includes('ibps')) {
+                locality = 'Mumbai';
+                region = 'Maharashtra';
+                postalCode = '400101';
+                streetAddress = 'IBPS Campus, Western Express Highway, Railway Frontier Estate, Kandivali East';
             } else if (job.type === 'punjab') {
                 locality = 'Chandigarh';
                 region = 'Punjab';
