@@ -629,6 +629,32 @@
         "pesco chandigarh",
         "pesco.punjab.gov.in"
       ]
+    },
+    {
+      "id": "ibps",
+      "proxyFallback": true,
+      "name": "IBPS",
+      "department": "Institute of Banking Personnel Selection (IBPS)",
+      "url": "https://www.ibps.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "ibps",
+        "institute of banking personnel selection",
+        "institute of banking personnel selection (ibps)",
+        "ibps crp",
+        "ibps po/mt",
+        "ibps specialist officer",
+        "ibps rrb"
+      ]
     }
   ]
 }

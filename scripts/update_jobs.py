@@ -760,6 +760,10 @@ def strip_website_domains(value: Any) -> str:
 HOST_ORGANIZATION_NAMES = {
     "sbi.bank.in": "State Bank of India (SBI)",
     "uco.bank.in": "UCO Bank",
+    # Every *.ibps.in portal (www.ibps.in, ibpsonline.ibps.in, ibpsreg.ibps.in)
+    # belongs to the same board; the registry link for it used to be a bare
+    # domain, which is what let a row label become a published department.
+    "ibps.in": "Institute of Banking Personnel Selection (IBPS)",
     "iob.bank.in": "Indian Overseas Bank (IOB)",
     "iitbhu.ac.in": "Indian Institute of Technology (BHU), Varanasi",
     "hau.ac.in": "Chaudhary Charan Singh Haryana Agricultural University (HAU), Hisar",
@@ -833,10 +837,71 @@ OFFLINE_ROLE_START_RE = re.compile(
 )
 
 
+# Portal furniture that appears in a listing cell where a name should be:
+# the "View"/"Click here"/"Download" link label, sometimes glued to the row's
+# date ("View 22 Oct 2025"). No recruiting authority is ever named this way.
+LINK_LABEL_WORDS = (
+    r"(?:view|read|click(?:\s+here)?|download|apply|visit|register|log\s?in|more|here|check)"
+)
+LINK_LABEL_NOISE_RE = re.compile(rf"(?i)^\s*{LINK_LABEL_WORDS}\b(?:\s*[-:–—]\s*)?")
+# A listing row's date in the shapes official portals print: 22/10/2025,
+# 22 Oct 2025, Oct 22, 2025.
+DATE_TOKEN = (
+    r"\b\d{1,2}\s*[/.-]\s*\d{1,2}\s*[/.-]\s*\d{2,4}\b"                  # 22/10/2025
+    r"|\b\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]{3,9}\.?\s+\d{4}\b"         # 22 Oct 2025
+    r"|\b[A-Za-z]{3,9}\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}\b"        # Oct 22, 2025
+)
+LISTING_DATE_RE = re.compile(rf"(?i)(?:{DATE_TOKEN})")
+LEADING_DATE_RE = re.compile(rf"(?i)^(?:on\s+|dated\s+)?(?:{DATE_TOKEN})\s*")
+
+
+def strip_link_label_noise(value: str) -> str:
+    """Drop a link label glued to its row date from a listing cell text.
+
+    ``"View 22 Oct 2025 RECRUITMENT OF LOCAL BANK OFFICER (LBO) 2025-26"`` is a
+    listing row: ``View`` is the Documents-column link and ``22 Oct 2025`` is the
+    row date glued in front of the notice name. Both must come off before the
+    text is used as a title. The verb is only treated as portal furniture when
+    a date follows it, so a real notice name that happens to open with a word
+    like "View of Public Notice..." is left alone. Titles keep more of the
+    board's own wording than departments do, since only a label glued to its
+    row date counts as furniture here.
+    """
+    text = clean_text(value)
+    changed = True
+    while changed and text:
+        changed = False
+        match = re.match(rf"(?i)^\s*(?:{LINK_LABEL_WORDS})\b[\s:–—,-]*", text)
+        if match and LEADING_DATE_RE.match(text[match.end():]):
+            text = clean_text(text[match.end():])
+            changed = True
+        match = LEADING_DATE_RE.match(text)
+        if match:
+            text = clean_text(text[match.end():]).strip(" -:–—|,.")
+            changed = True
+    return text
+
+
+def is_link_label_noise(value: str) -> bool:
+    """True when the text is only a link label and/or a date, never a name."""
+    text = clean_text(value).strip(" .,:;|-–—")
+    if not text:
+        return True
+    without_dates = clean_text(LISTING_DATE_RE.sub(" ", text))
+    if not without_dates or without_dates.lower().strip(" .,:;|-–—") in {
+        "view", "click here", "click", "download", "read more", "more", "here",
+    }:
+        return True
+    return bool(LINK_LABEL_NOISE_RE.match(text))
+
+
 def is_specific_department(value: str) -> bool:
     department = clean_text(value)
     if is_website_domain(department):
         # A website address (e.g. "sbi.gov.in") is never a recruiting authority.
+        return False
+    if is_link_label_noise(department):
+        # "View 22 Oct 2025" is a listing row label, not an authority name.
         return False
     return bool(
         len(department) >= 3
@@ -925,7 +990,7 @@ def title_mentions_department(title: str, department: str) -> bool:
 
 def official_job_title(title: str, department: str) -> str:
     """Return a specific vacancy title that visibly names its authority."""
-    subject = clean_title(title)
+    subject = strip_link_label_noise(clean_title(title))
     authority = clean_text(department)
     if is_junk_job_title(subject) or not is_specific_department(authority):
         return ""
@@ -2651,13 +2716,21 @@ def sanitize_published_jobs(jobs: list[dict[str, Any]], now: datetime) -> bool:
     changed = backfill_extracted_fields(jobs)
     kept: list[dict[str, Any]] = []
     for job in jobs:
-        raw_title = clean_title(job.get("title", ""))
+        raw_title = strip_link_label_noise(clean_title(job.get("title", "")))
         if is_junk_job_title(raw_title):
             changed = True
             continue
         department = clean_text(job.get("department", ""))
         if not is_specific_department(department):
-            department = infer_recruiting_department(raw_title)
+            # A listing row label ("View 22 Oct 2025") or a bare domain is not
+            # an authority. Resolve the real one from the notice before giving
+            # up, so a genuine alert is repaired instead of silently dropped.
+            department = (
+                infer_recruiting_department(raw_title)
+                or department_from_url(str(job.get("sourceUrl", "")))
+                or department_from_url(str(job.get("noticeUrl", "")))
+                or department_from_url(str(job.get("pdfLink", "")))
+            )
         specific_title = official_job_title(raw_title, department)
         if not specific_title:
             changed = True
@@ -4087,10 +4160,20 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
             continue
         host = urllib.parse.urlsplit(url).netloc.removeprefix("www.")
         source_id = "custom-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
-        generated.append({
+        stored_department = clean_text(entry.get("department") or entry.get("name") or "")
+        # A registry entry can hold the bare domain it auto-discovered (e.g.
+        # "ibps.in"). Resolve the authority behind that host instead of feeding
+        # a website address into the pipeline as a department name.
+        if not is_specific_department(stored_department):
+            stored_department = organization_from_host(url) or host
+        stored_name = clean_text(entry.get("name") or "")
+        if is_website_domain(stored_name) or not stored_name:
+            # The label shown on a card is never a URL; prefer the authority name.
+            stored_name = stored_department or host
+        source = {
             "id": source_id,
-            "name": clean_text(entry.get("name") or host or "Additional job notification source"),
-            "department": clean_text(entry.get("department") or entry.get("name") or host),
+            "name": stored_name or "Additional job notification source",
+            "department": stored_department,
             "url": url,
             "type": clean_text(entry.get("type") or "central").lower(),
             "categorySlug": clean_text(entry.get("categorySlug") or "central"),
@@ -4100,7 +4183,17 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
             "maxNewPerRun": int(entry.get("maxNewPerRun", 8)),
             "includeKeywords": entry.get("includeKeywords", []),
             "excludeKeywords": entry.get("excludeKeywords", []),
-        })
+        }
+        # Mirror opt-in and timeouts configured on the registry entry, so a
+        # registered official site that refuses datacenter connections is still
+        # readable. Mirrors are transport only: every link parsed from them keeps
+        # the official URL and no mirror host is ever published.
+        if entry.get("proxyFallback"):
+            source["proxyFallback"] = True
+        for key in ("timeout", "detailTimeout"):
+            if key in entry:
+                source[key] = int(entry[key])
+        generated.append(source)
     return generated
 
 

@@ -1710,7 +1710,7 @@
         };
         const ALERT_TYPE_DEFAULTS = {
             'result': 'Result', 'answer-key': 'Answer Key', 'corrigendum': 'Corrigendum',
-            'admission': 'Admission', 'recruitment': 'Recruitment'
+            'admission': 'Admission', 'admit-card': 'Admit Card', 'recruitment': 'Recruitment'
         };
         const HEADLINE_NOISE = [
             /\bPDF\s*\d+(\.\d+)?\s*(KB|MB)\b/gi, /-?\s*opens? in a new window/gi, /\bclick here\b/gi,
@@ -1815,7 +1815,13 @@
         function noticeType(title, alertType) {
             const text = stripDateBlurbs(title);
             for (const [label, pattern] of NOTICE_TYPE_RULES) {
-                if (pattern.test(text)) return label;
+                if (pattern.test(text)) {
+                    // A generic "recruitment" wording cue must not override the
+                    // notice the board actually published (admit card / result /
+                    // corrigendum) — mirrors short_headlines.notice_type().
+                    if (label === 'Recruitment') return ALERT_TYPE_DEFAULTS[alertType] || 'Recruitment';
+                    return label;
+                }
             }
             return ALERT_TYPE_DEFAULTS[alertType] || 'Recruitment';
         }
@@ -3194,6 +3200,11 @@
                 region = 'Haryana';
                 postalCode = '124001';
                 streetAddress = 'College Campus / Administrative Office, Rohtak';
+            } else if (loc.includes('mumbai') || loc.includes('kandivali') || loc.includes('ibps')) {
+                locality = 'Mumbai';
+                region = 'Maharashtra';
+                postalCode = '400101';
+                streetAddress = 'IBPS Campus, Western Express Highway, Railway Frontier Estate, Kandivali East';
             } else if (job.type === 'punjab') {
                 locality = 'Chandigarh';
                 region = 'Punjab';

@@ -1346,6 +1346,53 @@
       "maxNewPerRun": 5,
       "timeout": 35,
       "detailTimeout": 25
+    },
+    {
+      "id": "ibps",
+      "enabled": true,
+      "name": "IBPS",
+      "department": "Institute of Banking Personnel Selection (IBPS)",
+      "url": "https://www.ibps.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "includeKeywords": [
+        "notification",
+        "window notification",
+        "corrigendum",
+        "addendum",
+        "vacancy",
+        "vacancies",
+        "crp",
+        "online registration",
+        "admit card",
+        "call letter",
+        "answer key",
+        "result"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest",
+        "procurement",
+        "consultant",
+        "retainer"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5,
+      "maxRefreshPerRun": 8,
+      "maxCatchUpPerRun": 8,
+      "proxyFallback": true,
+      "timeout": 40,
+      "detailTimeout": 30
     }
   ]
 }

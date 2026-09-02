@@ -881,8 +881,8 @@
     },
     {
       "url": "https://www.ibps.in/",
-      "name": "ibps.in",
-      "department": "ibps.in",
+      "name": "IBPS",
+      "department": "Institute of Banking Personnel Selection (IBPS)",
       "type": "central",
       "categorySlug": "central",
       "location": "All India",
@@ -894,6 +894,8 @@
         "corrigendum",
         "admit-card"
       ],
+      "proxyFallback": true,
+      "timeout": 40,
       "addedBy": "discovery-official-website",
       "addedAt": "2026-08-31T06:18:29Z"
     },

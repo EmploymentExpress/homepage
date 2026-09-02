@@ -2473,3 +2473,149 @@ class ProxyFallbackWiringTests(unittest.TestCase):
         feeds = json.loads((root / "automation" / "discovery-feeds.json").read_text(encoding="utf-8"))["feeds"]
         feed_ids = {f.get("id") for f in feeds if f.get("proxyFallback")}
         self.assertIn("punjabjobalert", feed_ids)
+
+
+class ListingRowNoiseTests(unittest.TestCase):
+    """A listing row's link label and date must never become job details.
+
+    An official "Job Opportunities" table prints the notice name, a "View"
+    link and the row date side by side. Reading that row once glued
+    "View 22 Oct 2025" in front of the notice name and used it as the
+    recruiting department, which then flowed into a published heading and
+    failed the headline guard test in CI - aborting the whole monitor run.
+    """
+
+    def test_row_label_cannot_be_a_recruiting_department(self):
+        for noise in ("View 22 Oct 2025", "22 Oct 2025", "View", "Click here",
+                      "Download", "Click Here to View", "More"):
+            with self.subTest(department=noise):
+                self.assertFalse(monitor.is_specific_department(noise), f"{noise!r} is not an authority")
+                self.assertTrue(monitor.is_link_label_noise(noise))
+
+    def test_real_authority_names_are_still_specific(self):
+        for department in ("Institute of Banking Personnel Selection (IBPS)", "UCO Bank",
+                           "Punjab Police", "Chandigarh Administration",
+                           "Central University of Punjab (CUPB), Bathinda"):
+            with self.subTest(department=department):
+                self.assertTrue(monitor.is_specific_department(department))
+
+    def test_only_a_glued_row_date_counts_as_title_noise(self):
+        cases = {
+            # label + row date glued in front of the notice name -> noise
+            "View 22 Oct 2025 RECRUITMENT OF LOCAL BANK OFFICER (LBO) 2025-26":
+                "RECRUITMENT OF LOCAL BANK OFFICER (LBO) 2025-26",
+            "Download: 12/05/2026 Merit List": "Merit List",
+            "22 Oct 2025 RECRUITMENT OF CLERK": "RECRUITMENT OF CLERK",
+            # real notice wording must survive untouched
+            "View of Public Notice regarding amendment":
+                "View of Public Notice regarding amendment",
+            "Apply Online for the post of Clerk (Advertisement No. 5/2026)":
+                "Apply Online for the post of Clerk (Advertisement No. 5/2026)",
+            "Result of 2024-25 written exam": "Result of 2024-25 written exam",
+        }
+        for raw, expected in cases.items():
+            with self.subTest(title=raw):
+                self.assertEqual(monitor.strip_link_label_noise(raw), expected)
+
+    def test_stored_row_label_record_is_repaired_instead_of_dropped(self):
+        now = datetime(2026, 9, 2, tzinfo=timezone.utc)
+        jobs = [{
+            "id": 271206967351178,
+            "title": ("View 22 Oct 2025 RECRUITMENT OF LOCAL BANK OFFICER (LBO) 2025-26, "
+                      "Advertisement No. HO/HRM/RECR/2024-25/COM-75"),
+            "department": "View 22 Oct 2025",
+            "alertType": "recruitment",
+            "lastDate": "See Notification",
+            "sourceUrl": "https://uco.bank.in/job-opportunities",
+            "pdfLink": "https://ibpsonline.ibps.in/ucolbodec24/",
+        }]
+        self.assertTrue(monitor.sanitize_published_jobs(jobs, now))
+        self.assertEqual(len(jobs), 1, "a genuine notice is repaired, never silently dropped")
+        self.assertEqual(jobs[0]["department"], "UCO Bank")
+        self.assertNotRegex(jobs[0]["title"], r"(?i)^view\b|\bView 22 Oct 2025\b")
+        self.assertTrue(monitor.is_specific_department(jobs[0]["department"]))
+        # Running the pass again must be a no-op, so CI publishes no churn commit.
+        self.assertFalse(monitor.sanitize_published_jobs(jobs, now))
+
+    def test_published_data_never_carries_a_row_label_department(self):
+        root = Path(__file__).resolve().parents[1]
+        jobs = json.loads((root / "data" / "auto-jobs.json").read_text(encoding="utf-8"))["jobs"]
+        self.assertTrue(jobs, "the published feed must not be emptied")
+        for job in jobs:
+            with self.subTest(job_id=job.get("id")):
+                self.assertTrue(
+                    monitor.is_specific_department(job.get("department", "")),
+                    f"department {job.get('department')!r} is not a recruiting authority "
+                    f"(notice: {job.get('title', '')[:60]!r})",
+                )
+                self.assertFalse(
+                    re.match(r"(?i)^\s*(?:view|download|click here)\b", str(job.get("title") or "").strip()),
+                    "a published title must not start with a portal link label",
+                )
+
+
+class IbpsSourceTests(unittest.TestCase):
+    """IBPS is an approved official source, not a bare domain in the registry."""
+
+    def test_ibps_official_site_is_monitored(self):
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "ibps")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(source["url"], "https://www.ibps.in/")
+        self.assertEqual(source["department"], "Institute of Banking Personnel Selection (IBPS)")
+        self.assertEqual(source["type"], "central")
+        self.assertTrue(source["proxyFallback"], "ibps.in drops datacenter TLS; mirrors are the only transport")
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertTrue(monitor.looks_like_official_website(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "ibps")
+        self.assertEqual(org["url"], source["url"])
+        self.assertEqual(org["department"], source["department"])
+        self.assertIn("ibps", org["aliases"])
+        self.assertIn("institute of banking personnel selection", org["aliases"])
+
+    def test_ibps_host_resolves_to_the_board_name(self):
+        for url in ("https://www.ibps.in/", "https://ibpsonline.ibps.in/ucolbodec24/",
+                    "https://ibpsreg.ibps.in/bobjul26/"):
+            with self.subTest(url=url):
+                self.assertEqual(
+                    monitor.department_from_url(url),
+                    "Institute of Banking Personnel Selection (IBPS)",
+                )
+
+    def test_registry_links_resolve_a_domain_department_and_opt_into_mirrors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            registry = Path(directory) / "links.json"
+            registry.write_text(json.dumps({"version": 1, "links": [{
+                "url": "https://www.ibps.in/",
+                "name": "ibps.in",
+                "department": "ibps.in",
+                "proxyFallback": True,
+                "timeout": 40,
+            }]}), encoding="utf-8")
+            sources = monitor.additional_link_sources(registry)
+        self.assertEqual(len(sources), 1)
+        source = sources[0]
+        self.assertEqual(source["department"], "Institute of Banking Personnel Selection (IBPS)")
+        self.assertNotEqual(source["name"], "ibps.in")
+        self.assertTrue(source["proxyFallback"], "a registry link must be able to use the mirrors")
+        self.assertEqual(source["timeout"], 40)
+
+    def test_official_links_in_the_published_data_are_specific_and_not_aggregators(self):
+        root = Path(__file__).resolve().parents[1]
+        jobs = json.loads((root / "data" / "auto-jobs.json").read_text(encoding="utf-8"))["jobs"]
+        for job in jobs:
+            for field in ("pdfLink", "applyLink"):
+                url = str(job.get(field) or "")
+                if not url or url == "#":
+                    continue
+                with self.subTest(job_id=job.get("id"), field=field):
+                    self.assertFalse(
+                        re.match(r"(?i)^https?://[^/]+/?$", url),
+                        f"{field} points at a bare site root: {url}",
+                    )
