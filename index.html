@@ -3181,11 +3181,11 @@
                 streetAddress = loc.includes('sahitya akademi')
                     ? 'Rabindra Bhavan, 35 Ferozeshah Road'
                     : 'Central Secretariat / Department Headquarters';
-            } else if (loc.includes('bangalore') || loc.includes('bengaluru') || loc.includes('nal') || loc.includes('asc centre')) {
+            } else if (loc.includes('bangalore') || loc.includes('bengaluru') || /\bnal\b/.test(loc) || loc.includes('asc centre')) {
                 locality = 'Bengaluru';
                 region = 'Karnataka';
                 postalCode = '560007';
-                streetAddress = loc.includes('nal')
+                streetAddress = /\bnal\b/.test(loc)
                     ? 'HAL Airport Road, Kodihalli'
                     : 'ASC Centre (South) - 2 ATC, Agram Post';
             } else if (loc.includes('chennai') || loc.includes('siddha') || loc.includes('ccrs')) {
