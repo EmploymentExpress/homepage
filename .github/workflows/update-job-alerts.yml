@@ -187,67 +187,67 @@ jobs:
           echo "Failed to rebase and push after 3 attempts" >&2
 
           exit 1
+
       - name: Publish share pages and job thumbnails
 
-shell: bash
+        shell: bash
 
-run: |
+        run: |
 
-# Rebuild every share/job-<id>.html page and every
+          # Rebuild every share/job-<id>.html page and every
 
-# assets/thumbnails/job-<id>.png from the current alert data, so the
+          # assets/thumbnails/job-<id>.png from the current alert data, so the
 
-# social-share thumbnails always match what the site displays. The
+          # social-share thumbnails always match what the site displays. The
 
-# builder is deterministic and only writes share/ and
+          # builder is deterministic and only writes share/ and
 
-# assets/thumbnails/, so when nothing changed there is nothing to
+          # assets/thumbnails/, so when nothing changed there is nothing to
 
-# commit. This step also runs when no new alerts were found, which
+          # commit. This step also runs when no new alerts were found, which
 
-# self-heals any drift between the alert data and the thumbnails.
+          # self-heals any drift between the alert data and the thumbnails.
 
-git checkout "${GITHUB_REF_NAME}"
+          git checkout "${GITHUB_REF_NAME}"
 
-python scripts/build_share_pages.py
+          python scripts/build_share_pages.py
 
-if [ -z "$(git status --porcelain -- share assets/thumbnails)" ]; then
+          if [ -z "$(git status --porcelain -- share assets/thumbnails)" ]; then
 
-echo "Share pages and thumbnails are already up to date."
+            echo "Share pages and thumbnails are already up to date."
 
-exit 0
+            exit 0
 
-fi
+          fi
 
-git config user.name "employment-express-alert-bot"
+          git config user.name "employment-express-alert-bot"
 
-git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-git add -- share assets/thumbnails
+          git add -- share assets/thumbnails
 
-git commit -m "chore: refresh share pages and thumbnails [skip ci]"
+          git commit -m "chore: refresh share pages and thumbnails [skip ci]"
 
-# Same rebase/push retry as the alert-data step above.
+          # Same rebase/push retry as the alert-data step above.
 
-for attempt in 1 2 3; do
+          for attempt in 1 2 3; do
 
-if git pull --rebase && git push; then
+            if git pull --rebase && git push; then
 
-exit 0
+              exit 0
 
-fi
+            fi
 
-if [ "$attempt" -lt 3 ]; then
+            if [ "$attempt" -lt 3 ]; then
 
-echo "Rebase/push attempt $attempt failed; retrying in 5 seconds..." >&2
+              echo "Rebase/push attempt $attempt failed; retrying in 5 seconds..." >&2
 
-sleep 5
+              sleep 5
 
-fi
+            fi
 
-done
+          done
 
-echo "Failed to rebase and push share pages after 3 attempts" >&2
+          echo "Failed to rebase and push share pages after 3 attempts" >&2
 
-exit 1
-
+          exit 1
