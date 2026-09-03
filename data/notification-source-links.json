@@ -1003,6 +1003,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-01T18:28:20Z"
+    },
+    {
+      "url": "https://www.mecl.co.in/ContentPageMecl.aspx?page=advertisement-notices-and-results&Antispam=a59a01dc-844f-446f-ae7a-32d90ea95d08&ControlID=61&Lng=EN&MyAntispam=2df5925d-4711-43eb-9f4e-702ab42850ac",
+      "name": "mecl.co.in",
+      "department": "mecl.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-03T06:32:21Z"
     }
   ]
 }
