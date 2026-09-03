@@ -384,7 +384,8 @@
         "39cff5acd0cee6c8456d1d1fafa93fc66ffff4485dae12122a4dccab7a71c23a",
         "f146803913932f884e191705bb54e78cec6e12e960b8bc78cf8d434fbce7a842",
         "67732a60a655d1fdc943eab4e2516b473af11fe2c93b9bda327920aae5da4528",
-        "109ff809a640bb1a59564f4c1df4347812e8fa8ba76c4ee447723e81f2855831"
+        "109ff809a640bb1a59564f4c1df4347812e8fa8ba76c4ee447723e81f2855831",
+        "3aeb51c6ce185f7a6daf428e8dae8889935ebd125b8bc2761ab6226f96daeac3"
       ]
     },
     "custom-1603115d4a87": {
@@ -825,7 +826,15 @@
         "a52c286ff541850c396f87f0ba8d613d6a67312a929bbae9552a8a78393a91a8",
         "2382ee3b8c46d87ebc70af9597ab3b620074651e24b5f577414e0e98e6a0cd35",
         "9aea998da58dd117c9895b5ecebdb502c5bc53f0ca23e3d9cda6064058e76510",
-        "18ae368e27c93d2b50d0c8c99e1ecc1c28cbf62dd786f4479e445075324c8abf"
+        "18ae368e27c93d2b50d0c8c99e1ecc1c28cbf62dd786f4479e445075324c8abf",
+        "b3976c6412c868acdb90c30cc2b7c1b4ed1b65f233480d1de2fb338a03dd434b",
+        "02ab6ceea533446946ddc5948bb1f6c347359209189ab9f85325d8ccef65b88c",
+        "92f63a2c74d983004e6f1eca4867ed16b2823a284ca0b8114667f9a027adeefb",
+        "79b38ec1c7630a7d00204b0ad2498cd014e012fd1a0d062ec11db63ef1f872b3",
+        "83af449983aab766e03971531731c04c483b96b780dd9f3488d2374e96bf33c2",
+        "da24ae5382296902a322ab3e995ddb8c4b67d5efa2e329d35a68c2f6db4bb43a",
+        "ee5bcfc4db260b72b68c433a233cb34097ca80debbe4419dd63e80d2ee9f583c",
+        "d8f654d868bb0e5d7de5d6d3f4aca06b331233c988ea7a187e0efa325f904508"
       ]
     },
     "custom-49bf338af839": {
@@ -1085,7 +1094,20 @@
         "1803f1e47472d1c67d38f9f928d9719f9d16bb49b6ce00b93b7b522df6c48978",
         "5f5afac82ede542a5378a31fadf6d25b5e7dd011d23758cac9f803daf4569184",
         "9d45a208bc9ea9371a79c5d86cecdfde7d1ba508cf7155bb17e77fac94cbcb29",
-        "df317c103efc1faab04e6535e03cf0cf3b1141a1921357b9b26e04a641657c85"
+        "df317c103efc1faab04e6535e03cf0cf3b1141a1921357b9b26e04a641657c85",
+        "a67bf5886e1900d88dbb4c83977525c2098aae45b066dc4095ec43154655d001",
+        "c4a9fecf3b84dab5052292cf3ffbcc5db5da323b44459841aa04fc84231c490f"
+      ]
+    },
+    "custom-ea47f2a4f8e2": {
+      "initializedAt": "2026-09-03T12:32:44Z",
+      "fingerprints": [
+        "3b58aceb675216cd3a1cc762892bc3ccc27729b8451c2648af26bcca9f45aa15",
+        "c3e25ca9022ed3dfac79cf25cfaa023a8218c3ff95de7c4b2b040979b31b0a9e",
+        "fe9951d51079843274040589d1cad56f06a448db4fe09b3ee8a7f2ea1d06be6a",
+        "41e0ab951b4fb1cf334ae5c5409bd6a87d5b675a215116d9a2844d80fe5a6f19",
+        "e1c6b562fe38b4ad308166b312ea29d50da3e42edc8b4359d3d1ab39419a514e",
+        "3d8d72992f70a6bbe5ecb91f90586f9a78a7b7fad89511762013ec53b5a43f8a"
       ]
     }
   },
@@ -7121,12 +7143,23 @@
       "startDate": "12-09-2026",
       "lastDate": "11-10-2026",
       "pageTitle": "MECL Non Executive Recruitment 2026"
+    },
+    "https://www.speedjob.in/upsc-combined-geo-scientist-recruitment-2027/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.upsc.gov.in/sites/default/files/Notif-CGSPE-2027-Engl-020926.pdf",
+      "website": "",
+      "applyMode": "online",
+      "department": "Union Public Service Commission (UPSC)",
+      "startDate": "02-09-2026",
+      "lastDate": "22-09-2026",
+      "pageTitle": "UPSC Combined Geo-Scientist Recruitment 2027"
     }
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -7150,28 +7183,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -7191,13 +7224,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -7213,13 +7246,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -7227,13 +7260,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -7241,8 +7274,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -7266,13 +7299,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -7280,17 +7313,21 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
       "lastSuccessAt": "2026-08-31T12:18:34Z",
-      "consecutiveFailures": 0
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
+      "lastError": "<urlopen error timed out>"
     },
     "custom-f12474453dfd": {
       "lastSuccessAt": "2026-08-31T12:18:34Z",
-      "consecutiveFailures": 0
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
+      "lastError": "<urlopen error timed out>"
     },
     "custom-a4634bb37126": {
       "lastSuccessAt": "2026-08-30T12:18:38Z",
@@ -7301,18 +7338,18 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -7332,18 +7369,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 23,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 24,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 19,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 20,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 19,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 20,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -7359,8 +7396,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 18,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 19,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
@@ -7368,14 +7405,14 @@
       "consecutiveFailures": 0
     },
     "custom-ac818ccf7e1c": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-1c5eb2ad0b22": {
-      "consecutiveFailures": 4,
+      "consecutiveFailures": 5,
       "lastSuccessAt": "2026-09-01T12:30:31Z",
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b97daddda9af": {
@@ -7384,8 +7421,8 @@
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-501ebf7f4ad9": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-9a97990dc80b": {
@@ -7393,8 +7430,8 @@
       "consecutiveFailures": 0
     },
     "custom-5df32e916383": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dc214c99342a": {
@@ -7406,14 +7443,18 @@
       "consecutiveFailures": 0
     },
     "custom-4e8822c8e2c1": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
-      "lastError": "<urlopen error timed out>"
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
+      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-5758e613fcd0": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-09-03T06:32:21Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
+    },
+    "custom-ea47f2a4f8e2": {
+      "lastSuccessAt": "2026-09-03T12:32:44Z",
+      "consecutiveFailures": 0
     }
   }
 }
