@@ -143,7 +143,16 @@ Three safeguards keep an official source from silently going stale — do not re
    listing and its vacancy pages, and discovery-article registration. The fallback fires
    **only** for refusal/connection errors — never for clean 404/410s — and every parsed
    link keeps the **official URL**: mirrors are transport only, never a source of truth,
-   and their URLs must never appear in published data. Sites that block **non-Indian**
+   and their URLs must never appear in published data. The chain itself is `r.jina.ai`
+   with `X-Engine: curl` (a plain HTTP fetch — the notice tables are static, and the
+   reader's default browser engine answers HTTP 422 after a 15s `networkidle` wait), then
+   `r.jina.ai` with `X-Engine: browser` and an explicit `X-Timeout`, then `web.archive.org`
+   with the `id_` suffix so the archived bytes keep their original hrefs. That last mirror
+   is **freshness-guarded** by `WAYBACK_MAX_CAPTURE_AGE_DAYS`: a capture older than the
+   limit is rejected rather than published, because Wayback will happily serve a snapshot
+   from a year ago and a stale notice must never be presented as a new one. Keep
+   `allorigins`/`codetabs`-style CORS relays out — they have been returning Cloudflare
+   520/522 service-wide since 2026-09-03. Sites that block **non-Indian**
    visitors entirely (several `*.punjab.gov.in` hosts) defeat mirrors too; their
    `sourceHealth` entries make the gap visible and an India-egress runner would be the
    real fix.

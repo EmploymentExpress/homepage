@@ -211,7 +211,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://iafrecruitment.edcil.co.in/",
@@ -229,7 +230,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.ddpmod.gov.in/",
@@ -265,7 +267,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://indianairforce.nic.in/",
@@ -283,7 +286,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://bro.gov.in/",
@@ -319,7 +323,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://wcdhry.gov.in/",
@@ -427,7 +432,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://yamunanagar.dcourts.gov.in/",
@@ -445,7 +451,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.sainikschoolnalanda.edu.in/",
@@ -481,10 +488,11 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
-      "url": "https://www.idsj.org/",
+      "url": "https://www.idsj.org/news-announcements",
       "name": "IDS Jaipur Recruitment 2026 Apply for Non-Faculty Posts",
       "department": "Institute of Development Studies (IDS)",
       "type": "central",
@@ -499,10 +507,13 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "repointedAt": "2026-09-03T15:23:53Z",
+      "repointedReason": "official page moved: listing page copied verbatim from an anchor href on the official homepage",
+      "proxyFallback": true
     },
     {
-      "url": "https://gonda.kvk4.in/",
+      "url": "https://gonda.kvk4.in/recruitment.php",
       "name": "Gonda KVK Recruitment 2026 Apply for Driver, Assistant, Steno & Other",
       "department": "Deendayal Research Institute LBS Krishi Vigyan Kendra, Gonda (UP)",
       "type": "central",
@@ -517,7 +528,10 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "repointedAt": "2026-09-03T15:23:53Z",
+      "repointedReason": "official page moved: listing page copied verbatim from an anchor href on the official homepage",
+      "proxyFallback": true
     },
     {
       "url": "https://rampur.nic.in/",
@@ -571,7 +585,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://kanpurnagar.dcourts.gov.in/",
@@ -589,7 +604,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://ambala.dcourts.gov.in/",
@@ -607,7 +623,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "proxyFallback": true
     },
     {
       "url": "https://ssghorakhal.org/",
@@ -715,7 +732,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-28T01:47:01Z"
+      "addedAt": "2026-08-28T01:47:01Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.indianarmy.nic.in/",
@@ -733,7 +751,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T06:18:36Z"
+      "addedAt": "2026-08-29T06:18:36Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.iob.bank.in/en/careers",
@@ -823,7 +842,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T12:18:37Z"
+      "addedAt": "2026-08-29T12:18:37Z",
+      "proxyFallback": true
     },
     {
       "url": "https://uco.bank.in/job-opportunities",
@@ -859,7 +879,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T06:18:29Z"
+      "addedAt": "2026-08-31T06:18:29Z",
+      "proxyFallback": true
     },
     {
       "url": "https://pucb.in/index.html",
@@ -877,7 +898,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T06:18:29Z"
+      "addedAt": "2026-08-31T06:18:29Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.ibps.in/",
@@ -915,7 +937,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T12:18:34Z"
+      "addedAt": "2026-08-31T12:18:34Z",
+      "proxyFallback": true
     },
     {
       "url": "https://sssc.uk.gov.in/",
@@ -948,7 +971,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "proxyFallback": true
     },
     {
       "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/home.jsp",
@@ -984,7 +1008,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T18:28:20Z"
+      "addedAt": "2026-09-01T18:28:20Z",
+      "proxyFallback": true
     },
     {
       "url": "https://jkssb.nic.in/Whatsnew.html",
@@ -1002,7 +1027,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T18:28:20Z"
+      "addedAt": "2026-09-01T18:28:20Z",
+      "proxyFallback": true
     },
     {
       "url": "https://www.mecl.co.in/ContentPageMecl.aspx?page=advertisement-notices-and-results&Antispam=a59a01dc-844f-446f-ae7a-32d90ea95d08&ControlID=61&Lng=EN&MyAntispam=2df5925d-4711-43eb-9f4e-702ab42850ac",

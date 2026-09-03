@@ -1107,16 +1107,92 @@ def _download_direct(url: str, timeout: int) -> Download:
 # (for example a firewall that drops datacenter IPs mid-TLS-handshake). They
 # relay the exact public page content; the parsed result is always attributed
 # to the original official URL, never to the mirror.
+#
+# Reconnected 2026-09-03. The previous chain could not fetch anything at all,
+# which is why 32 of 66 monitored sources sat at `consecutiveFailures: 24` in
+# data/seen-notices.json with "mirror fetch failed: HTTP Error 422":
+#
+#   * api.allorigins.win — dropped. It returned a service-wide Cloudflare
+#     522 (/raw) and 520 (/get) for every URL, verified even against
+#     https://www.google.com/, so it was pure dead weight on every run.
+#   * r.jina.ai — kept, but driven with the documented reader headers. Its
+#     default browser engine waits for `networkidle` and gives up after 15s,
+#     answering HTTP 422 (`status: 42206`) for the slow *.gov.in notice pages
+#     (sssb.punjab.gov.in and jkssb.nic.in both reproduced it). The first
+#     attempt therefore uses `X-Engine: curl` — a plain HTTP fetch with no JS
+#     and no networkidle wait, which is what these static notice tables need —
+#     and only the second attempt spends time on the browser engine, with an
+#     explicit `X-Timeout` so it is not cut off at 15s.
+#   * web.archive.org — added as a last resort, freshness-guarded. A mirror is
+#     transport only and never a source of truth, and Wayback happily serves a
+#     capture from a year ago (sssb.punjab.gov.in resolved to 29 Aug 2025), so
+#     a capture older than WAYBACK_MAX_CAPTURE_AGE_DAYS is rejected rather than
+#     published as a fresh notice. `id_` returns the ORIGINAL archived bytes,
+#     so hrefs inside stay official URLs instead of /web/... mirror links.
+WAYBACK_MAX_CAPTURE_AGE_DAYS = 21
+
+
+@dataclass(frozen=True)
+class MirrorSpec:
+    template: str
+    headers: tuple[tuple[str, str], ...] = ()
+    timeout: int = 30
+    max_capture_age_days: int | None = None
+
+
 SOURCE_MIRRORS = (
-    "https://api.allorigins.win/raw?url={quoted}",
-    "https://r.jina.ai/{url}",
+    MirrorSpec(
+        template="https://r.jina.ai/{url}",
+        headers=(
+            ("X-Engine", "curl"),
+            ("X-Timeout", "25"),
+            ("X-Respond-With", "html"),
+        ),
+        timeout=35,
+    ),
+    MirrorSpec(
+        template="https://r.jina.ai/{url}",
+        headers=(
+            ("X-Engine", "browser"),
+            ("X-Timeout", "40"),
+            ("X-Respond-With", "html"),
+        ),
+        timeout=50,
+    ),
+    MirrorSpec(
+        template="https://web.archive.org/web/{wayback_stamp}id_/{url}",
+        timeout=30,
+        max_capture_age_days=WAYBACK_MAX_CAPTURE_AGE_DAYS,
+    ),
 )
+
+
+def _wayback_capture_age_days(resolved_url: str, now: datetime | None = None) -> float | None:
+    """Age in days of a Wayback capture, read off the URL it resolved to.
+
+    Returns None when the resolved URL carries no 14-digit capture stamp, i.e.
+    the page was never archived and Wayback served its "not in archive" page.
+    """
+    match = re.search(r"/web/(\d{14})", resolved_url or "")
+    if not match:
+        return None
+    try:
+        captured = datetime.strptime(match.group(1), "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+    reference = now or datetime.now(timezone.utc)
+    return (reference - captured).total_seconds() / 86400.0
 
 
 def _download_via_mirror(url: str, timeout: int) -> Download:
     last_error: Exception | None = None
-    for template in SOURCE_MIRRORS:
-        mirror_url = template.format(quoted=urllib.parse.quote(url, safe=""), url=url)
+    attempts: list[str] = []
+    for spec in SOURCE_MIRRORS:
+        mirror_url = spec.template.format(
+            quoted=urllib.parse.quote(url, safe=""),
+            url=url,
+            wayback_stamp=datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S"),
+        )
         try:
             request = urllib.request.Request(
                 mirror_url,
@@ -1124,15 +1200,24 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
                     "User-Agent": USER_AGENT,
                     "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.5",
                     "Accept-Language": "en-IN,en;q=0.8",
-                    "X-Return-Format": "html",
+                    **dict(spec.headers),
                 },
             )
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            with urllib.request.urlopen(request, timeout=max(timeout, spec.timeout)) as response:
                 data = response.read(MAX_DOWNLOAD_BYTES + 1)
                 if len(data) > MAX_DOWNLOAD_BYTES:
                     raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
                 if response.status != 200 or len(data) < 256:
                     raise ValueError("mirror returned an unusable response")
+                if spec.max_capture_age_days is not None:
+                    age = _wayback_capture_age_days(response.geturl())
+                    if age is None:
+                        raise ValueError("archive has no capture for this URL")
+                    if age > spec.max_capture_age_days:
+                        raise ValueError(
+                            f"archived capture is {age:.0f} day(s) old "
+                            f"(limit {spec.max_capture_age_days})"
+                        )
                 return Download(
                     # Keep the OFFICIAL url so every downstream link/fingerprint
                     # continues to point at the source, not at the mirror.
@@ -1142,7 +1227,13 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
                 )
         except (OSError, ValueError, urllib.error.URLError) as exc:
             last_error = exc
-    raise RuntimeError(f"mirror fetch failed: {last_error}")
+            attempts.append(f"{type(exc).__name__}: {exc}")
+    # Name every mirror that was tried: sourceHealth stores this string, so a
+    # future reader can tell "the archive was too stale" apart from "the reader
+    # refused the site" without re-running the fetch.
+    detail = " | ".join(attempts)
+    suffix = f" [{detail}]" if attempts else ""
+    raise RuntimeError(f"mirror fetch failed: {last_error}{suffix}")
 
 
 def _should_try_mirror(error: Exception | None) -> bool:

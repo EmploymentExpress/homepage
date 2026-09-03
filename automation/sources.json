@@ -1123,6 +1123,7 @@
     },
     {
       "id": "chandigarh-administration-public-notices",
+      "proxyFallback": true,
       "enabled": true,
       "name": "Chandigarh Administration Public Notices",
       "department": "Chandigarh Administration",
