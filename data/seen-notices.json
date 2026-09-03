@@ -7317,18 +7317,6 @@
       "lastFailureAt": "2026-09-03T12:32:44Z",
       "lastError": "<urlopen error timed out>"
     },
-    "custom-c8770f2e6b8f": {
-      "lastSuccessAt": "2026-08-31T12:18:34Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-09-03T12:32:44Z",
-      "lastError": "<urlopen error timed out>"
-    },
-    "custom-f12474453dfd": {
-      "lastSuccessAt": "2026-08-31T12:18:34Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-09-03T12:32:44Z",
-      "lastError": "<urlopen error timed out>"
-    },
     "custom-a4634bb37126": {
       "lastSuccessAt": "2026-08-30T12:18:38Z",
       "consecutiveFailures": 0

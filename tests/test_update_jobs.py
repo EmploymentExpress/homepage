@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import json
 import re
@@ -2668,3 +2669,163 @@ class PunjabCrossListingTests(unittest.TestCase):
                 unique.append(job)
         self.assertEqual({job["id"] for job in self.flagged(unique)}, expected,
                          "the published store lost alsoInPunjab while being rewritten")
+
+
+class MirrorReconnectTests(unittest.TestCase):
+    """The mirrors are the only transport for sources that refuse datacenter IPs.
+
+    The chain had silently died: api.allorigins.win returned a service-wide
+    Cloudflare 522 (/raw) and 520 (/get) for every URL, and r.jina.ai answered
+    HTTP 422 because its browser engine gives up on `networkidle` after 15s.
+    32 of 66 monitored sources sat at consecutiveFailures: 24 as a result.
+    """
+
+    def _mirror_response(self, resolved_url, content_type="text/html"):
+        payload = b"<html>" + b"x" * 400 + b"</html>"
+
+        class FakeHeaders(dict):
+            def get_content_type(self):
+                return self.get("Content-Type", "")
+
+        class FakeResponse:
+            status = 200
+
+            def __init__(self):
+                self.headers = FakeHeaders({"Content-Type": content_type})
+
+            def geturl(self):
+                return resolved_url
+
+            def read(self, amount=-1):
+                return payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        return FakeResponse()
+
+    def test_dead_allorigins_is_gone_from_the_mirror_chain(self):
+        templates = " ".join(spec.template for spec in monitor.SOURCE_MIRRORS)
+        self.assertNotIn("allorigins", templates, "allorigins is returning Cloudflare 522 for every URL")
+
+    def test_mirror_chain_tries_reader_curl_engine_before_browser_engine(self):
+        specs = [spec for spec in monitor.SOURCE_MIRRORS if "r.jina.ai" in spec.template]
+        self.assertGreaterEqual(len(specs), 2, "both reader engines must be tried")
+        self.assertEqual([dict(spec.headers).get("X-Engine") for spec in specs[:2]], ["curl", "browser"])
+        for spec in specs:
+            self.assertGreater(
+                int(dict(spec.headers)["X-Timeout"]),
+                15,
+                "X-Timeout must beat jina's 15s networkidle cap that produced the 422s",
+            )
+
+    def test_wayback_capture_age_parses_the_resolved_stamp(self):
+        now = datetime(2026, 9, 3, tzinfo=timezone.utc)
+        fresh = monitor._wayback_capture_age_days(
+            "https://web.archive.org/web/20260901000000id_/https://sssb.punjab.gov.in/", now
+        )
+        self.assertAlmostEqual(fresh, 2.0, places=3)
+        stale = monitor._wayback_capture_age_days(
+            "https://web.archive.org/web/20250829130530id_/https://sssb.punjab.gov.in/", now
+        )
+        self.assertGreater(stale, 300, "a year-old capture must not look fresh")
+        self.assertIsNone(monitor._wayback_capture_age_days("https://web.archive.org/web/2/x.gov.in/"))
+
+    def test_wayback_mirror_rejects_a_stale_capture(self):
+        target = "https://sssb.punjab.gov.in/"
+        with patch.object(monitor, "SOURCE_MIRRORS", monitor.SOURCE_MIRRORS[-1:]), patch.object(
+            monitor.urllib.request,
+            "urlopen",
+            return_value=self._mirror_response("https://web.archive.org/web/20250829130530id_/" + target),
+        ):
+            with self.assertRaises(RuntimeError) as ctx:
+                monitor._download_via_mirror(target, timeout=5)
+        self.assertIn("day(s) old", str(ctx.exception))
+
+    def test_wayback_mirror_serves_a_fresh_capture_under_the_official_url(self):
+        target = "https://sssb.punjab.gov.in/"
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+        with patch.object(monitor, "SOURCE_MIRRORS", monitor.SOURCE_MIRRORS[-1:]), patch.object(
+            monitor.urllib.request,
+            "urlopen",
+            return_value=self._mirror_response(f"https://web.archive.org/web/{stamp}id_/{target}"),
+        ):
+            download = monitor._download_via_mirror(target, timeout=5)
+        self.assertEqual(download.url, target, "a mirror is transport only; the official URL must be kept")
+
+    def test_mirror_error_message_names_every_attempt(self):
+        with patch.object(monitor.urllib.request, "urlopen", side_effect=urllib.error.URLError("boom")):
+            with self.assertRaises(RuntimeError) as ctx:
+                monitor._download_via_mirror("https://sssb.punjab.gov.in/", timeout=5)
+        message = str(ctx.exception)
+        self.assertIn("mirror fetch failed", message)
+        self.assertEqual(
+            message.count("URLError"),
+            len(monitor.SOURCE_MIRRORS),
+            "sourceHealth stores this string; every mirror tried must be named",
+        )
+
+
+class ReconnectConfigTests(unittest.TestCase):
+    """A refusal-class source with no proxyFallback can never reconnect."""
+
+    ROOT = Path(__file__).resolve().parents[1]
+    REFUSAL = re.compile(r"403|timed out|Connection refused|CERTIFICATE_VERIFY|422", re.I)
+
+    def _health(self):
+        path = self.ROOT / "data" / "seen-notices.json"
+        return json.loads(path.read_text(encoding="utf-8")).get("sourceHealth", {})
+
+    def _link_id(self, url):
+        return "custom-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+
+    def test_failing_registry_links_opt_into_mirrors(self):
+        links = json.loads(
+            (self.ROOT / "data" / "notification-source-links.json").read_text(encoding="utf-8")
+        )["links"]
+        health = self._health()
+        gaps = [
+            link["url"]
+            for link in links
+            if self.REFUSAL.search((health.get(self._link_id(link["url"])) or {}).get("lastError", ""))
+            and not link.get("proxyFallback")
+        ]
+        self.assertEqual(gaps, [], f"refusal-class sources that cannot reach a mirror: {gaps}")
+
+    def test_chandigarh_administration_opts_into_mirrors(self):
+        sources = json.loads((self.ROOT / "automation" / "sources.json").read_text(encoding="utf-8"))["sources"]
+        entry = next(s for s in sources if s.get("id") == "chandigarh-administration-public-notices")
+        self.assertTrue(
+            entry.get("proxyFallback"),
+            "chandigarh.gov.in serves fine but fails Python's TLS chain; mirrors are the only transport",
+        )
+
+    def test_repointed_sources_stay_on_their_own_official_host(self):
+        links = json.loads(
+            (self.ROOT / "data" / "notification-source-links.json").read_text(encoding="utf-8")
+        )["links"]
+        repointed = {link["url"] for link in links if link.get("repointedReason")}
+        self.assertEqual(
+            repointed,
+            {"https://www.idsj.org/news-announcements", "https://gonda.kvk4.in/recruitment.php"},
+        )
+        for link in links:
+            if link.get("repointedReason"):
+                # host_name() normalises away the www. prefix.
+                self.assertIn(monitor.host_name(link["url"]), {"idsj.org", "gonda.kvk4.in"})
+                self.assertFalse(monitor.is_discovery_host(link["url"]))
+
+    def test_no_orphaned_health_entries_remain_for_unconfigured_urls(self):
+        health = self._health()
+        sources = json.loads((self.ROOT / "automation" / "sources.json").read_text(encoding="utf-8"))["sources"]
+        links = json.loads(
+            (self.ROOT / "data" / "notification-source-links.json").read_text(encoding="utf-8")
+        )["links"]
+        live = {s.get("id") for s in sources}
+        urls = {s.get("url") for s in sources} | {link["url"] for link in links}
+        live |= {self._link_id(url) for url in urls if url}
+        orphans = [key for key in health if key.startswith("custom-") and key not in live]
+        self.assertEqual(orphans, [], f"health entries for URLs no longer configured: {orphans}")
