@@ -2652,7 +2652,38 @@ class PunjabCrossListingTests(unittest.TestCase):
     def test_monitor_passes_never_strip_the_curation_flag(self):
         jobs = json.loads(json.dumps(self.store["jobs"]))
         expected = {job["id"] for job in self.flagged(jobs)}
+
+        # One settling round first: the live store legitimately changes under
+        # these passes between publishes - sanitize drops recruitment notices
+        # once their last date has passed (data/auto-jobs.json is only purged
+        # by the scheduled update step, so the test can see already-expired
+        # notices). The curation invariant is about the records that survive,
+        # not about freezing the store in time.
         monitor.refresh_badges(jobs, self.now, 72)
+        for pass_name in (
+            "normalize_stored_departments", "reclassify_stored_jobs",
+            "apply_extensions", "strip_internal_job_fields",
+        ):
+            getattr(monitor, pass_name)(jobs)
+        monitor.sanitize_published_jobs(jobs, self.now)
+
+        surviving = {job["id"] for job in self.flagged(jobs)}
+        still_present = {job["id"] for job in jobs}
+        self.assertFalse((expected & still_present) - surviving,
+                         "the monitor passes stripped alsoInPunjab from a surviving record")
+        # Records may only leave the cross-listing because their dated notice
+        # legitimately expired - not because a pass dropped or de-flagged them.
+        expired = {
+            job["id"] for job in self.flagged(self.store["jobs"])
+            if monitor.clean_text(job.get("alertType", "recruitment")).lower()
+            in {"recruitment", "admission"}
+            and monitor._dated_notice_is_active(job.get("lastDate", ""), self.now) is False
+        }
+        self.assertEqual(surviving, expected - expired,
+                         "the monitor passes lost cross-listed records that had not expired")
+
+        # A settled store must not be rewritten again (no churn commit, and no
+        # silent flag strip) - the regression this test guards against.
         for pass_name in (
             "normalize_stored_departments", "reclassify_stored_jobs",
             "apply_extensions", "strip_internal_job_fields",
@@ -2666,5 +2697,5 @@ class PunjabCrossListingTests(unittest.TestCase):
             if key not in known:
                 known.add(key)
                 unique.append(job)
-        self.assertEqual({job["id"] for job in self.flagged(unique)}, expected,
+        self.assertEqual({job["id"] for job in self.flagged(unique)}, surviving,
                          "the published store lost alsoInPunjab while being rewritten")
