@@ -655,6 +655,31 @@
         "ibps specialist officer",
         "ibps rrb"
       ]
+    },
+    {
+      "id": "pgimer",
+      "proxyFallback": true,
+      "name": "PGIMER Chandigarh",
+      "department": "Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh",
+      "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/Vacancies/JSP/VACANCIE_VIEW.jsp?countt=0",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "Chandigarh",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "pgimer",
+        "post graduate institute of medical education and research",
+        "post graduate institute of medical education and research (pgimer)",
+        "pgimer chandigarh",
+        "pgimer chd"
+      ]
     }
   ]
 }
