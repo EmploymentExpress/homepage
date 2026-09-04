@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-04T12:32:22Z",
+  "updatedAt": "2026-09-04T18:26:52Z",
   "jobs": [
     {
       "id": 183622126000108,
-      "title": "CSIR–National Aerospace Laboratories (CSIR–NAL) — Result Notification of engagement of Project Staff on contract basis Advt no. 13/2026/PS- 21st & 25th August 2026",
+      "title": "CSIR–National Aerospace Laboratories (CSIR–NAL) — Result Notification of engagement of Project Staff on contract basis Advt no. 13/2026/PS- 24th & 25th August 2026",
       "department": "CSIR–National Aerospace Laboratories (CSIR–NAL)",
       "vacancies": "See Notification",
       "qualification": "12th / ITI / Diploma",
@@ -6097,7 +6097,7 @@
     },
     {
       "id": 222167597830746,
-      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South MTS, Cook, Cleaner, Fireman, Tradesman & Various Post",
+      "title": "Ministry of Defence, ASC Centre (South), Bangalore — Army ASC Centre South Recruitment 2026 Offline Application Form",
       "department": "Ministry of Defence, ASC Centre (South), Bangalore",
       "vacancies": "See Notification",
       "qualification": "See Official Notification",
@@ -6529,7 +6529,7 @@
     },
     {
       "id": 173105104324831,
-      "title": "Guru Nanak Dev University (GNDU), Amritsar — Admission & Academic Info",
+      "title": "Guru Nanak Dev University (GNDU), Amritsar — Score card performa/Guidelines for the post of Medical Officer",
       "department": "Guru Nanak Dev University (GNDU), Amritsar",
       "vacancies": "6 Posts",
       "qualification": "Graduate / Post Graduate",
@@ -6539,9 +6539,9 @@
       "examDate": "See Official Notification",
       "location": "Amritsar, Punjab",
       "applyMode": "Online / As Notified",
-      "alertType": "admission",
-      "badge": "NEW ADMISSION",
-      "badgeColor": "bg-purple-600",
+      "alertType": "result",
+      "badge": "NEW RESULT",
+      "badgeColor": "bg-rose-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "advtNo": "G.S.R.72/CONST./ART.309/AMD",
@@ -6551,13 +6551,13 @@
       "age": "See Official Notification",
       "details": "__________ Name of the Candidate : _______________________ Score card performa/Guidelines for the post of Medical Officer in the University Health Centre The Distribution of 100 Marks will be as follows: (A) Academic Background (10%) (B) Experience = (10%) (C) Screening Test = (40%) (D) Assessment of Domain Knowledge (20%) (Assessment by the Experts) (E) Interview performance (20%) (Assessment by the Interview Board) Score Card Proforma (To be filled in by the Candidate) (A) Academic Background (10 %) Max. Category Experience (in years) Marks Claimed Marks Verified 1 Experience (1 mark per year) Total of the Mark Claimed : ________________ Date :_______________ Signature of the Candidate Not",
       "howToApply": [
-        "Open the official admission notification and review eligible courses, criteria and dates.",
-        "Fill the online or offline admission form with required student and parent details.",
-        "Submit the registration and save the acknowledgement receipt."
+        "Open the official result or answer-key link below.",
+        "Match the post, advertisement number, examination date and set/category carefully.",
+        "Download the official file and retain it for reference."
       ],
       "pdfLink": "https://digital.gndu.ac.in/pdf/news/ScoreCardMedicalOfficer.pdf",
       "applyLink": "https://collegeadmissions.gndu.ac.in/loginNew.aspx",
-      "applyLabel": "Open Admission Notice",
+      "applyLabel": "Open Official Result",
       "sourceName": "Guru Nanak Dev University Recruitment",
       "sourceUrl": "https://digital.gndu.ac.in/Career-with-us.aspx",
       "noticeUrl": "https://digital.gndu.ac.in/pdf/news/ScoreCardMedicalOfficer.pdf",
