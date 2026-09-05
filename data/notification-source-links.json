@@ -1021,6 +1021,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-03T06:32:21Z"
+    },
+    {
+      "url": "https://pucb.bank.in/",
+      "name": "pucb.bank.in",
+      "department": "pucb.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-05T06:29:04Z"
     }
   ]
 }
