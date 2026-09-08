@@ -1057,6 +1057,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-05T12:28:39Z"
+    },
+    {
+      "url": "https://sahitya-akademi.gov.in/",
+      "name": "sahitya-akademi.gov.in",
+      "department": "sahitya-akademi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-08T12:33:16Z"
     }
   ]
 }
