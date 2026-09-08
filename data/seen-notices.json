@@ -1179,7 +1179,8 @@
         "fe5109c3c04ecaac16c0fb6ad9b6ddc3c6d0d1904828eea548973e78a336cd75",
         "a10d0f0b5a26d800163d00587082a50f6951e7d8f744fa7146a3d109bdccd40c",
         "0e9851e67bbee7fe8e8f6cf949dfc3180272db3b88ad7551c2fb05658749c94c",
-        "5c25105c0c135c8eacb636c248df07465488afaceaba7d766456efa032840d1d"
+        "5c25105c0c135c8eacb636c248df07465488afaceaba7d766456efa032840d1d",
+        "cafb85a01c9e5296fc5fa89710a62495905f3cbf67104c3d936102de1889bbb1"
       ]
     },
     "pgimer": {
@@ -7371,12 +7372,23 @@
       "startDate": "07-09-2026",
       "lastDate": "07-10-2026",
       "pageTitle": "SSC CHSL 10+2 Level Recruitment 2026 | SSC Clerk Vacancy 2026"
+    },
+    "https://www.speedjob.in/rrb-paramedical-staff-recruitment-2026/": {
+      "extractorVersion": 2,
+      "form": "",
+      "notification": "https://www.speedjob.in/wp-content/uploads/2026/09/RRB-Paramedical-Staff-Recruitment-2026.webp",
+      "website": "",
+      "applyMode": "online",
+      "department": "Railway Recruitment Board (RRB)",
+      "startDate": "15-09-2026",
+      "lastDate": "14-10-2026",
+      "pageTitle": "RRB Paramedical Staff Recruitment 2026 | Railway Vacancy 2026"
     }
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-legal-services-authority": {
@@ -7400,28 +7412,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-health": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chdsw": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "pilbs": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "punjab-sports": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "tmc": {
@@ -7441,13 +7453,13 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "chandigarh-administration-public-notices": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "cup": {
@@ -7463,13 +7475,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -7477,13 +7489,13 @@
       "consecutiveFailures": 0
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -7491,8 +7503,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -7516,13 +7528,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -7530,8 +7542,8 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
@@ -7551,18 +7563,18 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -7582,18 +7594,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 41,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 42,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 37,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 38,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "mirror fetch failed: HTTP Error 422: Unprocessable Entity"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 37,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 38,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -7609,8 +7621,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 36,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 37,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
@@ -7618,14 +7630,14 @@
       "consecutiveFailures": 0
     },
     "custom-ac818ccf7e1c": {
-      "consecutiveFailures": 29,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 30,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-1c5eb2ad0b22": {
-      "consecutiveFailures": 22,
+      "consecutiveFailures": 23,
       "lastSuccessAt": "2026-09-01T12:30:31Z",
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b97daddda9af": {
@@ -7634,8 +7646,8 @@
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-501ebf7f4ad9": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-9a97990dc80b": {
@@ -7643,8 +7655,8 @@
       "consecutiveFailures": 0
     },
     "custom-5df32e916383": {
-      "consecutiveFailures": 26,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 27,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dc214c99342a": {
@@ -7656,28 +7668,26 @@
       "consecutiveFailures": 0
     },
     "custom-4e8822c8e2c1": {
-      "consecutiveFailures": 24,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 25,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-5758e613fcd0": {
-      "consecutiveFailures": 24,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 25,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-ea47f2a4f8e2": {
-      "lastSuccessAt": "2026-09-03T12:32:44Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
-      "lastError": "HTTP Error 502: Bad Gateway"
+      "lastSuccessAt": "2026-09-08T06:32:33Z",
+      "consecutiveFailures": 0
     },
     "pgimer": {
       "lastSuccessAt": "2026-09-04T18:26:52Z",
       "consecutiveFailures": 0
     },
     "custom-bff0bd9d1cf9": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-09-08T00:37:20Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-09-08T06:32:33Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dd40f8b9f110": {
