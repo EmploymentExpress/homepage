@@ -11,10 +11,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import html
 import io
 import json
+import os
 import re
+import ssl
 import sys
 import time
 import urllib.error
@@ -1082,7 +1085,7 @@ def fingerprint(candidate: Candidate) -> str:
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 
-def _download_direct(url: str, timeout: int) -> Download:
+def _download_direct(url: str, timeout: int, ssl_fallback: bool = False) -> Download:
     request = urllib.request.Request(
         url,
         headers={
@@ -1092,7 +1095,13 @@ def _download_direct(url: str, timeout: int) -> Download:
             "Accept-Encoding": "identity",
         },
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    # R4: some official portals serve content over a broken certificate chain
+    # (observed: CERTIFICATE_VERIFY_FAILED on 4 sources for 47 runs). For those
+    # sources only — opt-in via "sslFallback": true — the public listing is
+    # fetched without certificate verification. It is a read-only fetch of
+    # public pages and every published link still comes from that page source.
+    context = ssl._create_unverified_context() if ssl_fallback else None
+    with urllib.request.urlopen(request, timeout=timeout, context=context) as response:
         length = response.headers.get("Content-Length")
         if length and int(length) > MAX_DOWNLOAD_BYTES:
             raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
@@ -1110,15 +1119,73 @@ def _download_direct(url: str, timeout: int) -> Download:
 # (for example a firewall that drops datacenter IPs mid-TLS-handshake). They
 # relay the exact public page content; the parsed result is always attributed
 # to the original official URL, never to the mirror.
+#
+# Mirrors are ROTATED (R2): a mirror that recently succeeded is tried first and
+# a mirror that keeps failing is skipped for MIRROR_RETRY_COOLDOWN_HOURS before
+# being probed again. One dead mirror must never starve every failing source
+# (observed Aug-Sep 2026: allorigins alone returned HTTP 422 for 8 sources on
+# 47 consecutive runs while three other mirrors were never tried).
 SOURCE_MIRRORS = (
     "https://api.allorigins.win/raw?url={quoted}",
     "https://r.jina.ai/{url}",
+    "https://api.codetabs.com/v1/proxy/?quest={quoted}",
+    "https://corsproxy.io/?url={quoted}",
 )
+MIRROR_RETRY_COOLDOWN_HOURS = 24
+MIRROR_MEMORY: dict[str, dict[str, Any]] = {}
+
+
+def load_mirror_memory(state: dict[str, Any]) -> None:
+    """Load per-mirror health from seen-notices.json at the start of a run."""
+    MIRROR_MEMORY.clear()
+    stored = state.get("mirrorHealth")
+    if isinstance(stored, dict):
+        for template, stats in stored.items():
+            if isinstance(stats, dict):
+                MIRROR_MEMORY[template] = dict(stats)
+
+
+def save_mirror_memory(state: dict[str, Any]) -> bool:
+    """Persist per-mirror health; returns True when the state changed."""
+    stored = state.get("mirrorHealth")
+    if stored == MIRROR_MEMORY:
+        return False
+    state["mirrorHealth"] = {template: dict(stats) for template, stats in MIRROR_MEMORY.items()}
+    return True
+
+
+def _remember_mirror(template: str, success: bool, now: datetime) -> None:
+    stats = MIRROR_MEMORY.setdefault(template, {})
+    if success:
+        stats["consecutiveFailures"] = 0
+        stats["lastSuccessAt"] = now.isoformat().replace("+00:00", "Z")
+        stats.pop("lastFailureAt", None)
+    else:
+        stats["consecutiveFailures"] = int(stats.get("consecutiveFailures") or 0) + 1
+        stats["lastFailureAt"] = now.isoformat().replace("+00:00", "Z")
+
+
+def _ordered_mirror_templates(now: datetime) -> tuple[str, ...]:
+    """Healthy mirrors first; failing mirrors last (and only after cooldown)."""
+
+    def rank(template: str) -> tuple[int, int, str]:
+        stats = MIRROR_MEMORY.get(template) or {}
+        failures = int(stats.get("consecutiveFailures") or 0)
+        last_failure = parse_timestamp(stats.get("lastFailureAt") or "")
+        cooling_down = bool(
+            last_failure
+            and failures >= 2
+            and (now - last_failure).total_seconds() < MIRROR_RETRY_COOLDOWN_HOURS * 3600
+        )
+        return (1 if cooling_down else 0, failures, last_failure.isoformat() if last_failure else "")
+
+    return tuple(sorted(SOURCE_MIRRORS, key=rank))
 
 
 def _download_via_mirror(url: str, timeout: int) -> Download:
     last_error: Exception | None = None
-    for template in SOURCE_MIRRORS:
+    now = datetime.now(timezone.utc)
+    for template in _ordered_mirror_templates(now):
         mirror_url = template.format(quoted=urllib.parse.quote(url, safe=""), url=url)
         try:
             request = urllib.request.Request(
@@ -1136,14 +1203,16 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
                     raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
                 if response.status != 200 or len(data) < 256:
                     raise ValueError("mirror returned an unusable response")
+                _remember_mirror(template, True, now)
+                # Keep the OFFICIAL url so every downstream link/fingerprint
+                # continues to point at the source, not at the mirror.
                 return Download(
-                    # Keep the OFFICIAL url so every downstream link/fingerprint
-                    # continues to point at the source, not at the mirror.
                     url=url,
                     content_type=(response.headers.get_content_type() or "").lower(),
                     data=data,
                 )
         except (OSError, ValueError, urllib.error.URLError) as exc:
+            _remember_mirror(template, False, now)
             last_error = exc
     raise RuntimeError(f"mirror fetch failed: {last_error}")
 
@@ -1162,15 +1231,31 @@ def _should_try_mirror(error: Exception | None) -> bool:
     return False
 
 
-def fetch_url(url: str, timeout: int = 25, retries: int = 2, proxy_fallback: bool = False) -> Download:
+def fetch_url(
+    url: str,
+    timeout: int = 25,
+    retries: int = 2,
+    proxy_fallback: bool = False,
+    ssl_fallback: bool = False,
+) -> Download:
     last_error: Exception | None = None
     for attempt in range(retries):
         try:
-            return _download_direct(url, timeout)
+            return _download_direct(url, timeout, ssl_fallback=ssl_fallback)
         except (OSError, ValueError, urllib.error.URLError) as exc:
             last_error = exc
             if attempt + 1 < retries:
                 time.sleep(1.2 * (attempt + 1))
+    # R3: transient 5xx answers are common on these portals (observed:
+    # AIIMS Bathinda answers one request with 500 and the next with the real
+    # page). Give server errors and rate limits one extra direct attempt with
+    # a longer pause before any mirror is tried.
+    if isinstance(last_error, urllib.error.HTTPError) and (last_error.code >= 500 or last_error.code == 429):
+        time.sleep(2.5)
+        try:
+            return _download_direct(url, timeout, ssl_fallback=ssl_fallback)
+        except (OSError, ValueError, urllib.error.URLError) as exc:
+            last_error = exc
     if proxy_fallback and _should_try_mirror(last_error):
         try:
             download = _download_via_mirror(url, timeout)
@@ -1188,6 +1273,83 @@ def decode_document(download: Download) -> str:
         except UnicodeDecodeError:
             continue
     return download.data.decode("utf-8", errors="replace")
+
+
+# ---------------------------------------------------------------------------
+# R1 — a 200 answer is not a successful scan.
+#
+# Some official portals (observed: PGIMER Chandigarh) answer automated fetches
+# with HTTP 200 and a tiny HTML error stub ("Could not complete the request.
+# Some error occured.Please Try again."). The old pipeline treated that as a
+# healthy scan with zero notices, so the source looked fine in sourceHealth
+# while nothing was ever published. A listing that returns a stub — or that
+# carries no anchors at all — is a FAILURE: it is retried through a read-only
+# mirror when the source allows it, and recorded in sourceHealth otherwise.
+# ---------------------------------------------------------------------------
+ERROR_STUB_MARKERS = (
+    "could not complete the request",
+    "some error occured",
+    "some error occurred",
+    "error establishing a database connection",
+    "site is under maintenance",
+    "under maintenance",
+    "service temporarily unavailable",
+    "temporarily unavailable",
+)
+# A stub page is tiny; a real listing page is large, so markers are only
+# trusted on short bodies (a real notice page may legitimately mention
+# "please try again" inside help text).
+ERROR_STUB_MAX_BODY_CHARS = 2500
+
+
+def is_error_stub(text: str) -> bool:
+    lowered = clean_text(text).lower()
+    if len(lowered) > ERROR_STUB_MAX_BODY_CHARS:
+        return False
+    return any(marker in lowered for marker in ERROR_STUB_MARKERS)
+
+
+def listing_is_error_stub(download: Download) -> bool:
+    if (download.content_type or "").lower() == "application/pdf":
+        return False
+    return is_error_stub(decode_document(download))
+
+
+def fetch_source_listing(source: dict[str, Any], source_url: str) -> Download:
+    """Fetch an official listing, enforcing the error-stub rule (R1).
+
+    Returns the first download — direct, or via a read-only mirror after a stub
+    or an anchor-less listing — that actually carries candidate anchors.
+    Raises RuntimeError otherwise, so the caller records a source failure
+    instead of silently treating the scan as successful-but-empty.
+    """
+    timeout = int(source.get("timeout", 25))
+    proxy_fallback = bool(source.get("proxyFallback"))
+    download = fetch_url(
+        source_url,
+        timeout=timeout,
+        proxy_fallback=proxy_fallback,
+        ssl_fallback=bool(source.get("sslFallback")),
+    )
+    if (download.content_type or "").lower() == "application/pdf":
+        return download
+    candidates = source_candidates(download)
+    stub = listing_is_error_stub(download)
+    if candidates and not stub:
+        return download
+    reason = "error stub" if stub else "no notice links"
+    if not proxy_fallback:
+        raise RuntimeError(f"official listing answered HTTP 200 with {reason}")
+    mirror_download = _download_via_mirror(source_url, timeout)
+    if (mirror_download.content_type or "").lower() == "application/pdf":
+        return mirror_download
+    if source_candidates(mirror_download) and not listing_is_error_stub(mirror_download):
+        print(
+            f"  Direct listing answered 200 with {reason}; fetched the real listing via read-only mirror",
+            file=sys.stderr,
+        )
+        return mirror_download
+    raise RuntimeError(f"official listing answered HTTP 200 with {reason} (direct and mirror)")
 
 
 def local_name(tag: str) -> str:
@@ -1846,6 +2008,76 @@ def infer_age(text: str) -> str:
     return "See Official Notification"
 
 
+# R9: fee and exam-date extraction. Both are filled ONLY on a clear labelled
+# match in the official notice text; anything ambiguous keeps the placeholder
+# so a fee or exam date is never guessed (R8).
+FEE_AMOUNT_PATTERN = r"(?:rs\.?|₹|inr)\s*([0-9]{1,3}(?:,[0-9]{3})*)\s*(?:/-)?"
+FEE_CATEGORY_GENERAL = r"(?:general|unreserved|\bur\b|\bgen\b|obc)"
+FEE_CATEGORY_RESERVED = r"(?:sc\s*/?\s*st|sc/st|\bsc\b|\bst\b|\bew\b|\bewsd\b)"
+FEE_NIL_PATTERN = (
+    r"(?is)\b(?:sc\s*/?\s*st|sc/st|\bsc\b|\bst\b|pwbd|pwd|ph|female|women)\b"
+    r"[^.;]{0,50}?\b(nil|no\s+fee|nil/no\s+fee|exempt(?:ed)?|waived)\b"
+)
+
+
+def _format_fee(amount: str) -> str:
+    return f"₹{amount}"
+
+
+def infer_fee(text: str) -> tuple[str, str]:
+    """Return (general fee, reserved fee); placeholders when no clear match."""
+    general_patterns = (
+        rf"(?is){FEE_AMOUNT_PATTERN}\s*(?:for|to)\s+{FEE_CATEGORY_GENERAL}\b",
+        rf"(?is)\b{FEE_CATEGORY_GENERAL}\b[^.;]{{0,60}}?{FEE_AMOUNT_PATTERN}",
+    )
+    reserved_patterns = (
+        rf"(?is){FEE_AMOUNT_PATTERN}\s*(?:for|to)\s+{FEE_CATEGORY_RESERVED}\b",
+        rf"(?is)\b{FEE_CATEGORY_RESERVED}\b[^.;]{{0,60}}?{FEE_AMOUNT_PATTERN}",
+    )
+    fee_general = ""
+    fee_reserved = ""
+    for pattern in general_patterns:
+        match = re.search(pattern, text)
+        if match:
+            fee_general = _format_fee(match.group(1))
+            break
+    for pattern in reserved_patterns:
+        match = re.search(pattern, text)
+        if match:
+            fee_reserved = _format_fee(match.group(1))
+            break
+    if not fee_reserved:
+        nil_match = re.search(FEE_NIL_PATTERN, text)
+        if nil_match:
+            fee_reserved = "Nil"
+    return (
+        fee_general or "See Official Notification",
+        fee_reserved or "See Official Notification",
+    )
+
+
+def infer_fee_mode(text: str) -> str:
+    lowered = clean_text(text).lower()
+    if re.search(r"\b(?:online\s+(?:payment|mode)|net\s*banking|debit\s+card|credit\s+card|upi)\b", lowered):
+        return "Online"
+    if re.search(r"\b(?:demand\s+draft|bank\s+challan|offline\s+payment)\b", lowered):
+        return "Offline"
+    return "As Notified"
+
+
+EXAM_DATE_LABELS = (
+    r"exam(?:ination)?\s+date"
+    r"|date\s+of\s+(?:the\s+)?(?:exam(?:ination)?|cbt|written\s+exam(?:ination)?|online\s+exam(?:ination)?)"
+    r"|cbt\s+date"
+    r"|(?:exam(?:ination)?|cbt|written\s*test)\s*\)?\s+(?:will\s+(?:be\s+)?(?:held|conducted)\s+on|is\s+scheduled\s+(?:to\s+be\s+held\s+)?on|is\s+on)"
+)
+
+
+def infer_exam_date(text: str) -> str:
+    """Exam date only when the notice itself labels one; never guessed."""
+    return find_labelled_date(text, EXAM_DATE_LABELS)
+
+
 def useful_summary(text: str, title: str, source_name: str, notice_type: str) -> str:
     cleaned = clean_text(text)
     if cleaned:
@@ -1891,6 +2123,65 @@ def pdf_text(data: bytes) -> str:
         return ""
 
 
+# ---------------------------------------------------------------------------
+# R5 — endpoint health budget for detail/document fetches.
+#
+# When a portal's file endpoint (observed: PGIMER AbstractFilePath serves HTTP
+# 500 to every non-browser fetcher) or detail host is repeatedly unreachable,
+# every notice still burns its full detailTimeout on every run. After
+# DETAIL_FETCH_FAILURE_THRESHOLD consecutive failures the host is probed at
+# most once per DETAIL_FETCH_COOLDOWN_HOURS, so the six-hourly cycle stays
+# fast while the listing page itself remains the heartbeat.
+# ---------------------------------------------------------------------------
+DETAIL_FETCH_FAILURE_THRESHOLD = 3
+DETAIL_FETCH_COOLDOWN_HOURS = 24
+_DETAIL_FETCH_HEALTH: dict[str, dict[str, Any]] = {}
+
+
+def load_detail_fetch_health(state: dict[str, Any]) -> None:
+    _DETAIL_FETCH_HEALTH.clear()
+    stored = state.get("detailFetchHealth")
+    if isinstance(stored, dict):
+        for host, stats in stored.items():
+            if isinstance(stats, dict):
+                _DETAIL_FETCH_HEALTH[host] = dict(stats)
+
+
+def save_detail_fetch_health(state: dict[str, Any]) -> bool:
+    stored = state.get("detailFetchHealth")
+    if stored == _DETAIL_FETCH_HEALTH:
+        return False
+    state["detailFetchHealth"] = {host: dict(stats) for host, stats in _DETAIL_FETCH_HEALTH.items()}
+    return True
+
+
+def _detail_fetch_host(url: str) -> str:
+    return urllib.parse.urlsplit(url).netloc.lower()
+
+
+def _detail_fetch_cooldown_active(url: str, now: datetime) -> bool:
+    stats = _DETAIL_FETCH_HEALTH.get(_detail_fetch_host(url)) or {}
+    if int(stats.get("consecutiveFailures") or 0) < DETAIL_FETCH_FAILURE_THRESHOLD:
+        return False
+    last_failure = parse_timestamp(stats.get("lastFailureAt") or "")
+    return bool(
+        last_failure
+        and (now - last_failure).total_seconds() < DETAIL_FETCH_COOLDOWN_HOURS * 3600
+    )
+
+
+def _record_detail_fetch(url: str, success: bool, now: datetime) -> None:
+    host = _detail_fetch_host(url)
+    stats = _DETAIL_FETCH_HEALTH.setdefault(host, {})
+    if success:
+        stats["consecutiveFailures"] = 0
+        stats["lastSuccessAt"] = now.isoformat().replace("+00:00", "Z")
+        stats.pop("lastFailureAt", None)
+    else:
+        stats["consecutiveFailures"] = int(stats.get("consecutiveFailures") or 0) + 1
+        stats["lastFailureAt"] = now.isoformat().replace("+00:00", "Z")
+
+
 def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str, str, str, str]:
     """Return (searchable text, description source, best apply URL, best PDF URL).
 
@@ -1909,14 +2200,26 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
     if source.get("enrichDetails", True) is False:
         return combined, description_source, apply_url, pdf_url
 
+    # R5: skip the detail fetch while this host is in its daily-probe cooldown.
+    if _detail_fetch_cooldown_active(candidate.url, datetime.now(timezone.utc)):
+        print(
+            f"  Detail fetch skipped (endpoint repeatedly unreachable, daily probe budget): "
+            f"{_detail_fetch_host(candidate.url)}",
+            file=sys.stderr,
+        )
+        return combined, description_source, apply_url, pdf_url
+
     try:
         download = fetch_url(
             candidate.url,
             timeout=int(source.get("detailTimeout", 20)),
             retries=1,
             proxy_fallback=bool(source.get("proxyFallback")),
+            ssl_fallback=bool(source.get("sslFallback")),
         )
+        _record_detail_fetch(candidate.url, True, datetime.now(timezone.utc))
     except RuntimeError as exc:
+        _record_detail_fetch(candidate.url, False, datetime.now(timezone.utc))
         print(f"  Could not enrich {candidate.url}: {exc}", file=sys.stderr)
         return combined, description_source, apply_url, pdf_url
 
@@ -2093,6 +2396,10 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         searchable,
         r"start(?:ing)?\s+date|opening\s+date|applications?\s+open",
     )
+    # R9: fees, fee mode and the exam date are extracted from the notice text
+    # only on a clear labelled match; otherwise the honest placeholder stays.
+    fee_gen, fee_sc = infer_fee(searchable)
+    exam_date = infer_exam_date(searchable)
     discovered = now.replace(microsecond=0).isoformat().replace("+00:00", "Z")
     stable_id = int(hashlib.sha256(fingerprint(candidate).encode()).hexdigest()[:12], 16)
     badge, badge_color = notice_presentation(notice_type, True)
@@ -2119,7 +2426,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "startDate": start_date
         or (f"Published {candidate.notice_date}" if candidate.notice_date else "")
         or (f"Published {candidate.published_at[:10]}" if candidate.published_at else "Newly Published"),
-        "examDate": "See Official Notification",
+        "examDate": exam_date or "See Official Notification",
         "location": clean_text(source.get("location") or ("Punjab" if source.get("type") == "punjab" else "All India")),
         "applyMode": "Offline" if any(marker in searchable.lower() for marker in OFFLINE_APPLY_MARKERS) else "Online / As Notified",
         "alertType": notice_type,
@@ -2128,9 +2435,9 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "type": "punjab" if source.get("type") == "punjab" else "central",
         "categorySlug": clean_text(source.get("categorySlug") or "central"),
         "advtNo": infer_advertisement_number(searchable),
-        "feeGen": "See Official Notification",
-        "feeSC": "See Official Notification",
-        "feeMode": "As Notified",
+        "feeGen": fee_gen,
+        "feeSC": fee_sc,
+        "feeMode": infer_fee_mode(searchable),
         "age": infer_age(searchable),
         "details": useful_summary(description_source or searchable[:1200], title, source_name, notice_type),
         "howToApply": notice_steps(notice_type),
@@ -2441,6 +2748,9 @@ def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
         "advtNo",
         "age",
         "examDate",
+        "feeGen",
+        "feeSC",
+        "feeMode",
         "applyMode",
         "applyLabel",
         "details",
@@ -2519,6 +2829,27 @@ def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
             if found != "See Official Notification":
                 job["age"] = found
                 changed = True
+        # R9/R10: fees, fee mode and exam dates are backfilled from stored
+        # notice text too, so notices published before the extractors existed
+        # gain their details without a re-fetch.
+        if is_placeholder_detail(job.get("feeGen", "")) or is_placeholder_detail(job.get("feeSC", "")):
+            fee_gen, fee_sc = infer_fee(blob)
+            if is_placeholder_detail(job.get("feeGen", "")) and not is_placeholder_detail(fee_gen):
+                job["feeGen"] = fee_gen
+                changed = True
+            if is_placeholder_detail(job.get("feeSC", "")) and not is_placeholder_detail(fee_sc):
+                job["feeSC"] = fee_sc
+                changed = True
+        if is_placeholder_detail(job.get("feeMode", "")):
+            found = infer_fee_mode(blob)
+            if found != "As Notified":
+                job["feeMode"] = found
+                changed = True
+        if is_placeholder_detail(job.get("examDate", "")):
+            found = infer_exam_date(blob)
+            if found:
+                job["examDate"] = found
+                changed = True
         for field in ("pdfLink", "applyLink", "offlineFormLink"):
             if is_generic_homepage(job.get(field, "")):
                 job[field] = ""
@@ -2559,7 +2890,7 @@ def refresh_published_source_jobs(
     def refresh_score(item: tuple[Candidate, dict[str, Any]]) -> int:
         existing = item[1]
         score = 0
-        for field in ("lastDate", "vacancies", "advtNo", "age", "qualification"):
+        for field in ("lastDate", "vacancies", "advtNo", "age", "qualification", "feeGen", "feeSC", "examDate"):
             if is_placeholder_detail(existing.get(field, "")):
                 score += 2
         if _is_weak_public_link(existing.get("applyLink", ""), existing.get("sourceUrl", "")):
@@ -2714,6 +3045,39 @@ def record_source_failure(state: dict[str, Any], source_id: str, now: datetime, 
     entry["lastFailureAt"] = now.isoformat().replace("+00:00", "Z")
     entry["lastError"] = clean_text(error)[:300]
     return True
+
+
+# R12: a source that was initialized days ago but has never produced a single
+# notice fingerprint is "silent dead" — it looks healthy (200 answers, no
+# exceptions) while publishing nothing (observed: PGIMER initialized 04 Sep
+# 2026 with zero fingerprints for a week). Flag it in sourceHealth so the
+# workflow summary and a human can see it.
+SILENT_DEAD_AFTER_DAYS = 3
+
+
+def flag_silent_dead_sources(state: dict[str, Any], now: datetime) -> list[str]:
+    """Mark/unmark silentDead on every tracked source; returns newly flagged ids."""
+    newly_flagged: list[str] = []
+    health = state.setdefault("sourceHealth", {})
+    for source_id, entry in (state.get("sources") or {}).items():
+        if not isinstance(entry, dict):
+            continue
+        initialized = parse_timestamp(entry.get("initializedAt") or "")
+        fingerprints = entry.get("fingerprints") or []
+        health_entry = health.get(source_id) if isinstance(health.get(source_id), dict) else {}
+        silent = (
+            bool(initialized)
+            and not fingerprints
+            and (now - initialized).total_seconds() >= SILENT_DEAD_AFTER_DAYS * 86400
+        )
+        if silent and not health_entry.get("silentDead"):
+            health_entry["silentDead"] = True
+            health[source_id] = health_entry
+            newly_flagged.append(source_id)
+        elif not silent and health_entry.get("silentDead"):
+            health_entry.pop("silentDead", None)
+            health[source_id] = health_entry
+    return newly_flagged
 
 
 def read_json(path: Path, fallback: Any) -> Any:
@@ -2966,17 +3330,21 @@ def process_discovery_feeds(
     for feed in load_discovery_feeds():
         print(f"Checking discovery feed {feed['name']}: {feed['url']}")
         try:
-            download = fetch_url(
-                feed["url"],
-                timeout=25,
-                proxy_fallback=bool(feed.get("proxyFallback")),
-            )
+            # R1 + R11: the feed listing gets the same error-stub guard as
+            # official sources, and every feed outcome is recorded in
+            # sourceHealth so a dead feed is visible instead of silently
+            # skipped.
+            download = fetch_source_listing(feed, feed["url"])
+            if record_source_success(state, feed["id"], now):
+                state_changed = True
             headlines = deduplicate_candidates(
                 candidate
                 for candidate in source_candidates(download)[: feed["maxHeadlines"]]
                 if looks_like_discovery_headline(candidate)
             )
         except Exception as exc:
+            if record_source_failure(state, feed["id"], now, str(exc)):
+                state_changed = True
             print(f"  Discovery feed unavailable: {exc}", file=sys.stderr)
             continue
 
@@ -3024,6 +3392,7 @@ def process_discovery_feeds(
                         official_url,
                         timeout=int(official.get("timeout", 25)),
                         proxy_fallback=bool(official.get("proxyFallback")),
+                        ssl_fallback=bool(official.get("sslFallback")),
                     )
                     official_downloads[official_url] = official_download
                     official_cache[official_url] = deduplicate_candidates(
@@ -3570,6 +3939,7 @@ def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
                 source_url,
                 timeout=int(source.get("timeout", 25)),
                 proxy_fallback=bool(source.get("proxyFallback")),
+                ssl_fallback=bool(source.get("sslFallback")),
             )
             for cand in source_candidates(download)[: int(source.get("maxLinks", 600))]:
                 cand_url = canonical_url(cand.url)
@@ -4219,6 +4589,10 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
         # the official URL and no mirror host is ever published.
         if entry.get("proxyFallback"):
             source["proxyFallback"] = True
+        # R4: opt-in unverified-SSL fetch for official sites that serve their
+        # public listing over a broken certificate chain.
+        if entry.get("sslFallback"):
+            source["sslFallback"] = True
         for key in ("timeout", "detailTimeout"):
             if key in entry:
                 source[key] = int(entry[key])
@@ -4250,6 +4624,11 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     jobs = list(output.get("jobs") or [])
     state_sources = state.setdefault("sources", {})
     now = datetime.now(timezone.utc).replace(microsecond=0)
+    # R2/R5: per-mirror and per-endpoint health persists across runs in
+    # seen-notices.json so a dead mirror or a blocked file endpoint is not
+    # re-probed on every six-hourly cycle.
+    load_mirror_memory(state)
+    load_detail_fetch_health(state)
     jobs_changed = sanitize_published_jobs(jobs, now)
     if refresh_badges(jobs, now, int(config.get("newBadgeHours", 72))):
         jobs_changed = True
@@ -4272,11 +4651,10 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         print(f"Checking {source.get('name', source_id)}: {source_url}")
         proxy_fallback = bool(source.get("proxyFallback"))
         try:
-            download = fetch_url(
-                source_url,
-                timeout=int(source.get("timeout", 25)),
-                proxy_fallback=proxy_fallback,
-            )
+            # R1: fetch_source_listing treats a 200 error-stub / anchor-less
+            # answer as a failure (with a mirror retry) instead of a healthy
+            # empty scan, and passes the source's sslFallback flag (R4).
+            download = fetch_source_listing(source, source_url)
             discovered = deduplicate_candidates(
                 candidate
                 for candidate in source_candidates(download)[: int(source.get("maxLinks", 600))]
@@ -4427,6 +4805,24 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             "jobs": jobs,
         }
 
+    # R12: initialized sources and feeds that never produced a fingerprint are
+    # flagged silent-dead in sourceHealth so the workflow summary surfaces them.
+    newly_silent = flag_silent_dead_sources(state, now)
+    for silent_id in newly_silent:
+        state_changed = True
+        print(
+            f"WARNING: source '{silent_id}' was initialized more than "
+            f"{SILENT_DEAD_AFTER_DAYS} day(s) ago but has never produced a notice — "
+            "it answers like a healthy source while publishing nothing. "
+            "Recorded in data/seen-notices.json (sourceHealth.silentDead).",
+            file=sys.stderr,
+        )
+    # R2/R5: persist mirror rotation memory and endpoint probe budgets.
+    if save_mirror_memory(state):
+        state_changed = True
+    if save_detail_fetch_health(state):
+        state_changed = True
+
     print(
         f"Finished: {successful_sources} source(s) available, {added} new alert(s), "
         f"{len(jobs)} automatic alert(s) stored."
@@ -4475,6 +4871,36 @@ def restore_protected_layout(
             path.write_bytes(content)
 
 
+def append_workflow_summary(state_path: Path, output_path: Path) -> None:
+    """R11/R12: append the source-health report to $GITHUB_STEP_SUMMARY.
+
+    The workflow runs this script as its update step, so the summary is written
+    by the run itself — no separate workflow step (and no workflow-file
+    permission) is required. Silently skipped outside GitHub Actions or when
+    the report cannot be built.
+    """
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY", "")
+    if not summary_path:
+        return
+    try:
+        # Load the sibling script explicitly so this works no matter how
+        # update_jobs itself was imported (direct run, importlib from tests).
+        summary_module_path = Path(__file__).resolve().parent / "source_health_summary.py"
+        spec = importlib.util.spec_from_file_location("source_health_summary", summary_module_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"cannot load {summary_module_path}")
+        summary_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(summary_module)
+        state = read_json(state_path, {})
+        output = read_json(output_path, {"version": 1, "jobs": []})
+        report = summary_module.build_report(state, output)
+        with open(summary_path, "a", encoding="utf-8") as fh:
+            fh.write(report)
+        print("  Appended the source-health summary to the workflow run summary.")
+    except Exception as exc:  # The summary must never fail the update run.
+        print(f"  Could not append the workflow summary: {exc}", file=sys.stderr)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Update automatic recruitment, admission, answer-key, result and corrigendum alerts")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -4492,8 +4918,10 @@ def main() -> int:
                 raise RuntimeError(
                     "Layout protection stopped and reverted an attempted change to index.html or assets/"
                 )
+        append_workflow_summary(args.state, args.output)
         return result
     except RuntimeError as exc:
+        append_workflow_summary(args.state, args.output)
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 

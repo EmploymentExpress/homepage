@@ -226,7 +226,12 @@ class JobMonitorTests(unittest.TestCase):
         self.assertNotIn("onlinesbi", job["pdfLink"])
         self.assertNotIn("forms.gle", job["pdfLink"])
 
-    def test_configured_aiims_bathinda_sources_are_the_two_listing_pages(self):
+    def test_configured_aiims_bathinda_sources_cover_every_recruitment_category(self):
+        # R13: AIIMS Bathinda groups notices by category page (Faculty=1,
+        # Non-Faculty=2, SR/JR=3, Project=4). Every category must be monitored —
+        # an open walk-in that reaches the site through no source is a coverage
+        # bug (observed: the 14-Sep-2026 SR walk-in was invisible while only
+        # the Non-Faculty and Project pages were configured, both disabled).
         config = json.loads(
             (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
                 encoding="utf-8"
@@ -238,10 +243,13 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(
             sorted(source["url"] for source in bathinda),
             [
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=1",
                 "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=3",
                 "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
             ],
         )
+        self.assertTrue(all(source.get("enabled", True) for source in bathinda))
 
     def test_psssb_official_site_is_monitored(self):
         config = json.loads(
@@ -1549,7 +1557,7 @@ class JobMonitorTests(unittest.TestCase):
             b"<html><body><p>can apply through online mode.</p></body></html>",
         )
 
-        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False, ssl_fallback=False):
             if url == "https://onlineforms.in/latest-offline-forms/":
                 return listing
             if url == "https://onlineforms.in/some-offline-job-recruitment/":
@@ -2400,11 +2408,17 @@ class ProxyFallbackWiringTests(unittest.TestCase):
 
     def test_discovery_feed_fetch_honors_proxy_fallback(self):
         calls = []
-        empty = monitor.Download(url="https://feed.example/", content_type="text/html", data=b"<html></html>")
+        # The page must carry at least one anchor: under the error-stub rule
+        # (R1) an anchor-less 200 listing is a failure, not a healthy scan.
+        page = monitor.Download(
+            url="https://feed.example/",
+            content_type="text/html",
+            data=b'<html><body><a href="/headline-1">Some Board Recruitment 2026 Apply Online</a></body></html>',
+        )
 
-        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
-            calls.append({"url": url, "proxy_fallback": proxy_fallback})
-            return empty
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False, ssl_fallback=False):
+            calls.append({"url": url, "proxy_fallback": proxy_fallback, "ssl_fallback": ssl_fallback})
+            return page
 
         feed = {
             "id": "example-feed",
@@ -2439,8 +2453,8 @@ class ProxyFallbackWiringTests(unittest.TestCase):
         calls = []
         empty = monitor.Download(url="https://portal.example/latest/", content_type="text/html", data=b"<html></html>")
 
-        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False):
-            calls.append({"url": url, "proxy_fallback": proxy_fallback})
+        def fake_fetch(url, timeout=25, retries=2, proxy_fallback=False, ssl_fallback=False):
+            calls.append({"url": url, "proxy_fallback": proxy_fallback, "ssl_fallback": ssl_fallback})
             return empty
 
         config = {"sources": [{
@@ -2748,3 +2762,315 @@ class PunjabCrossListingTests(unittest.TestCase):
         retained = monitor.retain_stored_jobs(jobs + [duplicate], 10)
         self.assertNotIn(99, [record["id"] for record in retained],
                          "a curated duplicate of a newer record must still de-duplicate")
+
+
+class VerifiedReliabilityRuleTests(unittest.TestCase):
+    """R1-R13: the Verified Job-Updates Reliability Rule.
+
+    Born from three real incidents (Aug-Sep 2026):
+    - PGIMER answered 200 with an HTML error stub and looked healthy while
+      publishing nothing for a week;
+    - AIIMS Bathinda answered one request with a transient 500 and the next
+      with the real page;
+    - 33 sources failed 47 consecutive runs because a single dead fallback
+      mirror (allorigins) was the only mirror ever tried.
+    """
+
+    def test_error_stub_body_is_detected(self):
+        stub_body = (
+            b"<html><body>Could not complete the request."
+            b"Some error occured.Please Try again.</body></html>"
+        )
+        stub = monitor.Download(url="https://pgi.example/", content_type="text/html", data=stub_body)
+        self.assertTrue(monitor.listing_is_error_stub(stub))
+        real = monitor.Download(
+            url="https://board.example/",
+            content_type="text/html",
+            data=b"<html><body>" + b"recruitment notice links follow " * 200 + b"</body></html>",
+        )
+        self.assertFalse(monitor.listing_is_error_stub(real))
+        # A PDF listing is never a stub.
+        pdf = monitor.Download(url="https://board.example/list.pdf", content_type="application/pdf", data=b"%PDF-1.4")
+        self.assertFalse(monitor.listing_is_error_stub(pdf))
+
+    def test_stub_listing_is_a_failure_and_mirror_recovers(self):
+        stub = monitor.Download(
+            url="https://pgi.example/vacancies",
+            content_type="text/html",
+            data=b"<html><body>Could not complete the request. Some error occured.Please Try again.</body></html>",
+        )
+        real = monitor.Download(
+            url="https://pgi.example/vacancies",
+            content_type="text/html",
+            data=b'<html><body><a href="/notice-1.pdf">Recruitment of 243 Nursing Officer posts</a></body></html>',
+        )
+        mirror_calls: list[str] = []
+        with patch.object(monitor, "fetch_url", return_value=stub), \
+             patch.object(monitor, "_download_via_mirror", side_effect=lambda url, timeout:
+                          (mirror_calls.append(url), real)[1]):
+            download = monitor.fetch_source_listing(
+                {"timeout": 5, "proxyFallback": True}, "https://pgi.example/vacancies"
+            )
+        self.assertIs(download, real)
+        self.assertEqual(mirror_calls, ["https://pgi.example/vacancies"])
+
+        # Without proxyFallback a stub listing is a recorded failure, never a
+        # silently healthy empty scan.
+        with patch.object(monitor, "fetch_url", return_value=stub):
+            with self.assertRaises(RuntimeError):
+                monitor.fetch_source_listing({"timeout": 5}, "https://pgi.example/vacancies")
+
+    def test_anchorless_listing_is_a_failure(self):
+        empty = monitor.Download(url="https://js.example/", content_type="text/html", data=b"<html><body></body></html>")
+        with patch.object(monitor, "fetch_url", return_value=empty):
+            with self.assertRaises(RuntimeError):
+                monitor.fetch_source_listing({"timeout": 5, "proxyFallback": False}, "https://js.example/")
+
+    def test_mirror_rotation_demotes_repeatedly_failing_mirror(self):
+        monitor.MIRROR_MEMORY.clear()
+        self.addCleanup(monitor.MIRROR_MEMORY.clear)
+        now = datetime.now(timezone.utc)
+        allorigins = "https://api.allorigins.win/raw?url={quoted}"
+        for _ in range(3):
+            monitor._remember_mirror(allorigins, False, now)
+        ordered = monitor._ordered_mirror_templates(now)
+        self.assertEqual(ordered[-1], allorigins)
+        # Mirrors beyond the original two exist (R2: rotation pool).
+        self.assertIn("https://api.codetabs.com/v1/proxy/?quest={quoted}", ordered)
+        self.assertIn("https://corsproxy.io/?url={quoted}", ordered)
+        # A success resets the mirror to the front of the rotation.
+        monitor._remember_mirror(allorigins, True, now)
+        self.assertEqual(monitor._ordered_mirror_templates(now)[0], allorigins)
+
+    def test_mirror_memory_round_trips_through_state(self):
+        monitor.MIRROR_MEMORY.clear()
+        self.addCleanup(monitor.MIRROR_MEMORY.clear)
+        now = datetime.now(timezone.utc)
+        monitor._remember_mirror("https://r.jina.ai/{url}", False, now)
+        state: dict = {"version": 1}
+        self.assertTrue(monitor.save_mirror_memory(state))
+        monitor.MIRROR_MEMORY.clear()
+        monitor.load_mirror_memory(state)
+        self.assertEqual(
+            monitor.MIRROR_MEMORY["https://r.jina.ai/{url}"]["consecutiveFailures"], 1
+        )
+
+    def test_fetch_url_retries_transient_server_error_once_more(self):
+        attempts: list[int] = []
+        server_error = urllib.error.HTTPError(
+            "https://aiims.example/Recruitment.aspx", 500, "Internal Server Error", hdrs=None, fp=None
+        )
+
+        def fake_direct(url, timeout, ssl_fallback=False):
+            attempts.append(1)
+            if len(attempts) < 3:
+                raise server_error
+            return monitor.Download(url=url, content_type="text/html", data=b"<html></html>")
+
+        with patch.object(monitor.time, "sleep"), \
+             patch.object(monitor, "_download_direct", side_effect=fake_direct):
+            monitor.fetch_url("https://aiims.example/Recruitment.aspx", timeout=5, retries=2)
+        self.assertEqual(len(attempts), 3, "a transient 5xx must earn one extra direct attempt")
+
+    def test_fetch_url_passes_ssl_fallback_to_downloader(self):
+        seen: dict = {}
+
+        def fake_direct(url, timeout, ssl_fallback=False):
+            seen["ssl_fallback"] = ssl_fallback
+            return monitor.Download(url=url, content_type="text/html", data=b"x" * 300)
+
+        with patch.object(monitor, "_download_direct", side_effect=fake_direct):
+            monitor.fetch_url("https://legacy.example/", timeout=5, ssl_fallback=True)
+        self.assertTrue(seen["ssl_fallback"])
+
+    def test_infer_fee_extracts_only_labelled_fees(self):
+        text = (
+            "Application Fee: Rs. 500/- for General/OBC candidates and "
+            "Rs. 125/- for SC/ST candidates. Fee is Nil for PwBD candidates."
+        )
+        self.assertEqual(monitor.infer_fee(text), ("₹500", "₹125"))
+        text = "₹300 for General candidates; SC/ST/PwBD: Nil"
+        self.assertEqual(monitor.infer_fee(text), ("₹300", "Nil"))
+        # No fee statement -> placeholders, never a guess.
+        self.assertEqual(
+            monitor.infer_fee("The last date to apply is 30.09.2026."),
+            ("See Official Notification", "See Official Notification"),
+        )
+
+    def test_infer_fee_mode_from_payment_markers(self):
+        self.assertEqual(
+            monitor.infer_fee_mode("Fee can be paid via net banking or debit card."),
+            "Online",
+        )
+        self.assertEqual(
+            monitor.infer_fee_mode("Fee payable through demand draft."),
+            "Offline",
+        )
+        self.assertEqual(monitor.infer_fee_mode("No payment details."), "As Notified")
+
+    def test_infer_exam_date_only_when_labelled(self):
+        self.assertEqual(
+            monitor.infer_exam_date("The CBT will be held on 15-10-2026 at various centres."),
+            "15-10-2026",
+        )
+        self.assertEqual(
+            monitor.infer_exam_date("The examination will be conducted on 05 November 2026."),
+            "05-11-2026",
+        )
+        self.assertEqual(
+            monitor.infer_exam_date("Applications close on 30.09.2026. Exam schedule follows later."),
+            "",
+        )
+
+    def test_backfill_fills_fee_and_exam_placeholders_from_stored_text(self):
+        job = {
+            "title": "Some Board Recruitment 2026",
+            "details": "Application Fee: Rs. 500 for General and Rs. 150 for SC/ST, "
+                       "payable online through net banking. "
+                       "The CBT will be held on 15-10-2026.",
+            "qualification": "",
+            "feeGen": "See Official Notification",
+            "feeSC": "See Official Notification",
+            "feeMode": "As Notified",
+            "examDate": "See Official Notification",
+        }
+        self.assertTrue(monitor.backfill_extracted_fields([job]))
+        self.assertEqual(job["feeGen"], "₹500")
+        self.assertEqual(job["feeSC"], "₹150")
+        self.assertEqual(job["feeMode"], "Online")
+        self.assertEqual(job["examDate"], "15-10-2026")
+
+    def test_merge_job_details_copies_extracted_fees(self):
+        existing = {"feeGen": "See Official Notification", "feeSC": "See Official Notification", "examDate": "See Official Notification"}
+        fresh = {"feeGen": "₹500", "feeSC": "Nil", "examDate": "15-10-2026", "sourceUrl": "https://board.example/"}
+        self.assertTrue(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["feeGen"], "₹500")
+        self.assertEqual(existing["feeSC"], "Nil")
+        self.assertEqual(existing["examDate"], "15-10-2026")
+
+    def test_discovery_feed_failure_is_recorded_in_source_health(self):
+        def failing_fetch(url, timeout=25, retries=2, proxy_fallback=False, ssl_fallback=False):
+            raise RuntimeError("feed dropped")
+
+        feed = {
+            "id": "example-feed",
+            "name": "Example Feed",
+            "url": "https://feed.example/",
+            "maxHeadlines": 5,
+        }
+        state: dict = {"version": 1, "sources": {}}
+        with patch.object(monitor, "load_discovery_feeds", return_value=[feed]), \
+             patch.object(monitor, "fetch_url", side_effect=failing_fetch):
+            monitor.process_discovery_feeds([], state, datetime.now(timezone.utc), dry_run=True)
+        entry = state["sourceHealth"]["example-feed"]
+        self.assertEqual(entry["consecutiveFailures"], 1)
+        self.assertIn("feed dropped", entry["lastError"])
+
+    def test_silent_dead_sources_are_flagged_and_recovered(self):
+        from datetime import timedelta
+        now = datetime.now(timezone.utc)
+        stale = (now - timedelta(days=5)).isoformat().replace("+00:00", "Z")
+        state = {
+            "version": 1,
+            "sources": {
+                "pgi-like": {"initializedAt": stale, "fingerprints": []},
+                "healthy": {"initializedAt": stale, "fingerprints": ["abc"]},
+                "brand-new": {"initializedAt": now.isoformat().replace("+00:00", "Z"), "fingerprints": []},
+            },
+            "sourceHealth": {},
+        }
+        flagged = monitor.flag_silent_dead_sources(state, now)
+        self.assertEqual(flagged, ["pgi-like"])
+        self.assertTrue(state["sourceHealth"]["pgi-like"]["silentDead"])
+        self.assertNotIn("silentDead", state["sourceHealth"].get("healthy", {}))
+        # Producing the first fingerprint clears the flag.
+        state["sources"]["pgi-like"]["fingerprints"] = ["first-notice"]
+        monitor.flag_silent_dead_sources(state, now)
+        self.assertNotIn("silentDead", state["sourceHealth"]["pgi-like"])
+
+    def test_detail_fetch_cooldown_skips_blocked_endpoint(self):
+        from datetime import timedelta
+        monitor._DETAIL_FETCH_HEALTH.clear()
+        self.addCleanup(monitor._DETAIL_FETCH_HEALTH.clear)
+        now = datetime.now(timezone.utc)
+        url = "https://pgi.example/PGIMER_PORTAL/AbstractFilePath?FileName=Notice.pdf"
+        for _ in range(monitor.DETAIL_FETCH_FAILURE_THRESHOLD):
+            monitor._record_detail_fetch(url, False, now)
+        self.assertTrue(monitor._detail_fetch_cooldown_active(url, now))
+        calls: list[int] = []
+
+        def fake_fetch(*args, **kwargs):
+            calls.append(1)
+            raise RuntimeError("endpoint blocked")
+
+        candidate = monitor.Candidate(
+            title="Recruitment of 10 posts", url=url, summary="", published_at=""
+        )
+        with patch.object(monitor, "fetch_url", side_effect=fake_fetch):
+            monitor.enrich_candidate(candidate, {"detailTimeout": 5})
+        self.assertEqual(calls, [], "a blocked endpoint must not burn its timeout on every run")
+        # Cooldown also expires so the endpoint is re-probed daily.
+        later = now + timedelta(hours=25)
+        self.assertFalse(monitor._detail_fetch_cooldown_active(url, later))
+
+    def test_aiims_bathinda_sources_are_enabled_with_mirrors(self):
+        root = Path(__file__).resolve().parents[1]
+        sources = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))["sources"]
+        by_id = {s.get("id"): s for s in sources}
+        expected_urls = {
+            "aiims-bathinda-non-faculty": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            "aiims-bathinda-project": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
+            "aiims-bathinda-faculty": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=1",
+            "aiims-bathinda-sr-jr": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=3",
+        }
+        for sid, url in expected_urls.items():
+            self.assertIn(sid, by_id, f"sources.json must monitor {sid}")
+            self.assertTrue(by_id[sid].get("enabled", True), f"{sid} must stay enabled")
+            self.assertTrue(by_id[sid].get("proxyFallback"), f"{sid} needs proxyFallback")
+            self.assertEqual(by_id[sid].get("url"), url)
+
+    def test_pgimer_source_stays_enabled_with_mirrors(self):
+        root = Path(__file__).resolve().parents[1]
+        sources = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))["sources"]
+        pgimer = {s.get("id"): s for s in sources}["pgimer"]
+        self.assertTrue(pgimer.get("enabled", True))
+        self.assertTrue(pgimer.get("proxyFallback"))
+
+    def test_update_jobs_appends_workflow_summary(self):
+        # R11/R12: the update run itself appends the source-health report to
+        # $GITHUB_STEP_SUMMARY, so no separate workflow step (or workflow-file
+        # permission) is needed.
+        with tempfile.TemporaryDirectory() as directory:
+            state_path = Path(directory) / "state.json"
+            output_path = Path(directory) / "out.json"
+            summary_path = Path(directory) / "summary.md"
+            state_path.write_text(json.dumps({
+                "version": 1,
+                "sources": {"example": {"initializedAt": None, "fingerprints": []}},
+                "sourceHealth": {"example": {"consecutiveFailures": 3, "lastError": "mirror fetch failed: boom"}},
+            }), encoding="utf-8")
+            output_path.write_text(json.dumps({"version": 1, "jobs": []}), encoding="utf-8")
+            with patch.dict(monitor.os.environ, {"GITHUB_STEP_SUMMARY": str(summary_path)}):
+                monitor.append_workflow_summary(state_path, output_path)
+            report = summary_path.read_text(encoding="utf-8")
+            self.assertIn("Monitor source health", report)
+            self.assertIn("example", report)
+            self.assertIn("mirror fetch failed: boom", report)
+            # Without the env var (local runs) nothing is written.
+            local_summary = Path(directory) / "local.md"
+            with patch.dict(monitor.os.environ, {}, clear=False):
+                monitor.os.environ.pop("GITHUB_STEP_SUMMARY", None)
+                monitor.append_workflow_summary(state_path, output_path)
+            self.assertFalse(local_summary.exists())
+
+    def test_source_health_summary_reports_failures_and_placeholders(self):
+        import subprocess
+        root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, str(root / "scripts" / "source_health_summary.py")],
+            capture_output=True, text=True, timeout=60,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Monitor source health", result.stdout)
+        self.assertIn("Failing", result.stdout)
+        self.assertIn("Placeholder", result.stdout)

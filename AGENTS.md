@@ -154,6 +154,49 @@ Three safeguards keep an official source from silently going stale — do not re
    revert to raw page order — that is exactly how a portal link was once published as a
    "vacancy" with placeholder details.
 
+**Verified Job-Updates Reliability Rule (R1–R13)** — added Sep 2026 after three real incidents
+(PGIMER's 200 error-stub starvation, AIIMS Bathinda's transient 500s, and 33 sources failing 47
+runs because a single dead mirror was the only one ever tried). The same section of
+`data/seen-notices.json` also carries the new `mirrorHealth`, `detailFetchHealth` and
+`silentDead` keys. Do not remove these safeguards:
+
+4. **A 200 answer is not a successful scan (R1).** A listing that answers HTTP 200 with a known
+   error stub ("Could not complete the request. Some error occured…") or with no notice anchors
+   at all is a **failure**: `fetch_source_listing()` retries it through a read-only mirror when
+   the source opts in, otherwise records it in `sourceHealth`. PGIMER stayed "healthy" with zero
+   published notices for a week before this rule existed.
+5. **Mirror rotation with memory (R2).** `SOURCE_MIRRORS` holds four read-only mirrors
+   (allorigins, r.jina.ai, codetabs, corsproxy). Per-mirror health persists in
+   `mirrorHealth` across runs: a mirror that fails twice is skipped for 24 hours instead of
+   being retried on every fetch. One dead mirror must never starve every failing source.
+6. **Transient 5xx retry (R3) and opt-in SSL fallback (R4).** Server errors and 429s earn one
+   extra direct attempt with backoff (AIIMS Bathinda answers one request with 500 and the next
+   with the real page). Sources with broken certificate chains may set `"sslFallback": true`
+   (read-only fetch of public pages; every published link still comes from that page source).
+7. **Endpoint health budget (R5).** Detail/document hosts that fail
+   `DETAIL_FETCH_FAILURE_THRESHOLD` times in a row are probed at most once per 24 hours
+   (`detailFetchHealth`) — the listing page stays the heartbeat, so a blocked PDF servlet
+   (PGIMER `AbstractFilePath` serves 500 to non-browsers) no longer burns its timeout on
+   every notice in every run.
+8. **Extract what the notice says, never guess (R6–R10).** Official page source is the only
+   truth; detail-page link labels ("Click here for Notice/apply", "Corrigendum") drive
+   `pdfLink`/`applyLink` even when the file endpoint blocks bots; anything unverifiable stays
+   **"See Official Notification"**. Fees, fee mode and exam dates are now parsed from notice
+   text on clear labelled matches only (`infer_fee`, `infer_fee_mode`, `infer_exam_date`) and
+   backfilled into already-published jobs (`backfill_extracted_fields`, refresh scoring) — a
+   placeholder is always preferable to a guess.
+9. **Visibility for feeds and silent sources (R11/R12).** Discovery feeds record
+   `sourceHealth` like every official source. A source or feed initialized more than
+   `SILENT_DEAD_AFTER_DAYS` ago that still has zero fingerprints is flagged `silentDead`.
+   `scripts/source_health_summary.py` (a workflow step with `if: always()`) prints failing,
+   silent-dead, never-initialized sources, the placeholder backlog and mirror health into the
+   Actions run summary (`$GITHUB_STEP_SUMMARY`).
+10. **Category coverage per organisation (R13).** When an organisation groups notices by
+    category (AIIMS Bathinda: Faculty / Non-Faculty / SR-JR / Project), monitor **every**
+    category page — an open walk-in that reaches the site through no source is a coverage bug
+    (observed: the 14-Sep-2026 SR walk-in interview was invisible while only
+    `aiimsexams.ac.in` was monitored).
+
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 
 Notification pages on the discovery feeds print an **"Official Website"** row beside their
