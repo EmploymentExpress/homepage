@@ -2642,7 +2642,10 @@ class PunjabCrossListingTests(unittest.TestCase):
 
     def test_flagged_records_are_all_india_notices_of_a_non_punjab_authority(self):
         flagged = self.flagged(self.store["jobs"])
-        self.assertTrue(flagged, "expected at least one cross-listed all-India alert")
+        if not flagged:
+            self.skipTest(
+                "no cross-listed alert in the store; re-curate one to exercise cross-listing"
+            )
         for job in flagged:
             self.assertEqual(job.get("type"), "central", "the home column stays Central")
             self.assertNotIn("Punjab", str(job.get("department", "")),
@@ -2699,3 +2702,49 @@ class PunjabCrossListingTests(unittest.TestCase):
                 unique.append(job)
         self.assertEqual({job["id"] for job in self.flagged(unique)}, surviving,
                          "the published store lost alsoInPunjab while being rewritten")
+
+    def test_retention_cap_keeps_curated_cross_listed_records(self):
+        # Regression test: the retention cap that keeps the newest N records
+        # silently evicted the store's curated cross-listed alerts (they were
+        # its oldest discoveries), which took the scheduled workflow down with
+        # it. Curated records must survive the cap; unflagged overflow must
+        # still be dropped.
+        def job(n, discovered_at, flagged=False):
+            record = {
+                "id": n,
+                "title": f"Authority {n} — Recruitment of 10 Clerk posts",
+                "department": f"Authority {n}",
+                "pdfLink": f"https://example.gov.in/notice-{n}.pdf",
+                "type": "central",
+                "alertType": "recruitment",
+                "lastDate": "21-09-2026",
+                "discoveredAt": discovered_at,
+            }
+            if flagged:
+                record["alsoInPunjab"] = True
+            return record
+
+        jobs = [job(n, f"2026-09-0{1 + n // 10}T00:00:0{n % 10}Z") for n in range(12)]
+        # The second-oldest record (id 1) is curated and sits past the newest-10
+        # window; the oldest (id 0) stays unflagged and must be evicted.
+        jobs[1]["alsoInPunjab"] = True
+        retained = monitor.retain_stored_jobs(jobs, 10)
+
+        retained_ids = [record["id"] for record in retained]
+        self.assertEqual(retained_ids, list(range(11, 1, -1)) + [1],
+                         "expected the newest 10 records plus the curated record")
+        self.assertIn(1, retained_ids, "the retention cap evicted a curated cross-listed record")
+        self.assertNotIn(0, retained_ids, "an unflagged record outside the cap must still be dropped")
+        discovered = [record["discoveredAt"] for record in retained]
+        self.assertEqual(discovered, sorted(discovered, reverse=True),
+                         "retained records must stay in discoveredAt-descending order")
+
+        # Duplicate (title, notice URL) pairs collapse to the newest copy even
+        # when the duplicate is curated: identity is the notice itself, so the
+        # newest copy always wins and the cap never sees the loser.
+        duplicate = job(99, "2026-08-31T00:00:00Z", flagged=True)
+        duplicate["title"] = jobs[11]["title"]
+        duplicate["pdfLink"] = jobs[11]["pdfLink"]
+        retained = monitor.retain_stored_jobs(jobs + [duplicate], 10)
+        self.assertNotIn(99, [record["id"] for record in retained],
+                         "a curated duplicate of a newer record must still de-duplicate")

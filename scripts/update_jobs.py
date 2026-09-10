@@ -2385,6 +2385,32 @@ def find_existing_job_for_candidate(
     return titled[0] if len(titled) == 1 else None
 
 
+def retain_stored_jobs(jobs: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    """De-duplicate the store and apply the retention cap.
+
+    Records are ordered newest-first (``discoveredAt`` descending) and
+    de-duplicated on (title, notice URL); the newest ``limit`` records are
+    kept. Curated cross-listed records (``alsoInPunjab`` is true) are exempt
+    from the cap: a hand-curated all-India notice may only leave the store
+    when its dated notice expires (``sanitize_published_jobs``), never
+    because newer discoveries pushed it past the newest-N window.
+    """
+    unique_jobs: list[dict[str, Any]] = []
+    known_job_keys: set[tuple[str, str]] = set()
+    for job in sorted(jobs, key=lambda item: item.get("discoveredAt", ""), reverse=True):
+        key = (clean_text(job.get("title")).lower(), canonical_url(job.get("pdfLink", "")))
+        if key not in known_job_keys:
+            known_job_keys.add(key)
+            unique_jobs.append(job)
+    limit = max(1, int(limit))
+    retained = unique_jobs[:limit]
+    # Curated cross-listed records that fell outside the newest-N window are
+    # the oldest discoveries by construction, so appending them keeps the
+    # store's newest-first order intact.
+    retained.extend(job for job in unique_jobs[limit:] if job.get("alsoInPunjab") is True)
+    return retained
+
+
 def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
     """Copy verified details from a re-fetched notice onto the published job.
 
@@ -4391,14 +4417,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         jobs_changed = True
 
     if jobs_changed:
-        unique_jobs: list[dict[str, Any]] = []
-        known_job_keys: set[tuple[str, str]] = set()
-        for job in sorted(jobs, key=lambda item: item.get("discoveredAt", ""), reverse=True):
-            key = (clean_text(job.get("title")).lower(), canonical_url(job.get("pdfLink", "")))
-            if key not in known_job_keys:
-                known_job_keys.add(key)
-                unique_jobs.append(job)
-        jobs = unique_jobs[: max(1, int(config.get("maxStoredJobs", 100)))]
+        jobs = retain_stored_jobs(jobs, int(config.get("maxStoredJobs", 100)))
         output = {
             "version": 1,
             "updatedAt": now.isoformat().replace("+00:00", "Z"),
