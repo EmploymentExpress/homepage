@@ -897,7 +897,8 @@
       "proxyFallback": true,
       "timeout": 40,
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T06:18:29Z"
+      "addedAt": "2026-08-31T06:18:29Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.bgss.in/careers/all",
@@ -966,7 +967,9 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T12:30:31Z"
+      "addedAt": "2026-09-01T12:30:31Z",
+      "sslFallback": true,
+      "proxyFallback": true
     },
     {
       "url": "https://esb.mp.gov.in/e_default.html",
@@ -984,7 +987,9 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T18:28:20Z"
+      "addedAt": "2026-09-01T18:28:20Z",
+      "sslFallback": true,
+      "proxyFallback": true
     },
     {
       "url": "https://jkssb.nic.in/Whatsnew.html",
