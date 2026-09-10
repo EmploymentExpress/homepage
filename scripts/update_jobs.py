@@ -477,6 +477,9 @@ EXCLUDED_TERMS = (
     "quotation",
     "eoi",
     "expression of interest",
+    "request for proposal",
+    "pre bid",
+    "pre-bid",
 )
 DEFAULT_NOTICE_TYPES = {
     "recruitment",

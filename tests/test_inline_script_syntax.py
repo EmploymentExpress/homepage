@@ -137,8 +137,10 @@ class InlineScriptSyntaxTest(unittest.TestCase):
         self.assertIn("modalExtensionNoticeBanner", self.html)
         self.assertIn("const isExtended = Boolean(job && job.lastDateExtended === true);", self.html)
 
-    def test_headline_department_name_is_always_in_capital_letter(self):
-        self.assertIn("return headlineClean(short).toUpperCase();", self.html)
+    def test_headline_department_name_is_title_case(self):
+        # Headline rule: the department keeps its recognisable title-case short
+        # name (e.g. "PGIMER Chandigarh", "Punjab Police") — never forced ALL-CAPS.
+        self.assertIn("return smartTitleCase(headlineClean(short));", self.html)
 
     @unittest.skipUnless(shutil.which("node"), "node executable not available")
     def test_inline_scripts_parse_with_node(self):
