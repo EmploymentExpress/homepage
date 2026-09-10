@@ -108,11 +108,10 @@ def write_html(rows) -> None:
   <p>Before = heading posted today &nbsp;·&nbsp; After = proposed short heading &nbsp;·&nbsp; {len(rows)} live job details</p>
 </header>
 <div class="rule">
-  <strong>Rule:</strong> <code>&lt;Department short name&gt; — &lt;Post / subject&gt; &lt;What the notice is about&gt;</code>,
-  capped at 72 characters. The notice type is detected from the board's own wording:
-  Recruitment · Corrigendum · Addendum · Cancelled · Postponed · Date Extended · Shortlisted ·
-  Exam Date · Admit Card · Answer Key · Merit List · Waiting List · Result · Posting Orders ·
-  Walk-in Interview · Admission · Notice.
+  <strong>Rule:</strong> <code>&lt;Department name&gt; &lt;Post name(s)&gt; Recruitment | Apply Online/Offline</code>
+  (1 post → that post name; 2–4 posts → all listed; more than 4 → <code>Various Post</code>; none → department only).
+  Non-recruitment notices: <code>&lt;Department name&gt; &lt;Notice type&gt;</code> (e.g. <code>SBI Admit Card</code>).
+  No length cap, no vacancy count in the heading. Interview call letters render as Admit Card notices.
 </div>
 <table>
   <tr><th>#</th><th>Before (current heading)</th><th>After (short heading)</th></tr>
@@ -132,17 +131,18 @@ def main() -> None:
         rows.append((entry["source"], before, after))
 
     lines = [
-        "# Job details heading — SHORT headline demo",
+        "# Job details heading — headline demo",
         "",
-        "Proposed rule: `<Department short name> <Total posts> <Post name(s)> <What the notice is about>`",
-        "(job-portal headline style, e.g. `HAL Design Trainee, Management Trainee Online Form`)",
-        "where the notice type is auto-detected from the official wording",
-        "(Online/Offline Form, Corrigendum Notice, Addendum Notice, Vacancy Cancelled,",
-        "Exam Postponed, Last Date Extended, Shortlisted Candidates, Exam Date, Admit Card,",
-        "Answer Key, Merit List, Waiting List, Result, Posting Orders, Walk in Interview,",
-        "Admission Form, Public Notice).",
+        "Rule: `<Department name> <Post name(s)> Recruitment | Apply Online/Offline`",
+        "(1 post -> that post name; 2-4 posts -> all listed; more than 4 -> `Various Post`;",
+        "none named -> department only). Non-recruitment notices are headed",
+        "`<Department name> <Notice type>` (e.g. `SBI Admit Card`, `PGIMER Chandigarh Result`)",
+        "with the notice type auto-detected from the official wording (Corrigendum Notice,",
+        "Addendum Notice, Vacancy Cancelled, Exam Postponed, Last Date Extended,",
+        "Shortlisted Candidates, Exam Date, Admit Card, Answer Key, Merit List, Waiting List,",
+        "Result, Posting Orders, Walk in Interview, Admission Form, Public Notice).",
         "",
-        f"Headlines are capped at 72 characters. {len(rows)} posted job details below.",
+        f"No length cap; no vacancy count in the heading. {len(rows)} posted job details below.",
         "",
     ]
     for i, (source, before, after) in enumerate(rows, 1):

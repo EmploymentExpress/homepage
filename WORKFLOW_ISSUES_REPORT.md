@@ -16,7 +16,14 @@ The **"Update job alerts" workflow is failing intermittently** due to **3 distin
 
 ---
 
-## Issue 1: Headline Length Truncation (CRITICAL)
+## Issue 1: Headline Length Truncation (CRITICAL) — RESOLVED 2026-09-10
+
+> **Status: RESOLVED.** The headline rule was replaced (see AGENTS.md →
+> "Job-details headline rule"). Headlines are now
+> `<Department name> <Post name(s)> Recruitment | Apply Online/Offline`
+> (2–4 posts listed, `Various Post` beyond 4) with **no length cap and no
+> truncation logic at all**, so the failing cap/truncation code path no longer
+> exists. The notes below are kept for history.
 
 ### Failure Details
 - **Affected Test:** `test_headlines_never_exceed_the_cap_and_keep_department_and_type`

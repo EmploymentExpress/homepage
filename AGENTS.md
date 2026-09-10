@@ -193,39 +193,47 @@ Whenever new job details are added or published through automation:
 
 Every published job title must visibly contain the full recruiting department/organisation name and the actual post or vacancy subject. Convert action-only labels such as `Application for Clerk` into a specific title such as `Punjab State Legal Services Authority (PULSA) — Clerk Recruitment`; reject navigation/link labels such as `Other Links`, `Close menu`, or `work Recruitments`. Generic source labels such as `Official Recruitment Notice` are never valid department names.
 
-## 📰 Short job-details headline rule (Mandatory)
+## 📰 Job-details headline rule (Mandatory)
 
 Every job-details **heading** published on the site (grid cards, Last Date Reminders, the master
-vacancy table, admission cards) must be a **short, scannable headline generated from the official
-notification** — never the raw portal link text and never a full sentence.
+vacancy table, admission cards, the admit-card and result lists) is generated from the official
+notification — never the raw portal link text and never a full sentence.
 
-**Format (fixed word order, no em dash, no year):**
+**Recruitment notices (fixed format, no length cap):**
 
 ```
-<Department short name> <Total posts> <Post name(s)> <What the notice is about>
+<Department name> <Post name(s)> Recruitment | Apply Online
+<Department name> Various Post Recruitment | Apply Offline
 ```
 
-- **Department short name** — always in **capital letters** (uppercase). Use the board's own bracketed acronym when it publishes one
-  (`Punjab State Legal Services Authority (PULSA)` → `PULSA`,
-  `Punjab Agricultural University (PAU), Ludhiana` → `PAU`), otherwise the leading segment of the
-  official name in capital letters, abbreviated and capped at 34 characters (`Local Audit Department, Chandigarh
-  Administration` → `LOCAL AUDIT DEPT.`). Keep the state/UT visible when the acronym hides it
-  (`HARYANA WCD`, `ABDM CHANDIGARH`). Never invent an acronym the board does not use.
-- **Total posts** — the numeric vacancy count when the notice states one (`681`, `4,161`).
-  Omit it for `See Notification` / `Various` / single-post notices.
-- **Post name(s)** — the actual post(s), taken from the notice's own wording. List at most two,
-  comma separated, and append `& Various Post` when more exist
-  (`Clerk, Typist & Various Post`). Strip portal noise (`View`, `PDF 383 KB - opens in a new
-  window`, `Click Here`, `Apply Online`, `Application Form`, `Notification`), bracketed
-  `(Last date … / interview on …)` blurbs, advertisement numbers, years, and trailing
-  office/college/department qualifiers.
-- **What the notice is about** — detected from the board's own wording, using exactly this
-  vocabulary:
+- **Department name** — the board's own bracketed acronym when it publishes one
+  (`Postgraduate Institute of Medical Education and Research (PGIMER), Chandigarh` →
+  `PGIMER Chandigarh`), otherwise the leading segment of the official name in title case,
+  abbreviated and capped at 34 characters (`Local Audit Department, Chandigarh Administration` →
+  `Local Audit Dept. Chandigarh`). Keep the state/UT or city visible when the acronym hides it
+  (`Haryana WCD`, `PAU Ludhiana`). Title case means acronyms stay capitalised (`DEO`, `MTS`,
+  `PGIMER`) and small words stay lowercase (`Ministry of Defence`). Never invent an acronym the
+  board does not use.
+- **Post name(s)** — taken from the notice's own wording:
+
+  | Posts in the notice | Headline shows | Example |
+  | --- | --- | --- |
+  | 1 post | that post name | `PGIMER Chandigarh Nursing Officer Recruitment \| Apply Online` |
+  | 2–4 different posts | all of them, comma separated | `PGIMER Chandigarh DEO, MTS, Pharmacist Recruitment \| Apply Online` |
+  | more than 4 posts | `Various Post` | `PGIMER Chandigarh Various Post Recruitment \| Apply Offline` |
+  | no post named | department only | `PGIMER Chandigarh Recruitment \| Apply Online` |
+
+- **Apply mode** — from the stored apply mode and the notice's own wording: offline / by-post /
+  by-hand applications end `| Apply Offline`; everything else ends `| Apply Online`.
+
+**Non-recruitment notices** (admit card, result, answer key, corrigendum, admission, exam date,
+postponement, cancellation, shortlist, merit/waiting list, posting orders, walk-in interview,
+public notice): `<Department name> <Notice type>` — e.g. `SBI Admit Card`,
+`PGIMER Chandigarh Result`. No post names, no apply-mode suffix. The notice type is detected from
+the board's own wording, using exactly this vocabulary:
 
   | Notice says | Headline ends with |
   | --- | --- |
-  | new vacancy, apply online | `Online Form` |
-  | apply offline / by post / walk-in application | `Offline Form` |
   | corrigendum | `Corrigendum Notice` |
   | addendum | `Addendum Notice` |
   | cancellation / withdrawal of vacancy | `Vacancy Cancelled` (exam → `Exam Cancelled`) |
@@ -243,25 +251,29 @@ notification** — never the raw portal link text and never a full sentence.
   | admission / entrance | `Admission Form` |
   | public notice | `Public Notice` |
 
+**Interview call letters are admit-card notices:** anything the board words as a call letter,
+admit card, hall ticket or roll no. (interview call letters included) must render in the Admit
+Card column — `alertType: "admit-card"` end to end, and the frontend `allowedAlertTypes` list in
+`index.html` must keep `"admit-card"` allowed so such notices are never downgraded to
+`recruitment`.
+
 **Hard rules:**
 
-- ⏳ **72-character cap.** Shorten by dropping extra posts (`& Various Post`), then brackets —
-  never by cutting a word in half or dropping the notice type.
-- 🧾 **Headline ≠ data.** Shortening applies to the displayed heading only. The full official
+- 🧾 **Headline ≠ data.** The headline shortens the displayed heading only. The full official
   title, advertisement number, dates and links stay in the job-details modal, the description and
   the `JobPosting` structured data — nothing is deleted from the dataset.
-- 🏛️ **The department and the post must both still be visible** (the specific
-  recruiting-department title rule above still applies); never publish a bare
-  `Result` / `Online Form` heading with no department.
-- 🚫 Never guess the notice type. If the official wording gives no cue, use `Online Form` for a
-  vacancy notice and the alert type's default otherwise.
+- 🏛️ **The department must always be visible** (the specific recruiting-department title rule
+  above still applies); never publish a bare `Result` heading with no department.
+- 🔢 **No vacancy count in the headline** — counts live in the card details, not in the heading.
+- 🚫 Never guess the notice type. If the official wording gives no cue, use
+  `Recruitment | Apply Online` for a vacancy notice and the alert type's default otherwise.
 - 🛠 **Use the shared implementation, don't re-invent it:** `scripts/short_headlines.py`
   (`short_job_headline(title, department, alert_type, vacancies, apply_mode)`) and its JS mirror in
-  `index.html` (`shortJobHeadline()` / `jobDisplayHeadline(job)`, used by the grid cards, the master
-  table and Last Date Reminders; both implementations must produce identical output).
-  Regenerate the before/after demo with `python scripts/preview_short_headlines.py`
-  (writes `docs/short-headline-demo.html` / `.md`). Guard tests live in
-  `tests/test_short_headlines.py` and must stay green.
+  `index.html` (`shortJobHeadline()` / `jobDisplayHeadline(job)`, used by the grid cards, the
+  master table, Last Date Reminders and the results and admit-card lists; both implementations
+  must produce identical output). Regenerate the before/after demo with
+  `python scripts/preview_short_headlines.py` (writes `docs/short-headline-demo.html` / `.md`).
+  Guard tests live in `tests/test_short_headlines.py` and must stay green.
 
 ## 📋 Google Jobs & Search Console Schema Standard (Mandatory)
 
