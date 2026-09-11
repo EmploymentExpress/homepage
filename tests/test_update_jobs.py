@@ -317,7 +317,9 @@ class JobMonitorTests(unittest.TestCase):
         self.assertTrue(source["enabled"])
         self.assertEqual(source["url"], "https://cup.edu.in/")
         self.assertEqual(source["department"], "Central University of Punjab (CUPB), Bathinda")
-        self.assertEqual(source["type"], "central")
+        # R14: a Punjab campus university, home-listed in the Punjab column.
+        self.assertEqual(source["type"], "punjab")
+        self.assertEqual(source["categorySlug"], "punjab-jobs")
         self.assertFalse(monitor.is_discovery_host(source["url"]))
         self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
 
@@ -328,6 +330,99 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(org["url"], source["url"])
         self.assertIn("central university of punjab", org["aliases"])
         self.assertIn("cupb", org["aliases"])
+
+    def test_cup_sources_cover_every_recruitment_category(self):
+        # R13: CUPB groups notices by category page, and the homepage
+        # "Recruitment" tab only ever links to those three pages — never to an
+        # individual advertisement. Monitoring the homepage alone therefore
+        # produced a stable set of fingerprints and published nothing for
+        # weeks while real adverts (CUPB/26-27/012 included) went live, because
+        # a new advert never created a new fingerprint on the root page.
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cup_sources = [
+            source for source in config["sources"] if source["id"].startswith("cup")
+        ]
+        self.assertEqual(
+            sorted(source["url"] for source in cup_sources),
+            [
+                "https://cup.edu.in/",
+                "https://cup.edu.in/non-teaching_jobs.php",
+                "https://cup.edu.in/other-jobs.php",
+                "https://cup.edu.in/teaching_jobs.php",
+            ],
+        )
+        self.assertTrue(all(source.get("enabled", True) for source in cup_sources))
+        for source in cup_sources:
+            with self.subTest(source=source["id"]):
+                # R14: CUPB is a Punjab campus university, so its notices are
+                # home-listed in the Latest Punjab Jobs column.
+                self.assertEqual(source["type"], "punjab")
+                self.assertEqual(source["categorySlug"], "punjab-jobs")
+                self.assertEqual(
+                    source["department"], "Central University of Punjab (CUPB), Bathinda"
+                )
+                self.assertIn("recruitment", source["noticeTypes"])
+                # A category page must publish more than one advert on its
+                # first scan; bootstrapCount 1 would bury the live one behind
+                # the portal/navigation links further down the page.
+                if source["id"] != "cup":
+                    self.assertGreaterEqual(int(source.get("bootstrapCount", 1)), 2)
+
+    def test_cup_category_page_rows_become_recruitment_notices(self):
+        # The category pages are Drupal tables: a heading cell carrying the
+        # advert title/date and a cell holding "Detailed Advertisement:
+        # [Click Here]". Each row must become one notice pointing at its own
+        # advertisement PDF, with the row's own last date in the title.
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        source = next(item for item in config["sources"] if item["id"] == "cup-non-teaching")
+        markup = """
+        <html><body><table><tbody>
+        <tr><td>
+          <p><strong>Advertisement for Contractual Non-Teaching Posts (Advt. No. CUPB/26-27/012 dated 02.09.2026)</strong></p>
+          <p>Date of Advertisement: <strong>02.09.2026</strong></p>
+          <p>Detailed Advertisement: <a href="https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf">Click Here</a></p>
+          <p>Link for Applying Online: <a href="https://cupnt.samarth.edu.in/">Click Here</a></p>
+        </td></tr>
+        <tr><td>
+          <p><strong>Advertisement for Contractual Non-Teaching Posts (Advt. No. CUPB/26-27/009 dated 03.08.2026)</strong></p>
+          <p>Last Date to Apply: <strong>12.08.2026 09:00 AM</strong></p>
+          <p>Detail Advertisement: <a href="https://cup.edu.in/sites/default/files/Contract%20NT_009_08_26.pdf">Click Here</a></p>
+        </td></tr>
+        </tbody></table></body></html>
+        """
+        candidates, _ = monitor.parse_html(markup, source["url"])
+        notices = [
+            (candidate, monitor.classify_notice(candidate, source))
+            for candidate in candidates
+            if monitor.looks_like_notice(candidate, source)
+        ]
+        self.assertEqual(
+            [url for _, url in [(notice[1], notice[0].url) for notice in notices]],
+            [
+                "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+                "https://cup.edu.in/sites/default/files/Contract%20NT_009_08_26.pdf",
+            ],
+        )
+        self.assertTrue(all(notice_type == "recruitment" for _, notice_type in notices))
+        # The title is the advert heading itself, not the field lead-ins the
+        # board prints next to the download link. Left unfiltered, the row
+        # parser produced "Date of Advertisement: 02.09.2026 Detailed
+        # Advertisement — …" and the published headline became
+        # "CUPB Bathinda Date of : Detailed Recruitment".
+        for candidate, _ in notices:
+            with self.subTest(title=candidate.title[:60]):
+                self.assertNotIn("Date of Advertisement", candidate.title)
+                self.assertNotIn("Detailed Advertisement", candidate.title)
+                self.assertNotIn("Link for Applying Online", candidate.title)
+                self.assertRegex(candidate.title, r"Advertisement for .*Advt\. No\. CUPB/")
 
     def test_indiapost_gds_official_site_is_monitored(self):
         """India Post's GDS online engagement page is an enabled official source and

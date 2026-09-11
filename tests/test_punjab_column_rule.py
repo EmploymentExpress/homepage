@@ -1,11 +1,13 @@
-"""R14 Punjab column rule: AIIMS Bathinda & every Chandigarh organisation.
+"""R14 Punjab column rule: AIIMS Bathinda, every Chandigarh organisation & CUPB.
 
-AGENTS.md ("Punjab column rule") requires every notice from AIIMS Bathinda and
-from any recruiting organisation of Chandigarh — even a UT/central institute or
-a national body's Chandigarh-specific notice — to publish in Column 1, Latest
-Punjab Jobs (`type: "punjab"`, `categorySlug: "punjab-jobs"`), never in the All
-India & NVS / Central column, and never carrying the ``alsoInPunjab``
-cross-listing flag (their home column is Punjab).
+AGENTS.md ("Punjab column rule") requires every notice from AIIMS Bathinda, from
+any recruiting organisation of Chandigarh — even a UT/central institute or a
+national body's Chandigarh-specific notice — and from the Central University of
+Punjab (CUPB), Bathinda, to publish in Column 1, Latest Punjab Jobs
+(`type: "punjab"`, `categorySlug: "punjab-jobs"`), never in the All India & NVS /
+Central column, and never carrying the ``alsoInPunjab`` cross-listing flag
+(their home column is Punjab). CUPB is a Punjab campus university, so its
+vacancies belong next to AIIMS Bathinda's, not in the all-India column.
 
 ``EnforcePunjabColumnRuleTests`` runs the real enforcement function from
 ``scripts/update_jobs.py``; ``StoreClassificationTests`` asserts the published
@@ -47,6 +49,16 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
             "Chandigarh Administration Public Notices",
             "https://aiimsbathinda.edu.in/Recruitment.aspx?type=1",
             "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/home.jsp",
+            # R14 extension: Central University of Punjab is a Punjab campus
+            # university, so every one of its notices is a Punjab-column
+            # notice — by name, by acronym and by its own domain.
+            "Central University of Punjab (CUPB), Bathinda",
+            "Central University of Punjab Recruitment",
+            "CUPB Bathinda — Laboratory Attendant Recruitment",
+            "Advertisement No. CUPB/26-27/012 dated 02.09.2026",
+            "https://cup.edu.in/",
+            "https://cup.edu.in/non-teaching_jobs.php",
+            "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
         ]
         for text in cases:
             with self.subTest(text=text):
@@ -57,9 +69,12 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
             "State Bank of India (SBI)",
             "Institute of Banking Personnel Selection (IBPS)",
             "Indian Institute of Technology (BHU), Varanasi",
-            "Central University of Punjab (CUPB), Bathinda",  # not AIIMS Bathinda
             "Punjab Police Recruitment 2026",
             "https://sbi.co.in/web/careers",
+            # A short acronym must be anchored to word boundaries, or
+            # "cupboard" would be read as CUPB.
+            "Cupboard and stationery supplier tender notice",
+            "Recruitment of Cup Bearer",
             "",
             None,
         ]
@@ -113,6 +128,39 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
         self.assertEqual(job["type"], "punjab")
         self.assertEqual(job["categorySlug"], "punjab-jobs")
 
+    def test_the_rule_is_actually_wired_into_the_monitor_run(self):
+        """The enforcement function must be *called*, not merely defined.
+
+        For a long time `enforce_punjab_column_rule()` was never invoked from
+        the pipeline, so R14 only held because every affected source happened
+        to be configured as `punjab`. A notice arriving from a discovery feed
+        would have landed in the Central column silently.
+        """
+        source = MODULE_PATH.read_text(encoding="utf-8")
+        calls = source.count("enforce_punjab_column_rule(jobs)")
+        self.assertGreaterEqual(
+            calls, 1, "enforce_punjab_column_rule() is defined but never called")
+
+    def test_cupb_record_is_moved_to_the_punjab_column(self):
+        """R14 extension: CUPB is a Punjab campus university, not all-India."""
+        job = {
+            "id": 555,
+            "title": ("Central University of Punjab (CUPB), Bathinda — "
+                      "Laboratory Attendant (Computer Science & Technology) Recruitment"),
+            "department": "Central University of Punjab (CUPB), Bathinda",
+            "sourceName": "Central University of Punjab Recruitment",
+            "sourceUrl": "https://cup.edu.in/",
+            "noticeUrl": "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+            "type": "central",
+            "categorySlug": "central",
+            "alsoInPunjab": True,
+        }
+        self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "punjab-jobs")
+        # A Punjab-column notice is home-listed, not cross-listed.
+        self.assertNotIn("alsoInPunjab", job)
+
     def test_genuine_central_records_are_left_alone(self):
         jobs = [
             {
@@ -124,8 +172,8 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
             },
             {
                 "id": 2,
-                "title": "Central University of Punjab (CUPB), Bathinda — Non-Teaching Recruitment",
-                "department": "Central University of Punjab (CUPB), Bathinda",
+                "title": "Indian Institute of Technology (BHU) — Junior Assistant Recruitment",
+                "department": "Indian Institute of Technology (BHU), Varanasi",
                 "type": "central",
                 "categorySlug": "central",
             },

@@ -1446,6 +1446,49 @@ def _is_attachment_label(title: str) -> bool:
     return normalised in ATTACHMENT_LABELS or len(normalised) < 8
 
 
+# Lead-in text boards print immediately before a download link
+# ("Date of Advertisement:", "Detailed Advertisement:", "Link for Applying
+# Online:"). The row parser records it as the anchor's own label, which made
+# CUPB's category pages publish headings such as
+# "CUPB Bathinda Date of : Detailed Recruitment" instead of the advert.
+FIELD_LABEL_START = re.compile(
+    r"""(?ix)\b(?:
+        date\s+of\s+(?:advertisement|issue|publishing|notification)
+      | last\s+date(?:\s+to\s+apply|\s+for[^.]{0,40})?
+      | detailed?\s+advertisement
+      | advertisement\s+in\s+(?:english|hindi|punjabi|marathi|bengali)
+      | link\s+for\s+applying\s+online
+      | published\s+on
+      | format
+      | size
+    )\b\s*:?"""
+)
+
+
+def _is_field_label(text: str) -> bool:
+    """True for the lead-in printed before a link, never a notice subject."""
+    stripped = clean_text(text).strip()
+    if not stripped:
+        return True
+    if stripped.endswith(":"):
+        return True
+    return bool(FIELD_LABEL_START.match(stripped))
+
+
+def _strip_field_labels(text: str) -> str:
+    """Drop the link lead-ins a board prints after the real subject.
+
+    Only trims when a substantial subject precedes the label, so a genuine
+    title that merely contains the word "advertisement" is never cut short.
+    """
+    match = FIELD_LABEL_START.search(text)
+    if match and match.start() >= 20:
+        trimmed = clean_text(text[: match.start()]).strip(" ,;:|-")
+        if len(trimmed) >= 12:
+            return trimmed
+    return text
+
+
 def _row_notice_title(row: dict[str, Any]) -> str:
     """Longest descriptive subject in a notice-table row.
 
@@ -1467,6 +1510,7 @@ def _row_notice_title(row: dict[str, Any]) -> str:
             continue
         if re.fullmatch(r"(?i)[\d\s./-]*", text) or parse_date_token(text):
             continue
+        text = _strip_field_labels(text)
         if len(text) > len(best):
             best = text
     # Discovery-feed tables often put the recruiting organisation in an anchor
@@ -1477,6 +1521,7 @@ def _row_notice_title(row: dict[str, Any]) -> str:
         clean_title(label)
         for _, label in row.get("links", [])
         if not _is_attachment_label(label)
+        and not _is_field_label(label)
         and not is_junk_job_title(label)
         and len(clean_title(label)) >= 8
     ]
@@ -2610,20 +2655,36 @@ PUNJAB_COLUMN_MARKERS = (
     "post graduate institute of medical education",
     "postgraduate institute of medical education",
     "chandigarh",  # every Chandigarh organisation, incl. RRB/High Court/UT boards
+    # R14 extension: Central University of Punjab is a Punjab campus
+    # university, so its vacancies belong in the Punjab column exactly like
+    # AIIMS Bathinda's, not in All India & Central.
+    "central university of punjab",
+)
+
+# Matched as regular expressions against the normalised text, so a short
+# acronym can be anchored to word boundaries: a plain substring "cupb" would
+# also match inside an unrelated word such as "cupboard".
+PUNJAB_COLUMN_PATTERNS = (
+    re.compile(r"\bcupb\b"),  # CUPB — Central University of Punjab
+    re.compile(r"\bcup edu in\b"),  # cup.edu.in (normalised from the URL)
 )
 
 
 def is_punjab_column_organisation(*texts: Any) -> bool:
-    """True when a notice belongs to AIIMS Bathinda or a Chandigarh organisation."""
+    """True for AIIMS Bathinda, a Chandigarh organisation, or CUPB (R14)."""
     for text in texts:
         normalized = re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
-        if normalized and any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+        if not normalized:
+            continue
+        if any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+            return True
+        if any(pattern.search(normalized) for pattern in PUNJAB_COLUMN_PATTERNS):
             return True
     return False
 
 
 def enforce_punjab_column_rule(jobs: list[dict[str, Any]]) -> bool:
-    """Move AIIMS Bathinda / Chandigarh notices into the Punjab column (R14).
+    """Move AIIMS Bathinda / Chandigarh / CUPB notices to the Punjab column (R14).
 
     Runs over the published store on every refresh so the rule holds even when a
     source was registered as ``central`` before the rule existed. Only the home
@@ -4847,6 +4908,11 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     # website link ("sbi.gov.in — Result") into the real authority name, and
     # move stored notices to their correct column as classification tightens.
     if normalize_stored_departments(jobs):
+        jobs_changed = True
+    # R14 (Punjab column rule) is enforced here, not only through the source
+    # config: a notice that reaches the store from a discovery feed or from a
+    # source registered before the rule existed is still moved home.
+    if enforce_punjab_column_rule(jobs):
         jobs_changed = True
     if reclassify_stored_jobs(jobs):
         jobs_changed = True

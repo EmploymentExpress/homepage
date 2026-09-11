@@ -196,6 +196,14 @@ runs because a single dead mirror was the only one ever tried). The same section
     category page — an open walk-in that reaches the site through no source is a coverage bug
     (observed: the 14-Sep-2026 SR walk-in interview was invisible while only
     `aiimsexams.ac.in` was monitored).
+    **A homepage that only links to its category pages is the same bug.** Central University
+    of Punjab (`cup.edu.in`) is the cautionary case: its "Recruitment" tab links to
+    `teaching_jobs.php`, `non-teaching_jobs.php` and `other-jobs.php` — never to an
+    advertisement — so a new advert never created a new fingerprint on the monitored root
+    page. The source looked healthy (14 stable fingerprints, no failures) while publishing
+    nothing for weeks. Monitoring the root alone is not enough; add one source per category
+    page (see `cup-teaching` / `cup-non-teaching` / `cup-project`) and give each a
+    `bootstrapCount` above 1 so the live advert is not buried on the first scan.
 
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 
@@ -351,16 +359,66 @@ Whenever job structured data, `index.html` schema functions, curated vacancy dat
    - If any specific or optional detail (such as exact salary figures, detailed street address, or explicit application opening/closing dates) is not found in the official notification, **the job details MUST STILL be published on the homepage, table, feeds, and structured data**.
    - Never skip, drop, withhold, or fail to publish a job alert solely due to missing optional details — use safe, standard fallbacks (`See Notification`, official board headquarters address, standard pay scale defaults) so the job is always visible to applicants and search engines.
 
-## 🗺️ Punjab column rule: AIIMS Bathinda & every Chandigarh organisation (R14, Mandatory)
+## 🔎 Discovery files: sitemap.xml, llms.txt, robots.txt (generated — never hand-edit)
 
-AIIMS Bathinda notices and every notice from a recruiting organisation **of
-Chandigarh** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
+`scripts/build_seo.py` regenerates three files on **every** scheduled run (its own
+workflow step runs after the alert and share-page steps). Hand edits are lost at the
+next run, so change the generator instead.
+
+- **`sitemap.xml`** — the homepage, the standalone article pages listed in
+  `ARTICLE_PAGES`, and one `share/job-<id>.html` per alert. Generated from the
+  filesystem plus each alert's own `discoveredAt` date, so new alerts become
+  discoverable the same run they are published.
+- **`llms.txt`** — the [llmstxt.org](https://llmstxt.org) index for AI answer
+  engines. It describes the site, states that notices are verified on the
+  authority's own website, then lists the freshest vacancies / admit cards /
+  results, each with a one-line summary. Expired alerts and alerts whose share
+  page does not exist yet are deliberately excluded: an assistant must never
+  quote a deadline that has passed or link to a page that 404s.
+- **`robots.txt`** — allows every crawler, names each AI agent explicitly
+  (GPTBot, OAI-SearchBot, PerplexityBot, ClaudeBot, Google-Extended, …) and
+  points at the sitemap and the LLM index.
+
+**Why this exists.** The homepage is a single-page app: its alert board only
+exists after JavaScript fetches `data/auto-jobs.json`. Crawlers that never run
+JavaScript — Googlebot's secondary pass and the AI answer engines — used to
+receive an essentially empty page, while 500+ static, canonical alert pages sat
+undiscoverable in `share/`. So:
+
+- `scripts/build_share_pages.py` writes **static** `JobPosting` + `BreadcrumbList`
+  JSON-LD, per-page `meta keywords` and the alert's details as readable text into
+  every share page. That is the content AI crawlers actually read.
+- Share pages redirect real visitors to the app with **JavaScript only**. Never
+  re-add a `http-equiv="refresh"`: a 0-second meta refresh flags the page as a
+  redirect and costs it the index.
+- `index.html` and `assets/` are protected layout files
+  (`PROTECTED_LAYOUT_PATHS`), so homepage-level tags stay hand-authored while
+  these three files stay fresh.
+
+Guards: `tests/test_seo.py` (sitemap lists every share page, robots allows the
+AI agents, llms.txt links only to pages that exist, share pages carry valid
+static structured data, and `build_seo.main()` never touches a protected file).
+
+## 🗺️ Punjab column rule: AIIMS Bathinda, every Chandigarh organisation & CUPB (R14, Mandatory)
+
+AIIMS Bathinda notices, every notice from a recruiting organisation **of
+Chandigarh**, and every notice of the **Central University of Punjab (CUPB),
+Bathinda** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
 with `type: "punjab"` and `categorySlug: "punjab-jobs"`. They must never appear
 in the All India & NVS / Central column, no matter how their source is
 registered:
 
 - **AIIMS Bathinda** (Bathinda is in Punjab): Faculty, Non-Faculty, SR/JR
   Resident, Project posts — every category.
+- **Central University of Punjab (CUPB), Bathinda** — every notice, teaching,
+  non-teaching and project/research posts alike. CUPB is a central university
+  **located in Punjab**, exactly like AIIMS Bathinda: being "central" describes
+  who funds it, not where the job is. Punjab applicants are the primary
+  audience, so CUPB vacancies sit beside AIIMS Bathinda's in the Punjab column
+  and their sources are registered as `type: "punjab"` /
+  `categorySlug: "punjab-jobs"`. Matching is by full name, by the `CUPB`
+  acronym and by the `cup.edu.in` domain — the acronym is matched on word
+  boundaries so an unrelated word such as "cupboard" never triggers the rule.
 - **Every Chandigarh organisation**, even when the body is a UT/central
   institute or the notification serves a wider region: PGIMER Chandigarh,
   Chandigarh Administration departments (incl. Social Welfare / chdsw), Punjab
@@ -387,6 +445,13 @@ registered:
   published outside the Punjab column.
 - **Rationale:** Bathinda is in Punjab and Chandigarh is the region's shared
   capital; Punjab applicants are the primary audience for these recruitments.
+
+**Keep the enforcement call wired.** `enforce_punjab_column_rule()` is invoked
+from the store-refresh block in `main()` (right after
+`normalize_stored_departments()`). It was once defined but never called, so R14
+held only because the affected sources happened to be configured as `punjab` —
+a notice arriving from a discovery feed would have landed in the Central column
+silently. `tests/test_punjab_column_rule.py` guards that the call still exists.
 
 ## 📐 Canonical section order (do not reorder)
 

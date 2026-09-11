@@ -26,8 +26,10 @@ site displays, using the house-style ``thumbnail_generator``.
 """
 
 import json
+import re
 import subprocess
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -41,10 +43,10 @@ AUTO_JOBS = ROOT / "data" / "auto-jobs.json"
 BASE_URL = "https://employmentexpress.github.io/homepage"
 
 sys.path.insert(0, str(ROOT))
-from scripts.thumbnail_generator import (  # noqa: E402
-    parse_job_for_thumbnail,
-    generate_job_thumbnail,
-)
+# thumbnail_generator needs Pillow, which the scheduled runner installs but a
+# plain checkout may not have. Import it lazily inside main() so this module
+# stays importable — and testable — without the imaging dependency: the SEO
+# markup below is pure text.
 
 
 # A tiny Node helper evaluates the curated jobDatabase / admissionDatabase
@@ -128,15 +130,225 @@ def describe(job):
     return body + suffix
 
 
+def keywords_for(job):
+    """Keyword meta for one alert, from the alert's own fields.
+
+    Crawlers that never run JavaScript cannot see the homepage's dynamic
+    boards, so each alert page has to carry its own search phrases.
+    """
+    words = []
+
+    def add(*values):
+        for value in values:
+            text = re.sub(r"\s+", " ", str(value or "")).strip()
+            if text and text.lower() not in {w.lower() for w in words}:
+                words.append(text)
+
+    department = str(job.get("department") or "").strip()
+    add(department)
+    short = department.split("(")[0].strip(" ,-")
+    if short and short != department:
+        add(short)
+    acronym = re.search(r"\(([A-Z][A-Za-z0-9/&.\-]{2,12})\)", department)
+    if acronym:
+        add(acronym.group(1))
+    title = str(job.get("title") or "").strip()
+    if " — " in title:
+        add(title.split(" — ", 1)[1].strip())
+    add(str(job.get("location") or "").strip())
+    category = str(job.get("qualCategory") or "").strip()
+    if category:
+        add(f"{category} pass jobs")
+    alert = str(job.get("alertType") or "recruitment").strip()
+    label = {
+        "admit-card": "admit card",
+        "answer-key": "answer key",
+        "result": "result",
+        "corrigendum": "corrigendum",
+        "admission": "admission",
+    }.get(alert, "recruitment")
+    add(f"{label} 2026", "sarkari naukri 2026", "government jobs 2026")
+    if str(job.get("type", "")).startswith("punjab") or job.get("alsoInPunjab") is True:
+        add("Punjab govt jobs 2026", "Punjab sarkari naukri")
+    add("EMPLOYMENT EXPRESS")
+    return ", ".join(words[:22])
+
+
+def _salary(job):
+    """MonetaryAmount for the schema, parsed from stored text (never guessed)."""
+    text = f"{job.get('details') or ''} {job.get('qualification') or ''}"
+    match = re.search(
+        r"(?:Rs\.?|INR|₹)\s*([0-9,]{5,8})(?:\s*/?\s*(?:-|to)?\s*[0-9,]*\s*)?"
+        r"(?:per\s*month|p\.?m\.?|month)?",
+        text, re.IGNORECASE)
+    if not match:
+        return None
+    value = int(match.group(1).replace(",", ""))
+    if not 10000 <= value <= 500000:
+        return None
+    return {
+        "@type": "MonetaryAmount",
+        "currency": "INR",
+        "value": {"@type": "QuantitativeValue", "value": value, "unitText": "MONTH"},
+    }
+
+
+def _iso_date(value):
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
+    match = re.match(r"(\d{4})-(\d{2})-(\d{2})", text)
+    if match:
+        return match.group(0)
+    match = re.match(r"(\d{1,2})-(\d{1,2})-(\d{4})", text)
+    if match:
+        day, month, year = match.groups()
+        return f"{year}-{int(month):02d}-{int(day):02d}"
+    return None
+
+
+def _place(job):
+    location = str(job.get("location") or "").strip()
+    country = {"@type": "Country", "name": "India"}
+    if not location or location.lower().startswith("all india"):
+        return {
+            "@type": "Place",
+            "address": {"@type": "PostalAddress", "addressCountry": "IN",
+                        "addressLocality": "India"},
+        }
+    parts = [part.strip() for part in location.split(",") if part.strip()]
+    address = {"@type": "PostalAddress", "addressCountry": "IN",
+               "addressLocality": parts[0]}
+    if len(parts) > 1:
+        address["addressRegion"] = parts[1]
+    return {"@type": "Place", "address": address}
+
+
+def structured_data(job, page_url, description):
+    """Static JSON-LD for one alert page.
+
+    index.html injects JobPosting data at runtime, but AI crawlers read only
+    static HTML — so every share page carries its own graph.
+    """
+    posted = (_iso_date(job.get("publishedAt")) or _iso_date(job.get("discoveredAt")))
+    valid = _iso_date(job.get("lastDate"))
+    if not posted:
+        posted = valid or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if not valid:
+        valid = (datetime.strptime(posted, "%Y-%m-%d") + timedelta(days=30)).strftime("%Y-%m-%d")
+
+    text = f"{job.get('details') or ''} {job.get('title') or ''}".lower()
+    employment = ("CONTRACTOR" if any(word in text for word in
+                                      ("contract", "temporary", "outsourc", "engagement"))
+                  else "FULL_TIME")
+    notice = str(job.get("pdfLink") or "").strip()
+    apply_link = str(job.get("applyLink") or "").strip()
+    if notice.lower().startswith("http"):
+        notice = notice
+    else:
+        notice = ""
+
+    posting = {
+        "@type": "JobPosting",
+        "title": str(job.get("title") or "Government Recruitment Notification").strip(),
+        "description": description,
+        "identifier": {"@type": "PropertyValue", "name": "EMPLOYMENT EXPRESS",
+                       "value": str(job.get("id"))},
+        "hiringOrganization": {
+            "@type": "Organization",
+            "name": str(job.get("department") or "Government Recruitment Board").strip(),
+            "url": notice or page_url,
+        },
+        "jobLocation": _place(job),
+        "employmentType": employment,
+        "datePosted": posted,
+        "validThrough": valid,
+        "applicantLocationRequirements": {"@type": "Country", "name": "India"},
+        "url": page_url,
+    }
+    salary = _salary(job)
+    if salary:
+        posting["baseSalary"] = salary
+    if apply_link.lower().startswith("http"):
+        posting["directApply"] = True
+        posting["applicationContact"] = {"@type": "WebPage", "url": apply_link}
+    if notice:
+        posting["sameAs"] = notice
+
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            posting,
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "EMPLOYMENT EXPRESS",
+                     "item": f"{BASE_URL}/"},
+                    {"@type": "ListItem", "position": 2, "name": "Government job alerts",
+                     "item": f"{BASE_URL}/#master-table"},
+                    {"@type": "ListItem", "position": 3,
+                     "name": str(job.get("title") or "Alert").strip(), "item": page_url},
+                ],
+            },
+        ],
+    }
+
+
+def summary_rows(job):
+    """(label, value) pairs shown on the page for crawlers and humans alike."""
+    rows = []
+    fields = (
+        ("Department", job.get("department")),
+        ("Posts", job.get("vacancies")),
+        ("Eligibility", job.get("qualification")),
+        ("Qualification level", job.get("qualCategory")),
+        ("Age limit", job.get("age")),
+        ("Application fee", job.get("feeGen")),
+        ("Fee for SC/ST", job.get("feeSC")),
+        ("Last date to apply", job.get("lastDate")),
+        ("Advertisement number", job.get("advtNo")),
+        ("Location", job.get("location")),
+        ("Apply mode", job.get("applyMode")),
+    )
+    for label, value in fields:
+        text = re.sub(r"\s+", " ", str(value or "")).strip()
+        if not text or text.lower() in ("see notification", "see official notification",
+                                        "see official notice", "newly published",
+                                        "as notified"):
+            continue
+        rows.append((label, text[:300].rsplit(" ", 1)[0] if len(text) > 300 else text))
+    return rows
+
+
 def share_page_html(job):
     jid = job["id"]
     title = str(job.get("title") or "EMPLOYMENT EXPRESS Alert").strip()
     desc = describe(job)
-    thumb = f"{BASE_URL}/assets/thumbnails/job-{jid}.png"
+    # A page written before its thumbnail exists (Pillow missing, or a partial
+    # run) must still show an image in WhatsApp/Facebook cards, so fall back to
+    # the site logo instead of pointing at a 404.
+    if (THUMBS / f"job-{jid}.png").exists():
+        thumb = f"{BASE_URL}/assets/thumbnails/job-{jid}.png"
+    else:
+        thumb = f"{BASE_URL}/assets/logo.png"
     page_url = f"{BASE_URL}/share/job-{jid}.html"
     target = f"../index.html?job={jid}"
     t = esc(title)
     d = esc(desc)
+    k = esc(keywords_for(job))
+    schema = (json.dumps(structured_data(job, page_url, desc), ensure_ascii=False, indent=2)
+              .replace("</", "<\\/").replace("<!--", "<\\!--"))
+    rows_html = "\n".join(
+        f'            <div class="row"><dt>{esc(label)}</dt><dd>{esc(value)}</dd></div>'
+        for label, value in summary_rows(job)
+    )
+    notice = str(job.get("pdfLink") or "").strip()
+    apply_link = str(job.get("applyLink") or "").strip()
+    links_html = ""
+    if notice.lower().startswith("http"):
+        links_html += (f'\n            <a class="link" href="{esc(notice)}">'
+                       f'Official notification &rarr;</a>')
+    if apply_link.lower().startswith("http") and apply_link != notice:
+        links_html += (f'\n            <a class="link primary" href="{esc(apply_link)}">'
+                       f'Apply online &rarr;</a>')
     return f"""<!doctype html>
 <html lang="en-IN">
 <head>
@@ -144,7 +356,11 @@ def share_page_html(job):
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{t} | EMPLOYMENT EXPRESS</title>
     <meta name="description" content="{d}">
+    <meta name="keywords" content="{k}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <meta name="author" content="EMPLOYMENT EXPRESS">
+    <meta name="geo.region" content="IN-PB">
+    <meta name="language" content="English">
     <link rel="canonical" href="{page_url}">
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
@@ -169,23 +385,65 @@ def share_page_html(job):
     <meta name="twitter:image" content="{thumb}">
     <meta name="twitter:image:alt" content="{t}">
 
-    <!-- Real visitor -> open the alert in the app. Scrapers stay on this page. -->
-    <meta http-equiv="refresh" content="0; url={target}">
+    <!-- Static structured data: this page is the canonical, indexable copy of
+         the alert, so the JobPosting and breadcrumb are served in the HTML
+         itself. Crawlers that never run JavaScript (AI answer engines
+         included) can therefore read the vacancy without the app. -->
+    <script type="application/ld+json">
+{schema}
+    </script>
+
+    <!-- Real visitors are sent on to the alert board; crawlers stay on this
+         page. The redirect is JavaScript-only on purpose: a 0-second meta
+         refresh would flag the page as a redirect and cost it the index. -->
     <script>window.location.replace({json.dumps(target)});</script>
 </head>
-<body style="margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f1f5f9;color:#0f172a;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;">
-    <div style="max-width:420px;width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;text-align:center;box-shadow:0 10px 30px rgba(2,6,23,.08);">
-        <div style="width:56px;height:56px;margin:0 auto 14px;border-radius:50%;background:#1d4ed8;color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;">EE</div>
-        <h1 style="font-size:16px;line-height:1.4;margin:0 0 8px;">{t}</h1>
-        <p style="font-size:13px;color:#64748b;margin:0 0 18px;">Opening the alert on EMPLOYMENT EXPRESS&hellip;</p>
+<body style="margin:0;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f1f5f9;color:#0f172a;display:flex;min-height:100vh;align-items:flex-start;justify-content:center;padding:24px;">
+    <main style="max-width:560px;width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(2,6,23,.08);">
+        <header style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+            <span style="width:34px;height:34px;border-radius:50%;background:#1d4ed8;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">EE</span>
+            <span style="font-weight:800;font-size:12px;letter-spacing:.08em;color:#1e3a8a;">EMPLOYMENT EXPRESS</span>
+        </header>
+
+        <h1 style="font-size:18px;line-height:1.4;margin:0 0 8px;">{t}</h1>
+        <p style="font-size:13px;color:#475569;margin:0 0 16px;line-height:1.5;">{d}</p>
+
+        <dl style="margin:0 0 16px;font-size:13px;">
+            <style>
+                .row {{ display:flex; gap:10px; padding:6px 0; border-top:1px solid #f1f5f9; }}
+                .row dt {{ flex:0 0 130px; color:#64748b; font-weight:600; }}
+                .row dd {{ margin:0; color:#0f172a; flex:1; }}
+                .link {{ display:inline-block; font-weight:700; font-size:13px; text-decoration:none;
+                         padding:9px 16px; border-radius:8px; border:1px solid #cbd5e1; color:#1e3a8a; }}
+                .link.primary {{ background:#dc2626; border-color:#dc2626; color:#fff; }}
+            </style>
+{rows_html}
+        </dl>
+
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">{links_html}
+        </div>
+
         <a href="{target}" style="display:inline-block;background:#dc2626;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:10px;">View Alert &rarr;</a>
-    </div>
+
+        <p style="font-size:11px;color:#94a3b8;margin:16px 0 0;line-height:1.5;">
+            Verified against the recruiting authority's own official notice.
+            Dates and vacancy counts change without warning — confirm them on
+            the official notification before applying.
+        </p>
+    </main>
 </body>
 </html>
 """
 
 
 def main():
+    # Imported here (not at module scope) so this module stays importable —
+    # and the SEO markup testable — without Pillow installed.
+    from scripts.thumbnail_generator import (  # noqa: PLC0415
+        parse_job_for_thumbnail,
+        generate_job_thumbnail,
+    )
+
     jobs = load_all_jobs()
     if not jobs:
         print("No jobs found; nothing to build.")
