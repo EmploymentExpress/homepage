@@ -262,8 +262,8 @@
       "name": "Railway Recruitment Board Chandigarh",
       "department": "Railway Recruitment Board (RRB), Chandigarh",
       "url": "https://www.rrbcdg.gov.in/",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "All India / Chandigarh Region",
       "noticeTypes": [
         "recruitment",
@@ -311,8 +311,8 @@
       "name": "PGIMER Chandigarh",
       "department": "Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh",
       "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/Vacancies/JSP/VACANCIE_VIEW.jsp?countt=0",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Chandigarh",
       "noticeTypes": [
         "recruitment",
@@ -469,8 +469,8 @@
     {
       "id": "aiims-bathinda-faculty",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -516,8 +516,8 @@
     {
       "id": "aiims-bathinda-sr-jr",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -566,8 +566,8 @@
       "name": "AIIMS Bathinda (Non-Faculty)",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
       "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -618,8 +618,8 @@
       "name": "AIIMS Bathinda (Project Posts)",
       "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
       "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=4",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -876,8 +876,8 @@
       "name": "Chandigarh Social Welfare Recruitment",
       "department": "Department of Social Welfare, Women & Child Development, Chandigarh Administration",
       "url": "https://chdsw.gov.in/index.php/recruitments/index",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Chandigarh",
       "noticeTypes": [
         "recruitment",
@@ -1232,8 +1232,8 @@
       "name": "Chandigarh Administration Public Notices",
       "department": "Chandigarh Administration",
       "url": "https://chandigarh.gov.in/public-notice",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Chandigarh",
       "noticeTypes": [
         "recruitment",
@@ -1370,8 +1370,8 @@
       "name": "Punjab and Haryana High Court Recruitments \u2014 Administrative Staff",
       "department": "High Court of Punjab and Haryana at Chandigarh",
       "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Chandigarh, Punjab and Haryana",
       "noticeTypes": [
         "recruitment",

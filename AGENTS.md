@@ -351,6 +351,43 @@ Whenever job structured data, `index.html` schema functions, curated vacancy dat
    - If any specific or optional detail (such as exact salary figures, detailed street address, or explicit application opening/closing dates) is not found in the official notification, **the job details MUST STILL be published on the homepage, table, feeds, and structured data**.
    - Never skip, drop, withhold, or fail to publish a job alert solely due to missing optional details — use safe, standard fallbacks (`See Notification`, official board headquarters address, standard pay scale defaults) so the job is always visible to applicants and search engines.
 
+## 🗺️ Punjab column rule: AIIMS Bathinda & every Chandigarh organisation (R14, Mandatory)
+
+AIIMS Bathinda notices and every notice from a recruiting organisation **of
+Chandigarh** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
+with `type: "punjab"` and `categorySlug: "punjab-jobs"`. They must never appear
+in the All India & NVS / Central column, no matter how their source is
+registered:
+
+- **AIIMS Bathinda** (Bathinda is in Punjab): Faculty, Non-Faculty, SR/JR
+  Resident, Project posts — every category.
+- **Every Chandigarh organisation**, even when the body is a UT/central
+  institute or the notification serves a wider region: PGIMER Chandigarh,
+  Chandigarh Administration departments (incl. Social Welfare / chdsw), Punjab
+  and Haryana High Court at Chandigarh, Railway Recruitment Board (RRB)
+  Chandigarh, and any future organisation located in or administered from
+  Chandigarh.
+- **The rule is per notice, not only per organisation.** A notice from a
+  national body that is itself specifically for Chandigarh / the Chandigarh UT
+  region (e.g. a UCO Bank result list for Chandigarh UT) also publishes in the
+  Punjab column, while the same body's all-India notices stay in the central
+  column.
+- **Data side:** register sources for these organisations with `type: "punjab"`
+  / `categorySlug: "punjab-jobs"` in `automation/sources.json`,
+  `data/notification-source-links.json` and `automation/offline-forms.json`.
+  Keep the `location` metadata truthful (e.g. `Bathinda, Punjab`,
+  `Chandigarh`) — the column rule is about placement, not the address.
+- **Never** put the `alsoInPunjab` cross-listing flag on these records: their
+  home column is Punjab. The flag stays reserved for genuine all-India notices
+  that Punjab candidates can also apply to.
+- **Enforcement:** `enforce_punjab_column_rule()` in `scripts/update_jobs.py`
+  re-classifies matching records into the Punjab column on every monitoring run
+  (it self-heals anything that still reaches the store as `central`), and
+  `tests/test_punjab_column_rule.py` fails CI if one of these notices is
+  published outside the Punjab column.
+- **Rationale:** Bathinda is in Punjab and Chandigarh is the region's shared
+  capital; Punjab applicants are the primary audience for these recruitments.
+
 ## 📐 Canonical section order (do not reorder)
 
 Inside `<main>` of `index.html`:

@@ -2594,6 +2594,68 @@ def normalize_stored_departments(jobs: list[dict[str, Any]]) -> bool:
     return changed
 
 
+# R14 (AGENTS.md → "Punjab column rule"): AIIMS Bathinda and every recruiting
+# organisation of Chandigarh always publish in Column 1 — Latest Punjab Jobs —
+# never in the central column, regardless of how their source is registered.
+# Bathinda is in Punjab and Chandigarh is the region's shared capital, so Punjab
+# applicants are the primary audience for these recruitments. Matching is
+# deliberately broad (title, department, source name and notice URLs all
+# qualify) so a Chandigarh-posted notice surfaces in the Punjab column even
+# when the recruiting body is a UT/central institute or its notification
+# serves a wider region.
+PUNJAB_COLUMN_MARKERS = (
+    "aiims bathinda",  # AIIMS Bathinda, any punctuation between the words
+    "aiimsbathinda",  # aiimsbathinda.edu.in hosts
+    "pgimer",  # PGIMER Chandigarh
+    "post graduate institute of medical education",
+    "postgraduate institute of medical education",
+    "chandigarh",  # every Chandigarh organisation, incl. RRB/High Court/UT boards
+)
+
+
+def is_punjab_column_organisation(*texts: Any) -> bool:
+    """True when a notice belongs to AIIMS Bathinda or a Chandigarh organisation."""
+    for text in texts:
+        normalized = re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
+        if normalized and any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+            return True
+    return False
+
+
+def enforce_punjab_column_rule(jobs: list[dict[str, Any]]) -> bool:
+    """Move AIIMS Bathinda / Chandigarh notices into the Punjab column (R14).
+
+    Runs over the published store on every refresh so the rule holds even when a
+    source was registered as ``central`` before the rule existed. Only the home
+    column fields change; ``location`` metadata stays truthful.
+    """
+    changed = False
+    for job in jobs:
+        if not is_punjab_column_organisation(
+            job.get("title"),
+            job.get("department"),
+            job.get("sourceName"),
+            job.get("sourceUrl"),
+            job.get("noticeUrl"),
+            job.get("pdfLink"),
+        ):
+            continue
+        title = clean_title(job.get("title", ""))
+        if job.get("type") != "punjab":
+            job["type"] = "punjab"
+            changed = True
+            print(f"  Moved notice to the Latest Punjab Jobs column (R14): {title[:70]}")
+        if clean_text(job.get("categorySlug")) in {"", "central"}:
+            job["categorySlug"] = "punjab-jobs"
+            changed = True
+        # alsoInPunjab cross-listing is reserved for genuine all-India notices;
+        # a Punjab-column notice must never carry it.
+        if job.get("alsoInPunjab") is True:
+            del job["alsoInPunjab"]
+            changed = True
+    return changed
+
+
 def reclassify_stored_jobs(jobs: list[dict[str, Any]]) -> bool:
     """Re-derive each stored alert's column from its title.
 
