@@ -1446,6 +1446,49 @@ def _is_attachment_label(title: str) -> bool:
     return normalised in ATTACHMENT_LABELS or len(normalised) < 8
 
 
+# Lead-in text boards print immediately before a download link
+# ("Date of Advertisement:", "Detailed Advertisement:", "Link for Applying
+# Online:"). The row parser records it as the anchor's own label, which made
+# CUPB's category pages publish headings such as
+# "CUPB Bathinda Date of : Detailed Recruitment" instead of the advert.
+FIELD_LABEL_START = re.compile(
+    r"""(?ix)\b(?:
+        date\s+of\s+(?:advertisement|issue|publishing|notification)
+      | last\s+date(?:\s+to\s+apply|\s+for[^.]{0,40})?
+      | detailed?\s+advertisement
+      | advertisement\s+in\s+(?:english|hindi|punjabi|marathi|bengali)
+      | link\s+for\s+applying\s+online
+      | published\s+on
+      | format
+      | size
+    )\b\s*:?"""
+)
+
+
+def _is_field_label(text: str) -> bool:
+    """True for the lead-in printed before a link, never a notice subject."""
+    stripped = clean_text(text).strip()
+    if not stripped:
+        return True
+    if stripped.endswith(":"):
+        return True
+    return bool(FIELD_LABEL_START.match(stripped))
+
+
+def _strip_field_labels(text: str) -> str:
+    """Drop the link lead-ins a board prints after the real subject.
+
+    Only trims when a substantial subject precedes the label, so a genuine
+    title that merely contains the word "advertisement" is never cut short.
+    """
+    match = FIELD_LABEL_START.search(text)
+    if match and match.start() >= 20:
+        trimmed = clean_text(text[: match.start()]).strip(" ,;:|-")
+        if len(trimmed) >= 12:
+            return trimmed
+    return text
+
+
 def _row_notice_title(row: dict[str, Any]) -> str:
     """Longest descriptive subject in a notice-table row.
 
@@ -1467,6 +1510,7 @@ def _row_notice_title(row: dict[str, Any]) -> str:
             continue
         if re.fullmatch(r"(?i)[\d\s./-]*", text) or parse_date_token(text):
             continue
+        text = _strip_field_labels(text)
         if len(text) > len(best):
             best = text
     # Discovery-feed tables often put the recruiting organisation in an anchor
@@ -1477,6 +1521,7 @@ def _row_notice_title(row: dict[str, Any]) -> str:
         clean_title(label)
         for _, label in row.get("links", [])
         if not _is_attachment_label(label)
+        and not _is_field_label(label)
         and not is_junk_job_title(label)
         and len(clean_title(label)) >= 8
     ]

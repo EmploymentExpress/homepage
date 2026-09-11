@@ -196,6 +196,14 @@ runs because a single dead mirror was the only one ever tried). The same section
     category page — an open walk-in that reaches the site through no source is a coverage bug
     (observed: the 14-Sep-2026 SR walk-in interview was invisible while only
     `aiimsexams.ac.in` was monitored).
+    **A homepage that only links to its category pages is the same bug.** Central University
+    of Punjab (`cup.edu.in`) is the cautionary case: its "Recruitment" tab links to
+    `teaching_jobs.php`, `non-teaching_jobs.php` and `other-jobs.php` — never to an
+    advertisement — so a new advert never created a new fingerprint on the monitored root
+    page. The source looked healthy (14 stable fingerprints, no failures) while publishing
+    nothing for weeks. Monitoring the root alone is not enough; add one source per category
+    page (see `cup-teaching` / `cup-non-teaching` / `cup-project`) and give each a
+    `bootstrapCount` above 1 so the live advert is not buried on the first scan.
 
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 
@@ -350,6 +358,46 @@ Whenever job structured data, `index.html` schema functions, curated vacancy dat
 7. **Resilience & Fallbacks (Always Post the Job Details):**
    - If any specific or optional detail (such as exact salary figures, detailed street address, or explicit application opening/closing dates) is not found in the official notification, **the job details MUST STILL be published on the homepage, table, feeds, and structured data**.
    - Never skip, drop, withhold, or fail to publish a job alert solely due to missing optional details — use safe, standard fallbacks (`See Notification`, official board headquarters address, standard pay scale defaults) so the job is always visible to applicants and search engines.
+
+## 🔎 Discovery files: sitemap.xml, llms.txt, robots.txt (generated — never hand-edit)
+
+`scripts/build_seo.py` regenerates three files on **every** scheduled run (its own
+workflow step runs after the alert and share-page steps). Hand edits are lost at the
+next run, so change the generator instead.
+
+- **`sitemap.xml`** — the homepage, the standalone article pages listed in
+  `ARTICLE_PAGES`, and one `share/job-<id>.html` per alert. Generated from the
+  filesystem plus each alert's own `discoveredAt` date, so new alerts become
+  discoverable the same run they are published.
+- **`llms.txt`** — the [llmstxt.org](https://llmstxt.org) index for AI answer
+  engines. It describes the site, states that notices are verified on the
+  authority's own website, then lists the freshest vacancies / admit cards /
+  results, each with a one-line summary. Expired alerts and alerts whose share
+  page does not exist yet are deliberately excluded: an assistant must never
+  quote a deadline that has passed or link to a page that 404s.
+- **`robots.txt`** — allows every crawler, names each AI agent explicitly
+  (GPTBot, OAI-SearchBot, PerplexityBot, ClaudeBot, Google-Extended, …) and
+  points at the sitemap and the LLM index.
+
+**Why this exists.** The homepage is a single-page app: its alert board only
+exists after JavaScript fetches `data/auto-jobs.json`. Crawlers that never run
+JavaScript — Googlebot's secondary pass and the AI answer engines — used to
+receive an essentially empty page, while 500+ static, canonical alert pages sat
+undiscoverable in `share/`. So:
+
+- `scripts/build_share_pages.py` writes **static** `JobPosting` + `BreadcrumbList`
+  JSON-LD, per-page `meta keywords` and the alert's details as readable text into
+  every share page. That is the content AI crawlers actually read.
+- Share pages redirect real visitors to the app with **JavaScript only**. Never
+  re-add a `http-equiv="refresh"`: a 0-second meta refresh flags the page as a
+  redirect and costs it the index.
+- `index.html` and `assets/` are protected layout files
+  (`PROTECTED_LAYOUT_PATHS`), so homepage-level tags stay hand-authored while
+  these three files stay fresh.
+
+Guards: `tests/test_seo.py` (sitemap lists every share page, robots allows the
+AI agents, llms.txt links only to pages that exist, share pages carry valid
+static structured data, and `build_seo.main()` never touches a protected file).
 
 ## 🗺️ Punjab column rule: AIIMS Bathinda & every Chandigarh organisation (R14, Mandatory)
 

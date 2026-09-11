@@ -1,5 +1,70 @@
 # robots.txt for EMPLOYMENT EXPRESS
+# https://employmentexpress.github.io/homepage/
+#
+# Every crawler is welcome, including the AI answer engines named
+# below. Public government recruitment notices should be easy to find
+# in search results and in ChatGPT, Gemini, Perplexity and Claude.
 User-agent: *
 Allow: /
 
+# AI answer engines / assistants (explicit allow)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: omgili
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# Crawl budget: the alert board is the content; the JSON feeds and
+# offline-form redirector are application plumbing.
+Disallow: /data/
+Disallow: /redirect.html
+
 Sitemap: https://employmentexpress.github.io/homepage/sitemap.xml
+
+# LLM index for assistants:
+# https://employmentexpress.github.io/homepage/llms.txt

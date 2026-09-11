@@ -1,0 +1,113 @@
+# EMPLOYMENT EXPRESS
+
+> Verified Punjab, Chandigarh and Central Government job alerts — recruitment notifications, admit cards, results and answer keys, each linked to the recruiting authority's own official notice.
+
+EMPLOYMENT EXPRESS is a government job alert portal for India. It publishes one page per government vacancy with the post name, department, vacancy count, eligibility, age limit, application fee, last date to apply and a direct link to the official notification and application portal. Coverage focuses on Punjab and Chandigarh (PSSSB, PPSC, PSPCL, Punjab Police, Punjab & Haryana High Court, AIIMS Bathinda, PGIMER Chandigarh, GNDU, PAU Ludhiana) and All-India recruitments open to Punjab candidates (SSC, UPSC, RRB, IBPS, SBI, India Post GDS, Navodaya Vidyalaya Samiti).
+
+Every alert is read from the recruiting authority's own website before it is published; job-aggregator URLs are never used as the official notice link. Deadlines are re-checked on every refresh and an alert leaves the site once its last date has passed.
+
+## How to use this index
+
+Each link below opens one static page for a single government vacancy or notice. For a question such as "which Punjab government jobs are open right now", prefer the pages listed under the latest Punjab jobs below, and always quote the last date shown on the page.
+
+## Latest Punjab government jobs
+
+- [PAU Ludhiana: Extension in date of submission of application form for Project Associate- I (Now the last date of submission of applications is 15.09.2026)](https://employmentexpress.github.io/homepage/share/job-247673804031631.html) — last date 15-09-2026; eligibility Graduate
+- [PAU Ludhiana: Post of Female Gym Trainer (Last date for submission of application 18-09-2026 upto 04:00 PM) - Director Students' Welfare](https://employmentexpress.github.io/homepage/share/job-205005620184312.html) — last date 18-09-2026; eligibility Diploma/ITI
+- [AIIMS Bathinda: 3) Application form- Deputation Basis](https://employmentexpress.github.io/homepage/share/job-154537547151087.html) — eligibility B.Ed/ETT
+- [AIIMS Bathinda: 3) Application form- Deputation Basis](https://employmentexpress.github.io/homepage/share/job-148998367824804.html) — eligibility B.Ed/ETT
+- [AIIMS Bathinda: 5) Reopening of Advertisement of Various Group A Posts on Direct Recruitment Basis — Recruitment Of Various Group A Posts at AIIMS Bathinda on Direct Recruitment Basis](https://employmentexpress.github.io/homepage/share/job-238536873514066.html) — 2024 Posts; eligibility Diploma/ITI
+- [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-222955750355299.html) — 2024 Posts; eligibility Diploma/ITI
+- [AIIMS Bathinda: Recruitment Types](https://employmentexpress.github.io/homepage/share/job-208298934260796.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 18) Corrigendum: Revision in Final Eligibility Status for the Post of Senior Programmer](https://employmentexpress.github.io/homepage/share/job-180273852351094.html) — eligibility Graduate
+- [AIIMS Bathinda: 2) Application Form- Deputation Basis](https://employmentexpress.github.io/homepage/share/job-17494091943443.html) — eligibility B.Ed/ETT
+- [PAU Ludhiana: Post of Junior Research Fellow (JRF), scheduled to be held on 21 September 2026 at ICAR-IIRMR, Sewar, Bharatpur (Rajasthan)](https://employmentexpress.github.io/homepage/share/job-273985059741038.html) — eligibility Graduate
+- [PAU Ludhiana: Written test for recruitment to the post of Office Assistant to be conducted on 15.09.2026 at 10:00 AM](https://employmentexpress.github.io/homepage/share/job-36192673574334.html) — eligibility Graduate
+- [PAU Ludhiana: Post of Jr. Field/Lab Helper (Last date for submission of application 11-09-2026 and appear for selection committee on 15-09-2026 at 02.30 PM)](https://employmentexpress.github.io/homepage/share/job-254983160602132.html) — last date 11-09-2026; eligibility Graduate
+- [PAU Ludhiana: Post of Jr. Lab/Field Helper (Last date for submission of application 16-09-2026 and appear for interview on 23-09-2026 at 11.00 AM) - School of Agricultural Biotechnology](https://employmentexpress.github.io/homepage/share/job-170357258377426.html) — last date 16-09-2026; eligibility Graduate
+- [PAU Ludhiana: Post of Senior Research Fellow (Last date for submission of application 16-09-2026 and appear for interview on 22-09-2026 at 11.00 AM) - School of Organic & Natural Farming](https://employmentexpress.github.io/homepage/share/job-81597433251741.html) — last date 16-09-2026; eligibility Graduate
+- [IBPS All India (state-wise: Regional Rural Banks Post of Officers (Scale-I, II & III) CRP-RRBs-XV, Online Form](https://employmentexpress.github.io/homepage/share/job-199809054699195.html) — last date 21-09-2026; eligibility Graduate
+- [IBPS All India (state-wise: Apply Online for Common Recruitment Process under CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-48059417248026.html) — last date 21-09-2026; eligibility Graduate
+
+## Latest Central and All-India government jobs
+
+- [CUPB Bathinda: Laboratory Attendant (Pharmaceutical Sciences & Natural Products) Recruitment](https://employmentexpress.github.io/homepage/share/job-225794245619041.html) — 1 Post (01-OBC); last date 14-09-2026; eligibility 12th
+- [Office of The District and Session Judge, Rewari: Rewari Court Stenographer](https://employmentexpress.github.io/homepage/share/job-198668728686499.html) — last date 17-09-2026; eligibility Graduate
+- [CUPB Bathinda: Senior Analyst (Food Testing Laboratory) Recruitment](https://employmentexpress.github.io/homepage/share/job-197156935421034.html) — 1 Post (01-UR); last date 11-09-2026; eligibility Graduate
+- [University, Rohtak: Aaryan College Rohtak Peon, Sweeper, Helper, Librarian & Various Post](https://employmentexpress.github.io/homepage/share/job-169925163425759.html) — last date 14-09-2026; eligibility Graduate
+- [CUPB Bathinda: Contractual Faculty (B.Tech, Computer Science & Technology) Recruitment](https://employmentexpress.github.io/homepage/share/job-130790040209220.html) — 1 Post (01-EWS); last date 11-09-2026; eligibility Graduate
+- [CUPB Bathinda: Laboratory Attendant (Computer Science & Technology) Recruitment](https://employmentexpress.github.io/homepage/share/job-127365582242435.html) — 1 Post (01-UR); last date 15-09-2026; eligibility 12th
+- [CUPB Bathinda: Laboratory Assistant (Biotechnology & Bioinformatics, Community Medicine & Health) Recruitment](https://employmentexpress.github.io/homepage/share/job-89222607795562.html) — 2 Posts (01-UR each — one under Department of Biotechnology and Bioinformatics, one under Department of Community Medicine & Health); last date 14-09-2026; eligibility Graduate
+- [CUPB Bathinda: Laboratory Assistant (Computer Science & Technology) Recruitment](https://employmentexpress.github.io/homepage/share/job-1841297353408.html) — 1 Post (01-OBC); last date 15-09-2026; eligibility Graduate
+- [South All India: Army ASC Centre South Fireman, Librarian, Fire Engine Driver](https://employmentexpress.github.io/homepage/share/job-190313966828.html) — last date 18-09-2026; eligibility Graduate
+- [Sahitya Akademi, New Delhi: Delhi Sahitya Akademi MTS, Driver, Clerk, T.A & Various Post](https://employmentexpress.github.io/homepage/share/job-265384826326519.html) — last date 21-09-2026; eligibility Graduate
+- [CSIR–National Aerospace Laboratories: CSIR NAL Multi-Tasking Staff Recruitment 2026 Application Form](https://employmentexpress.github.io/homepage/share/job-262868705269347.html) — last date 21-09-2026; eligibility Graduate
+- [Department of Posts: GDS Online Engagement](https://employmentexpress.github.io/homepage/share/job-230036812169917.html) — eligibility Graduate
+- [NAL All India: CSIR-NAL MTS](https://employmentexpress.github.io/homepage/share/job-189540865656198.html) — last date 21-09-2026; eligibility Graduate
+- [Department of Posts: Vacancies](https://employmentexpress.github.io/homepage/share/job-177501976484520.html) — 2,265 Posts; eligibility 8th/10th
+- [Department of Posts: Recruitment Rules](https://employmentexpress.github.io/homepage/share/job-165733716293132.html) — 2,265 Posts; eligibility 8th/10th
+- [IBPS All India: PFRDA Recruitment of Officer Registration From 03-Sep-26](https://employmentexpress.github.io/homepage/share/job-80940509797576.html) — last date 09-10-2026; eligibility Graduate
+- [DPCC All India: SEE, AEE, EE](https://employmentexpress.github.io/homepage/share/job-39463886263821.html) — last date 18-09-2026; eligibility Graduate
+- [IBPS All India: Updated Vacancies as on 09.09.2026 for Common Recruitment Process for CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-36810966681557.html) — eligibility 8th/10th
+- [IBPS All India: Corrigendum dated 09.09.2026 in connection with CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-8554977044946.html) — eligibility 8th/10th
+- [IBPS All India: IDBI Appointment of Executive to Assistant Manager Registration From 08-Sep-26](https://employmentexpress.github.io/homepage/share/job-185450624134681.html) — last date 26-09-2026; eligibility Graduate
+- [IBPS All India: IDBI Appointment of ESO as Junior Assistant Manager Registration From 08-Sep-26](https://employmentexpress.github.io/homepage/share/job-165643466903913.html) — last date 26-09-2026; eligibility Graduate
+- [IBPS All India: BOB Recruitment of Human Resource Registration From 04-Sep-26](https://employmentexpress.github.io/homepage/share/job-128079677638997.html) — last date 09-10-2026; eligibility Graduate
+- [IBPS All India: UIICL Recruitment of Administrative Officer (Scale I) Registration From 08-Sep-26](https://employmentexpress.github.io/homepage/share/job-120245487102628.html) — last date 13-10-2026; eligibility Graduate
+- [IBPS All India: IIFCL Direct Recruitment for the Post of DGM Registration From 05-Sep-26](https://employmentexpress.github.io/homepage/share/job-101885874568223.html) — last date 05-10-2026; eligibility Graduate
+- [Invite applications for the various Posts on direct: Invite applications for the various Posts on direct recruitment basis. (Last Date: 21 October 2026)](https://employmentexpress.github.io/homepage/share/job-273404553365083.html) — last date 21-10-2026; eligibility Graduate
+- [Sahitya Akademi: Sahitya Akademi Recruitment 2026 Apply for MTS, Clerk & Others](https://employmentexpress.github.io/homepage/share/job-181881138733528.html) — last date 21-10-2026; eligibility Graduate
+- [UCO Bank: Engagement of UCO Bank’s Retired Officials as Concurrent Auditors for Audit Year 2026-27](https://employmentexpress.github.io/homepage/share/job-227165293798669.html) — last date 15-09-2026; eligibility 8th/10th
+- [UCO Bank: Engagement of Chartered Accountant firms as Concurrent Auditors for Audit Year 2026-27](https://employmentexpress.github.io/homepage/share/job-106725609005004.html) — last date 15-09-2026; eligibility 8th/10th
+- [UCO Bank: RECRUITMENT OF IT SPECIALIST OFFICERS IN MMGS-II ON REGULAR BASIS 2026-27>Advertisement No. HO/HRM/RECR/2026-27/COM-01](https://employmentexpress.github.io/homepage/share/job-232078252988241.html) — eligibility Graduate
+- [Aakash College of Education, VPO Kalirawan, Tehsil Adampur, Hisar, Haryana Affiliated to CRSU, jind: Aakash College of Edu. Hisar Store Keeper, Lab Assistant, Lab Attendant & Various Post](https://employmentexpress.github.io/homepage/share/job-135002023585707.html) — last date 26-09-2026; eligibility Graduate
+
+## Admit cards and call letters
+
+- [SBI All India: CALL LETTER LINK DOWNLOAD PRELIMINARY EXAMINATION CALL LETTER](https://employmentexpress.github.io/homepage/share/job-179004495446097.html) — eligibility 8th/10th
+- [PAU Ludhiana: the admit card for the qualifying exam of Punjabi Language for recruitment to the post(s) of Assistant Professor (Soil Science) and District Extension Scientist (Agril. Economics) (at Outstat](https://employmentexpress.github.io/homepage/share/job-151237395259903.html) — eligibility Graduate
+- [SBI All India: MARKS SECURED BY THE CANDIDATES IN PRELIMINARY EXAMINATION](https://employmentexpress.github.io/homepage/share/job-240227402347702.html) — eligibility 8th/10th
+- [BHU All India: Call Letter](https://employmentexpress.github.io/homepage/share/job-189415207199683.html) — eligibility Graduate
+- [BHU All India: Call Letter](https://employmentexpress.github.io/homepage/share/job-179217769092747.html) — eligibility Graduate
+- [BHU All India: Call Letter](https://employmentexpress.github.io/homepage/share/job-127682830077834.html) — eligibility Graduate
+- [BHU All India: Call Letter](https://employmentexpress.github.io/homepage/share/job-111819441795143.html) — eligibility Graduate
+- [BHU All India: Call Letter](https://employmentexpress.github.io/homepage/share/job-138975637586634.html) — eligibility Graduate
+
+## Results and answer keys
+
+- [AIIMS Bathinda: 3) Award List and Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-250331143185694.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 2) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-230942392742569.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 9) Result Notification](https://employmentexpress.github.io/homepage/share/job-225914078352332.html) — eligibility Graduate
+- [AIIMS Bathinda: 2) Notification of Document Verification](https://employmentexpress.github.io/homepage/share/job-223263624310498.html) — eligibility Diploma/ITI
+- [AIIMS Bathinda: 8) Final Eligibility List](https://employmentexpress.github.io/homepage/share/job-217365902158596.html) — eligibility Graduate
+- [AIIMS Bathinda: 3) List of Eligible/Ineligible Candidates for the post of Nursing Officer Garde-II](https://employmentexpress.github.io/homepage/share/job-212162140460816.html) — eligibility Graduate
+- [AIIMS Bathinda: 10) Result Notification](https://employmentexpress.github.io/homepage/share/job-210454184709069.html) — eligibility Graduate
+- [AIIMS Bathinda: 5) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-189741729030002.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 6) Eligibility List](https://employmentexpress.github.io/homepage/share/job-176646255313918.html) — eligibility Graduate
+- [AIIMS Bathinda: 2) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-173644912878761.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 5) List of Eligible/Provisionally-Eligible /In-Eligible Candidates](https://employmentexpress.github.io/homepage/share/job-170503043842250.html) — eligibility Graduate
+- [AIIMS Bathinda: 4) Result Notice](https://employmentexpress.github.io/homepage/share/job-169304504938985.html) — eligibility Graduate
+- [AIIMS Bathinda: 7) Provisional Result Notification for the post of Junior Audiologist/Speech Therapist/Technical Assistant (ENT), Occupational Therapist and Special Educator](https://employmentexpress.github.io/homepage/share/job-165822843279232.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 4) Result Notification](https://employmentexpress.github.io/homepage/share/job-161722252179549.html) — eligibility Graduate
+- [AIIMS Bathinda: 3) Result](https://employmentexpress.github.io/homepage/share/job-156989075403556.html) — eligibility Graduate
+- [AIIMS Bathinda: 3) Result Notification](https://employmentexpress.github.io/homepage/share/job-141212317404726.html) — eligibility Graduate
+- [AIIMS Bathinda: 4) Notification: Regarding List of Eligible/Ineligible Candidates for the post of Nursing Officer Garde-II](https://employmentexpress.github.io/homepage/share/job-135942653393639.html) — eligibility Graduate
+- [AIIMS Bathinda: 5) Result (Junior Residents)](https://employmentexpress.github.io/homepage/share/job-134376097784970.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 3) List of Eligible / Ineligible Candidates](https://employmentexpress.github.io/homepage/share/job-132042479309862.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 6) Final List of Eligible/In-Eligible Candidates](https://employmentexpress.github.io/homepage/share/job-115053980512747.html) — eligibility Graduate
+- [AIIMS Bathinda: 8) Provisional Result Notification for the post of Clinical Psychologist](https://employmentexpress.github.io/homepage/share/job-110627271509330.html) — eligibility Graduate
+- [AIIMS Bathinda: 8) Result Notification](https://employmentexpress.github.io/homepage/share/job-97258099250852.html) — eligibility Graduate
+- [AIIMS Bathinda: 4) Result (Senior Residents)](https://employmentexpress.github.io/homepage/share/job-96125027083734.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 4) Schedule for Document Verification of Candidates](https://employmentexpress.github.io/homepage/share/job-89966823181333.html) — 1 Posts; eligibility Diploma/ITI
+- [AIIMS Bathinda: 3) Provisional Result Notification cum Re-open the Advertisement](https://employmentexpress.github.io/homepage/share/job-65927248439364.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 3) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-58455562495176.html) — eligibility 8th/10th
+- [AIIMS Bathinda: 3) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-51114896761053.html) — eligibility 8th/10th
+- [CUPB Bathinda: Lower Division Clerk (LDC) Written Test Paper-1 Answer Key](https://employmentexpress.github.io/homepage/share/job-29207504207723.html) — eligibility Graduate
+- [AIIMS Bathinda: 2) Schedule for Document Verification of Candidates Provisionally Allocated to AIIMS Bathinda through CRE-4 (2025) for recruitment to various Group B and C posts](https://employmentexpress.github.io/homepage/share/job-11912435293819.html) — 1 Posts; eligibility Diploma/ITI
+- [AIIMS Bathinda: 3) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-7248454389592.html) — eligibility 8th/10th
+
+## Official sources monitored
+- [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
+- Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
+
+Last updated: 2026-09-11
