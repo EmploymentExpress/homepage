@@ -317,7 +317,9 @@ class JobMonitorTests(unittest.TestCase):
         self.assertTrue(source["enabled"])
         self.assertEqual(source["url"], "https://cup.edu.in/")
         self.assertEqual(source["department"], "Central University of Punjab (CUPB), Bathinda")
-        self.assertEqual(source["type"], "central")
+        # R14: a Punjab campus university, home-listed in the Punjab column.
+        self.assertEqual(source["type"], "punjab")
+        self.assertEqual(source["categorySlug"], "punjab-jobs")
         self.assertFalse(monitor.is_discovery_host(source["url"]))
         self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
 
@@ -356,8 +358,10 @@ class JobMonitorTests(unittest.TestCase):
         self.assertTrue(all(source.get("enabled", True) for source in cup_sources))
         for source in cup_sources:
             with self.subTest(source=source["id"]):
-                self.assertEqual(source["type"], "central")
-                self.assertEqual(source["categorySlug"], "central")
+                # R14: CUPB is a Punjab campus university, so its notices are
+                # home-listed in the Latest Punjab Jobs column.
+                self.assertEqual(source["type"], "punjab")
+                self.assertEqual(source["categorySlug"], "punjab-jobs")
                 self.assertEqual(
                     source["department"], "Central University of Punjab (CUPB), Bathinda"
                 )

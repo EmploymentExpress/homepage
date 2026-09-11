@@ -1284,8 +1284,8 @@
       "name": "Central University of Punjab Recruitment",
       "department": "Central University of Punjab (CUPB), Bathinda",
       "url": "https://cup.edu.in/",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -1328,8 +1328,8 @@
       "name": "Central University of Punjab (Teaching Posts)",
       "department": "Central University of Punjab (CUPB), Bathinda",
       "url": "https://cup.edu.in/teaching_jobs.php",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -1381,8 +1381,8 @@
       "name": "Central University of Punjab (Non-Teaching Posts)",
       "department": "Central University of Punjab (CUPB), Bathinda",
       "url": "https://cup.edu.in/non-teaching_jobs.php",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",
@@ -1435,8 +1435,8 @@
       "name": "Central University of Punjab (Project & Research Posts)",
       "department": "Central University of Punjab (CUPB), Bathinda",
       "url": "https://cup.edu.in/other-jobs.php",
-      "type": "central",
-      "categorySlug": "central",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
       "location": "Bathinda, Punjab",
       "noticeTypes": [
         "recruitment",

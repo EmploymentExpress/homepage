@@ -399,16 +399,26 @@ Guards: `tests/test_seo.py` (sitemap lists every share page, robots allows the
 AI agents, llms.txt links only to pages that exist, share pages carry valid
 static structured data, and `build_seo.main()` never touches a protected file).
 
-## 🗺️ Punjab column rule: AIIMS Bathinda & every Chandigarh organisation (R14, Mandatory)
+## 🗺️ Punjab column rule: AIIMS Bathinda, every Chandigarh organisation & CUPB (R14, Mandatory)
 
-AIIMS Bathinda notices and every notice from a recruiting organisation **of
-Chandigarh** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
+AIIMS Bathinda notices, every notice from a recruiting organisation **of
+Chandigarh**, and every notice of the **Central University of Punjab (CUPB),
+Bathinda** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
 with `type: "punjab"` and `categorySlug: "punjab-jobs"`. They must never appear
 in the All India & NVS / Central column, no matter how their source is
 registered:
 
 - **AIIMS Bathinda** (Bathinda is in Punjab): Faculty, Non-Faculty, SR/JR
   Resident, Project posts — every category.
+- **Central University of Punjab (CUPB), Bathinda** — every notice, teaching,
+  non-teaching and project/research posts alike. CUPB is a central university
+  **located in Punjab**, exactly like AIIMS Bathinda: being "central" describes
+  who funds it, not where the job is. Punjab applicants are the primary
+  audience, so CUPB vacancies sit beside AIIMS Bathinda's in the Punjab column
+  and their sources are registered as `type: "punjab"` /
+  `categorySlug: "punjab-jobs"`. Matching is by full name, by the `CUPB`
+  acronym and by the `cup.edu.in` domain — the acronym is matched on word
+  boundaries so an unrelated word such as "cupboard" never triggers the rule.
 - **Every Chandigarh organisation**, even when the body is a UT/central
   institute or the notification serves a wider region: PGIMER Chandigarh,
   Chandigarh Administration departments (incl. Social Welfare / chdsw), Punjab
@@ -435,6 +445,13 @@ registered:
   published outside the Punjab column.
 - **Rationale:** Bathinda is in Punjab and Chandigarh is the region's shared
   capital; Punjab applicants are the primary audience for these recruitments.
+
+**Keep the enforcement call wired.** `enforce_punjab_column_rule()` is invoked
+from the store-refresh block in `main()` (right after
+`normalize_stored_departments()`). It was once defined but never called, so R14
+held only because the affected sources happened to be configured as `punjab` —
+a notice arriving from a discovery feed would have landed in the Central column
+silently. `tests/test_punjab_column_rule.py` guards that the call still exists.
 
 ## 📐 Canonical section order (do not reorder)
 

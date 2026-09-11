@@ -2655,20 +2655,36 @@ PUNJAB_COLUMN_MARKERS = (
     "post graduate institute of medical education",
     "postgraduate institute of medical education",
     "chandigarh",  # every Chandigarh organisation, incl. RRB/High Court/UT boards
+    # R14 extension: Central University of Punjab is a Punjab campus
+    # university, so its vacancies belong in the Punjab column exactly like
+    # AIIMS Bathinda's, not in All India & Central.
+    "central university of punjab",
+)
+
+# Matched as regular expressions against the normalised text, so a short
+# acronym can be anchored to word boundaries: a plain substring "cupb" would
+# also match inside an unrelated word such as "cupboard".
+PUNJAB_COLUMN_PATTERNS = (
+    re.compile(r"\bcupb\b"),  # CUPB — Central University of Punjab
+    re.compile(r"\bcup edu in\b"),  # cup.edu.in (normalised from the URL)
 )
 
 
 def is_punjab_column_organisation(*texts: Any) -> bool:
-    """True when a notice belongs to AIIMS Bathinda or a Chandigarh organisation."""
+    """True for AIIMS Bathinda, a Chandigarh organisation, or CUPB (R14)."""
     for text in texts:
         normalized = re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
-        if normalized and any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+        if not normalized:
+            continue
+        if any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+            return True
+        if any(pattern.search(normalized) for pattern in PUNJAB_COLUMN_PATTERNS):
             return True
     return False
 
 
 def enforce_punjab_column_rule(jobs: list[dict[str, Any]]) -> bool:
-    """Move AIIMS Bathinda / Chandigarh notices into the Punjab column (R14).
+    """Move AIIMS Bathinda / Chandigarh / CUPB notices to the Punjab column (R14).
 
     Runs over the published store on every refresh so the rule holds even when a
     source was registered as ``central`` before the rule existed. Only the home
@@ -4892,6 +4908,11 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     # website link ("sbi.gov.in — Result") into the real authority name, and
     # move stored notices to their correct column as classification tightens.
     if normalize_stored_departments(jobs):
+        jobs_changed = True
+    # R14 (Punjab column rule) is enforced here, not only through the source
+    # config: a notice that reaches the store from a discovery feed or from a
+    # source registered before the rule existed is still moved home.
+    if enforce_punjab_column_rule(jobs):
         jobs_changed = True
     if reclassify_stored_jobs(jobs):
         jobs_changed = True
