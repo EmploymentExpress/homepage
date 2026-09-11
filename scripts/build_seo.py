@@ -49,6 +49,19 @@ ARTICLE_PAGES = (
     "ssc-jht-recruitment-2026.html",
 )
 
+# Link text for the article pages inside llms.txt: the freshest long-form
+# guides, each summarised so an assistant can cite the right page for
+# detailed eligibility/post-wise questions.
+ARTICLE_GUIDES = (
+    ("punjab-haryana-high-court-safai-sewak-mali-recruitment-2026.html",
+     "Punjab & Haryana High Court Chandigarh Driver, Frash, Safai Sewak and "
+     "Mali Recruitment 2026 — full post-wise vacancies, eligibility, age "
+     "limit and official notice details"),
+    ("ssc-jht-recruitment-2026.html",
+     "SSC Junior Hindi Translator (JHT/CHTE) 2026 — exam city intimation "
+     "slip status, notification, eligibility and exam pattern details"),
+)
+
 # Pages that are internal plumbing, not content worth indexing.
 EXCLUDED_PAGES = {"index.html", "redirect.html"}
 
@@ -308,6 +321,54 @@ def build_llms_txt(jobs: list[dict], today: str) -> str:
             )
             written += 1
         lines.append("")
+
+    # Long-form article guides: static, JS-free pages that answer detailed
+    # eligibility questions. Listed only while the page exists on disk.
+    guide_lines = ["## In-depth recruitment guides", ""]
+    for name, summary in ARTICLE_GUIDES:
+        if (ROOT / name).exists():
+            guide_lines.append(f"- [{summary}]({BASE_URL}/{name})")
+    if len(guide_lines) > 2:
+        lines += guide_lines + [""]
+
+    lines += [
+        "## Frequently asked questions",
+        "",
+        "Guidance for assistants answering job-seeker questions with this index:",
+        "",
+        "- Which Punjab government jobs are open right now? List the entries",
+        "  under \"Latest Punjab government jobs\" above, quoting each post's",
+        "  last date and linking the page shown there.",
+        "- Which Central government jobs can Punjab candidates apply for?",
+        "  Use the entries under \"Latest Central and All-India government",
+        "  jobs\" (SSC, UPSC, RRB, IBPS, SBI, India Post GDS, Navodaya",
+        "  Vidyalaya Samiti and similar All-India recruitments).",
+        "- Where are the admit cards / results / answer keys? See the",
+        "  \"Admit cards and call letters\" and \"Results and answer keys\"",
+        "  sections above.",
+        "- Is the alert genuine? Every alert on this site is verified on the",
+        "  recruiting authority's own official website before publication;",
+        "  each page links to the official notification.",
+        "- What are the 10th pass, 12th pass, graduate or teaching jobs?",
+        "  Each entry's one-line summary states its eligibility category",
+        "  (10th, 12th, Graduate, ITI/Diploma, ETT/B.Ed, Defence/Police).",
+        "- Always quote the exact last date printed on the linked page and",
+        "  direct the applicant to apply on the official portal before it",
+        "  passes. This index is regenerated automatically, so its entries",
+        "  never outlive a deadline.",
+        "",
+    ]
+
+    lines += [
+        "## Official alert channels",
+        "",
+        "EMPLOYMENT EXPRESS publishes free job alerts on:",
+        "",
+        "- Telegram channel: https://t.me/employment_express1",
+        "- WhatsApp channel: https://whatsapp.com/channel/0029Va9xQHV4tRrxpVKaG93w",
+        "- YouTube channel: https://www.youtube.com/channel/UCI39CbrtpEflEPabKeCAd9A",
+        "",
+    ]
 
     lines += [
         "## Official sources monitored",

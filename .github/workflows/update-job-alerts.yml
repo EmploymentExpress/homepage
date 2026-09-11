@@ -251,3 +251,69 @@ jobs:
           echo "Failed to rebase and push share pages after 3 attempts" >&2
 
           exit 1
+
+      - name: Refresh SEO discovery files
+
+        shell: bash
+
+        run: |
+
+          # Regenerate sitemap.xml, llms.txt and robots.txt from the current
+
+          # alert data (scripts/build_seo.py) so search engines and AI answer
+
+          # engines (Google, ChatGPT/GPTBot, Gemini/Google-Extended,
+
+          # Perplexity, Claude) always discover the freshest vacancies, admit
+
+          # cards and results. The builder is deterministic and only writes
+
+          # these three files, so a run with nothing new leaves nothing to
+
+          # commit. Runs after the alert and share-page steps because the
+
+          # sitemap and the LLM index are built from the share/ pages.
+
+          git checkout "${GITHUB_REF_NAME}"
+
+          python scripts/build_seo.py
+
+          if [ -z "$(git status --porcelain -- sitemap.xml llms.txt robots.txt)" ]; then
+
+            echo "SEO discovery files are already up to date."
+
+            exit 0
+
+          fi
+
+          git config user.name "employment-express-alert-bot"
+
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -- sitemap.xml llms.txt robots.txt
+
+          git commit -m "chore: refresh SEO discovery files [skip ci]"
+
+          # Same rebase/push retry as the alert-data step above.
+
+          for attempt in 1 2 3; do
+
+            if git pull --rebase && git push; then
+
+              exit 0
+
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+
+              echo "Rebase/push attempt $attempt failed; retrying in 5 seconds..." >&2
+
+              sleep 5
+
+            fi
+
+          done
+
+          echo "Failed to rebase and push SEO discovery files after 3 attempts" >&2
+
+          exit 1
