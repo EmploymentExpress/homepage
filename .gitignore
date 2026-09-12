@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 .venv/
 venv/
+
+# Local review artifacts (sample thumbnails, user-uploaded reference images)
+/uploads/
