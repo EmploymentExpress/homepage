@@ -2639,15 +2639,25 @@ def normalize_stored_departments(jobs: list[dict[str, Any]]) -> bool:
     return changed
 
 
-# R14 (AGENTS.md → "Punjab column rule"): AIIMS Bathinda and every recruiting
-# organisation of Chandigarh always publish in Column 1 — Latest Punjab Jobs —
-# never in the central column, regardless of how their source is registered.
-# Bathinda is in Punjab and Chandigarh is the region's shared capital, so Punjab
-# applicants are the primary audience for these recruitments. Matching is
-# deliberately broad (title, department, source name and notice URLs all
-# qualify) so a Chandigarh-posted notice surfaces in the Punjab column even
-# when the recruiting body is a UT/central institute or its notification
-# serves a wider region.
+# R14 (AGENTS.md → "Punjab column rule"): AIIMS Bathinda, every recruiting
+# organisation of Chandigarh, the Central University of Punjab, the Punjab
+# state name and every notice naming a district of Punjab as its JOB LOCATION
+# always publish in Column 1 — Latest Punjab Jobs — never in the central
+# column, regardless of how their source is registered. Bathinda is in Punjab
+# and Chandigarh is the region's shared capital, so Punjab applicants are the
+# primary audience for these recruitments. Matching is deliberately broad
+# (title, department, source name, location, details summary and notice URLs
+# all qualify) so a Punjab-district notice surfaces in the Punjab column even
+# when the recruiting body is a central institute (e.g. an ECHS polyclinic at
+# Ferozepur) or its notification serves a wider region.
+#
+# Two exclusions keep the rule honest (AGENTS.md → "Never an examination
+# centre"): a Punjab district/Chandigarh that appears only as an EXAMINATION
+# CENTRE / exam city / test venue never moves a notice (the candidate sits the
+# exam there; the job is not there), and in PDF-derived details text a bare
+# word "Punjab" does not count either — it is usually exam language or a
+# participating-state list (IBPS: "test versions offered for Punjab are
+# English, Hindi and Punjabi") — only an explicit employer phrase does.
 PUNJAB_COLUMN_MARKERS = (
     "aiims bathinda",  # AIIMS Bathinda, any punctuation between the words
     "aiimsbathinda",  # aiimsbathinda.edu.in hosts
@@ -2669,36 +2679,192 @@ PUNJAB_COLUMN_PATTERNS = (
     re.compile(r"\bcup edu in\b"),  # cup.edu.in (normalised from the URL)
 )
 
+# R14 district extension: every district of Punjab. A notice whose details name
+# a Punjab district — wherever the recruiting body is headquartered, whatever
+# its funding and however the source is registered — is a Punjab-column notice:
+# an ECHS polyclinic vacancy at Ferozepur is a Punjab vacancy and publishes
+# beside the state's own board notices. All 23 districts are listed with their
+# common spelling variants (Firozpur for Ferozepur, Bhatinda for Bathinda,
+# Ropar for Rupnagar, Mohali for SAS Nagar, Nawanshahr for Shahid Bhagat Singh
+# Nagar, Muktsar for Sri Muktsar Sahib). Like the acronyms above, every name is
+# matched on word boundaries so a short district name such as "Moga" or "Mansa"
+# never fires inside an unrelated word ("Mansarovar", "cupboard").
+PUNJAB_COLUMN_DISTRICTS = (
+    "amritsar",
+    "barnala",
+    "bathinda",
+    "bhatinda",  # common variant spelling of Bathinda
+    "faridkot",
+    "fatehgarh sahib",
+    "fazilka",
+    "ferozepur",
+    "firozpur",  # Ferozepur's alternative spelling
+    "ferozepore",  # colonial-era spelling still seen on older notices
+    "gurdaspur",
+    "hoshiarpur",
+    "jalandhar",
+    "jullundur",  # Jalandhar's older spelling
+    "kapurthala",
+    "ludhiana",
+    "malerkotla",
+    "mansa",
+    "moga",
+    "pathankot",
+    "patiala",
+    "ropar",  # Rupnagar's older name
+    "rupnagar",
+    "sas nagar",  # Sahibzada Ajit Singh Nagar
+    "s a s nagar",  # "S.A.S. Nagar" after normalisation
+    "mohali",  # SAS Nagar's everyday name
+    "sangrur",
+    "nawanshahr",  # Shahid Bhagat Singh Nagar's everyday name
+    "shahid bhagat singh nagar",
+    "sri muktsar sahib",
+    "muktsar",
+    "tarn taran",
+)
+PUNJAB_COLUMN_DISTRICT_PATTERNS = tuple(
+    re.compile(r"\b" + re.escape(district) + r"\b")
+    for district in PUNJAB_COLUMN_DISTRICTS
+)
 
-def is_punjab_column_organisation(*texts: Any) -> bool:
-    """True for AIIMS Bathinda, a Chandigarh organisation, or CUPB (R14)."""
+# R14 state extension: the Punjab state name itself qualifies — "Punjab
+# Police", location "Punjab", "Government of Punjab" — except for the banks
+# that are merely NAMED Punjab but are headquartered outside the state.
+PUNJAB_STATE_WORD = re.compile(r"\bpunjab\b")
+PUNJAB_NAMED_BANKS = re.compile(
+    r"\bpunjab\s+(?:national|and\s+sind|and\s+maharashtra|sind|maharashtra)\b"
+)
+# In PDF-derived details free text, only an explicit employer phrase counts
+# (a bare "Punjab" there is exam language / a participating-state list).
+PUNJAB_STATE_EMPLOYER_PHRASES = (
+    "government of punjab",
+    "govt of punjab",
+    "state of punjab",
+    "punjab government",
+)
+
+# R14 exam-centre exclusion: sentences naming an examination centre, exam city
+# or test venue are masked before matching — a Punjab district appearing there
+# names where the candidate sits the exam, not where the job is.
+EXAM_CENTRE_CONTEXT_MARKERS = re.compile(
+    r"exam(?:ination)?\s*(?:cent(?:re|er)s?|cit(?:y|ies)|venue)"
+    r"|test\s+cent(?:re|er)s?"
+    r"|cit(?:y|ies)\s+intimation"
+    r"|city\s+slip"
+    r"|choice\s+of\s+(?:exam(?:ination)?\s+)?cit(?:y|ies)"
+    r"|\bvenue\b"
+    r"|\bcent(?:re|er)s?\s*:",
+    re.IGNORECASE,
+)
+
+
+def strip_exam_centre_context(text: Any) -> str:
+    """Blank every sentence that names an examination centre, exam city or
+    test venue, so a Punjab district or Chandigarh mentioned there can never
+    trigger the Punjab column rule (R14 — exam centres are not job locations)."""
+    raw = str(text or "")
+    if not raw:
+        return ""
+    sentences = re.split(r"(?<=[.!?;])\s+|\n+", raw)
+    return " ".join(
+        "" if EXAM_CENTRE_CONTEXT_MARKERS.search(sentence) else sentence
+        for sentence in sentences
+    )
+
+
+def _normalize_punjab_text(text: Any) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
+
+
+def punjab_state_names_the_location(normalized: str, *, strict: bool) -> bool:
+    """True when "Punjab" names the state as the notice's location/employer.
+
+    Banks merely named "Punjab" (PNB, Punjab & Sind, Punjab & Maharashtra) are
+    headquartered outside Punjab and never count. With ``strict=True`` (used
+    for PDF-derived details free text) only an explicit employer phrase —
+    "Government of Punjab", "State of Punjab" — qualifies, because a bare
+    "Punjab" there is typically exam language or a participating-state list.
+    """
+    if not PUNJAB_STATE_WORD.search(normalized):
+        return False
+    without_banks = PUNJAB_NAMED_BANKS.sub("bank", normalized)
+    if not PUNJAB_STATE_WORD.search(without_banks):
+        return False
+    if strict:
+        return any(phrase in without_banks for phrase in PUNJAB_STATE_EMPLOYER_PHRASES)
+    return True
+
+
+def _punjab_column_match(normalized: str, *, strict_state: bool) -> bool:
+    if not normalized:
+        return False
+    if any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+        return True
+    if any(pattern.search(normalized) for pattern in PUNJAB_COLUMN_PATTERNS):
+        return True
+    if any(pattern.search(normalized) for pattern in PUNJAB_COLUMN_DISTRICT_PATTERNS):
+        return True
+    return punjab_state_names_the_location(normalized, strict=strict_state)
+
+
+def is_punjab_column_organisation(
+    *texts: Any,
+    department: Any = None,
+    source_name: Any = None,
+    details: Any = None,
+) -> bool:
+    """True for AIIMS Bathinda, a Chandigarh organisation, CUPB, the Punjab
+    state, or any notice naming a district of Punjab as its job location (R14).
+
+    Examination-centre context is masked first, so a Punjab district or
+    Chandigarh that appears only as an exam centre/city/venue never triggers
+    the rule. ``department`` and ``source_name`` carry the recruiting
+    organisation's own identity and are matched unmasked — a Chandigarh
+    organisation's notices (e.g. RRB Chandigarh's exam-city slips) stay in the
+    Punjab column even when their titles talk about exam cities. ``details``
+    (PDF-derived free text) is masked and matched strictly: a bare "Punjab"
+    does not count there, only an explicit employer phrase does.
+    """
     for text in texts:
-        normalized = re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
-        if not normalized:
-            continue
-        if any(marker in normalized for marker in PUNJAB_COLUMN_MARKERS):
+        normalized = _normalize_punjab_text(strip_exam_centre_context(text))
+        if _punjab_column_match(normalized, strict_state=False):
             return True
-        if any(pattern.search(normalized) for pattern in PUNJAB_COLUMN_PATTERNS):
+    for identity in (department, source_name):
+        normalized = _normalize_punjab_text(identity)
+        if _punjab_column_match(normalized, strict_state=False):
+            return True
+    if details is not None:
+        normalized = _normalize_punjab_text(strip_exam_centre_context(details))
+        if _punjab_column_match(normalized, strict_state=True):
             return True
     return False
 
 
 def enforce_punjab_column_rule(jobs: list[dict[str, Any]]) -> bool:
-    """Move AIIMS Bathinda / Chandigarh / CUPB notices to the Punjab column (R14).
+    """Move AIIMS Bathinda / Chandigarh / CUPB / Punjab job-location notices to
+    the Punjab column (R14).
 
     Runs over the published store on every refresh so the rule holds even when a
-    source was registered as ``central`` before the rule existed. Only the home
-    column fields change; ``location`` metadata stays truthful.
+    source was registered as ``central`` before the rule existed. Every job
+    detail is scanned — title, department, source name, location, the details
+    summary and the notice URLs — but examination-centre context is masked
+    first: a Punjab district, the state or Chandigarh counts only as a job
+    location (the employer's posting), never as an exam centre/city/venue, and
+    a bare "Punjab" in the details text needs an explicit employer phrase. Only
+    the home column fields change; ``location`` metadata stays truthful.
     """
     changed = False
     for job in jobs:
         if not is_punjab_column_organisation(
             job.get("title"),
-            job.get("department"),
-            job.get("sourceName"),
+            job.get("location"),
             job.get("sourceUrl"),
             job.get("noticeUrl"),
             job.get("pdfLink"),
+            department=job.get("department"),
+            source_name=job.get("sourceName"),
+            details=job.get("details"),
         ):
             continue
         title = clean_title(job.get("title", ""))

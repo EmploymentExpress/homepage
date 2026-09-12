@@ -1,13 +1,21 @@
-"""R14 Punjab column rule: AIIMS Bathinda, every Chandigarh organisation & CUPB.
+"""R14 Punjab column rule: AIIMS Bathinda, every Chandigarh organisation, CUPB,
+Punjab state & every Punjab district — as the JOB LOCATION, never an exam centre.
 
 AGENTS.md ("Punjab column rule") requires every notice from AIIMS Bathinda, from
 any recruiting organisation of Chandigarh — even a UT/central institute or a
-national body's Chandigarh-specific notice — and from the Central University of
-Punjab (CUPB), Bathinda, to publish in Column 1, Latest Punjab Jobs
-(`type: "punjab"`, `categorySlug: "punjab-jobs"`), never in the All India & NVS /
-Central column, and never carrying the ``alsoInPunjab`` cross-listing flag
-(their home column is Punjab). CUPB is a Punjab campus university, so its
-vacancies belong next to AIIMS Bathinda's, not in the all-India column.
+national body's Chandigarh-specific notice — from the Central University of
+Punjab (CUPB), Bathinda, and every notice whose job details name **the Punjab
+state, Chandigarh, or a district of Punjab as the job location** (all 23
+districts, with their common spelling variants, matched on word boundaries) to
+publish in Column 1, Latest Punjab Jobs (`type: "punjab"`,
+`categorySlug: "punjab-jobs"`), never in the All India & NVS / Central column,
+and never carrying the ``alsoInPunjab`` cross-listing flag (their home column is
+Punjab). Two exclusions keep the rule honest: a Punjab district / the state /
+Chandigarh that appears only as an **examination centre, exam city or test
+venue** never moves a notice (the candidate sits the exam there, the job is not
+there), banks merely *named* Punjab (PNB, Punjab & Sind, Punjab & Maharashtra)
+stay central, and a bare word "Punjab" in the PDF-derived details free text
+needs an explicit employer phrase ("Government of Punjab") to count.
 
 ``EnforcePunjabColumnRuleTests`` runs the real enforcement function from
 ``scripts/update_jobs.py``; ``StoreClassificationTests`` asserts the published
@@ -69,7 +77,6 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
             "State Bank of India (SBI)",
             "Institute of Banking Personnel Selection (IBPS)",
             "Indian Institute of Technology (BHU), Varanasi",
-            "Punjab Police Recruitment 2026",
             "https://sbi.co.in/web/careers",
             # A short acronym must be anchored to word boundaries, or
             # "cupboard" would be read as CUPB.
@@ -81,6 +88,136 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
         for text in cases:
             with self.subTest(text=text):
                 self.assertFalse(monitor.is_punjab_column_organisation(text))
+
+    def test_punjab_state_name_matches(self):
+        # R14 state extension: the state's own name counts like a district —
+        # "Punjab Police Recruitment 2026" is a Punjab notice (its source is
+        # registered as punjab in automation/sources.json).
+        cases = [
+            "Punjab Police Recruitment 2026",
+            "Punjab State Power Corporation Limited (PSPCL) — Lineman Recruitment",
+            "Government of Punjab — Clerk Recruitment",
+            "Punjab State Civil Supplies Corporation (PUNSUP) Recruitment",
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertTrue(monitor.is_punjab_column_organisation(text))
+
+    def test_punjab_location_value_matches(self):
+        self.assertTrue(monitor.is_punjab_column_organisation("Punjab"))
+
+    def test_banks_named_punjab_stay_central(self):
+        # These banks are merely NAMED Punjab but are headquartered outside
+        # the state, so their all-India notices never move to Punjab.
+        cases = [
+            "Punjab National Bank (PNB) — Officer Recruitment",
+            "Punjab & Sind Bank — Specialist Officers Recruitment",
+            "Punjab and Maharashtra Bank — Clerk Recruitment",
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(monitor.is_punjab_column_organisation(text))
+
+    # ------------------------------------------------------------------
+    # R14 exam-centre exclusion: a Punjab district / the state / Chandigarh
+    # counts only as a JOB LOCATION — never as an examination centre, exam
+    # city or test venue named in the notice.
+    # ------------------------------------------------------------------
+
+    def test_exam_centre_mentions_do_not_trigger(self):
+        cases = [
+            "SSC JHT 2026 — Examination Centres: Delhi, Ludhiana, Chandigarh and Pune",
+            "The written examination will be held at exam centres in Amritsar and Jalandhar.",
+            "Exam City Intimation — Chandigarh region",
+            "Test centre: Patiala",
+            "Venue: SAS Nagar (Mohali)",
+            "CUIET — choice of exam cities includes Bathinda and Delhi",
+            "Examination cities: Chandigarh, Delhi, Mumbai",
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(monitor.is_punjab_column_organisation(text))
+
+    def test_exam_centre_notice_stays_in_the_central_column(self):
+        # A notice whose ONLY Punjab connection is its exam centres must stay
+        # in the All India & Central column.
+        job = {
+            "id": 9001,
+            "title": "SSC — Junior Hindi Translator Recruitment",
+            "department": "Staff Selection Commission (SSC)",
+            "sourceName": "Staff Selection Commission (SSC)",
+            "location": "All India",
+            "details": ("The examination will be conducted at examination centres in "
+                        "Delhi, Ludhiana and Chandigarh. Applications are submitted online."),
+            "type": "central",
+            "categorySlug": "central",
+        }
+        self.assertFalse(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "central")
+        self.assertEqual(job["categorySlug"], "central")
+
+    def test_job_location_survives_alongside_exam_centres(self):
+        # The employer's posting names the district, the exam happens
+        # elsewhere: the notice still moves to the Punjab column.
+        job = {
+            "id": 9002,
+            "title": "Ex-Servicemen Contributory Health Scheme, Ferozepur (Punjab) — Recruitment",
+            "department": "Ex-Servicemen Contributory Health Scheme (ECHS)",
+            "location": "All India",
+            "details": ("Post based at Ferozepur (Punjab). Examination centres for the "
+                        "written test: Delhi and Chandigarh."),
+            "type": "central",
+            "categorySlug": "central",
+        }
+        self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "punjab-jobs")
+
+    def test_bare_punjab_in_details_free_text_does_not_trigger(self):
+        # The live IBPS case: "Punjab" appears only as an exam-language option
+        # in the PDF-derived details, not as the job location — the notice
+        # stays central and keeps its all-India cross-listing.
+        details = ("For Office Assistants and Officer Scale-I the test versions "
+                   "offered for Punjab are English, Hindi and Punjabi, and the "
+                   "medium is chosen in the online application.")
+        self.assertFalse(monitor.is_punjab_column_organisation(details=details))
+        job = {
+            "id": 9003,
+            "title": "Institute of Banking Personnel Selection (IBPS) — Apply Online for Common Recruitment Process",
+            "department": "Institute of Banking Personnel Selection (IBPS)",
+            "sourceName": "IBPS",
+            "location": "All India (state-wise, participating RRBs)",
+            "details": details,
+            "type": "central",
+            "categorySlug": "central",
+            "alsoInPunjab": True,
+        }
+        self.assertFalse(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "central")
+        self.assertTrue(job.get("alsoInPunjab") is True)
+
+    def test_punjab_employer_phrase_in_details_triggers(self):
+        details = ("Applications are invited under the Government of Punjab for "
+                   "various district posts. Apply before the last date.")
+        self.assertTrue(monitor.is_punjab_column_organisation(details=details))
+
+    def test_chandigarh_organisation_exam_city_notice_stays_punjab(self):
+        # A Chandigarh organisation's own exam-city notice still publishes in
+        # the Punjab column: the organisation identity (department/source
+        # name) is matched unmasked, even though the title names an exam city.
+        job = {
+            "id": 9004,
+            "title": "RRB Chandigarh — Exam City Intimation Slip",
+            "department": "Railway Recruitment Board (RRB), Chandigarh",
+            "sourceName": "Railway Recruitment Board Chandigarh",
+            "location": "All India",
+            "details": "Exam city intimation for the upcoming computer based test.",
+            "type": "central",
+            "categorySlug": "central",
+        }
+        self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "punjab-jobs")
 
     def test_central_record_is_moved_to_the_punjab_column(self):
         job = {
@@ -181,6 +318,144 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
         self.assertFalse(monitor.enforce_punjab_column_rule(jobs))
         self.assertTrue(all(job["type"] == "central" for job in jobs))
 
+    # ------------------------------------------------------------------
+    # R14 district extension: every district of Punjab, named anywhere in
+    # the job details, always publishes in the Punjab column.
+    # ------------------------------------------------------------------
+
+    PUNJAB_DISTRICTS = (
+        "Amritsar",
+        "Barnala",
+        "Bathinda",
+        "Faridkot",
+        "Fatehgarh Sahib",
+        "Fazilka",
+        "Ferozepur",
+        "Gurdaspur",
+        "Hoshiarpur",
+        "Jalandhar",
+        "Kapurthala",
+        "Ludhiana",
+        "Malerkotla",
+        "Mansa",
+        "Moga",
+        "Pathankot",
+        "Patiala",
+        "Rupnagar",
+        "SAS Nagar",
+        "Sangrur",
+        "Shahid Bhagat Singh Nagar",
+        "Sri Muktsar Sahib",
+        "Tarn Taran",
+    )
+
+    def test_every_punjab_district_matches(self):
+        for district in self.PUNJAB_DISTRICTS:
+            with self.subTest(district=district):
+                self.assertTrue(
+                    monitor.is_punjab_column_organisation(
+                        f"Office of the District and Sessions Judge, {district} — Clerk Recruitment"
+                    )
+                )
+
+    def test_district_spelling_variants_match(self):
+        cases = [
+            "ECHS Polyclinic Firozpur Recruitment 2026",
+            "District Court Ferozepore Recruitment",
+            "Bhatinda District Administration Notice",
+            "Ropar DC Office Recruitment",
+            "Mohali Court Stenographer Recruitment",
+            "S.A.S. Nagar Municipal Corporation Recruitment",
+            "Nawanshahr District Court Recruitment",
+            "Muktsar DC Office Notice",
+            "Jullundur Cantonment Board Recruitment",
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertTrue(monitor.is_punjab_column_organisation(text))
+
+    def test_district_names_inside_other_words_do_not_match(self):
+        # Short district names are matched on word boundaries, so they must
+        # never fire inside an unrelated word.
+        cases = [
+            "Mansarovar Lake Development Authority Recruitment",
+            "Mansarovar colony welfare association notice",
+            "PSG Medical College recruitment",  # no district name present
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(monitor.is_punjab_column_organisation(text))
+
+    def test_districts_of_other_states_do_not_match(self):
+        cases = [
+            "Office of The District and Session Judge, Rewari — Stenographer Recruitment",
+            "Panipat Urban Co-operative Bank, Haryana — Clerk Recruitment",
+            "Chaudhary Charan Singh Haryana Agricultural University (HAU), Hisar",
+            "University, Rohtak — Peon Recruitment",
+            "Ex-Servicemen Contributory Health Scheme (ECHS), Meerut",
+            "District Court Balangir, Odisha Recruitment",
+        ]
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(monitor.is_punjab_column_organisation(text))
+
+    def test_punjab_district_notice_is_moved_to_the_punjab_column(self):
+        # The live case that motivated the district rule: an ECHS (central
+        # body) vacancy at Ferozepur was published in the central column with
+        # location "All India".
+        job = {
+            "id": 238551255168358,
+            "title": ("Ex-Servicemen Contributory Health Scheme, Ferozepur (Punjab) — "
+                      "ECHS Ferozepur Recruitment 2026 Application Form"),
+            "department": "Ex-Servicemen Contributory Health Scheme, Ferozepur (Punjab)",
+            "sourceName": "ECHS Ferozepur Recruitment",
+            "location": "All India",
+            "details": ("Offline application vacancy for Ex-Servicemen Contributory "
+                        "Health Scheme, Ferozepur (Punjab)."),
+            "type": "central",
+            "categorySlug": "central",
+        }
+        self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "punjab-jobs")
+        # Only the home column changes — the location metadata stays truthful
+        # (the enforcement never rewrites it).
+        self.assertEqual(job["location"], "All India")
+
+    def test_district_named_only_in_location_or_details_still_moves(self):
+        # Every job detail is scanned: a district that appears only in the
+        # location field, or only inside the details summary text, is enough.
+        for field, value in (
+            ("location", "Ludhiana, Punjab"),
+            ("details", "Applications must reach the Kapurthala polyclinic office."),
+        ):
+            with self.subTest(field=field):
+                job = {
+                    "id": 42,
+                    "title": "Ex-Servicemen Contributory Health Scheme — Recruitment",
+                    "department": "Ex-Servicemen Contributory Health Scheme (ECHS)",
+                    "type": "central",
+                    "categorySlug": "central",
+                    field: value,
+                }
+                self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+                self.assertEqual(job["type"], "punjab")
+                self.assertEqual(job["categorySlug"], "punjab-jobs")
+
+    def test_rail_coach_factory_kapurthala_notice_is_moved_to_the_punjab_column(self):
+        # RCF is a Ministry of Railways body — but it is located in Kapurthala,
+        # a district of Punjab, so its notices belong in the Punjab column.
+        job = {
+            "id": 77,
+            "title": "Rail Coach Factory (RCF), Kapurthala — Act Apprentice Recruitment",
+            "department": "Rail Coach Factory (RCF), Kapurthala — Ministry of Railways",
+            "type": "central",
+            "categorySlug": "central",
+        }
+        self.assertTrue(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "punjab-jobs")
+
     def test_already_punjab_records_report_no_change(self):
         job = {
             "id": 1,
@@ -202,21 +477,28 @@ class StoreClassificationTests(unittest.TestCase):
         cls.registry = json.loads(REGISTRY.read_text(encoding="utf8"))
 
     def matched_store_jobs(self):
+        # The same fields enforce_punjab_column_rule() scans, with the same
+        # exam-centre masking and strict details handling.
         return [
             job
             for job in self.store["jobs"]
             if monitor.is_punjab_column_organisation(
                 job.get("title"),
-                job.get("department"),
-                job.get("sourceName"),
+                job.get("location"),
                 job.get("sourceUrl"),
                 job.get("noticeUrl"),
                 job.get("pdfLink"),
+                department=job.get("department"),
+                source_name=job.get("sourceName"),
+                details=job.get("details"),
             )
         ]
 
-    def test_store_has_aiims_bathinda_or_chandigarh_records(self):
-        self.assertTrue(self.matched_store_jobs(), "expected the published store to hold AIIMS Bathinda / Chandigarh notices")
+    def test_store_has_aiims_bathinda_chandigarh_or_punjab_district_records(self):
+        self.assertTrue(
+            self.matched_store_jobs(),
+            "expected the published store to hold AIIMS Bathinda / Chandigarh / Punjab-district notices",
+        )
 
     def test_every_matching_store_record_publishes_in_the_punjab_column(self):
         for job in self.matched_store_jobs():
@@ -237,8 +519,15 @@ class StoreClassificationTests(unittest.TestCase):
             ):
                 continue
             with self.subTest(source=source.get("id")):
+                # The column is `type`; `categorySlug` is the homepage's
+                # master-table filter and may deliberately be a custom Punjab
+                # category ("psssb", "ppsc", "punjab-police", …) — but a
+                # Punjab-column source must never carry the central values.
                 self.assertEqual(source.get("type"), "punjab")
-                self.assertEqual(source.get("categorySlug"), "punjab-jobs")
+                self.assertNotIn(
+                    source.get("categorySlug"), ("", None, "central"),
+                    "a Punjab-column source must not carry the central category slug",
+                )
             checked += 1
         self.assertGreaterEqual(checked, 5, "expected the AIIMS Bathinda / Chandigarh sources to stay registered")
 
