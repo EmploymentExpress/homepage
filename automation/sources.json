@@ -1313,7 +1313,12 @@
         "eoi",
         "expression of interest",
         "procurement",
-        "gem bid"
+        "gem bid",
+        "telephone directory",
+        "contact directory",
+        "address directory",
+        "holiday list",
+        "annual report"
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
@@ -1366,7 +1371,12 @@
         "home",
         "contact us",
         "student corner",
-        "fee payment"
+        "fee payment",
+        "telephone directory",
+        "contact directory",
+        "address directory",
+        "holiday list",
+        "annual report"
       ],
       "bootstrapCount": 3,
       "maxNewPerRun": 8,
@@ -1420,7 +1430,12 @@
         "home",
         "contact us",
         "student corner",
-        "fee payment"
+        "fee payment",
+        "telephone directory",
+        "contact directory",
+        "address directory",
+        "holiday list",
+        "annual report"
       ],
       "bootstrapCount": 3,
       "maxNewPerRun": 8,
@@ -1475,7 +1490,12 @@
         "home",
         "contact us",
         "student corner",
-        "fee payment"
+        "fee payment",
+        "telephone directory",
+        "contact directory",
+        "address directory",
+        "holiday list",
+        "annual report"
       ],
       "bootstrapCount": 3,
       "maxNewPerRun": 8,

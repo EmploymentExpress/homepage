@@ -40,6 +40,16 @@ Whenever job details are updated, curated, or generated via automation:
 - **`pdfLink` (Official Notice / PDF):** MUST always point directly to the specific advertisement notification PDF or active notice page for that job.
 - **`applyLink` (Apply Online / Portal):** MUST always point directly to the specific online application or registration portal page for that post.
 - **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). Always extract or provide the direct notification or portal page URL.
+- **❌ NEVER attach an administrative document as the "official notification":** a telephone / contact / address **directory**, holiday list, duty roster,
+  office order, staff or employee list, newsletter, gallery, annual report or RTI file is **site housekeeping, not a notice** — it may never become a
+  `pdfLink`/`applyLink`, and it may never be the subject of a job/admission post. Open the file name and check what the document *is*, not just that it is
+  an official `.pdf`. `NON_NOTICE_DOCUMENT_TERMS` / `is_non_notice_document()` in `scripts/update_jobs.py` enforce this in the detail-page PDF picker, the
+  raw page-source scan, the refresh merge and the published-data sanitize pass (which blanks such a link and falls back to the notice page);
+  `tests/test_update_jobs.py` guards it.
+  **Real incident (fixed 2026-09-12):** a CUPB Bathinda "job details" post was published whose only attachment was
+  `Telephone directory (Hindi & English) as on 09.10.2025.pdf`, scraped from the university's site chrome while its listing page read
+  "Will be Updated Shortly." — i.e. a **job post that was actually a telephone directory**. Two CUPB admission cards had the same file. A notice exists
+  only when the board's own page carries the advertisement: an empty or informational page yields **nothing**, never a fallback document.
 
 ## 🔍 Source-of-truth rule: always read the official website **and its page source** (Mandatory)
 
