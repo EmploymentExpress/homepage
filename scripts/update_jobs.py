@@ -484,6 +484,40 @@ EXCLUDED_TERMS = (
     "pre bid",
     "pre-bid",
 )
+# Administrative and publicity documents an official website publishes for its
+# own housekeeping. They are NEVER a vacancy, admission, result or answer-key
+# notice, so they must never become an alert's notification/apply link.
+#
+# Observed in the wild (fixed 2026-09-12): CUPB Bathinda keeps a
+# "Telephone directory (Hindi & English)" PDF in its site chrome, and the
+# detail-page PDF picker grabbed it as the "Official notification" of a
+# non-teaching job alert whose listing page only said "Will be Updated
+# Shortly." — a published job post whose only attachment was a phone book.
+NON_NOTICE_DOCUMENT_TERMS = (
+    "telephone directory",
+    "telephone list",
+    "contact directory",
+    "address directory",
+    "contact list",
+    "staff list",
+    "employee list",
+    "office order",
+    "duty roster",
+    "rotation roster",
+    "holiday list",
+    "list of holidays",
+    "newsletter",
+    "photo gallery",
+    "image gallery",
+    "annual report",
+    "annual activity report",
+    "income and expenditure",
+    "utilisation of funds",
+    "rti",
+)
+NON_NOTICE_DOCUMENT_RE = re.compile(
+    r"(?i)\b(?:" + "|".join(re.escape(term) for term in NON_NOTICE_DOCUMENT_TERMS) + r")\b"
+)
 DEFAULT_NOTICE_TYPES = {
     "recruitment",
     "admission",
@@ -1062,6 +1096,29 @@ def is_generic_homepage(url: str) -> bool:
 def is_placeholder_detail(value: Any) -> bool:
     text = clean_text(value).lower().strip(" .:-–—")
     return text in PLACEHOLDER_DETAILS or text.startswith("published ")
+
+
+def document_wording(value: Any) -> str:
+    """Lowercase, space-separated words of a URL or link label ("/", "%20", "_", "+").
+
+    File names are how an administrative document announces itself
+    ("Telephone_directory.pdf", "holiday-list-2026.pdf"), so the check needs the
+    words, not the raw path.
+    """
+    raw = clean_text(value)
+    if not raw:
+        return ""
+    decoded = urllib.parse.unquote(raw.replace("+", " "))
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", decoded.lower())).strip()
+
+
+def is_non_notice_document(*values: Any) -> bool:
+    """True when any URL / link label names an administrative document, not a notice."""
+    for value in values:
+        words = document_wording(value)
+        if words and NON_NOTICE_DOCUMENT_RE.search(words):
+            return True
+    return False
 
 
 def is_direct_pdf_url(url: str) -> bool:
@@ -1682,6 +1739,10 @@ def _is_page_source_asset(url: str) -> bool:
 def _looks_like_page_source_notice(url: str) -> bool:
     parts = urllib.parse.urlsplit(url)
     path = parts.path.lower()
+    if is_non_notice_document(path):
+        # Any document — including a .pdf — whose file name says it is
+        # administrative page chrome is not a notice.
+        return False
     if path.endswith(PAGE_SOURCE_DOC_EXTENSIONS):
         return True
     if any(token in path for token in PAGE_SOURCE_IGNORED_URL_TOKENS):
@@ -1848,6 +1909,10 @@ def classify_notice(candidate: Candidate, source: dict[str, Any]) -> str | None:
     if len(title) < 8 or is_junk_job_title(title):
         return None
     if any(term in lowered for term in EXCLUDED_TERMS):
+        return None
+    if is_non_notice_document(candidate.url, candidate.title):
+        # A telephone directory, holiday list or annual report is page content,
+        # never a notice — even when its link sits inside a recruitment listing.
         return None
 
     exclude_terms = [clean_text(term).lower() for term in source.get("excludeKeywords", [])]
@@ -2309,6 +2374,10 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
             if re.search(r"(?i)\bpdf\b", label or "") or PRIMARY_ATTACHMENT_PATTERN.search(label or ""):
                 is_pdf_url = True
         if not is_pdf_url:
+            continue
+        if is_non_notice_document(safe, label or ""):
+            # Never adopt a site's phone book / holiday list / annual report as
+            # the "Official notification" of an alert, however it is labelled.
             continue
         if HELPER_ATTACHMENT_PATTERN.search(label or ""):
             continue
@@ -2937,6 +3006,8 @@ def _is_better_notice_link(new: str, old: str, source_url: str = "") -> bool:
     new_url = canonical_url(new)
     if not new_url or is_discovery_host(new_url) or is_generic_homepage(new_url):
         return False
+    if is_non_notice_document(new_url):
+        return False
     if _is_weak_public_link(old, source_url):
         return True
     if is_direct_pdf_url(new_url) and not is_direct_pdf_url(old):
@@ -3143,6 +3214,20 @@ def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
             if is_generic_homepage(job.get(field, "")):
                 job[field] = ""
                 changed = True
+        # An alert whose notification/apply link is administrative page chrome (a
+        # telephone directory, a holiday list, an annual report) is a wrongly
+        # posted detail: drop that link, falling back to the official notice page
+        # for the notice button so the card keeps a working, honest URL.
+        for field in ("pdfLink", "applyLink"):
+            if not is_non_notice_document(job.get(field, "")):
+                continue
+            replacement = ""
+            if field == "pdfLink":
+                notice_page = canonical_url(job.get("noticeUrl", ""))
+                if notice_page and not is_generic_homepage(notice_page) and not is_non_notice_document(notice_page):
+                    replacement = notice_page
+            job[field] = replacement
+            changed = True
         if not canonical_url(job.get("noticeUrl", "")):
             for field in ("pdfLink", "applyLink"):
                 url = canonical_url(job.get(field, ""))

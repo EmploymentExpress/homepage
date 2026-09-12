@@ -3169,3 +3169,162 @@ class VerifiedReliabilityRuleTests(unittest.TestCase):
         self.assertIn("Monitor source health", result.stdout)
         self.assertIn("Failing", result.stdout)
         self.assertIn("Placeholder", result.stdout)
+
+class NonNoticeDocumentGuardTests(unittest.TestCase):
+    """R15: an administrative document is never a notice and never an attachment.
+
+    Born from a real mis-post (fixed 2026-09-12): a CUPB Bathinda job alert was
+    published whose only "Official notification" was the university's
+    *Telephone directory (Hindi & English)* PDF, taken from the site chrome while
+    its listing page read "Will be Updated Shortly." Two CUPB admission cards
+    had carried the same file. A document has to be checked for *what it is*,
+    not merely that it is an official ``.pdf``.
+    """
+
+    DIRECTORY_URL = (
+        "https://cup.edu.in/sites/default/files/Documents/"
+        "Telephone directory (Hindi & English) as on 09.10.2025.pdf"
+    )
+    ADVERTISEMENT_URL = "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf"
+    ROOT = Path(__file__).resolve().parents[1]
+
+    def test_administrative_documents_are_recognised_by_file_name(self):
+        self.assertTrue(monitor.is_non_notice_document(self.DIRECTORY_URL))
+        self.assertTrue(monitor.is_non_notice_document("holiday_list_2026.pdf"))
+        self.assertTrue(monitor.is_non_notice_document("annual-report-2025-26.pdf"))
+        self.assertTrue(monitor.is_non_notice_document("Office Order (Transfer).pdf"))
+        self.assertTrue(monitor.is_non_notice_document("Contact List of Officers.docx"))
+        # A real advertisement and a real result notice stay untouched.
+        self.assertFalse(monitor.is_non_notice_document(self.ADVERTISEMENT_URL))
+        self.assertFalse(monitor.is_non_notice_document("https://cup.edu.in/sites/default/files/Notification_No-545.pdf"))
+        self.assertFalse(monitor.is_non_notice_document("PG Prospectus 2026_27.pdf"))
+        self.assertFalse(monitor.is_non_notice_document(""))
+
+    def test_directory_url_is_never_a_page_source_notice(self):
+        # The raw page-source scan accepts any ``.pdf``; the file name must veto it.
+        self.assertFalse(monitor._looks_like_page_source_notice(self.DIRECTORY_URL))
+        self.assertTrue(monitor._looks_like_page_source_notice(self.ADVERTISEMENT_URL))
+
+    def test_candidate_pointing_at_a_directory_is_never_classified_as_a_notice(self):
+        source = {"noticeTypes": ["recruitment", "admission"], "includeKeywords": ["recruitment"]}
+        for title in (
+            "Central University of Punjab (CUPB), Bathinda — non-teaching-notifications",
+            "Telephone directory (Hindi & English) as on 09.10.2025",
+        ):
+            candidate = monitor.Candidate(title=title, url=self.DIRECTORY_URL)
+            with self.subTest(title=title):
+                self.assertIsNone(monitor.classify_notice(candidate, source))
+                self.assertFalse(monitor.looks_like_notice(candidate, source))
+
+    def test_detail_page_never_adopts_the_directory_as_the_official_notice(self):
+        # The page an empty CUPB category page actually served: no advertisement,
+        # only the site-chrome directory link.
+        markup = (
+            "<html><body><p>Will be Updated Shortly.</p>"
+            f'<a href="{self.DIRECTORY_URL}">Telephone directory (Hindi &amp; English)</a>'
+            "</body></html>"
+        )
+        download = monitor.Download(
+            url="https://cup.edu.in/non-teaching-notifications.php",
+            content_type="text/html",
+            data=markup.encode("utf-8"),
+        )
+        candidate = monitor.Candidate(
+            title="Non-Teaching Notifications", url="https://cup.edu.in/non-teaching-notifications.php"
+        )
+        with patch.object(monitor, "fetch_url", return_value=download), \
+             patch.object(monitor, "_detail_fetch_cooldown_active", return_value=False), \
+             patch.object(monitor, "_record_detail_fetch"):
+            _, _, _, pdf_url = monitor.enrich_candidate(candidate, {"detailTimeout": 5})
+        self.assertNotIn("Telephone", pdf_url)
+        self.assertFalse(monitor.is_non_notice_document(pdf_url))
+        self.assertEqual(pdf_url, "https://cup.edu.in/non-teaching-notifications.php")
+
+    def test_refresh_never_overwrites_a_good_link_with_a_directory(self):
+        self.assertFalse(
+            monitor._is_better_notice_link(
+                self.DIRECTORY_URL, self.ADVERTISEMENT_URL, "https://cup.edu.in/non-teaching_jobs.php"
+            )
+        )
+
+    def test_sanitize_pass_blanks_an_already_published_directory_attachment(self):
+        jobs = [{
+            "id": 1,
+            "title": "Example Board — Clerk Recruitment",
+            "noticeUrl": "https://cup.edu.in/non-teaching-notifications.php",
+            "pdfLink": self.DIRECTORY_URL,
+            "applyLink": "https://cup.edu.in/apply",
+        }]
+        self.assertTrue(monitor.backfill_extracted_fields(jobs))
+        self.assertFalse(monitor.is_non_notice_document(jobs[0]["pdfLink"]))
+        self.assertEqual(jobs[0]["pdfLink"], "https://cup.edu.in/non-teaching-notifications.php")
+
+    def test_no_published_alert_attaches_an_administrative_document(self):
+        data = json.loads((self.ROOT / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        self.assertGreater(len(data["jobs"]), 10)
+        for job in data["jobs"]:
+            for field in ("pdfLink", "applyLink", "noticeUrl"):
+                with self.subTest(job=job.get("id"), field=field):
+                    self.assertFalse(
+                        monitor.is_non_notice_document(job.get(field, "")),
+                        f"{job.get('title')}: {field} is a {job.get(field)}",
+                    )
+
+    def test_repaired_cupb_entries_point_at_verified_official_notices(self):
+        """The three CUPB cards that carried the directory now carry real notices."""
+        data = json.loads((self.ROOT / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        jobs = {str(job["id"]): job for job in data["jobs"]}
+
+        recruitment = jobs["7859300428388"]
+        self.assertEqual(
+            recruitment["pdfLink"],
+            "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+        )
+        self.assertEqual(recruitment["advtNo"], "CUPB/26-27/012 dated 02.09.2026")
+        self.assertEqual(recruitment["alertType"], "recruitment")
+        self.assertEqual(recruitment["categorySlug"], "punjab-jobs")
+        self.assertEqual(monitor.host_name(recruitment["applyLink"]), "cupnt.samarth.edu.in")
+        self.assertNotEqual(
+            monitor.canonical_url(recruitment["pdfLink"]), monitor.canonical_url(recruitment["sourceUrl"])
+        )
+        self.assertFalse(monitor.is_generic_homepage(recruitment["applyLink"]))
+        # Every date is read from the advertisement, never a placeholder pair.
+        self.assertEqual(recruitment["lastDate"], "15-09-2026")
+        self.assertEqual(recruitment["startDate"], "02-09-2026")
+
+        admissions = [jobs["74760015140371"], jobs["128544774645111"]]
+        for job in admissions:
+            with self.subTest(job=job["id"]):
+                self.assertEqual(job["alertType"], "admission")
+                self.assertEqual(monitor.host_name(job["pdfLink"]), "cup.edu.in")
+                self.assertEqual(monitor.host_name(job["applyLink"]), "cupadm.samarth.edu.in")
+                self.assertIn("2026-27", job["title"])
+
+    def test_cupb_sources_exclude_administrative_documents(self):
+        config = json.loads((self.ROOT / "automation" / "sources.json").read_text(encoding="utf-8"))
+        for source in [item for item in config["sources"] if item["id"].startswith("cup")]:
+            with self.subTest(source=source["id"]):
+                for term in ("telephone directory", "holiday list", "annual report"):
+                    self.assertIn(term, source["excludeKeywords"])
+
+    def test_agents_rules_forbid_administrative_documents(self):
+        raw = (self.ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        agents = " ".join(raw.split())
+        self.assertIn("NEVER attach an administrative document", agents)
+        self.assertIn("NON_NOTICE_DOCUMENT_TERMS", agents)
+
+    def test_the_sister_directory_attachment_was_repaired_too(self):
+        """The dataset guard also caught an AIIMS Bathinda alert attached to
+        ``RTI-Format.pdf`` — the same page-chrome mistake, same fix."""
+        data = json.loads((self.ROOT / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        job = next(item for item in data["jobs"] if str(item["id"]) == "208298934260796")
+        self.assertEqual(
+            job["pdfLink"], "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf"
+        )
+        self.assertNotIn("Recruitment Types", job["title"])
+        self.assertTrue(job["lastDateExtended"])
+        self.assertEqual(job["originalLastDate"], "21-08-2026")
+        self.assertEqual(
+            job["extensionNoticeUrl"],
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20260822040503.pdf",
+        )
