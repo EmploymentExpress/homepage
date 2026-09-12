@@ -349,6 +349,8 @@ RESULT_TERMS = (
     "results",
     # Selection / score lists are results, never new vacancies — they must land
     # in the Results column, not the recruitment (job) column.
+    "eligibility notification",
+    "eligibility notice",
     "shortlisted candidate",
     "short-listed candidate",
     "short listing",
@@ -2017,6 +2019,50 @@ def find_labelled_date(text: str, labels: str) -> str:
     return parse_date_token(match.group(1)) if match else ""
 
 
+# Official document file names usually carry the date the authority uploaded
+# them ("AIIMS Bathinda: /images/Reqruitment/20241114045844.pdf" is 14 Nov 2024,
+# 04:58:44). The stamp is the document's own date — reading it lets the monitor
+# publish a notice with its real date instead of the scan date, and lets an
+# archived document be recognised as archive rather than reported as new.
+DOCUMENT_DATE_IN_NAME = re.compile(
+    r"(?<!\d)(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?:\d{6})?(?!\d)"
+)
+
+
+def document_date_from_url(url: str) -> str:
+    """The date encoded in a document's file name (DD-MM-YYYY), else ''.
+
+    Only a plausible calendar date that is not in the future is accepted, so a
+    numeric file name that merely looks like a date is ignored.
+    """
+    path = urllib.parse.urlsplit(canonical_url(url) or clean_text(url)).path
+    name = urllib.parse.unquote(path.rsplit("/", 1)[-1])
+    today = datetime.now(timezone.utc).date()
+    for match in DOCUMENT_DATE_IN_NAME.finditer(name):
+        year, month, day = (int(part) for part in match.groups())
+        try:
+            stamped = datetime(year, month, day).date()
+        except ValueError:
+            continue
+        if stamped > today:
+            continue
+        return stamped.strftime("%d-%m-%Y")
+    return ""
+
+
+def iso_timestamp_from_date(value: str) -> str:
+    """ISO timestamp (midnight UTC) for a DD-MM-YYYY / "13 June 2026" date."""
+    parsed = parse_date_token(clean_text(value))
+    if not parsed:
+        return ""
+    return (
+        datetime.strptime(parsed, "%d-%m-%Y")
+        .replace(tzinfo=timezone.utc)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
+
+
 def detect_extension(text: str) -> tuple[bool, str]:
     """Return (is_extension, new_date) from a corrigendum/addendum body.
 
@@ -2510,6 +2556,12 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         searchable,
         r"start(?:ing)?\s+date|opening\s+date|applications?\s+open",
     )
+    # The notice's own date: an official document carries it in its file name
+    # (".../Reqruitment/20241114045844.pdf"), and many listing pages print it
+    # beside the row. Falling back to the scan time is what made a years-old
+    # archived result look like a brand-new alert.
+    notice_date = document_date_from_url(candidate_url) or candidate.notice_date
+    published_at = candidate.published_at or iso_timestamp_from_date(notice_date)
     # R9: fees, fee mode and the exam date are extracted from the notice text
     # only on a clear labelled match; otherwise the honest placeholder stays.
     fee_gen, fee_sc = infer_fee(searchable)
@@ -2538,7 +2590,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "qualCategory": qual_category,
         "lastDate": last_date or "See Notification",
         "startDate": start_date
-        or (f"Published {candidate.notice_date}" if candidate.notice_date else "")
+        or (f"Published {notice_date}" if notice_date else "")
         or (f"Published {candidate.published_at[:10]}" if candidate.published_at else "Newly Published"),
         "examDate": exam_date or "See Official Notification",
         "location": clean_text(source.get("location") or ("Punjab" if source.get("type") == "punjab" else "All India")),
@@ -2561,7 +2613,7 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
         "sourceName": source_name,
         "sourceUrl": source_url,
         "noticeUrl": candidate_url,
-        "publishedAt": candidate.published_at,
+        "publishedAt": published_at,
         "discoveredAt": discovered,
         # Internal fields used only to link a last-date-extension corrigendum back to
         # its original recruitment. They are stripped by apply_extensions() and are
@@ -3235,6 +3287,15 @@ def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
                     job["noticeUrl"] = url
                     changed = True
                     break
+        # A stored alert published before the notice-date reader existed still has
+        # an empty ``publishedAt``, so the page treats it as new (the 72-hour badge
+        # and the 48-hour "Just In" tag both fall back to the scan time). Re-derive
+        # the date from the alert's own document, exactly as a fresh publication does.
+        if not clean_text(job.get("publishedAt", "")):
+            stamped = iso_timestamp_from_date(job_document_date(job))
+            if stamped:
+                job["publishedAt"] = stamped
+                changed = True
     return changed
 
 
@@ -3301,6 +3362,7 @@ def publish_unpublished_seen_notices(
     known: set[str],
     source: dict[str, Any],
     now: datetime,
+    max_age_days: int | None = None,
 ) -> int:
     """Publish still-open notices that bootstrap only marked as seen.
 
@@ -3336,6 +3398,8 @@ def publish_unpublished_seen_notices(
             print(f"  Could not catch up {candidate.url}: {exc}", file=sys.stderr)
             continue
         if _dated_notice_is_active(job.get("lastDate", ""), now) is False:
+            continue
+        if is_archive_notice(job, now, max_age_days):
             continue
         jobs.append(job)
         added += 1
@@ -3478,8 +3542,10 @@ def parse_timestamp(value: str) -> datetime | None:
         return None
 
 
-def sanitize_published_jobs(jobs: list[dict[str, Any]], now: datetime) -> bool:
-    """Enforce specific authority/post titles and remove known expired jobs."""
+def sanitize_published_jobs(
+    jobs: list[dict[str, Any]], now: datetime, max_age_days: int | None = None
+) -> bool:
+    """Enforce specific authority/post titles, drop expired and archived jobs."""
     changed = backfill_extracted_fields(jobs)
     kept: list[dict[str, Any]] = []
     for job in jobs:
@@ -3510,6 +3576,18 @@ def sanitize_published_jobs(jobs: list[dict[str, Any]], now: datetime) -> bool:
             clean_text(job.get("alertType", "recruitment")).lower() in {"recruitment", "admission"}
             and _dated_notice_is_active(job.get("lastDate", ""), now) is False
         ):
+            changed = True
+            continue
+        if is_archive_notice(job, now, max_age_days):
+            # A stored alert whose own official document predates the freshness
+            # window: an archived notification that was published before the
+            # window existed (AIIMS Bathinda's 2021–2025 results and eligibility
+            # lists). It leaves the store on the next run instead of lingering
+            # in the Results/Jobs lists as a fresh alert.
+            print(
+                f"  Dropped archived alert published {job_document_date(job)}: "
+                f"{clean_text(job.get('title', ''))[:80]}"
+            )
             changed = True
             continue
         kept.append(job)
@@ -4372,6 +4450,74 @@ def _dated_notice_is_active(last_date: str, now: datetime) -> bool | None:
     return deadline >= now.date()
 
 
+# How old a notice may be and still be published as an alert. Official listing
+# pages keep their complete history (AIIMS Bathinda's "Faculty" / "Non-Faculty"
+# / "SR-JR" / "Project Posts" tables go back to 2021, each row still carrying
+# every attachment it ever had), so without a window the monitor drains that
+# history into the store a few links per run and reports years-old results as
+# new Punjab jobs — which also pushes genuine alerts out of the 200-record
+# store. A notice whose own document is older than this window is archive
+# material, not news; an old advertisement whose verified deadline is still
+# open stays publishable (see ``is_archive_notice``).
+DEFAULT_MAX_NOTICE_AGE_DAYS = 60
+
+
+def job_document_date(job: dict[str, Any]) -> str:
+    """Date stamped on the alert's own official document (DD-MM-YYYY), else ''.
+
+    ``noticeUrl`` is the link the alert was discovered from, so it is read first;
+    ``pdfLink``/``applyLink`` follow as the detail-page fallback.
+    """
+    for field in ("noticeUrl", "pdfLink", "applyLink"):
+        stamped = document_date_from_url(job.get(field) or "")
+        if stamped:
+            return stamped
+    return ""
+
+
+def notice_age_days(job: dict[str, Any], now: datetime) -> int | None:
+    """Age of the alert's own document in days; None when it has no date stamp."""
+    stamped = parse_date_token(job_document_date(job))
+    if not stamped:
+        return None
+    return (now.date() - datetime.strptime(stamped, "%d-%m-%Y").date()).days
+
+
+def max_notice_age_days(
+    config: dict[str, Any], source: dict[str, Any] | None = None
+) -> int:
+    """The freshness window: per-source override, then config, then the default."""
+    for holder in (source or {}, config or {}):
+        raw = (holder or {}).get("maxNoticeAgeDays")
+        if raw is None:
+            continue
+        try:
+            return max(1, int(raw))
+        except (TypeError, ValueError):
+            continue
+    return DEFAULT_MAX_NOTICE_AGE_DAYS
+
+
+def is_archive_notice(
+    job: dict[str, Any], now: datetime, max_age_days: int | None = None
+) -> bool:
+    """True for an alert that is history rather than news.
+
+    Judged only on evidence the alert itself carries — the date stamped in its
+    official document's file name. An alert with no readable stamp is never
+    treated as archive, and an old advertisement whose deadline is verifiably
+    still open keeps its place in the vacancy columns.
+    """
+    limit = DEFAULT_MAX_NOTICE_AGE_DAYS if max_age_days is None else max(1, int(max_age_days))
+    age = notice_age_days(job, now)
+    if age is None or age <= limit:
+        return False
+    if clean_text(job.get("alertType", "")).lower() in {"recruitment", "admission"}:
+        if _dated_notice_is_active(job.get("lastDate", ""), now) is True:
+            return False
+    return True
+
+
 def _sanitize_offline_documents(documents: dict[str, Any]) -> dict[str, str]:
     """Drop portal homepages and site roots that slipped into cached documents."""
     cleaned: dict[str, Any] = {
@@ -5003,11 +5149,12 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     # re-probed on every six-hourly cycle.
     load_mirror_memory(state)
     load_detail_fetch_health(state)
-    jobs_changed = sanitize_published_jobs(jobs, now)
+    jobs_changed = sanitize_published_jobs(jobs, now, max_notice_age_days(config))
     if refresh_badges(jobs, now, int(config.get("newBadgeHours", 72))):
         jobs_changed = True
     state_changed = False
     added = 0
+    archived = 0
     successful_sources = 0
 
     for source in config["sources"]:
@@ -5024,6 +5171,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
             continue
         print(f"Checking {source.get('name', source_id)}: {source_url}")
         proxy_fallback = bool(source.get("proxyFallback"))
+        notice_age_limit = max_notice_age_days(config, source)
         try:
             # R1: fetch_source_listing treats a 200 error-stub / anchor-less
             # answer as a failure (with a mirror retry) instead of a healthy
@@ -5097,21 +5245,38 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
                 state_changed = True
 
         print(f"  Found {len(discovered)} supported alert link(s), {len(unseen)} unseen, publishing {len(selected)}")
+        source_archived = 0
         for candidate in selected:
             try:
                 job = job_from_candidate(candidate, source, now)
             except Exception as exc:
                 print(f"  Could not build job from {candidate.url}: {exc}", file=sys.stderr)
                 continue
+            if is_archive_notice(job, now, notice_age_limit):
+                # The listing still shows a document the authority published long
+                # ago (AIIMS Bathinda keeps every attachment of every advertisement
+                # it ever posted). It is history, not news: report it as skipped and
+                # keep its fingerprint, so the same archived link is not re-examined
+                # — and never republished as a new alert — on the next run.
+                archived += 1
+                source_archived += 1
+                continue
             jobs.append(job)
             added += 1
             jobs_changed = True
             print(f"  Published: {clean_text(job.get('title', ''))[:90]}")
+        if source_archived:
+            print(
+                f"  Skipped {source_archived} archived notice(s) older than "
+                f"{notice_age_limit} day(s) — already recorded as seen"
+            )
 
         if not first_success:
             if refresh_published_source_jobs(jobs, discovered, known, source, now):
                 jobs_changed = True
-            caught_up = publish_unpublished_seen_notices(jobs, discovered, known, source, now)
+            caught_up = publish_unpublished_seen_notices(
+                jobs, discovered, known, source, now, notice_age_limit
+            )
             if caught_up:
                 added += caught_up
                 jobs_changed = True
@@ -5173,7 +5338,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         jobs_changed = True
     # Re-run after refresh/backfill so a newly-read expired last date is removed
     # and placeholder fields filled from stored notice text are persisted.
-    if sanitize_published_jobs(jobs, now):
+    if sanitize_published_jobs(jobs, now, max_notice_age_days(config)):
         jobs_changed = True
 
     if jobs_changed:
@@ -5204,7 +5369,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
 
     print(
         f"Finished: {successful_sources} source(s) available, {added} new alert(s), "
-        f"{len(jobs)} automatic alert(s) stored."
+        f"{archived} archived notice(s) skipped, {len(jobs)} automatic alert(s) stored."
     )
     if dry_run:
         print("Dry run: no files written.")

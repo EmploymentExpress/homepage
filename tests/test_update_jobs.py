@@ -115,6 +115,26 @@ class JobMonitorTests(unittest.TestCase):
                 candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
                 self.assertEqual(monitor.classify_notice(candidate, {}), expected)
 
+        # AIIMS Bathinda keeps an advertisement's whole paper trail in one row, so a
+        # row can point straight at a stage document whose only description is the
+        # attachment label ("… — Non-Faculty" + "8) Eligibility Notification for the
+        # posts of …"). The broad recruitment filler terms ("posts of", "notification
+        # for") must not turn that 2025 result into a new Punjab job; a genuine
+        # advertisement label in the same row still stays recruitment.
+        row_subject = "All India Institute of Medical Sciences (AIIMS), Bathinda — Non-Faculty"
+        stage_document = monitor.Candidate(
+            row_subject,
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20250826034810.pdf",
+            "8) Eligibility Notification for the posts of Personal Assistant and Stenographer",
+        )
+        self.assertEqual(monitor.classify_notice(stage_document, {}), "result")
+        advertisement = monitor.Candidate(
+            row_subject,
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf",
+            "Advertisement for recruitment of Non-Faculty posts — apply online",
+        )
+        self.assertEqual(monitor.classify_notice(advertisement, {}), "recruitment")
+
     def test_written_test_exam_date_announcements_go_to_admit_card_column(self):
         admit_notices = {
             "Written test date announced for Clerk recruitment 2026": "admit-card",
@@ -3328,3 +3348,183 @@ class NonNoticeDocumentGuardTests(unittest.TestCase):
             job["extensionNoticeUrl"],
             "https://aiimsbathinda.edu.in/images/Reqruitment/20260822040503.pdf",
         )
+
+
+class ArchivedNoticeFreshnessTests(unittest.TestCase):
+    """A listing page keeps its history; the monitor must report only its news.
+
+    AIIMS Bathinda's category tables ("Recruitment.aspx?type=1..4") carry every
+    advertisement they ever published, each row still holding every attachment —
+    including results from 2021–2025. Republishing those is the reported bug: a
+    2025 result appeared in the Punjab jobs list as a brand-new alert. The
+    freshness window fixes it in two places — nothing older than the window is
+    published, and everything the monitor does publish carries its own official
+    date, so a years-old document can never wear a "NEW" badge.
+    """
+
+    def test_document_date_is_read_from_the_official_file_name(self):
+        self.assertEqual(
+            monitor.document_date_from_url(
+                "https://aiimsbathinda.edu.in/images/Reqruitment/20241114045844.pdf"
+            ),
+            "14-11-2024",
+        )
+        self.assertEqual(
+            monitor.document_date_from_url("https://example.gov.in/files/20250829.pdf"),
+            "29-08-2025",
+        )
+        # A numeric file name that is not a calendar date, a directory date and a
+        # future stamp are all ignored — the monitor never invents a date.
+        self.assertEqual(
+            monitor.document_date_from_url("https://example.gov.in/20261340.pdf"), ""
+        )
+        self.assertEqual(
+            monitor.document_date_from_url("https://example.gov.in/2026/09/notice.pdf"), ""
+        )
+        self.assertEqual(
+            monitor.document_date_from_url("https://example.gov.in/files/99990101.pdf"), ""
+        )
+
+    def test_archived_notice_is_never_published_or_badged_as_new(self):
+        page = b"""
+        <a href='/images/Reqruitment/20250829033442.pdf'>7) Provisional Result Notification</a>
+        <a href='/images/Reqruitment/20260910090000.pdf'>8) Final Result Notification</a>
+        """
+        source = {
+            "id": "aiims-bathinda-non-faculty",
+            "name": "AIIMS Bathinda (Non-Faculty)",
+            "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+            "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            "type": "punjab",
+            "categorySlug": "punjab-jobs",
+            "location": "Bathinda, Punjab",
+            "enrichDetails": False,
+            "bootstrapCount": 2,
+            "maxNewPerRun": 5,
+            "includeKeywords": ["non-faculty", "result", "eligibility list"],
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(
+                json.dumps({"maxNoticeAgeDays": 60, "sources": [source]}), encoding="utf-8"
+            )
+            download = monitor.Download(
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2", "text/html", page
+            )
+            with patch.object(monitor, "fetch_url", return_value=download):
+                monitor.run(config, output, state)
+
+            jobs = json.loads(output.read_text(encoding="utf-8"))["jobs"]
+            titles = [job["title"] for job in jobs]
+            # The 2025 result is history: it is not published at all.
+            self.assertEqual(len(jobs), 1)
+            self.assertIn("Final Result Notification", titles[0])
+            self.assertNotIn("20250829033442", json.dumps(jobs))
+            # …but it is recorded as seen, so the same archived link is not
+            # re-examined (or republished) on every following run.
+            fingerprints = json.loads(state.read_text(encoding="utf-8"))["sources"][
+                "aiims-bathinda-non-faculty"
+            ]["fingerprints"]
+            self.assertIn(
+                monitor.fingerprint(
+                    monitor.Candidate(
+                        "7) Provisional Result Notification",
+                        "https://aiimsbathinda.edu.in/images/Reqruitment/20250829033442.pdf",
+                    )
+                ),
+                fingerprints,
+            )
+
+    def test_published_alert_carries_its_own_official_date(self):
+        candidate = monitor.Candidate(
+            "Final Result Notification",
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20250910090000.pdf",
+        )
+        source = {
+            "name": "AIIMS Bathinda (Non-Faculty)",
+            "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+            "url": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            "type": "punjab",
+            "categorySlug": "punjab-jobs",
+            "enrichDetails": False,
+        }
+        now = datetime(2026, 9, 12, tzinfo=timezone.utc)
+        job = monitor.job_from_candidate(candidate, source, now)
+        self.assertEqual(job["publishedAt"], "2025-09-10T00:00:00Z")
+        self.assertEqual(job["startDate"], "Published 10-09-2025")
+        # The badge follows the document's own date, not the scan time.
+        self.assertTrue(monitor.refresh_badges([job], now, 72))
+        self.assertEqual(job["badge"], "RESULT")
+        self.assertEqual(job["badgeColor"], "bg-rose-600")
+
+    def test_archive_check_keeps_an_advertisement_with_an_open_deadline(self):
+        now = datetime(2026, 9, 12, tzinfo=timezone.utc)
+        old_advertisement = {
+            "title": "AIIMS Bathinda — Faculty (Group-A) Posts Recruitment",
+            "alertType": "recruitment",
+            "lastDate": "30-09-2026",
+            "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf",
+        }
+        self.assertFalse(monitor.is_archive_notice(old_advertisement, now, 60))
+        # A 2025 result is archive material whatever its deadline placeholder says.
+        old_result = {
+            "title": "AIIMS Bathinda — Provisional Result Notification",
+            "alertType": "result",
+            "lastDate": "See Notification",
+            "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20250829033442.pdf",
+        }
+        self.assertTrue(monitor.is_archive_notice(old_result, now, 60))
+        # An alert without a readable document date is never treated as archive.
+        self.assertFalse(
+            monitor.is_archive_notice(
+                {"title": "Example Board — Clerk Recruitment", "alertType": "recruitment"},
+                now,
+                60,
+            )
+        )
+
+    def test_sanitize_drops_archived_alerts_from_the_store(self):
+        now = datetime(2026, 9, 12, tzinfo=timezone.utc)
+        jobs = [
+            {
+                "id": 1,
+                "title": "All India Institute of Medical Sciences (AIIMS), Bathinda — Provisional Result Notification",
+                "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+                "alertType": "result",
+                "lastDate": "See Notification",
+                "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20250829033442.pdf",
+                "sourceUrl": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+                "noticeUrl": "https://aiimsbathinda.edu.in/images/Reqruitment/20250829033442.pdf",
+                "discoveredAt": "2026-09-12T06:30:07Z",
+            },
+            {
+                "id": 2,
+                "title": "All India Institute of Medical Sciences (AIIMS), Bathinda — Final Result Notification",
+                "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+                "alertType": "result",
+                "lastDate": "See Notification",
+                "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20260907120314.pdf",
+                "sourceUrl": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+                "noticeUrl": "https://aiimsbathinda.edu.in/images/Reqruitment/20260907120314.pdf",
+                "discoveredAt": "2026-09-12T06:30:07Z",
+            },
+        ]
+        self.assertTrue(monitor.sanitize_published_jobs(jobs, now, 60))
+        self.assertEqual([job["id"] for job in jobs], [2])
+
+    def test_the_freshness_window_is_configured_and_documented(self):
+        config = json.loads(
+            (Path(__file__).resolve().parents[1] / "automation" / "sources.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertGreaterEqual(int(config["maxNoticeAgeDays"]), 1)
+        agents = " ".join(
+            (Path(__file__).resolve().parents[1] / "AGENTS.md").read_text(encoding="utf-8").split()
+        )
+        self.assertIn("maxNoticeAgeDays", agents)
+        self.assertIn("is_archive_notice", agents)
+        self.assertIn("document_date_from_url", agents)
