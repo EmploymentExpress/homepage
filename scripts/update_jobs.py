@@ -349,6 +349,8 @@ RESULT_TERMS = (
     "results",
     # Selection / score lists are results, never new vacancies — they must land
     # in the Results column, not the recruitment (job) column.
+    "eligibility notification",
+    "eligibility notice",
     "shortlisted candidate",
     "short-listed candidate",
     "short listing",

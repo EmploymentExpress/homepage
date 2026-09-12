@@ -243,10 +243,19 @@ Every notice is now dated by the notice itself, and history is never published:
    and `sanitize_published_jobs()` removes it from the store. **An old advertisement whose
    verified deadline is still open stays published** — the window must never delete a live
    vacancy — and an alert with no readable document date is never treated as archive.
-3. **Do not weaken this.** `tests/test_update_jobs.py::ArchivedNoticeFreshnessTests` guards the
+3. **A stage document is a result, never a job.** The same tables point straight at a paper trail
+   — "8) Eligibility Notification for the posts of …", "Final Result Notification" — whose only
+   description is the attachment label. Such a link belongs in the Results column: `RESULT_TERMS`
+   carries the stage labels ("eligibility notification", "final result", "provisional result",
+   "shortlisted candidates", …) ahead of the broad recruitment filler terms ("posts of",
+   "notification for"), so a result can never be re-read as a fresh vacancy in the Punjab column.
+   A row whose label really is an advertisement ("Advertisement for recruitment of … posts")
+   still classifies as recruitment.
+4. **Do not weaken this.** `tests/test_update_jobs.py::ArchivedNoticeFreshnessTests` guards the
    stamp reader, the publish gate, the still-open-advertisement exception, the store cleanup and
-   the config key. The window is what keeps a monitor that reads whole archives honest; removing
-   it restores the 2025-result-as-new-job bug.
+   the config key, and `JobMonitorTests::test_shortlisted_eligible_and_score_card_go_to_result_column`
+   guards the stage-label rule. The window is what keeps a monitor that reads whole archives
+   honest; removing it restores the 2025-result-as-new-job bug.
 
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 

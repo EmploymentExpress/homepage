@@ -115,6 +115,26 @@ class JobMonitorTests(unittest.TestCase):
                 candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
                 self.assertEqual(monitor.classify_notice(candidate, {}), expected)
 
+        # AIIMS Bathinda keeps an advertisement's whole paper trail in one row, so a
+        # row can point straight at a stage document whose only description is the
+        # attachment label ("… — Non-Faculty" + "8) Eligibility Notification for the
+        # posts of …"). The broad recruitment filler terms ("posts of", "notification
+        # for") must not turn that 2025 result into a new Punjab job; a genuine
+        # advertisement label in the same row still stays recruitment.
+        row_subject = "All India Institute of Medical Sciences (AIIMS), Bathinda — Non-Faculty"
+        stage_document = monitor.Candidate(
+            row_subject,
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20250826034810.pdf",
+            "8) Eligibility Notification for the posts of Personal Assistant and Stenographer",
+        )
+        self.assertEqual(monitor.classify_notice(stage_document, {}), "result")
+        advertisement = monitor.Candidate(
+            row_subject,
+            "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf",
+            "Advertisement for recruitment of Non-Faculty posts — apply online",
+        )
+        self.assertEqual(monitor.classify_notice(advertisement, {}), "recruitment")
+
     def test_written_test_exam_date_announcements_go_to_admit_card_column(self):
         admit_notices = {
             "Written test date announced for Clerk recruitment 2026": "admit-card",
