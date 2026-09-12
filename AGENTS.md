@@ -399,11 +399,12 @@ Guards: `tests/test_seo.py` (sitemap lists every share page, robots allows the
 AI agents, llms.txt links only to pages that exist, share pages carry valid
 static structured data, and `build_seo.main()` never touches a protected file).
 
-## 🗺️ Punjab column rule: AIIMS Bathinda, every Chandigarh organisation & CUPB (R14, Mandatory)
+## 🗺️ Punjab column rule: AIIMS Bathinda, every Chandigarh organisation, CUPB & every Punjab district (R14, Mandatory)
 
 AIIMS Bathinda notices, every notice from a recruiting organisation **of
-Chandigarh**, and every notice of the **Central University of Punjab (CUPB),
-Bathinda** must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
+Chandigarh**, every notice of the **Central University of Punjab (CUPB),
+Bathinda**, and every notice whose **job details name a district of Punjab**
+must ALWAYS be published in Column 1 — **Latest Punjab Jobs** —
 with `type: "punjab"` and `categorySlug: "punjab-jobs"`. They must never appear
 in the All India & NVS / Central column, no matter how their source is
 registered:
@@ -430,11 +431,28 @@ registered:
   region (e.g. a UCO Bank result list for Chandigarh UT) also publishes in the
   Punjab column, while the same body's all-India notices stay in the central
   column.
+- **Every Punjab district.** A notice whose details name any of Punjab's 23
+  districts is a Punjab-column notice, whatever the recruiting body, whoever
+  funds it and however the source is registered — an ECHS polyclinic vacancy at
+  Ferozepur or a Rail Coach Factory (Ministry of Railways) notice at Kapurthala
+  is a Punjab vacancy. The districts: Amritsar, Barnala, Bathinda, Faridkot,
+  Fatehgarh Sahib, Fazilka, Ferozepur, Gurdaspur, Hoshiarpur, Jalandhar,
+  Kapurthala, Ludhiana, Malerkotla, Mansa, Moga, Pathankot, Patiala, Rupnagar,
+  SAS Nagar (Mohali), Sangrur, Shahid Bhagat Singh Nagar (Nawanshahr), Sri
+  Muktsar Sahib, Tarn Taran — with common spelling variants (Firozpur,
+  Bhatinda, Ropar, Jullundur) also matched. All names are matched on word
+  boundaries (in `PUNJAB_COLUMN_DISTRICTS` /
+  `PUNJAB_COLUMN_DISTRICT_PATTERNS`) so a short district name such as "Moga"
+  or "Mansa" never fires inside an unrelated word ("Mansarovar"). Every job
+  detail is scanned — title, department, source name, `location`, `details`
+  and the notice URLs — so a district named anywhere in the record moves the
+  notice home.
 - **Data side:** register sources for these organisations with `type: "punjab"`
   / `categorySlug: "punjab-jobs"` in `automation/sources.json`,
   `data/notification-source-links.json` and `automation/offline-forms.json`.
   Keep the `location` metadata truthful (e.g. `Bathinda, Punjab`,
-  `Chandigarh`) — the column rule is about placement, not the address.
+  `Ferozepur, Punjab`, `Chandigarh`) — the column rule is about placement,
+  not the address.
 - **Never** put the `alsoInPunjab` cross-listing flag on these records: their
   home column is Punjab. The flag stays reserved for genuine all-India notices
   that Punjab candidates can also apply to.
@@ -443,8 +461,9 @@ registered:
   (it self-heals anything that still reaches the store as `central`), and
   `tests/test_punjab_column_rule.py` fails CI if one of these notices is
   published outside the Punjab column.
-- **Rationale:** Bathinda is in Punjab and Chandigarh is the region's shared
-  capital; Punjab applicants are the primary audience for these recruitments.
+- **Rationale:** Bathinda is in Punjab, Chandigarh is the region's shared
+  capital, and a vacancy posted in a Punjab district serves Punjab applicants
+  first — these notices belong in the Punjab column whatever body issues them.
 
 **Keep the enforcement call wired.** `enforce_punjab_column_rule()` is invoked
 from the store-refresh block in `main()` (right after
