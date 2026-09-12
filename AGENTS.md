@@ -215,6 +215,39 @@ runs because a single dead mirror was the only one ever tried). The same section
     page (see `cup-teaching` / `cup-non-teaching` / `cup-project`) and give each a
     `bootstrapCount` above 1 so the live advert is not buried on the first scan.
 
+## 🗓 Freshness window: a listing's history is never news (R15, Mandatory)
+
+Official listing pages keep their complete history. AIIMS Bathinda's category tables
+(`Recruitment.aspx?type=1` Faculty, `?type=2` Non-Faculty, `?type=3` SR/JR, `?type=4` Project
+Posts) still carry **every attachment of every advertisement they have published since 2021** —
+each row keeps its advertisement, application forms, eligibility lists, corrigenda and results
+forever. A link the monitor has not seen before is therefore **not** the same thing as a new
+notice: draining that history a few links per run published years-old results as
+`NEW RESULT` / `NEW JOB ALERT` in the Punjab column (a **2025 AIIMS Bathinda result was reported
+as a new Punjab job**, and the flood also pushed genuine alerts out of the 200-record store).
+
+Every notice is now dated by the notice itself, and history is never published:
+
+1. **The document's own date — `document_date_from_url()`.** An official file name carries the
+   date the authority uploaded it (`/images/Reqruitment/20241114045844.pdf` = 14 Nov 2024,
+   `20250829033442.pdf` = 29 Aug 2025). That stamp — otherwise the listing row's own date — is
+   written to `publishedAt`, so the 72-hour NEW badge, the 48-hour **"Just In"** tag and the
+   breaking marquee follow the document's real date instead of the scan time. Only a plausible,
+   non-future calendar date is accepted; an alert with no readable stamp keeps the previous
+   behaviour (`discoveredAt`).
+2. **The freshness window — `maxNoticeAgeDays` + `is_archive_notice()`.** A notice whose own
+   document is older than the window (**default 60 days**, top-level key in
+   `automation/sources.json`, may be overridden per source) is archive material: `run()` skips it
+   and still records its fingerprint, so the same archived link is never re-examined — and never
+   republished as new — on the following runs; `publish_unpublished_seen_notices()` skips it;
+   and `sanitize_published_jobs()` removes it from the store. **An old advertisement whose
+   verified deadline is still open stays published** — the window must never delete a live
+   vacancy — and an alert with no readable document date is never treated as archive.
+3. **Do not weaken this.** `tests/test_update_jobs.py::ArchivedNoticeFreshnessTests` guards the
+   stamp reader, the publish gate, the still-open-advertisement exception, the store cleanup and
+   the config key. The window is what keeps a monitor that reads whole archives honest; removing
+   it restores the 2025-result-as-new-job bug.
+
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 
 Notification pages on the discovery feeds print an **"Official Website"** row beside their
