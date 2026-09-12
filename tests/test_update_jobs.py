@@ -1994,6 +1994,30 @@ class JobMonitorTests(unittest.TestCase):
         self.assertFalse(monitor.merge_job_details(existing, fresh))
         self.assertEqual(existing["lastDate"], "30-09-2026")
 
+    def test_merge_job_details_ignores_attachment_labels_as_a_new_title(self):
+        """A listing's attachment labels must not erase a verified alert."""
+        existing = {
+            "title": "Central University of Punjab (CUPB), Bathinda — Various Post Recruitment",
+            "lastDate": "15-09-2026",
+            "applyLink": "https://cupnt.samarth.edu.in/index.php/site/login",
+            "pdfLink": "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+        }
+        fresh = {
+            "title": (
+                "Central University of Punjab (CUPB), Bathinda — Advertisement Image — "
+                "Date of Advertisement: 02.09.2026 Detailed Advertisement: "
+                "Corrigendum dated 08.09.2026: Updated Details dated 08.09.2026: "
+                "Link for Applying"
+            ),
+            "lastDate": "12-08-2026",
+            "applyLink": "https://cup.edu.in/sites/default/files/Contract NT_009_08_26.pdf",
+            "pdfLink": "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+        }
+        self.assertFalse(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["title"], "Central University of Punjab (CUPB), Bathinda — Various Post Recruitment")
+        self.assertEqual(existing["lastDate"], "15-09-2026")
+        self.assertEqual(existing["applyLink"], "https://cupnt.samarth.edu.in/index.php/site/login")
+
     def test_backfill_reads_last_date_from_stored_details(self):
         jobs = [{
             "title": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur — Professor posts",

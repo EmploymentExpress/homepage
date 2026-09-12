@@ -3133,6 +3133,27 @@ def retain_stored_jobs(jobs: list[dict[str, Any]], limit: int) -> list[dict[str,
     return retained
 
 
+def _is_listing_chrome_title(value: Any) -> bool:
+    """Recognise a page's attachment/link labels masquerading as a notice title.
+
+    Some official listing tables expose a sequence of labels such as
+    ``Advertisement Image``, ``Detailed Advertisement`` and ``Link for
+    Applying`` as one link's text.  It is not a better title than an already
+    verified alert, and refreshing from it also tends to replace the real
+    deadline and application portal with stale page-chrome values.
+    """
+    text = clean_text(value).lower()
+    if not text:
+        return False
+    markers = (
+        "advertisement image",
+        "detailed advertisement",
+        "link for applying",
+        "updated details",
+    )
+    return sum(marker in text for marker in markers) >= 2
+
+
 def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
     """Copy verified details from a re-fetched notice onto the published job.
 
@@ -3140,6 +3161,16 @@ def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
     homepage links are replaced; a later official last date overwrites an older
     one, but an already-applied extension is never reverted to an earlier date.
     """
+    # A listing row made entirely from attachment labels is not a verified
+    # refresh.  Do not let it overwrite a good title, deadline, or apply portal.
+    if (
+        clean_text(existing.get("title"))
+        and not is_placeholder_detail(existing.get("title"))
+        and _is_listing_chrome_title(fresh.get("title"))
+        and not _is_listing_chrome_title(existing.get("title"))
+    ):
+        return False
+
     changed = False
     source_url = clean_text(existing.get("sourceUrl") or fresh.get("sourceUrl") or "")
 
