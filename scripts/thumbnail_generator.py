@@ -25,6 +25,7 @@ FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONT_SERIF_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
 
 WHATSAPP_CHANNEL_URL = "https://whatsapp.com/channel/0029Va9xQHV4tRrxpVKaG93w"
+YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCI39CbrtpEflEPabKeCAd9A"
 
 
 def get_font(path, size):
@@ -77,10 +78,10 @@ def make_circular_masked_image(img_path, size):
         return None
 
 
-def get_whatsapp_qr_code_image(box_size=2, border=2):
+def get_qr_code_image(url, box_size=2, border=2):
     """
-    Generates a pixel-perfect, crisp, 100% scannable QR Code for the official WhatsApp Channel.
-    Uses integer module sizing (box_size=2, border=2 -> 74x74 px) to guarantee rapid optical scanning.
+    Generates a pixel-perfect, crisp, 100% scannable QR Code for any URL.
+    Uses integer module sizing to guarantee rapid optical scanning.
     """
     qr = qrcode.QRCode(
         version=None,
@@ -88,9 +89,17 @@ def get_whatsapp_qr_code_image(box_size=2, border=2):
         box_size=box_size,
         border=border,
     )
-    qr.add_data(WHATSAPP_CHANNEL_URL)
+    qr.add_data(url)
     qr.make(fit=True)
     return qr.make_image(fill_color="black", back_color="white").convert("RGB")
+
+
+def get_whatsapp_qr_code_image(box_size=2, border=2):
+    """
+    Generates a pixel-perfect, crisp, 100% scannable QR Code for the official WhatsApp Channel.
+    Uses integer module sizing (box_size=2, border=2 -> 74x74 px) to guarantee rapid optical scanning.
+    """
+    return get_qr_code_image(WHATSAPP_CHANNEL_URL, box_size=box_size, border=border)
 
 
 def resolve_visual_path(visual_key_or_path, job_title="", job_dept=""):
@@ -281,290 +290,550 @@ def draw_vector_icon(draw, cx, cy, icon_type, color="#facc15"):
         ], fill=color)
 
 
+try:
+    _RUPEE = "\u20b9" if get_font(FONT_BOLD, 30).getmask("\u20b9").getbbox() else "Rs "
+except Exception:
+    _RUPEE = "Rs "
+
+
+def _parse_salary(job):
+    """Extract Level-N and pay-range text from a job's details/qualification."""
+    blob = " ".join(str(job.get(k) or "") for k in ("details", "qualification", "title"))
+    level = ""
+    m = re.search(r"Level\s*[-\xE2\x80\x93]?\s*(\d+)", blob, re.IGNORECASE)
+    if m:
+        level = "Level-" + m.group(1)
+    rng = ""
+    m = re.search(r"(\d[\d,]{2,})\s*[-\xE2\x80\x93\xE2\x80\x94]\s*(\d[\d,]{2,})", blob)
+    if m:
+        a, b = m.group(1), m.group(2)
+        try:
+            av, bv = int(a.replace(",", "")), int(b.replace(",", ""))
+            if 8000 <= av < bv <= 10000000:
+                rng = _RUPEE + a + " \u2013 " + _RUPEE + b
+        except ValueError:
+            pass
+    return level, rng
+
+
+# --- small white vector icons for card headers (2x scale) --------------------
+def _icon_people(d, cx, cy, s, color):
+    d.ellipse([cx - s, cy - s, cx - s * 0.2, cy - s * 0.15], fill=color)
+    d.chord([cx - s * 1.5, cy - s * 0.1, cx + s * 0.3, cy + s * 1.1], start=180, end=360, fill=color)
+    d.ellipse([cx + s * 0.35, cy - s * 0.85, cx + s * 1.05, cy - s * 0.05], fill=color)
+    d.chord([cx - s * 0.1, cy - s * 0.05, cx + s * 1.5, cy + s * 1.1], start=180, end=360, fill=color)
+
+
+def _icon_cap(d, cx, cy, s, color):
+    d.polygon([(cx - s * 1.4, cy - s * 0.2), (cx, cy - s * 0.9), (cx + s * 1.4, cy - s * 0.2),
+               (cx, cy + s * 0.5)], fill=color)
+    d.rectangle([cx - s, cy + s * 0.25, cx + s, cy + s * 0.55], fill=color)
+    d.line([(cx + s * 1.4, cy - s * 0.2), (cx + s * 1.4, cy + s * 0.7)], fill=color, width=3)
+    d.ellipse([cx + s * 1.3, cy + s * 0.7, cx + s * 1.5, cy + s * 0.9], fill=color)
+
+
+def _icon_calendar(d, cx, cy, s, color):
+    d.rounded_rectangle([cx - s, cy - s * 0.8, cx + s, cy + s], radius=4, outline=color, width=3)
+    d.rectangle([cx - s, cy - s * 0.35, cx + s, cy + s * 0.05], fill=color)
+    d.line([(cx - s * 0.55, cy - s * 1.1), (cx - s * 0.55, cy - s * 0.6)], fill=color, width=3)
+    d.line([(cx + s * 0.55, cy - s * 1.1), (cx + s * 0.55, cy - s * 0.6)], fill=color, width=3)
+
+
+def _icon_rupee(d, cx, cy, s, color):
+    f = get_font(FONT_BOLD, int(s * 1.7))
+    d.text((cx, cy), "\u20b9", font=f, fill=color, anchor="mm")
+
+
+def _icon_person(d, cx, cy, s, color):
+    d.ellipse([cx - s * 0.5, cy - s, cx + s * 0.5, cy], fill=color)
+    d.chord([cx - s * 0.95, cy + s * 0.05, cx + s * 0.95, cy + s * 1.4], start=180, end=360, fill=color)
+
+
+def _icon_doc(d, cx, cy, s, color):
+    d.rounded_rectangle([cx - s * 0.75, cy - s, cx + s * 0.75, cy + s], radius=4, outline=color, width=3)
+    d.line([(cx - s * 0.4, cy - s * 0.45), (cx + s * 0.4, cy - s * 0.45)], fill=color, width=3)
+    d.line([(cx - s * 0.4, cy), (cx + s * 0.4, cy)], fill=color, width=3)
+    d.line([(cx - s * 0.4, cy + s * 0.45), (cx + s * 0.1, cy + s * 0.45)], fill=color, width=3)
+
+
+def _icon_monitor(d, cx, cy, s, color):
+    d.rounded_rectangle([cx - s, cy - s * 0.75, cx + s, cy + s * 0.35], radius=4, outline=color, width=3)
+    d.line([(cx, cy + s * 0.35), (cx, cy + s * 0.75)], fill=color, width=3)
+    d.line([(cx - s * 0.5, cy + s * 0.75), (cx + s * 0.5, cy + s * 0.75)], fill=color, width=3)
+
+
+def _icon_bell(d, cx, cy, s, color):
+    d.pieslice([cx - s * 0.7, cy - s * 0.8, cx + s * 0.7, cy + s * 0.6], start=180, end=360, fill=color)
+    d.rectangle([cx - s * 0.85, cy - s * 0.15, cx + s * 0.85, cy + s * 0.05], fill=color)
+    d.ellipse([cx - s * 0.2, cy + s * 0.15, cx + s * 0.2, cy + s * 0.55], fill=color)
+
+
+CARD_ICONS = {"people": _icon_people, "cap": _icon_cap, "calendar": _icon_calendar,
+              "rupee": _icon_rupee, "person": _icon_person, "doc": _icon_doc,
+              "monitor": _icon_monitor}
+
+
 def generate_job_thumbnail(
     job_data,
     output_path,
     channel_name="EmploymentExpress",
     subscribe_text="SUBSCRIBE FOR DAILY GOVT ALERTS",
-    visual_key=None
+    visual_key=None,
+    show_building=True
 ):
     """
-    Generates a publication-grade 1200x630 thumbnail card using 2x super-sampling
-    featuring official YouTube channel promotion, subscribe headline, dynamic text fitting,
-    role/department-specific AI imagery, and an embedded 100% scannable WhatsApp Channel QR Code.
+    Generates the example-style 1200x630 share card (2x super-sampled at
+    2400x1260, Lanczos downscale) matching the user's reference prompt:
+
+      TOP (35%):    navy gradient + blended institute visual (optional),
+                    website logo + department name, 3-line headline
+                    (org: yellow+white / post: black on yellow banner /
+                    alert: white on red banner)
+      MIDDLE (50%): 3 big cards (TOTAL VACANCY red, QUALIFICATION green,
+                    LAST DATE royal blue) + 4 small cards (SALARY purple,
+                    AGE LIMIT orange, APPLICATION FEE teal,
+                    SELECTION PROCESS magenta)
+      PROMO BAR:    navy - YouTube promo + QR (left), WhatsApp promo + QR
+                    (right)
+      FOOTER:       yellow strip - Like | Share | Subscribe
     """
     w2, h2 = 2400, 1260
-    canvas = Image.new("RGBA", (w2, h2), (248, 250, 252, 255))
+    canvas = Image.new("RGBA", (w2, h2), (255, 255, 255, 255))
     draw = ImageDraw.Draw(canvas)
 
-    # 1. Outer & Inner Framing
-    draw.rectangle([12, 12, w2 - 12, h2 - 12], outline="#0b1a30", width=8)
-    draw.rectangle([24, 24, w2 - 24, h2 - 24], outline="#f59e0b", width=4)
+    NAVY = "#071C38"
+    NAVY_TOP = "#0b2545"
+    NAVY_DEEP = "#04101F"
+    YELLOW = "#FFD800"
+    RED = "#E10600"
+    RED_NUM = "#D71919"
+    GREEN = "#0B6B35"
+    BLUE = "#1D4ED8"
+    PURPLE = "#5B259F"
+    ORANGE = "#F06A00"
+    TEAL = "#087D85"
+    MAGENTA = "#C90062"
+    CARD_BG = "#F5F5F5"
+    MID_BG = "#E8ECF2"
+    TEXT = "#111111"
+    SLATE = "#334155"
+    SHADOW = "#B9C2D0"
 
-    # 2. Top Header Section
-    org_code = job_data.get("org_code", "SSC").upper()
-    org_full = job_data.get("org_full", "STAFF SELECTION COMMISSION").upper()
-    main_title = job_data.get("main_title", "HINDI TRANSLATOR").upper()
-    subtitle = job_data.get("subtitle", "—— (CHTE) ——")
-    vacancies_count = str(job_data.get("vacancies_count", "303"))
-    ribbon_alert = job_data.get("ribbon_alert", "REVISED NOTIFICATION 2026").upper()
-    
-    # Medallion: official seal when we have one, otherwise the EmploymentExpress
-    # channel logo (every card carries the channel mark, like the reference).
-    logo_path = None
-    if "SSC" in org_code and (ASSETS_DIR / "ssc_logo.png").exists():
-        logo_path = ASSETS_DIR / "ssc_logo.png"
-    elif (("PUNJAB POLICE" in org_code or org_code == "PUNJAB POLICE") and (ASSETS_DIR / "punjab_logo.png").exists()):
-        logo_path = ASSETS_DIR / "punjab_logo.png"
-    elif (ASSETS_DIR / "logo.png").exists():
-        logo_path = ASSETS_DIR / "logo.png"
+    org_code = str(job_data.get("org_code", "GOVT")).upper()
+    org_full = str(job_data.get("org_full", "GOVERNMENT RECRUITMENT")).upper()
+    main_title = str(job_data.get("main_title", "RECRUITMENT")).upper()
+    ribbon_alert = str(job_data.get("ribbon_alert", "OFFICIAL NOTIFICATION 2026")).upper()
+    alert_type = job_data.get("alert_type", "recruitment")
+    vac_number = str(job_data.get("vacancy_badge_number") or job_data.get("vacancies_count") or "").strip()
+    vac_label = str(job_data.get("vacancy_badge_label") or "POSTS").upper()
 
-    if logo_path:
-        logo_img = make_circular_masked_image(logo_path, 176)
+    qualification = str(job_data.get("qualification") or "").strip()
+    age_limit = str(job_data.get("age_limit") or "").strip()
+    apply_mode = str(job_data.get("apply_mode") or "Online").strip()
+    exam_note = str(job_data.get("exam_note") or "").strip()
+    fee_lines = [str(l) for l in (job_data.get("fee_lines") or ["See Official Notification"])]
+    date_parts = job_data.get("date_parts")
+    last_date_raw = str(job_data.get("last_date_raw") or "").strip()
+    advt_no = str(job_data.get("advt_no") or "").strip()
+    salary_level = str(job_data.get("salary_level") or "").strip()
+    salary_range = str(job_data.get("salary_range") or "").strip()
+
+    hl = job_data.get("highlights") or {}
+    if not qualification:
+        for k in ("Result For", "Answer Key For", "Admit Card For", "Course",
+                  "Qualification", "Post Name"):
+            if hl.get(k):
+                qualification = str(hl[k])
+                break
+        qualification = qualification or "See Official Notification"
+    if not age_limit and alert_type in ("recruitment", "admission"):
+        age_limit = "As Per Notification"
+
+    is_recruit = alert_type in ("recruitment", "admission")
+    notice_word = {"result": "RESULT OUT", "answer_key": "ANSWER KEY",
+                   "admit_card": "ADMIT CARD", "admission": "ADMISSION"}.get(alert_type, "NEW NOTICE")
+    notice_type_word = {"result": "RESULT DECLARED", "answer_key": "ANSWER KEY OUT",
+                        "admit_card": "ADMIT CARD OUT", "admission": "ADMISSION NOTICE"}.get(alert_type, "NOTICE")
+
+    # ================================================================ TOP 35%
+    top_h = 440
+    navy_top_rgb = tuple(int(NAVY_TOP[i + 1:i + 3], 16) for i in (0, 2, 4))
+    navy_rgb0 = tuple(int(NAVY[i + 1:i + 3], 16) for i in (0, 2, 4))
+    for y in range(top_h):
+        t = y / (top_h - 1)
+        c = tuple(int(navy_top_rgb[k] + (navy_rgb0[k] - navy_top_rgb[k]) * t) for k in range(3))
+        draw.line([(0, y), (w2, y)], fill=c + (255,))
+
+    # Blended institute visual (right side). The image stays clearly visible:
+    # only a short fade at its left edge blends it into the navy background
+    # (heavy overlays made the picture invisible in earlier revisions).
+    if show_building:
+        visual_path = resolve_visual_path(visual_key or job_data.get("visual_key"),
+                                          job_title=main_title, job_dept=org_full)
+        try:
+            vis = Image.open(visual_path).convert("RGB")
+            vx1, vx2 = 1560, w2
+            target_w, target_h = vx2 - vx1, top_h
+            ratio = max(target_w / vis.width, target_h / vis.height)
+            vis = vis.resize((int(vis.width * ratio) + 1, int(vis.height * ratio) + 1), Image.LANCZOS)
+            # top-anchored crop keeps the subject (person / building top) in view
+            crop_y = int((vis.height - target_h) * 0.15)
+            vis = vis.crop(((vis.width - target_w) // 2, crop_y,
+                            (vis.width - target_w) // 2 + target_w, crop_y + target_h))
+            canvas.paste(vis, (vx1, 0))
+            # short fade on the left edge only + gentle bottom shade
+            overlay = Image.new("RGBA", (target_w, top_h), (0, 0, 0, 0))
+            odraw = ImageDraw.Draw(overlay)
+            navy_rgb = tuple(int(NAVY[i + 1:i + 3], 16) for i in (0, 2, 4))
+            fade_w = 340
+            for x in range(min(fade_w, target_w)):
+                alpha = int(255 * (1 - x / fade_w))
+                odraw.line([(x, 0), (x, top_h)], fill=navy_rgb + (alpha,))
+            for y in range(top_h):
+                a = int(55 * (y / (top_h - 1)))
+                if a:
+                    odraw.line([(0, y), (target_w, y)], fill=navy_rgb + (a,))
+            canvas = Image.alpha_composite(canvas, overlay)
+            draw = ImageDraw.Draw(canvas)
+        except Exception:
+            pass  # keep plain navy gradient
+
+    # Middle-section backdrop (drawn before the tilted banner so the banner
+    # can visually bridge the two sections without being overpainted)
+    draw.rectangle([0, top_h, w2, 1036], fill=MID_BG)
+
+    # Website logo (yellow ring) - never an institution seal
+    if (ASSETS_DIR / "logo.png").exists():
+        logo_img = make_circular_masked_image(ASSETS_DIR / "logo.png", 240)
         if logo_img:
-            canvas.paste(logo_img, (52, 40), mask=logo_img)
-            draw.ellipse([52, 40, 228, 216], outline="#f59e0b", width=4)
+            canvas.paste(logo_img, (70, 42), mask=logo_img)
+            draw = ImageDraw.Draw(canvas)
+            draw.ellipse([70, 42, 310, 282], outline=YELLOW, width=8)
+
+    # Department name under the logo
+    d_lines, d_font = _wrap_words(draw, org_full, FONT_BOLD, 300, 3)
+    dy = 300
+    for ln in d_lines:
+        draw.text((190, dy), ln, font=d_font, fill="#dce6f5", anchor="mm")
+        dy += 36
+    if advt_no:
+        f_advt = get_font(FONT_BOLD, 22)
+        draw.text((190, dy + 8), _clip(advt_no, 38), font=f_advt, fill="#93a8c7", anchor="mm")
+
+    # ---- headline stack (x 420..1520)
+    hx1, hx2 = 420, 1520
+    hcx = (hx1 + hx2) // 2
+
+    # L1: first word yellow, rest white
+    words = org_code.split()
+    l1_first = words[0] if words else org_code
+    l1_rest = " ".join(words[1:])
+    if len(l1_first) > 14:
+        l1_first, l1_rest = l1_first[:12] + "...", ""
+    elif len(org_code) > 22:
+        l1_first, l1_rest = org_code, ""
+    f_l1 = fit_text_font(draw, (l1_first + " " + l1_rest).strip(), max_w=hx2 - hx1, max_h=104,
+                         font_path=FONT_BOLD, start_size=120, min_size=60)
+    if l1_rest:
+        w_first = draw.textlength(l1_first + " ", font=f_l1)
+        w_rest = draw.textlength(l1_rest, font=f_l1)
+        total = w_first + w_rest
+        x0 = hcx - total / 2
+        draw.text((x0 + 4, 84 + 5), l1_first + " ", font=f_l1, fill=NAVY_DEEP, anchor="lm")
+        draw.text((x0 + w_first + 4, 84 + 5), l1_rest, font=f_l1, fill=NAVY_DEEP, anchor="lm")
+        draw.text((x0, 84), l1_first + " ", font=f_l1, fill=YELLOW, anchor="lm")
+        draw.text((x0 + w_first, 84), l1_rest, font=f_l1, fill="#ffffff", anchor="lm")
     else:
-        draw.ellipse([52, 40, 228, 216], fill="#c21807", outline="#f59e0b", width=6)
-        draw.ellipse([68, 56, 212, 200], fill="#8b0000", outline="#facc15", width=4)
-        font_tiny = get_font(FONT_BOLD, 40)
-        draw.text((140, 128), "EE", font=font_tiny, fill="#ffffff", anchor="mm")
+        draw.text((hcx + 4, 84 + 5), l1_first, font=f_l1, fill=NAVY_DEEP, anchor="mm")
+        draw.text((hcx, 84), l1_first, font=f_l1, fill=YELLOW, anchor="mm")
 
-    # Organization Large Name & Subtext
-    font_org_main = fit_text_font(draw, org_code, max_w=670, max_h=90, font_path=FONT_BOLD, start_size=110, min_size=52)
-    draw.text((256, 52), org_code, font=font_org_main, fill="#0b2545")
-
-    font_org_sub = get_font(FONT_BOLD, 26)
-    org_sub_display = org_full if len(org_full) <= 36 else org_full[:34] + "..."
-    draw.text((260, 176), org_sub_display, font=font_org_sub, fill="#1e3a8a")
-
-    # Top Center Badge: "NEW / REVISED"
-    badge_lines = job_data.get("top_badge_text", ["NEW", "REVISED"])
-    badge_x1, badge_y1, badge_x2, badge_y2 = 950, 52, 1230, 192
-    draw_rounded_rect(draw, [badge_x1, badge_y1, badge_x2, badge_y2], radius=16, fill="#dc2626", outline="#ffffff", width=4)
-    font_badge = get_font(FONT_BOLD, 36)
-    if len(badge_lines) >= 2:
-        draw.text(((badge_x1 + badge_x2) // 2, badge_y1 + 40), badge_lines[0], font=font_badge, fill="#ffffff", anchor="mm")
-        draw.text(((badge_x1 + badge_x2) // 2, badge_y1 + 96), badge_lines[1], font=font_badge, fill="#ffffff", anchor="mm")
+    # L2: main title - black on yellow banner. Long titles wrap to 2 lines so
+    # they can never overflow the banner width (80/202 live titles need this).
+    l2_max_w = hx2 - hx1 - 90
+    f_single = fit_text_font(draw, main_title, max_w=l2_max_w, max_h=96,
+                             font_path=FONT_BOLD, start_size=110, min_size=44)
+    if f_single.size >= 64:
+        # short title: one big line
+        l2_lines, f_l2 = [main_title], f_single
     else:
-        draw.text(((badge_x1 + badge_x2) // 2, (badge_y1 + badge_y2) // 2), badge_lines[0], font=font_badge, fill="#ffffff", anchor="mm")
-
-    # Resolve and Composite Job-Specific Visual Image
-    chosen_visual_path = resolve_visual_path(
-        visual_key or job_data.get("visual_key"),
-        job_title=main_title,
-        job_dept=org_full
-    )
-    composite_job_visual(canvas, chosen_visual_path, x1=1260, y1=36, x2=2352, y2=584, department_name=org_full)
-
-    # 3. Main Central Job Title Banner
-    title_box_x1, title_box_y1 = 52, 248
-    title_box_x2, title_box_y2 = 1230, 488
-    draw_rounded_rect(draw, [title_box_x1, title_box_y1, title_box_x2, title_box_y2], radius=28, fill="#0a1931")
-
-    # Title area bounds (leaves space for vacancy badge on right)
-    title_max_w = 880
-    title_cx = title_box_x1 + (title_max_w // 2) + 16
-
-    font_main = fit_text_font(draw, main_title, max_w=title_max_w, max_h=86, font_path=FONT_BOLD, start_size=76, min_size=36)
-    draw.text((title_cx, title_box_y1 + 84), main_title, font=font_main, fill="#ffffff", anchor="mm")
-
-    font_sub = fit_text_font(draw, subtitle, max_w=title_max_w, max_h=48, font_path=FONT_BOLD, start_size=46, min_size=28)
-    draw.text((title_cx, title_box_y1 + 172), subtitle, font=font_sub, fill="#facc15", anchor="mm")
-
-    # Alert Oval Badge attached on the right side of Navy Box.
-    # Recruitment cards show the vacancy number + "POSTS"; update cards
-    # (result / answer key / admit card / admission) show a status word.
-    vac_cx, vac_cy = 1120, 368
-    vac_rx, vac_ry = 120, 96
-    draw.ellipse([vac_cx - vac_rx, vac_cy - vac_ry, vac_cx + vac_rx, vac_cy + vac_ry], fill="#dc2626", outline="#facc15", width=8)
-
-    badge_number = str(job_data.get("vacancy_badge_number", vacancies_count))
-    badge_label = str(job_data.get("vacancy_badge_label", "POSTS")).upper()
-
-    if badge_number.strip():
-        font_vac_num = fit_text_font(draw, badge_number, max_w=190, max_h=76, font_path=FONT_BOLD, start_size=76, min_size=42)
-        font_vac_lbl = get_font(FONT_BOLD, 28)
-        draw.text((vac_cx, vac_cy - 18), badge_number, font=font_vac_num, fill="#fef08a", anchor="mm")
-        draw.text((vac_cx, vac_cy + 46), badge_label, font=font_vac_lbl, fill="#ffffff", anchor="mm")
+        # long title: two lines with the largest font that fits both lines
+        l2_lines, f_l2 = _wrap_words(draw, main_title, FONT_BOLD, l2_max_w, 2)
+        widest = max(draw.textlength(ln, font=f_l2) for ln in l2_lines)
+        while widest > l2_max_w and f_l2.size > 36:
+            f_l2 = get_font(FONT_BOLD, f_l2.size - 4)
+            widest = max(draw.textlength(ln, font=f_l2) for ln in l2_lines)
+    l2_w = max(draw.textlength(ln, font=f_l2) for ln in l2_lines)
+    bx1 = max(hx1 - 20, int(hcx - l2_w / 2 - 40))
+    bx2 = min(hx2 + 20, int(hcx + l2_w / 2 + 40))
+    if len(l2_lines) == 1:
+        draw.rectangle([bx1 + 6, 148 + 7, bx2 + 6, 262 + 7], fill=NAVY_DEEP)      # shadow
+        draw.rectangle([bx1, 148, bx2, 262], fill=YELLOW)
+        draw.text((hcx, 205), l2_lines[0], font=f_l2, fill=TEXT, anchor="mm")
     else:
-        # No vacancy number (update card): centre a bold status label.
-        font_status = fit_text_font(draw, badge_label, max_w=200, max_h=120, font_path=FONT_BOLD, start_size=46, min_size=22)
-        draw.text((vac_cx, vac_cy), badge_label, font=font_status, fill="#fef08a", anchor="mm")
+        draw.rectangle([bx1 + 6, 136 + 7, bx2 + 6, 300 + 7], fill=NAVY_DEEP)      # shadow
+        draw.rectangle([bx1, 136, bx2, 300], fill=YELLOW)
+        draw.text((hcx, 180), l2_lines[0], font=f_l2, fill=TEXT, anchor="mm")
+        draw.text((hcx, 254), l2_lines[1], font=f_l2, fill=TEXT, anchor="mm")
 
-    # Attached Red Ribbon Strip underneath Navy Box
-    ribbon_y1, ribbon_y2 = 488, 584
-    draw.rectangle([title_box_x1, ribbon_y1, title_box_x2, ribbon_y2], fill="#b91c1c")
-    font_ribbon = fit_text_font(draw, ribbon_alert, max_w=1120, max_h=52, font_path=FONT_BOLD, start_size=42, min_size=26)
-    draw.text(((title_box_x1 + title_box_x2) // 2, (ribbon_y1 + ribbon_y2) // 2), ribbon_alert, font=font_ribbon, fill="#ffffff", anchor="mm")
+    # L3: alert banner - white on red (straight, shadowed; sits clear of both
+    # the yellow banner above and the cards below)
+    f_l3 = fit_text_font(draw, ribbon_alert, max_w=hx2 - hx1 - 130, max_h=80,
+                         font_path=FONT_BOLD, start_size=88, min_size=42)
+    l3_w = draw.textlength(ribbon_alert, font=f_l3)
+    rb_x1 = max(hx1 - 20, int(hcx - l3_w / 2 - 55))
+    rb_x2 = min(hx2 + 20, int(hcx + l3_w / 2 + 55))
+    draw.rounded_rectangle([rb_x1 + 6, 318 + 7, rb_x2 + 6, 424 + 7], radius=20, fill=NAVY_DEEP)
+    draw.rounded_rectangle([rb_x1, 318, rb_x2, 424], radius=20, fill=RED)
+    draw.text((hcx, 371), ribbon_alert, font=f_l3, fill="#ffffff", anchor="mm")
 
-    # 4. Middle Section: Feature Pills (Left) & Important Highlights (Right)
-    default_pills = [
-        ("doc", "REVISED\nVACANCY", "#1976d2"),
-        ("users", f"{vacancies_count}\nPOSTS", "#2e7d32"),
-        ("calendar", "NEW\nNOTIFICATION", "#7b1fa2"),
-        ("target", "GREAT\nOPPORTUNITY\nFOR ASPIRANTS", "#e65100")
-    ]
-    pills = job_data.get("feature_pills", default_pills)
-    
-    pill_w = 200
-    start_px = 52
-    pill_gap = 24
-    for i, (icon_type, pill_text, icon_col) in enumerate(pills[:4]):
-        px = start_px + i * (pill_w + pill_gap)
-        py = 608
-        draw_rounded_rect(draw, [px, py, px + pill_w, py + 288], radius=20, fill="#ffffff", outline="#cbd5e1", width=4)
-        draw_icon_circle(draw, px + pill_w // 2, py + 72, 44, icon_col, icon_type=icon_type)
-        
-        font_pill = get_font(FONT_BOLD, 20)
-        lines = pill_text.split("\n")
-        if len(lines) == 1:
-            draw.text((px + pill_w // 2, py + 190), lines[0], font=font_pill, fill="#0f172a", anchor="mm")
-        elif len(lines) == 2:
-            draw.text((px + pill_w // 2, py + 176), lines[0], font=font_pill, fill="#0f172a", anchor="mm")
-            draw.text((px + pill_w // 2, py + 216), lines[1], font=font_pill, fill="#0f172a", anchor="mm")
+    # ============================================================== MIDDLE
+    def card(x1, y1, x2, y2, color, label, icon, head_h=62):
+        draw.rounded_rectangle([x1 + 7, y1 + 9, x2 + 7, y2 + 9], radius=18, fill=SHADOW)
+        draw.rounded_rectangle([x1, y1, x2, y2], radius=18, fill=CARD_BG, outline=color, width=5)
+        draw.rounded_rectangle([x1, y1, x2, y1 + head_h], radius=18, fill=color)
+        draw.rectangle([x1, y1 + head_h - 22, x2, y1 + head_h], fill=color)
+        # icon in white-ring circle
+        cx0, cy0 = x1 + 48, y1 + head_h // 2
+        draw.ellipse([cx0 - 25, cy0 - 25, cx0 + 25, cy0 + 25], outline="#ffffff", width=3)
+        CARD_ICONS[icon](draw, cx0, cy0, 14, "#ffffff")
+        f_lbl = get_font(FONT_BOLD, 34)
+        draw.text((x1 + 88, cy0), label, font=f_lbl, fill="#ffffff", anchor="lm")
+
+    # ---- Row 1: three big cards (y 460..790)
+    r1y1, r1y2 = 460, 790
+    c1x1, c1x2 = 40, 793
+    c2x1, c2x2 = 823, 1576
+    c3x1, c3x2 = 1606, 2360
+
+    if vac_number and vac_number not in ("NEW",):
+        card(c1x1, r1y1, c1x2, r1y2, RED, "TOTAL VACANCY", "people")
+        f_num = fit_text_font(draw, vac_number, max_w=430, max_h=126,
+                              font_path=FONT_BOLD, start_size=160, min_size=72)
+        draw.text(((c1x1 + c1x2) // 2, 640), vac_number, font=f_num, fill=RED_NUM, anchor="mm")
+        # 'Posts' navy pill
+        f_pl = get_font(FONT_BOLD, 30)
+        pl_w = int(draw.textlength(vac_label, font=f_pl)) + 70
+        draw.rounded_rectangle([(c1x1 + c1x2) / 2 - pl_w / 2, 726,
+                                (c1x1 + c1x2) / 2 + pl_w / 2, 774], radius=24, fill=NAVY)
+        draw.text(((c1x1 + c1x2) // 2, 750), vac_label, font=f_pl, fill="#ffffff", anchor="mm")
+    else:
+        card(c1x1, r1y1, c1x2, r1y2, RED, "NOTICE", "people")
+        f_nw = fit_text_font(draw, notice_word, max_w=440, max_h=84,
+                             font_path=FONT_BOLD, start_size=92, min_size=48)
+        draw.text(((c1x1 + c1x2) // 2, 655), notice_word, font=f_nw, fill=RED_NUM, anchor="mm")
+
+    q_label = "QUALIFICATION" if is_recruit else "POST / NOTICE DETAILS"
+    card(c2x1, r1y1, c2x2, r1y2, GREEN, q_label, "cap")
+    qcx = (c2x1 + c2x2) // 2
+    q_body_top, q_body_bot = 584, 782          # inside the card, under its header
+    q_max_w = c2x2 - c2x1 - 70
+    q_parts = re.split(r"\s+OR\s+", qualification, flags=re.IGNORECASE) if qualification else []
+    if len(q_parts) == 2 and all(len(p) < 90 for p in q_parts):
+        # Two qualification options separated by a green OR pill.
+        # Line budget: at most 3 text lines + the pill must fit 584..782.
+        p1_lines, p1_font = _wrap_words(draw, q_parts[0], FONT_BOLD, q_max_w, 2)
+        p2_lines, p2_font = _wrap_words(draw, q_parts[1], FONT_BOLD, q_max_w, 2)
+        if len(p1_lines) + len(p2_lines) > 3:
+            # give the longer part 2 lines, force the shorter to 1 (shrunk to fit)
+            if len(q_parts[0]) >= len(q_parts[1]):
+                p1_lines, p1_font = _wrap_words(draw, q_parts[0], FONT_BOLD, q_max_w, 2)
+                p2_lines = [q_parts[1]]
+                p2_font = fit_text_font(draw, q_parts[1], max_w=q_max_w, max_h=44,
+                                        font_path=FONT_BOLD, start_size=44, min_size=24)
+            else:
+                p2_lines, p2_font = _wrap_words(draw, q_parts[1], FONT_BOLD, q_max_w, 2)
+                p1_lines = [q_parts[0]]
+                p1_font = fit_text_font(draw, q_parts[0], max_w=q_max_w, max_h=44,
+                                        font_path=FONT_BOLD, start_size=44, min_size=24)
+        lh = 46
+        f_or = get_font(FONT_BOLD, 28)
+        or_w = int(draw.textlength("OR", font=f_or)) + 44
+        total_h = lh * (len(p1_lines) + len(p2_lines)) + 52
+        y = q_body_top + (q_body_bot - q_body_top - total_h) / 2 + lh / 2
+        for ln in p1_lines:
+            draw.text((qcx, y), ln, font=p1_font, fill=TEXT, anchor="mm"); y += lh
+        draw.rounded_rectangle([qcx - or_w / 2, y - 14, qcx + or_w / 2, y + 28], radius=21, fill=GREEN)
+        draw.text((qcx, y + 7), "OR", font=f_or, fill="#ffffff", anchor="mm")
+        y += 52
+        for ln in p2_lines:
+            draw.text((qcx, y), ln, font=p2_font, fill=TEXT, anchor="mm"); y += lh
+    else:
+        # Single blob of text: wrap to at most 4 lines, font capped so the
+        # whole block stays inside the card body.
+        q_lines, q_font = _wrap_words(draw, qualification or "See Official Notification", FONT_BOLD,
+                                      q_max_w, 4)
+        if q_font.size > 44:
+            q_font = get_font(FONT_BOLD, 44)
+        lh = 46
+        total_h = lh * len(q_lines)
+        qy = q_body_top + (q_body_bot - q_body_top - total_h) / 2 + lh / 2
+        for ln in q_lines:
+            draw.text((qcx, qy), ln, font=q_font, fill=TEXT, anchor="mm"); qy += lh
+
+    ld_label = "LAST DATE" if (is_recruit and date_parts) else ("NOTICE DATE" if date_parts else "STATUS")
+    card(c3x1, r1y1, c3x2, r1y2, BLUE, ld_label, "calendar")
+    lcx = (c3x1 + c3x2) // 2
+    if date_parts:
+        day, mon, yr = date_parts
+        f_day = fit_text_font(draw, day, max_w=300, max_h=118, font_path=FONT_BOLD,
+                              start_size=150, min_size=76)
+        draw.text((lcx, 620), day, font=f_day, fill=RED_NUM, anchor="mm")
+        f_my = get_font(FONT_BOLD, 56)
+        draw.text((lcx, 730), str(mon) + " " + str(yr), font=f_my, fill=NAVY, anchor="mm")
+    else:
+        big_word = {"result": "OUT NOW", "answer_key": "OUT NOW",
+                    "admit_card": "RELEASED"}.get(alert_type, "NEW")
+        f_bw = fit_text_font(draw, big_word, max_w=520, max_h=104, font_path=FONT_BOLD,
+                             start_size=130, min_size=60)
+        draw.text((lcx, 620), big_word, font=f_bw, fill=RED_NUM, anchor="mm")
+        f_sub = get_font(FONT_BOLD, 34)
+        draw.text((lcx, 726), "CHECK OFFICIAL SITE", font=f_sub, fill=NAVY, anchor="mm")
+
+    # ---- Row 2: four small cards (y 810..1030)
+    r2y1, r2y2 = 810, 1030
+    gap, mx = 24, 40
+    cw = (w2 - 2 * mx - 3 * gap) // 4
+    xs = [mx + i * (cw + gap) for i in range(4)]
+
+    # Card 4: SALARY (purple) - or ORGANISATION for notices
+    if is_recruit:
+        card(xs[0], r2y1, xs[0] + cw, r2y2, PURPLE, "SALARY", "rupee", head_h=56)
+        scx = xs[0] + cw // 2
+        if salary_level:
+            f_lv = get_font(FONT_BOLD, 30)
+            draw.text((scx, 890), salary_level, font=f_lv, fill=SLATE, anchor="mm")
+        s_text = salary_range or "As Per Notification"
+        f_sal = fit_text_font(draw, s_text, max_w=cw - 60, max_h=52, font_path=FONT_BOLD,
+                              start_size=48, min_size=26)
+        s_w = draw.textlength(s_text, font=f_sal)
+        draw.rectangle([scx - s_w / 2 - 16, 932, scx + s_w / 2 + 16, 992], fill=YELLOW)
+        draw.text((scx, 962), s_text, font=f_sal, fill=TEXT, anchor="mm")
+    else:
+        card(xs[0], r2y1, xs[0] + cw, r2y2, PURPLE, "ORGANISATION", "rupee", head_h=56)
+        o_lines, o_font = _wrap_words(draw, org_full, FONT_BOLD, cw - 50, 3)
+        oy = 950 - (len(o_lines) - 1) * 18
+        for ln in o_lines:
+            draw.text((xs[0] + cw // 2, oy), ln, font=o_font, fill=TEXT, anchor="mm"); oy += 40
+
+    # Card 5: AGE LIMIT (orange) - or NOTICE TYPE for notices
+    if is_recruit:
+        card(xs[1], r2y1, xs[1] + cw, r2y2, ORANGE, "AGE LIMIT", "person", head_h=56)
+        acx = xs[1] + cw // 2
+        age_text = age_limit or "As Per Notification"
+        a_lines, a_font = _wrap_words(draw, age_text, FONT_BOLD, cw - 50, 2)
+        ay = 908 if len(a_lines) > 1 else 916
+        for ln in a_lines:
+            draw.text((acx, ay), ln, font=a_font, fill=TEXT, anchor="mm"); ay += 48
+        f_rel = get_font(FONT_BOLD, 22)
+        draw.text((acx, 1000), "(Age Relaxation Applicable)", font=f_rel, fill=SLATE, anchor="mm")
+    else:
+        card(xs[1], r2y1, xs[1] + cw, r2y2, ORANGE, "NOTICE TYPE", "person", head_h=56)
+        f_nt = fit_text_font(draw, notice_type_word, max_w=cw - 50, max_h=60,
+                             font_path=FONT_BOLD, start_size=56, min_size=30)
+        draw.text((xs[1] + cw // 2, 930), notice_type_word, font=f_nt, fill=TEXT, anchor="mm")
+        f_nt2 = get_font(FONT_BOLD, 24)
+        draw.text((xs[1] + cw // 2, 1000), "Official Update 2026", font=f_nt2, fill=SLATE, anchor="mm")
+
+    # Card 6: APPLICATION FEE (teal) - amounts highlighted red. Every line is
+    # individually fitted to the card width so text can never spill out.
+    card(xs[2], r2y1, xs[2] + cw, r2y2, TEAL, "APPLICATION FEE", "doc", head_h=56)
+    fcx = xs[2] + cw // 2
+    fee_max_w = cw - 44
+    fee_items = fee_lines[:3]
+    fee_fonts = []
+    for ln in fee_items:
+        fee_fonts.append(fit_text_font(draw, ln, max_w=fee_max_w, max_h=40,
+                                       font_path=FONT_BOLD, start_size=28, min_size=16))
+    fy = 884 + (146 - 46 * len(fee_items)) / 2 + 4
+    for ln, f_fee in zip(fee_items, fee_fonts):
+        if ":" in ln:
+            key_part, val_part = ln.split(":", 1)
+            kw = draw.textlength(key_part + ": ", font=f_fee)
+            vw = draw.textlength(val_part.strip(), font=f_fee)
+            x0 = fcx - (kw + vw) / 2
+            # left-anchored so the key starts at x0 and the value follows it -
+            # centre-anchored parts overlapped each other and spilled left
+            draw.text((x0, fy), key_part + ": ", font=f_fee, fill=TEXT, anchor="lm")
+            draw.text((x0 + kw, fy), val_part.strip(), font=f_fee, fill=RED_NUM, anchor="lm")
         else:
-            font_pill_small = get_font(FONT_BOLD, 17)
-            draw.text((px + pill_w // 2, py + 164), lines[0], font=font_pill_small, fill="#0f172a", anchor="mm")
-            draw.text((px + pill_w // 2, py + 196), lines[1], font=font_pill_small, fill="#0f172a", anchor="mm")
-            draw.text((px + pill_w // 2, py + 228), lines[2], font=font_pill_small, fill="#0f172a", anchor="mm")
+            draw.text((fcx, fy), ln, font=f_fee, fill=TEXT, anchor="mm")
+        fy += 46
 
-    # Important Highlights Box (Right side)
-    hl_x1, hl_y1, hl_x2, hl_y2 = 956, 608, 2352, 896
-    draw_rounded_rect(draw, [hl_x1, hl_y1, hl_x2, hl_y2], radius=20, fill="#ffffff", outline="#94a3b8", width=4)
-    draw_rounded_rect(draw, [hl_x1, hl_y1, hl_x2, hl_y1 + 64], radius=16, fill="#0f284e")
-    font_hl_head = get_font(FONT_BOLD, 30)
-    draw.text(((hl_x1 + hl_x2) // 2, hl_y1 + 32), "IMPORTANT HIGHLIGHTS", font=font_hl_head, fill="#ffffff", anchor="mm")
+    # Card 7: SELECTION PROCESS (magenta)
+    card(xs[3], r2y1, xs[3] + cw, r2y2, MAGENTA, "SELECTION PROCESS", "monitor", head_h=56)
+    spx = xs[3] + cw // 2
+    sel_text = exam_note or "As Per Official Notification"
+    s_lines, s_font = _wrap_words(draw, sel_text, FONT_BOLD, cw - 50, 2)
+    sy = 910 if len(s_lines) > 1 else 918
+    for ln in s_lines:
+        draw.text((spx, sy), ln, font=s_font, fill=TEXT, anchor="mm"); sy += 46
+    badge_txt = "(No Interview)" if "no interview" in sel_text.lower() else "As Notified"
+    f_bd = get_font(FONT_BOLD, 22)
+    bd_w = int(draw.textlength(badge_txt, font=f_bd)) + 36
+    draw.rounded_rectangle([spx - bd_w / 2, 986, spx + bd_w / 2, 1020], radius=17, fill=MAGENTA)
+    draw.text((spx, 1003), badge_txt, font=f_bd, fill="#ffffff", anchor="mm")
 
-    hl_dict = job_data.get("highlights", {
-        "Post Name": main_title,
-        "Revised Vacancies": f"{vacancies_count} Posts",
-        "Department": org_full[:32],
-        "Exam": "Computer Based Test (CBT)",
-        "Official Notification": "2026"
-    })
+    # ============================================================ PROMO BAR
+    pb_y1, pb_y2 = 1036, 1206
+    draw.rectangle([0, pb_y1, w2, pb_y2], fill=NAVY)
+    draw.rectangle([0, pb_y1, w2, pb_y1 + 4], fill=YELLOW)
 
-    item_y = hl_y1 + 92
-    font_item_key = get_font(FONT_BOLD, 26)
-    font_item_val = get_font(FONT_REG, 26)
+    f_pb1 = get_font(FONT_BOLD, 32)
+    f_pb2 = get_font(FONT_BOLD, 38)
 
-    for key, val in list(hl_dict.items())[:5]:
-        draw.ellipse([hl_x1 + 32, item_y - 14, hl_x1 + 56, item_y + 10], fill="#0284c7")
-        draw.line([(hl_x1 + 38, item_y - 2), (hl_x1 + 44, item_y + 4), (hl_x1 + 52, item_y - 8)], fill="#ffffff", width=4)
-        
-        draw.text((hl_x1 + 72, item_y), f"{key}: ", font=font_item_key, fill="#0f172a", anchor="lm")
-        key_width = draw.textlength(f"{key}: ", font=font_item_key)
-        
-        val_str = str(val)
-        if len(val_str) > 42:
-            val_str = val_str[:39] + "..."
-        draw.text((hl_x1 + 72 + key_width, item_y), val_str, font=font_item_val, fill="#334155", anchor="lm")
-        
-        item_y += 42
+    # LEFT - YouTube
+    draw.rounded_rectangle([60, 1074, 168, 1182], radius=20, fill="#ff0000")
+    draw.polygon([(92, 1098), (146, 1128), (92, 1158)], fill="#ffffff")
+    draw.text((196, 1078), "Subscribe My", font=f_pb1, fill="#ffffff", anchor="lm")
+    draw.text((196, 1116), "YouTube Channel", font=f_pb1, fill="#ffffff", anchor="lm")
+    ch_w = int(draw.textlength(channel_name, font=f_pb2)) + 76
+    draw.rounded_rectangle([196, 1140, 196 + ch_w, 1192], radius=26, fill=RED)
+    draw.text((196 + ch_w / 2, 1166), channel_name, font=f_pb2, fill="#ffffff", anchor="mm")
+    _icon_bell(draw, 196 + ch_w + 40, 1166, 20, YELLOW)
+    # YouTube QR zone (2x): x 1000..1148, y 1044..1192 -> crisp paste at final
+    draw.text((1074, 1196), "SCAN & SUBSCRIBE", font=get_font(FONT_BOLD, 18), fill="#ffffff", anchor="mm")
 
-    # 5. Call To Action, YouTube Channel & WhatsApp QR Code Row
-    cta_y1, cta_y2 = 916, 1072
-    
-    # CTA Box 1 (Left - Yellow Gold: APPLY ONLINE)
-    box1_x1, box1_x2 = 52, 532
-    draw_rounded_rect(draw, [box1_x1, cta_y1, box1_x2, cta_y2], radius=20, fill="#f59e0b", outline="#d97706", width=4)
-    draw.ellipse([box1_x1 + 24, cta_y1 + 28, box1_x1 + 100, cta_y1 + 104], fill="#0f172a", outline="#ffffff", width=4)
-    draw.arc([box1_x1 + 36, cta_y1 + 40, box1_x1 + 88, cta_y1 + 92], 0, 360, fill="#ffffff", width=4)
-    draw.line([(box1_x1 + 24, cta_y1 + 66), (box1_x1 + 100, cta_y1 + 66)], fill="#ffffff", width=4)
-    draw.line([(box1_x1 + 62, cta_y1 + 28), (box1_x1 + 62, cta_y1 + 104)], fill="#ffffff", width=4)
-    
-    cta_main = job_data.get("cta_text", "APPLY ONLINE").upper()
-    font_cta_main = fit_text_font(draw, cta_main, max_w=300, max_h=56, font_path=FONT_BOLD, start_size=38, min_size=22)
-    draw.text((box1_x1 + 116, cta_y1 + 48), cta_main, font=font_cta_main, fill="#0a1931", anchor="lm")
-    font_cta_sub = get_font(FONT_BOLD, 18)
-    draw.text((box1_x1 + 118, cta_y1 + 100), "STAY UPDATED, STAY AHEAD!", font=font_cta_sub, fill="#0f172a", anchor="lm")
+    # RIGHT - WhatsApp (badge/texts stay left of the QR zone x2212..2360)
+    draw_whatsapp_badge(draw, 2150, 1128, 40)
+    draw.text((2090, 1078), "Follow My", font=f_pb1, fill="#ffffff", anchor="rm")
+    draw.text((2090, 1116), "WhatsApp Channel", font=f_pb1, fill="#ffffff", anchor="rm")
+    btn_w = int(draw.textlength("Scan & Join", font=f_pb2)) + 70
+    draw.rounded_rectangle([2090 - btn_w, 1140, 2090, 1192], radius=26, fill="#16a34a")
+    draw.text((2090 - btn_w / 2, 1166), "Scan & Join", font=f_pb2, fill="#ffffff", anchor="mm")
+    # WhatsApp QR zone (2x): x 2212..2360, y 1044..1192
+    draw.text((2286, 1196), "SCAN & JOIN", font=get_font(FONT_BOLD, 18), fill="#ffffff", anchor="mm")
 
-    # CTA Box 2 (Center - YouTube Channel: EmploymentExpress)
-    box2_x1, box2_x2 = 556, 1456
-    draw_rounded_rect(draw, [box2_x1, cta_y1, box2_x2, cta_y2], radius=20, fill="#ffffff", outline="#e2e8f0", width=4)
-    
-    yt_x1, yt_y1, yt_x2, yt_y2 = box2_x1 + 20, cta_y1 + 34, box2_x1 + 120, cta_y2 - 34
-    draw.rounded_rectangle([yt_x1, yt_y1, yt_x2, yt_y2], radius=18, fill="#ff0000")
-    draw.polygon([(yt_x1 + 36, yt_y1 + 18), (yt_x1 + 72, yt_y1 + 44), (yt_x1 + 36, yt_y1 + 70)], fill="#ffffff")
+    # ========================================================= YELLOW FOOTER
+    draw.rectangle([0, 1206, w2, h2], fill=YELLOW)
+    f_foot = get_font(FONT_BOLD, 38)
+    draw.text((w2 // 2, 1233), "Like  |  Share  |  Subscribe", font=f_foot, fill=TEXT, anchor="mm")
+    # red decorative bursts on both sides
+    for sx in (w2 // 2 - 470, w2 // 2 + 470):
+        draw.polygon([(sx, 1218), (sx + 46, 1233), (sx, 1248)], fill=RED)
+        draw.polygon([(sx - 56, 1218), (sx - 10, 1233), (sx - 56, 1248)], fill=RED)
 
-    font_ch_name = get_font(FONT_BOLD, 42)
-    draw.text((box2_x1 + 138, cta_y1 + 48), channel_name, font=font_ch_name, fill="#0a1931", anchor="lm")
+    # ------------------------------- downsample to 1200x630 (Lanczos)
+    final_img = canvas.convert("RGB").resize((1200, 630), Image.Resampling.LANCZOS)
+    final_img = final_img.quantize(colors=256, method=Image.MEDIANCUT).convert("RGB")
 
-    subscribe_text = job_data.get("subscribe_text", subscribe_text)
-    font_sub_head = get_font(FONT_BOLD, 19)
-    draw.text((box2_x1 + 140, cta_y1 + 102), subscribe_text, font=font_sub_head, fill="#dc2626", anchor="lm")
+    # Crisp-paste both scannable QR codes (74x74, integer modules) at final
+    # scale - palette quantization first so dithering cannot corrupt modules.
+    yt_qr = get_qr_code_image(YOUTUBE_CHANNEL_URL, box_size=2, border=2)
+    wa_qr = get_whatsapp_qr_code_image(box_size=2, border=2)
+    yt_cx, yt_cy = (1000 + 1148) // 4, (1044 + 1192) // 4     # 2x zone -> final centre
+    wa_cx, wa_cy = (2212 + 2360) // 4, (1044 + 1192) // 4
+    final_img.paste(yt_qr, (yt_cx - yt_qr.width // 2, yt_cy - yt_qr.height // 2))
+    final_img.paste(wa_qr, (wa_cx - wa_qr.width // 2, wa_cy - wa_qr.height // 2))
 
-    sub_pill_x1, sub_pill_x2 = box2_x2 - 216, box2_x2 - 20
-    sub_pill_y1, sub_pill_y2 = cta_y1 + 36, cta_y2 - 36
-    draw.rounded_rectangle([sub_pill_x1, sub_pill_y1, sub_pill_x2, sub_pill_y2], radius=34, fill="#dc2626")
-    font_btn = get_font(FONT_BOLD, 24)
-    draw.text(((sub_pill_x1 + sub_pill_x2) // 2, (sub_pill_y1 + sub_pill_y2) // 2), "SUBSCRIBE", font=font_btn, fill="#ffffff", anchor="mm")
-
-    # CTA Box 3 (Right - WhatsApp Channel with 100% Scannable QR Code)
-    box3_x1, box3_x2 = 1480, 2348
-    draw_rounded_rect(draw, [box3_x1, cta_y1, box3_x2, cta_y2], radius=20, fill="#ffffff", outline="#22c55e", width=4)
-    
-    draw_whatsapp_badge(draw, box3_x1 + 54, cta_y1 + 78, 36)
-    
-    font_wa_head = get_font(FONT_BOLD, 36)
-    draw.text((box3_x1 + 104, cta_y1 + 50), "WHATSAPP CHANNEL", font=font_wa_head, fill="#0f172a", anchor="lm")
-    
-    font_wa_sub = get_font(FONT_BOLD, 20)
-    draw.text((box3_x1 + 106, cta_y1 + 102), "SCAN QR FOR INSTANT ALERTS", font=font_wa_sub, fill="#16a34a", anchor="lm")
-
-    # Placeholder box for QR code border (will be crisp-pasted at final scale)
-    qr_box_x1, qr_box_y1 = box3_x2 - 164, cta_y1 + 6
-    qr_box_x2, qr_box_y2 = box3_x2 - 12, cta_y2 - 6
-    draw.rounded_rectangle([qr_box_x1 - 4, qr_box_y1 - 4, qr_box_x2 + 4, qr_box_y2 + 4], radius=8, fill="#ffffff", outline="#cbd5e1", width=2)
-
-    # 6. Bottom Motivational Ribbon (Y: 1100 to 1240)
-    foot_y1, foot_y2 = 1100, 1240
-    draw.rectangle([28, foot_y1, w2 - 28, foot_y2], fill="#881337")
-
-    motivational_points = [
-        ("PRESTIGIOUS\nGOVT. JOB", "book"),
-        ("SECURE\nYOUR FUTURE", "shield"),
-        ("GROW YOUR\nCAREER", "chart"),
-        ("BE A PART OF\nNATION BUILDING", "users"),
-        ("PREPARE TODAY\nSUCCESS TOMORROW", "star")
-    ]
-
-    m_step = (w2 - 56) // 5
-    for i, (m_text, m_icon) in enumerate(motivational_points):
-        mx = 28 + i * m_step + m_step // 2
-        my = (foot_y1 + foot_y2) // 2
-        
-        ix = mx - 136
-        draw_vector_icon(draw, ix, my, m_icon, color="#facc15")
-
-        font_mot = get_font(FONT_BOLD, 18)
-        lines = m_text.split("\n")
-        draw.text((mx + 20, my - 12), lines[0], font=font_mot, fill="#ffffff", anchor="mm")
-        draw.text((mx + 20, my + 14), lines[1], font=font_mot, fill="#fef08a", anchor="mm")
-        
-        if i < 4:
-            draw.line([(28 + (i + 1) * m_step, foot_y1 + 16), (28 + (i + 1) * m_step, foot_y2 - 16)], fill="#be123c", width=2)
-
-    # 7. Downsample to target 1200x630 using Lanczos
-    final_canvas = canvas.convert("RGB")
-    final_img = final_canvas.resize((1200, 630), Image.Resampling.LANCZOS)
-    
-    # 8. Crisp-paste the scannable WhatsApp QR code (74x74 px, box_size=2, border=2)
-    # Guaranteed integer module rendering for 100% reliable camera / optical detection
-    qr_img = get_whatsapp_qr_code_image(box_size=2, border=2)
-    # Position matches (qr_box_x1/2, qr_box_y1/2) -> (1092, 461)
-    final_img.paste(qr_img, (1092, 461))
-    
-    # Save standalone master QR code asset for reuse
     master_qr_path = ASSETS_DIR / "whatsapp_channel_qr.png"
     if not master_qr_path.exists():
         qr_master = get_whatsapp_qr_code_image(box_size=8, border=2)
         qr_master.save(master_qr_path, "PNG")
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    final_img.save(output_path, "PNG", quality=95)
-    print(f"Generated thumbnail successfully: {output_path}")
-    return output_path
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    final_img.save(output_path, "PNG", optimize=True)
+    print("Generated thumbnail successfully: " + str(output_path))
+    return str(output_path)
 
 
 def generate_homepage_cover(output_path):
@@ -763,6 +1032,72 @@ ALERT_STYLE = {
 }
 
 
+_MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+
+
+def parse_date_parts(raw):
+    """Split a job date string ('18-09-2026', '03.10.2026', ISO…) into
+    (day, 'MON', 'YEAR') big-box parts, or None when not a concrete date."""
+    if not raw:
+        return None
+    text = str(raw).strip().split("T")[0]
+    low = text.lower()
+    if "see" in low or "not" in low or text == "-":
+        return None
+    m = re.search(r"(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})", text)
+    if m:
+        d, mon, yr = int(m.group(1)), int(m.group(2)), m.group(3)
+        if 1 <= mon <= 12 and 1 <= d <= 31:
+            if len(yr) == 2:
+                yr = "20" + yr
+            return str(d), _MONTHS[mon - 1], yr
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", text)
+    if m:
+        yr, mon, d = m.groups()
+        if 1 <= int(mon) <= 12 and 1 <= int(d) <= 31:
+            return str(int(d)), _MONTHS[int(mon) - 1], yr
+    return None
+
+
+def _clip(text, limit):
+    text = str(text or "").strip()
+    if not text:
+        return ""
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
+
+def _wrap_words(draw, text, font_path, max_w, max_lines):
+    """Word-wrap ``text`` into at most ``max_lines`` lines that each fit
+    ``max_w`` at a font size chosen by fitting the longest candidate line.
+    Returns (lines, font)."""
+    words = str(text or "").split()
+    if not words:
+        return [""], get_font(font_path, 20)
+
+    def layout(size):
+        font = get_font(font_path, size)
+        lines, cur = [], ""
+        for w in words:
+            cand = (cur + " " + w).strip()
+            if cur and draw.textlength(cand, font=font) > max_w:
+                lines.append(cur)
+                cur = w
+            else:
+                cur = cand
+        if cur:
+            lines.append(cur)
+        return lines, font
+
+    for size in (52, 48, 44, 40, 36, 32, 28, 24, 20):
+        lines, font = layout(size)
+        if len(lines) <= max_lines and all(draw.textlength(l, font=font) <= max_w for l in lines):
+            if len(lines) == max_lines and len(words) > sum(len(l.split()) for l in lines):
+                continue  # truncated: try smaller font so all words fit
+            return lines[:max_lines], font
+    lines, font = layout(20)
+    return lines[:max_lines], font
+
+
 def parse_job_for_thumbnail(job):
     """Transforms any job/notice dictionary into thumbnail-generator card data.
 
@@ -910,6 +1245,28 @@ def parse_job_for_thumbnail(job):
     if len(advt) > 34:
         advt = advt[:32]
 
+    # --- Info-box data for the example-style card -----------------------------
+    qualification = _clip(job.get("qualification"), 120)
+    age_limit = _clip(job.get("age"), 60)
+    apply_mode = _clip(job.get("applyMode") or "Online", 40)
+    exam_note = _clip(job.get("examDate") or "As Per Official Notification", 90)
+    salary_level, salary_range = _parse_salary(job)
+
+    fee_lines = []
+    fee_gen = _clip(job.get("feeGen"), 36)
+    fee_sc = _clip(job.get("feeSC"), 36)
+    if fee_gen:
+        fee_lines.append(f"General: {fee_gen}")
+    if fee_sc and fee_sc != fee_gen:
+        fee_lines.append(f"SC/ST/BC: {fee_sc}")
+    if not fee_lines:
+        fee_lines = ["See Official Notification"]
+
+    date_parts = parse_date_parts(job.get("lastDate"))
+    if not date_parts:
+        pub_raw = str(job.get("publishedAt") or "")
+        date_parts = parse_date_parts(pub_raw)
+
     return {
         "org_code": org_code,
         "org_full": org_full,
@@ -925,6 +1282,16 @@ def parse_job_for_thumbnail(job):
         "cta_text": style["cta"],
         "subscribe_text": style["subscribe"],
         "alert_type": alert_type,
+        "qualification": qualification,
+        "age_limit": age_limit,
+        "apply_mode": apply_mode,
+        "exam_note": exam_note,
+        "fee_lines": fee_lines,
+        "date_parts": date_parts,
+        "last_date_raw": _clip(job.get("lastDate"), 40),
+        "advt_no": advt,
+        "salary_level": salary_level,
+        "salary_range": salary_range,
     }
 
 

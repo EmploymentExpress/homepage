@@ -14,6 +14,7 @@ from scripts.thumbnail_generator import (
     get_font,
     get_whatsapp_qr_code_image,
     WHATSAPP_CHANNEL_URL,
+    YOUTUBE_CHANNEL_URL,
     FONT_BOLD
 )
 
@@ -72,11 +73,18 @@ class TestThumbnailGenerator(unittest.TestCase):
                 self.assertEqual(img.size, (1200, 630))
                 self.assertEqual(img.mode, "RGB")
 
-            # Optical QR Scan verification via OpenCV
+            # Optical QR Scan verification via OpenCV. The card carries two
+            # QR codes (YouTube + WhatsApp); cv2's detector often locks onto
+            # the first one it finds and gives up on the whole frame, so each
+            # QR is verified in its own cropped zone - both must scan.
             detector = cv2.QRCodeDetector()
             cv_img = cv2.imread(str(out_path))
-            decoded_text, pts, _ = detector.detectAndDecode(cv_img)
-            self.assertEqual(decoded_text, WHATSAPP_CHANNEL_URL)
+            yt_zone = cv_img[559 - 60:559 + 60, 537 - 60:537 + 60]
+            wa_zone = cv_img[559 - 60:559 + 60, 1143 - 57:1143 + 57]
+            yt_text, _, _ = detector.detectAndDecode(yt_zone)
+            wa_text, _, _ = detector.detectAndDecode(wa_zone)
+            self.assertEqual(yt_text, YOUTUBE_CHANNEL_URL)
+            self.assertEqual(wa_text, WHATSAPP_CHANNEL_URL)
 
     def test_whatsapp_qr_code_image_generator(self):
         qr_img = get_whatsapp_qr_code_image(box_size=2, border=2)

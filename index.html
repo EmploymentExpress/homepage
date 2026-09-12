@@ -496,7 +496,7 @@
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="javascript:void(0)" onclick="resetFilter()" class="text-xs font-bold text-blue-600 hover:text-blue-800">View All Punjab Jobs &rarr;</a>
+                    <a href="javascript:void(0)" onclick="viewColumnJobs('punjab')" class="text-xs font-bold text-blue-600 hover:text-blue-800">View All Punjab Jobs &rarr;</a>
                 </div>
             </div>
 
@@ -553,7 +553,7 @@
                     <!-- Populated dynamically via JS -->
                 </div>
                 <div class="p-2 bg-slate-50 border-t border-slate-100 text-center">
-                    <a href="javascript:void(0)" class="text-xs font-bold text-rose-600 hover:text-rose-800">Check All Results &rarr;</a>
+                    <a href="javascript:void(0)" onclick="toggleColumnList('results-list', this, 'results &amp; answer keys')" class="text-xs font-bold text-rose-600 hover:text-rose-800">Check All Results &rarr;</a>
                 </div>
             </div>
 
@@ -2918,6 +2918,44 @@
             document.getElementById('searchClearBtn').classList.add('hidden');
             document.getElementById('searchCounterMsg').classList.add('hidden');
             renderMasterTable(jobDatabase);
+        }
+
+        // Punjab / Central column footer links: show that column's vacancies in the
+        // master table (same behaviour that made the Central link work) and scroll
+        // to it. Punjab notices live under several category slugs (punjab-jobs,
+        // psssb, ppsc, teacher, ...), so membership is resolved with
+        // jobInColumn() instead of a single categorySlug match.
+        function viewColumnJobs(column) {
+            const filtered = jobDatabase.filter(j => jobInColumn(j, column));
+            renderMasterTable(filtered.length > 0 ? filtered : jobDatabase);
+            document.getElementById('master-table-body').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const label = column === 'punjab' ? 'Punjab Govt' : 'All India / Central Govt';
+            showToast(filtered.length > 0
+                ? `Showing all ${filtered.length} ${label} notifications in the vacancies table below!`
+                : `No ${label} notifications right now — showing every active vacancy instead.`);
+        }
+
+        // Admit Card / Results column footer links: these notices do not exist in
+        // the master table, so expand the column's capped list (460px inner
+        // scrollbar) to full height, scroll to its top, and collapse back on a
+        // second click.
+        function toggleColumnList(listId, linkEl, itemLabel) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            if (linkEl && !linkEl.dataset.defaultLabel) linkEl.dataset.defaultLabel = linkEl.innerHTML;
+            if (list.dataset.expanded === 'true') {
+                list.dataset.expanded = 'false';
+                list.style.maxHeight = '';
+                if (linkEl) linkEl.innerHTML = linkEl.dataset.defaultLabel;
+            } else {
+                list.dataset.expanded = 'true';
+                list.style.maxHeight = 'none';
+                if (linkEl) linkEl.innerHTML = 'Show Less &uarr;';
+                if (list.parentElement) list.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                showToast(itemLabel
+                    ? `All ${list.children.length} ${itemLabel} are now visible. Click again to collapse.`
+                    : 'All items are now visible. Click again to collapse.');
+            }
         }
 
         // Job Details Modal Controls

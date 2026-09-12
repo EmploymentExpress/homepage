@@ -227,6 +227,18 @@ class BuildSeoContractTests(unittest.TestCase):
         protected = ("index.html", "assets/logo.png")
         before = [(path, (ROOT / path).read_bytes()) for path in protected
                   if (ROOT / path).exists()]
+        # The builder's output is date-sensitive: alerts whose last date has
+        # just passed drop out of llms.txt/sitemap.xml, so calling main() on
+        # the day after the files were committed rewrites them and leaves the
+        # working tree dirty. That made the scheduled workflow's
+        # "Commit newly discovered alerts" step fail its unstaged-changes
+        # guard (instantly, before pushing) on the first run after a UTC
+        # date rollover. Snapshot the three discovery files and restore them
+        # afterwards - the workflow regenerates them in its own
+        # "Refresh SEO discovery files" step, so the test suite must not
+        # modify them.
+        discovery = (build_seo.SITEMAP, build_seo.LLMS_TXT, build_seo.ROBOTS_TXT)
+        snapshots = [(path, path.read_bytes()) for path in discovery if path.exists()]
         try:
             build_seo.main()
         finally:
@@ -234,6 +246,9 @@ class BuildSeoContractTests(unittest.TestCase):
                 if (ROOT / path).read_bytes() != content:
                     (ROOT / path).write_bytes(content)
                     self.fail(f"build_seo.main() modified protected file {path}")
+            for path, content in snapshots:
+                if path.read_bytes() != content:
+                    path.write_bytes(content)
 
     def test_homepage_lastmod_tracks_the_newest_alert(self):
         jobs = [{"id": 1, "discoveredAt": "2026-09-10T00:00:00Z"},
