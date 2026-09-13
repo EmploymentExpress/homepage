@@ -39,7 +39,7 @@ to change** and nothing else.
 Whenever job details are updated, curated, or generated via automation:
 - **`pdfLink` (Official Notice / PDF):** MUST always point directly to the specific advertisement notification PDF or active notice page for that job.
 - **`applyLink` (Apply Online / Portal):** MUST always point directly to the specific online application or registration portal page for that post.
-- **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). Always extract or provide the direct notification or portal page URL.
+- **❌ NEVER use generic root homepages:** Never set `pdfLink` or `applyLink` to generic root URLs (e.g., `https://sssb.punjab.gov.in`, `https://pspcl.in`, `https://ppsc.gov.in`, `https://ssc.gov.in`). A portal's own document front door counts as generic too — `https://ors.gov.in/index.html` is `ors.gov.in`'s root homepage even though it carries a file name. `is_generic_homepage()` / `GENERIC_HOME_PATHS` in `scripts/update_jobs.py` treat `/index`, `/index.html`, `/index.php`, `/home` (and `.htm`/`.php` variants) as generic; the refresh merge (`_is_better_notice_link`) never swaps a stored link for one, and the sanitize pass blanks one it finds in the published store. Always extract or provide the direct notification or portal page URL.
 - **❌ NEVER attach an administrative document as the "official notification":** a telephone / contact / address **directory**, holiday list, duty roster,
   office order, staff or employee list, newsletter, gallery, annual report or RTI file is **site housekeeping, not a notice** — it may never become a
   `pdfLink`/`applyLink`, and it may never be the subject of a job/admission post. Open the file name and check what the document *is*, not just that it is
@@ -256,6 +256,55 @@ Every notice is now dated by the notice itself, and history is never published:
    the config key, and `JobMonitorTests::test_shortlisted_eligible_and_score_card_go_to_result_column`
    guards the stage-label rule. The window is what keeps a monitor that reads whole archives
    honest; removing it restores the 2025-result-as-new-job bug.
+
+## 🔄 Refresh safety: a refresh may verify and complete, never downgrade (R16, Mandatory)
+
+The refresh pass re-reads a notice the monitor already published and merges the fresh details
+onto the stored alert (`merge_job_details` in `scripts/update_jobs.py`). A refresh is allowed to
+**fill placeholders and supersede with the board's own newer wording** — it is never allowed to
+replace a verified value with something weaker. **Real incident (broke the scheduled runs
+2026-09-12/13):** re-reading AIIMS Bathinda's Non-Faculty table merged the page's *column
+heading* ("Non-Faculty") over a verified result title, filled a vacancy placeholder from a table
+header ("2024 Posts") and a notice-number placeholder from a page stamp ("TICE"), and swapped the
+verified apply portal for `ors.gov.in/index.html`. On CUPB, a per-post row attached to the same
+PDF as its umbrella alert was merged into the *umbrella* (the same-source fallback target),
+re-titled it, and the retention pass's (title, notice-URL) de-duplication then dropped the live
+umbrella recruitment. The rules that prevent both:
+
+1. **No title/department downgrade.** `merge_job_details` refuses to replace a verified,
+   specific title (or full authority name) with a shorter page label
+   (`_is_less_specific_title`): a refreshed title with at most two content words, or with fewer
+   content words and no overlap, is refused. Replacing a *generic* stored title with the
+   notice's specific wording still works.
+2. **Last dates move forward only.** A later official last date supersedes the stored one; an
+   earlier date is never written back (a deadline change arrives as an extension corrigendum via
+   `apply_extensions`). This is what the merge contract always said — the code now does it.
+3. **Placeholders only from real values.** An advertisement number without a digit is page
+   chrome, not a number (the merge and `infer_advertisement_number` both refuse it), and a
+   four-digit year is a table header, not a vacancy count
+   (`infer_vacancies` refuses `1900–2099` as the count).
+4. **A weak stored link justifies no candidate.** When the stored link is weak (the listing page
+   itself or a homepage), `_is_better_notice_link` still requires the replacement to be its own
+   strong link — a discovery host, a generic homepage or an administrative document never
+   "improves" anything.
+5. **Shared URLs target the title-matching alert only.** `find_existing_job_for_candidate`
+   prefers, among several stored alerts sharing a candidate's URL, the alert whose stored title
+   the candidate matches; `refresh_published_source_jobs` then **skips** the candidate entirely
+   when its URL is shared by several alerts and none of them carries its title (an umbrella alert
+   and its per-post alerts attach the same PDF). A row whose identity is ambiguous is left
+   alone, never merged.
+6. **Do not weaken this.** `JobMonitorTests` in `tests/test_update_jobs.py`
+   (`test_merge_never_downgrades_a_verified_title_to_a_page_label`,
+   `test_generic_homepage_recognizes_index_html_variants`,
+   `test_weak_link_is_never_swapped_for_a_portal_homepage`,
+   `test_merge_never_pulls_a_last_date_backwards`,
+   `test_infer_vacancies_rejects_a_year_as_the_count`,
+   `test_infer_advertisement_number_rejects_a_word_without_digits`,
+   `test_existing_job_lookup_prefers_the_title_match_among_shared_urls`,
+   `test_refresh_never_stamps_a_per_post_row_onto_the_umbrella_alert`) and
+   `NonNoticeDocumentGuardTests` (store-wide: no CUPB card ever carries an administrative
+   document or a generic homepage link, no alert carries the RTI document) guard every item
+   above. The full incident write-up is `docs/MONITOR_REFRESH_INCIDENT_2026-09-13.md`.
 
 ## 🔗 Auto-registration of the "Official Website" link (mandatory, every run)
 

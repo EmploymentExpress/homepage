@@ -1086,13 +1086,28 @@ def host_name(url: str) -> str:
     return urllib.parse.urlsplit(canonical_url(url) or url).netloc.lower().removeprefix("www.")
 
 
+# Paths that are a site's front door even when they carry a document name:
+# a portal's /index.html is as generic as its bare root (2026-09-12 incident:
+# ors.gov.in/index.html replaced a verified apply link during a refresh merge).
+GENERIC_HOME_PATHS = {
+    "/index",
+    "/index.html",
+    "/index.htm",
+    "/index.php",
+    "/home",
+    "/home.html",
+    "/home.htm",
+    "/home.php",
+}
+
+
 def is_generic_homepage(url: str) -> bool:
     """True for a site root such as https://example.gov.in/ — never a notice/apply URL."""
     parsed = urllib.parse.urlsplit(canonical_url(url) or "")
-    if not parsed.netloc:
+    if not parsed.netloc or parsed.query:
         return False
-    path = parsed.path.rstrip("/") or "/"
-    return path == "/" and not parsed.query
+    path = (parsed.path or "/").rstrip("/") or "/"
+    return path == "/" or path.lower() in GENERIC_HOME_PATHS
 
 
 def is_placeholder_detail(value: Any) -> bool:
@@ -2092,9 +2107,15 @@ def infer_vacancies(text: str) -> str:
         r"(?i)\b(?:vacancies|vacancy|posts?|positions?)\s*(?:are|is|:|-)?\s*([1-9]\d{0,5}(?:,\d{3})?)\b",
     )
     for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            return f"{match.group(1)} Posts"
+        for match in re.finditer(pattern, text):
+            number = match.group(1)
+            digits = number.replace(",", "")
+            # A four-digit year is a table header, not a vacancy count
+            # (2026-09-12 incident: a result PDF's table read "2024 Posts"
+            # and the refresh filled a placeholder from it).
+            if len(digits) == 4 and 1900 <= int(digits) <= 2099:
+                continue
+            return f"{number} Posts"
     return "See Notification"
 
 
@@ -2144,6 +2165,11 @@ def infer_advertisement_number(text: str) -> str:
         if match:
             value = clean_text(match.group(1)).strip(" .,:;-").upper()
             if value in INVALID_ADVT_NUMBERS or value.rstrip(".") in INVALID_ADVT_NUMBERS:
+                continue
+            # An advertisement number always carries a digit; a bare word
+            # ("TICE" out of a "NOTICE NO:" stamp) is page chrome, not a
+            # number (2026-09-12 incident).
+            if not any(ch.isdigit() for ch in value):
                 continue
             return value
     return "See Official Notice"
@@ -3061,7 +3087,11 @@ def _is_better_notice_link(new: str, old: str, source_url: str = "") -> bool:
     if is_non_notice_document(new_url):
         return False
     if _is_weak_public_link(old, source_url):
-        return True
+        # A weak stored link does not justify ANY candidate: the replacement
+        # must be its own strong link, not the listing page or a portal
+        # homepage (2026-09-12 incident: a weak listing-page link let
+        # ors.gov.in/index.html in as the "better" apply link).
+        return not _is_weak_public_link(new_url, source_url)
     if is_direct_pdf_url(new_url) and not is_direct_pdf_url(old):
         return True
     return False
@@ -3087,7 +3117,23 @@ def find_existing_job_for_candidate(
     if len(exact) == 1:
         return exact[0]
     if exact:
+        # Several stored alerts may share one URL (an umbrella alert and its
+        # per-post alerts attach the same PDF). The alert whose own title the
+        # candidate matches is the one this row describes. The previous first
+        # same-source match picked the umbrella alert, and the refresh merged
+        # one post's wording into it (2026-09-12 CUPB incident).
         source_url = canonical_url(source.get("url", ""))
+        candidate_title = official_job_title(
+            candidate.title, clean_text(source.get("department") or source.get("name") or "")
+        ).lower()
+        if candidate_title:
+            titled = [
+                job
+                for job in exact
+                if clean_text(job.get("title", "")).lower() == candidate_title
+            ]
+            if len(titled) == 1:
+                return titled[0]
         same_source = [
             job for job in exact if canonical_url(job.get("sourceUrl", "")) == source_url
         ]
@@ -3154,12 +3200,48 @@ def _is_listing_chrome_title(value: Any) -> bool:
     return sum(marker in text for marker in markers) >= 2
 
 
+def _title_subject(title: Any) -> str:
+    """The vacancy subject of a published title ('Authority — Subject')."""
+    text = clean_text(title)
+    parts = [part.strip() for part in text.split("—")]
+    return parts[-1] if len(parts) > 1 else text
+
+
+def _content_words(value: Any) -> set[str]:
+    return {word for word in re.findall(r"[a-z0-9]{3,}", clean_text(value).lower())}
+
+
+def _is_less_specific_title(new_title: Any, old_title: Any) -> bool:
+    """True when a refreshed title would downgrade a verified, specific title.
+
+    A listing's section heading ("Non-Faculty") is not a placeholder, so the
+    placeholder check alone cannot stop it — but it is not a better title than
+    the notice's own wording either (2026-09-12 AIIMS Bathinda incident: a
+    refresh merged the page's column heading over a verified result title and
+    its apply portal). A refresh may still replace a generic stored title with
+    the notice's specific wording; only downgrades are refused.
+    """
+    new_words = _content_words(_title_subject(new_title))
+    old_words = _content_words(_title_subject(old_title))
+    if not new_words:
+        return bool(old_words)
+    if not old_words:
+        return False
+    if len(new_words) <= 2 and len(new_words) < len(old_words):
+        return True
+    if len(new_words) < len(old_words) and not (new_words & old_words):
+        return True
+    return False
+
+
 def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
     """Copy verified details from a re-fetched notice onto the published job.
 
     Identity fields (id, discoveredAt) stay put. Placeholder values and generic
     homepage links are replaced; a later official last date overwrites an older
     one, but an already-applied extension is never reverted to an earlier date.
+    A verified title is never downgraded to a shorter page label, and an
+    advertisement number without a digit is page chrome, not a number.
     """
     # A listing row made entirely from attachment labels is not a verified
     # refresh.  Do not let it overwrite a good title, deadline, or apply portal.
@@ -3206,9 +3288,18 @@ def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
         if field == "howToApply" and not isinstance(new, list):
             continue
         if is_placeholder_detail(old) and not is_placeholder_detail(new):
+            # An advertisement number always carries a digit; a bare word
+            # ("TICE" out of a "NOTICE NO:" stamp) is page chrome, not a
+            # number (2026-09-12 incident) — the placeholder stays.
+            if field == "advtNo" and not any(ch.isdigit() for ch in str(new)):
+                continue
             existing[field] = new
             changed = True
         elif field in {"title", "department"} and new != old and not is_placeholder_detail(new):
+            # Never downgrade a verified, specific title (or full authority
+            # name) to a shorter page label during a refresh.
+            if _is_less_specific_title(new, old):
+                continue
             existing[field] = new
             changed = True
 
@@ -3220,12 +3311,13 @@ def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
         if not old_last or is_placeholder_detail(existing.get("lastDate", "")):
             existing["lastDate"] = new_last
             changed = True
-        elif new_last != old_last and new_dt and old_dt:
-            if existing.get("lastDateExtended") and new_dt < old_dt:
-                pass
-            else:
-                existing["lastDate"] = new_last
-                changed = True
+        elif new_last != old_last and new_dt and old_dt and new_dt > old_dt:
+            # A later official last date supersedes the stored one. An earlier
+            # date is never written back: an official deadline change arrives
+            # as an extension corrigendum (apply_extensions), and a per-post
+            # row must not pull an umbrella alert's last date backwards.
+            existing["lastDate"] = new_last
+            changed = True
 
     new_start = clean_text(fresh.get("startDate", ""))
     if new_start and not is_placeholder_detail(new_start):
@@ -3351,6 +3443,21 @@ def refresh_published_source_jobs(
         existing = find_existing_job_for_candidate(jobs, candidate, source)
         if existing is None:
             continue
+        # The candidate's URL is shared by several stored alerts and none of
+        # them carries this candidate's own title: the row's identity is
+        # ambiguous (an umbrella alert and its per-post alerts attach the same
+        # PDF). Merging it would stamp one row's wording onto the wrong alert,
+        # so it is left alone (2026-09-12 CUPB incident: the umbrella alert
+        # was re-titled from a per-post row and collapsed with the per-post
+        # alert in the retention pass).
+        candidate_url = canonical_url(candidate.url)
+        sharers = [job for job in jobs if candidate_url in job_notice_urls(job)]
+        if len(sharers) > 1:
+            candidate_title = official_job_title(
+                candidate.title, clean_text(source.get("department") or source.get("name") or "")
+            ).lower()
+            if clean_text(existing.get("title", "")).lower() != candidate_title:
+                continue
         pending.append((candidate, existing))
 
     def refresh_score(item: tuple[Candidate, dict[str, Any]]) -> int:
