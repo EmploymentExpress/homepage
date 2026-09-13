@@ -25,6 +25,7 @@ Each link below opens one static page for a single government vacancy or notice.
 - [PAU Ludhiana: Post of Senior Research Fellow (Last date for submission of application 16-09-2026 and appear for interview on 22-09-2026 at 11.00 AM) - School of Organic & Natural Farming](https://employmentexpress.github.io/homepage/share/job-81597433251741.html) — last date 16-09-2026; eligibility Graduate
 - [Chandigarh Administration: Vacancy Circular for filling up 05 posts of JE (Civil) and 05 posts of JE (PH) proposed to be filled up by deputation basis in the Engineering Department, UT, Chandigarh — Engineering](https://employmentexpress.github.io/homepage/share/job-66866344747179.html) — last date 08-10-2026; eligibility Diploma/ITI
 - [PAU Ludhiana: Post of Junior Research Fellow (Last date for submission of application 22-09-2026 and appear for interview on 28-09-2026 at 11.30 AM) - Processing & Food Engineering](https://employmentexpress.github.io/homepage/share/job-64991507105543.html) — last date 22-09-2026; eligibility Graduate
+- [CUPB Bathinda: Non-Teaching Jobs](https://employmentexpress.github.io/homepage/share/job-7859300428388.html) — 6 Posts (04-UR, 02-OBC); last date 15-09-2026; eligibility Graduate
 - [CUPB Bathinda: Laboratory Assistant (Computer Science & Technology) Recruitment](https://employmentexpress.github.io/homepage/share/job-1841297353408.html) — 1 Post (01-OBC); last date 15-09-2026; eligibility Graduate
 - [IBPS All India (state-wise: Regional Rural Banks Post of Officers (Scale-I, II & III) CRP-RRBs-XV, Online Form](https://employmentexpress.github.io/homepage/share/job-199809054699195.html) — last date 21-09-2026; eligibility Graduate
 - [IBPS All India (state-wise: Apply Online for Common Recruitment Process under CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-48059417248026.html) — last date 21-09-2026; eligibility Graduate
@@ -51,9 +52,9 @@ Each link below opens one static page for a single government vacancy or notice.
 - [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-223263624310498.html) — 2024 Posts; eligibility Diploma/ITI
 - [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-212162140460816.html) — 2024 Posts; eligibility Graduate
 - [CUPB Bathinda: non-teaching-results](https://employmentexpress.github.io/homepage/share/job-154203011121678.html) — eligibility Diploma/ITI
-- [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-135942653393639.html) — 2024 Posts; eligibility Graduate
+- [AIIMS Bathinda: 4) Notification: Regarding List of Eligible/Ineligible Candidates for the post of Nursing Officer Garde-II](https://employmentexpress.github.io/homepage/share/job-135942653393639.html) — eligibility Graduate
 - [AIIMS Bathinda: 8) List of Eligible/Provisionally Eligible/Ineligible Candidates](https://employmentexpress.github.io/homepage/share/job-104317341374256.html) — eligibility Graduate
-- [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-238706784518752.html) — 2024 Posts; eligibility Graduate
+- [AIIMS Bathinda: 30) Final Result Notification for the posts of Senior Medical Officer (AYUSH) & Medical Officer (AYUSH)](https://employmentexpress.github.io/homepage/share/job-238706784518752.html) — eligibility Graduate
 - [AIIMS Bathinda: 12) Final Result Notification](https://employmentexpress.github.io/homepage/share/job-179755348243697.html) — eligibility Graduate
 - [AIIMS Bathinda: Non-Faculty](https://employmentexpress.github.io/homepage/share/job-151101330323148.html) — 2024 Posts; eligibility 8th/10th
 - [AIIMS Bathinda: 10) Revised List of Shortlisted Candidates Qualified for Interview (Stage-II)](https://employmentexpress.github.io/homepage/share/job-125574743628579.html) — eligibility 8th/10th
@@ -111,4 +112,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-09-12
+Last updated: 2026-09-13
