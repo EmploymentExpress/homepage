@@ -2018,6 +2018,229 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(existing["lastDate"], "15-09-2026")
         self.assertEqual(existing["applyLink"], "https://cupnt.samarth.edu.in/index.php/site/login")
 
+    def test_merge_never_downgrades_a_verified_title_to_a_page_label(self):
+        """2026-09-12 incident: an AIIMS Bathinda refresh merged the listing
+        page's column heading ("Non-Faculty") over a verified result title,
+        filled placeholders from page chrome ("2024 Posts", "TICE") and
+        swapped the verified apply portal for ors.gov.in/index.html."""
+        existing = {
+            "id": 135942653393639,
+            "title": (
+                "All India Institute of Medical Sciences (AIIMS), Bathinda — 4) "
+                "Notification: Regarding List of Eligible/Ineligible Candidates "
+                "for the post of Nursing Officer Garde-II"
+            ),
+            "department": "All India Institute of Medical Sciences (AIIMS), Bathinda",
+            "vacancies": "See Notification",
+            "advtNo": "See Official Notice",
+            "feeMode": "As Notified",
+            "lastDate": "See Notification",
+            "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20260903045653.pdf",
+            "applyLink": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            "sourceUrl": "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+        }
+        fresh = {
+            "title": "All India Institute of Medical Sciences (AIIMS), Bathinda — Non-Faculty",
+            "vacancies": "2024 Posts",
+            "advtNo": "TICE",
+            "feeMode": "Online",
+            "lastDate": "03-09-2026",
+            "pdfLink": "https://aiimsbathinda.edu.in/images/Reqruitment/20260903045653.pdf",
+            "applyLink": "https://ors.gov.in/index.html",
+        }
+        monitor.merge_job_details(existing, fresh)
+        # The verified title, the placeholder that chrome tried to fill, and the
+        # verified apply portal all stay untouched.
+        self.assertIn("Nursing Officer Garde-II", existing["title"])
+        self.assertNotEqual(existing["title"], fresh["title"])
+        self.assertEqual(existing["advtNo"], "See Official Notice")
+        self.assertEqual(existing["applyLink"], "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2")
+        self.assertFalse(monitor.is_generic_homepage(existing["applyLink"]))
+
+    def test_generic_homepage_recognizes_index_html_variants(self):
+        # A portal's /index.html is as generic as its bare root (the
+        # ors.gov.in/index.html apply link from the 2026-09-12 incident).
+        for url in (
+            "https://ors.gov.in/index.html",
+            "https://ors.gov.in/",
+            "https://example.gov.in/home.php",
+            "https://example.gov.in/index",
+        ):
+            with self.subTest(url=url):
+                self.assertTrue(monitor.is_generic_homepage(url))
+        for url in (
+            "https://sssb.punjab.gov.in/wp-content/uploads/notice.pdf",
+            "https://example.gov.in/Recruitment.aspx?type=2",
+            "https://example.gov.in/index.html/annexure",
+        ):
+            with self.subTest(url=url):
+                self.assertFalse(monitor.is_generic_homepage(url))
+
+    def test_weak_link_is_never_swapped_for_a_portal_homepage(self):
+        # A weak stored link (the listing page itself) does not justify ANY
+        # candidate — the replacement must be its own strong link.
+        self.assertFalse(
+            monitor._is_better_notice_link(
+                "https://ors.gov.in/index.html",
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+                "https://aiimsbathinda.edu.in/Recruitment.aspx?type=2",
+            )
+        )
+        # …and a genuinely direct portal page still replaces the weak link.
+        self.assertTrue(
+            monitor._is_better_notice_link(
+                "https://cupnt.samarth.edu.in/index.php/site/login",
+                "https://cup.edu.in/non-teaching_jobs.php",
+                "https://cup.edu.in/non-teaching_jobs.php",
+            )
+        )
+
+    def test_merge_never_pulls_a_last_date_backwards(self):
+        # A per-post row (or a re-read) must not move a verified, later last
+        # date backwards; a later official date still supersedes the stored one.
+        existing = {"lastDate": "15-09-2026", "pdfLink": "https://cup.edu.in/a.pdf", "applyLink": ""}
+        fresh = {"lastDate": "14-09-2026", "pdfLink": "https://cup.edu.in/a.pdf"}
+        self.assertFalse(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["lastDate"], "15-09-2026")
+
+        existing = {"lastDate": "15-09-2026", "pdfLink": "https://cup.edu.in/a.pdf", "applyLink": ""}
+        fresh = {"lastDate": "20-09-2026", "pdfLink": "https://cup.edu.in/a.pdf"}
+        self.assertTrue(monitor.merge_job_details(existing, fresh))
+        self.assertEqual(existing["lastDate"], "20-09-2026")
+
+    def test_infer_vacancies_rejects_a_year_as_the_count(self):
+        # A four-digit year is a table header, not a vacancy count (the
+        # "2024 Posts" fill from the 2026-09-12 incident).
+        self.assertEqual(
+            monitor.infer_vacancies("Table of 2024 Posts under direct recruitment"),
+            "See Notification",
+        )
+        self.assertEqual(
+            monitor.infer_vacancies("Recruitment of 450 Clerk posts in 2024"),
+            "450 Posts",
+        )
+        self.assertEqual(
+            monitor.infer_vacancies("40 posts under Advertisement No. 8/2026"),
+            "40 Posts",
+        )
+
+    def test_infer_advertisement_number_rejects_a_word_without_digits(self):
+        # "TICE" out of a "NOTICE NO:" stamp is page chrome, not a number.
+        self.assertEqual(
+            monitor.infer_advertisement_number("NOTICE NO: TICE regarding the post"),
+            "See Official Notice",
+        )
+        self.assertEqual(
+            monitor.infer_advertisement_number("Advertisement No. CUPB/26-27/012 dated 02.09.2026"),
+            "CUPB/26-27/012",
+        )
+
+    def test_existing_job_lookup_prefers_the_title_match_among_shared_urls(self):
+        department = "Central University of Punjab (CUPB), Bathinda"
+        pdf = "https://cup.edu.in/sites/default/files/Contract NT_09_2026.pdf"
+        jobs = [
+            {
+                "id": 1,
+                "title": f"{department} — Various Post (Contractual Non-Teaching Posts) Recruitment",
+                "department": department,
+                "pdfLink": pdf,
+                "noticeUrl": "https://cup.edu.in/non-teaching_jobs.php",
+                "sourceUrl": "https://cup.edu.in/non-teaching_jobs.php",
+            },
+            {
+                "id": 2,
+                "title": f"{department} — Laboratory Attendant (Pharmaceutical Sciences) Recruitment",
+                "department": department,
+                "pdfLink": pdf,
+                "noticeUrl": pdf,
+                "sourceUrl": "https://cup.edu.in/",
+            },
+        ]
+        source = {
+            "id": "cup-non-teaching",
+            "name": "Central University of Punjab (Non-Teaching Posts)",
+            "department": department,
+            "url": "https://cup.edu.in/non-teaching_jobs.php",
+        }
+        per_post_row = monitor.Candidate(
+            f"{department} — Laboratory Attendant (Pharmaceutical Sciences) Recruitment", pdf
+        )
+        found = monitor.find_existing_job_for_candidate(jobs, per_post_row, source)
+        self.assertEqual(found["id"], 2, "the row's own alert wins over the umbrella")
+        # A row that matches no stored title falls back to the same-source alert.
+        other_row = monitor.Candidate(
+            "Advertisement for the post of Librarian (Contractual Non-Teaching)", pdf
+        )
+        found = monitor.find_existing_job_for_candidate(jobs, other_row, source)
+        self.assertEqual(found["id"], 1)
+
+    def test_refresh_never_stamps_a_per_post_row_onto_the_umbrella_alert(self):
+        """2026-09-12 CUPB incident: an umbrella alert and its per-post alerts
+        attach the same PDF. A per-post row that matches none of the stored
+        titles must be left alone — merging it re-titled the umbrella and the
+        retention pass collapsed the pair, dropping the live umbrella alert."""
+        department = "Central University of Punjab (CUPB), Bathinda"
+        pdf = "https://cup.edu.in/sites/default/files/Contract NT_09_2026.pdf"
+        jobs = [
+            {
+                "id": 1,
+                "title": f"{department} — Various Post (Contractual Non-Teaching Posts) Recruitment",
+                "department": department,
+                "alertType": "recruitment",
+                "vacancies": "6 Posts (04-UR, 02-OBC)",
+                "lastDate": "15-09-2026",
+                "advtNo": "CUPB/26-27/012 dated 02.09.2026",
+                "pdfLink": pdf,
+                "applyLink": "https://cupnt.samarth.edu.in/index.php/site/login",
+                "sourceUrl": "https://cup.edu.in/non-teaching_jobs.php",
+                "discoveredAt": "2026-09-11T18:29:30Z",
+            },
+            {
+                "id": 2,
+                "title": f"{department} — Laboratory Attendant (Pharmaceutical Sciences) Recruitment",
+                "department": department,
+                "alertType": "recruitment",
+                "vacancies": "1 Post (01-OBC)",
+                "lastDate": "14-09-2026",
+                "pdfLink": pdf,
+                "applyLink": "https://cupnt.samarth.edu.in/index.php/site/login",
+                "sourceUrl": "https://cup.edu.in/",
+                "discoveredAt": "2026-09-11T02:14:47Z",
+            },
+        ]
+        umbrella_before = dict(jobs[0])
+        source = {
+            "id": "cup-non-teaching",
+            "name": "Central University of Punjab (Non-Teaching Posts)",
+            "department": department,
+            "url": "https://cup.edu.in/non-teaching_jobs.php",
+            "maxRefreshPerRun": 8,
+        }
+        per_post_row = monitor.Candidate(
+            f"{department} — Laboratory Attendant (Pharmaceutical Sciences) Recruitment", pdf
+        )
+        new_post_row = monitor.Candidate(
+            "Advertisement for the post of Librarian (Contractual Non-Teaching)", pdf
+        )
+        known = {monitor.fingerprint(per_post_row), monitor.fingerprint(new_post_row)}
+        now = datetime(2026, 9, 12, 13, 16, 41, tzinfo=timezone.utc)
+
+        def fake_job(candidate, source, now):
+            return {
+                "title": monitor.official_job_title(candidate.title, source["department"]),
+                "vacancies": "1 Post",
+                "lastDate": "14-09-2026",
+                "pdfLink": pdf,
+                "applyLink": "https://cupnt.samarth.edu.in/index.php/site/login",
+            }
+
+        with patch.object(monitor, "job_from_candidate", side_effect=fake_job):
+            monitor.refresh_published_source_jobs(jobs, [per_post_row, new_post_row], known, source, now)
+        # The umbrella alert is untouched: same title, same (later) last date.
+        self.assertEqual(jobs[0]["title"], umbrella_before["title"])
+        self.assertEqual(jobs[0]["lastDate"], "15-09-2026")
+        self.assertEqual(jobs[0]["vacancies"], "6 Posts (04-UR, 02-OBC)")
+
     def test_backfill_reads_last_date_from_stored_details(self):
         jobs = [{
             "title": "Guru Ravidas Ayurved University (GRAU), Hoshiarpur — Professor posts",
@@ -3315,29 +3538,57 @@ class NonNoticeDocumentGuardTests(unittest.TestCase):
                     )
 
     def test_repaired_cupb_entries_point_at_verified_official_notices(self):
-        """The three CUPB cards that carried the directory now carry real notices."""
+        """The CUPB cards that carried the telephone directory carry real notices.
+
+        The permanent invariant is store-wide: no CUPB card ever points at an
+        administrative document or a bare homepage. The pinned records are
+        asserted while they are in the store; the monitor's expiry rule
+        (AGENTS.md "Active Recruitments") removes a recruitment/admission once
+        its last date passes, so a hard presence check would fail the workflow
+        the first time the monitor legitimately prunes the record
+        (2026-09-13: exactly what broke the scheduled runs).
+        """
         data = json.loads((self.ROOT / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
         jobs = {str(job["id"]): job for job in data["jobs"]}
 
-        recruitment = jobs["7859300428388"]
-        self.assertEqual(
-            recruitment["pdfLink"],
-            "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
-        )
-        self.assertEqual(recruitment["advtNo"], "CUPB/26-27/012 dated 02.09.2026")
-        self.assertEqual(recruitment["alertType"], "recruitment")
-        self.assertEqual(recruitment["categorySlug"], "punjab-jobs")
-        self.assertEqual(monitor.host_name(recruitment["applyLink"]), "cupnt.samarth.edu.in")
-        self.assertNotEqual(
-            monitor.canonical_url(recruitment["pdfLink"]), monitor.canonical_url(recruitment["sourceUrl"])
-        )
-        self.assertFalse(monitor.is_generic_homepage(recruitment["applyLink"]))
-        # Every date is read from the advertisement, never a placeholder pair.
-        self.assertEqual(recruitment["lastDate"], "15-09-2026")
-        self.assertEqual(recruitment["startDate"], "02-09-2026")
+        # Hard, store-wide: no CUPB card ever carries a directory/homepage link.
+        for job in jobs.values():
+            if "Central University of Punjab" not in monitor.clean_text(job.get("department", "")):
+                continue
+            for field in ("pdfLink", "applyLink", "noticeUrl"):
+                with self.subTest(job=job.get("id"), field=field):
+                    url = job.get(field, "")
+                    self.assertFalse(
+                        monitor.is_non_notice_document(url),
+                        f"{job.get('title')}: {field} is a {url}",
+                    )
+                    self.assertFalse(
+                        monitor.is_generic_homepage(url),
+                        f"{job.get('title')}: {field} is a homepage {url}",
+                    )
 
-        admissions = [jobs["74760015140371"], jobs["128544774645111"]]
-        for job in admissions:
+        recruitment = jobs.get("7859300428388")
+        if recruitment is not None:
+            self.assertEqual(
+                recruitment["pdfLink"],
+                "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+            )
+            self.assertEqual(recruitment["advtNo"], "CUPB/26-27/012 dated 02.09.2026")
+            self.assertEqual(recruitment["alertType"], "recruitment")
+            self.assertEqual(recruitment["categorySlug"], "punjab-jobs")
+            self.assertEqual(monitor.host_name(recruitment["applyLink"]), "cupnt.samarth.edu.in")
+            self.assertNotEqual(
+                monitor.canonical_url(recruitment["pdfLink"]), monitor.canonical_url(recruitment["sourceUrl"])
+            )
+            self.assertFalse(monitor.is_generic_homepage(recruitment["applyLink"]))
+            # Every date is read from the advertisement, never a placeholder pair.
+            self.assertEqual(recruitment["lastDate"], "15-09-2026")
+            self.assertEqual(recruitment["startDate"], "02-09-2026")
+
+        for job_id in ("74760015140371", "128544774645111"):
+            job = jobs.get(job_id)
+            if job is None:
+                continue
             with self.subTest(job=job["id"]):
                 self.assertEqual(job["alertType"], "admission")
                 self.assertEqual(monitor.host_name(job["pdfLink"]), "cup.edu.in")
@@ -3359,19 +3610,35 @@ class NonNoticeDocumentGuardTests(unittest.TestCase):
 
     def test_the_sister_directory_attachment_was_repaired_too(self):
         """The dataset guard also caught an AIIMS Bathinda alert attached to
-        ``RTI-Format.pdf`` — the same page-chrome mistake, same fix."""
+        ``RTI-Format.pdf`` — the same page-chrome mistake, same fix.
+
+        The permanent invariant: no stored alert may point at the RTI/directory
+        document. The pinned record's own fields are asserted while it is in
+        the store; its extended last date (31-08-2026) has since passed, so
+        the expiry rule (AGENTS.md "Active Recruitments") legitimately removes
+        it — a hard presence check would fail the workflow on the first run
+        after the deadline (2026-09-13: exactly what broke the scheduled runs).
+        """
         data = json.loads((self.ROOT / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
-        job = next(item for item in data["jobs"] if str(item["id"]) == "208298934260796")
-        self.assertEqual(
-            job["pdfLink"], "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf"
-        )
-        self.assertNotIn("Recruitment Types", job["title"])
-        self.assertTrue(job["lastDateExtended"])
-        self.assertEqual(job["originalLastDate"], "21-08-2026")
-        self.assertEqual(
-            job["extensionNoticeUrl"],
-            "https://aiimsbathinda.edu.in/images/Reqruitment/20260822040503.pdf",
-        )
+        for item in data["jobs"]:
+            for field in ("pdfLink", "applyLink"):
+                self.assertNotIn(
+                    "RTI-Format.pdf",
+                    item.get(field, ""),
+                    f"{item.get('title')}: {field} carries the RTI document",
+                )
+        job = next((item for item in data["jobs"] if str(item["id"]) == "208298934260796"), None)
+        if job is not None:
+            self.assertEqual(
+                job["pdfLink"], "https://aiimsbathinda.edu.in/images/Reqruitment/20260731062847.pdf"
+            )
+            self.assertNotIn("Recruitment Types", job["title"])
+            self.assertTrue(job["lastDateExtended"])
+            self.assertEqual(job["originalLastDate"], "21-08-2026")
+            self.assertEqual(
+                job["extensionNoticeUrl"],
+                "https://aiimsbathinda.edu.in/images/Reqruitment/20260822040503.pdf",
+            )
 
 
 class ArchivedNoticeFreshnessTests(unittest.TestCase):
