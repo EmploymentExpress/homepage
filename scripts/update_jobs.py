@@ -3080,7 +3080,7 @@ def _is_weak_public_link(url: str, source_url: str = "") -> bool:
     return False
 
 
-def _is_better_notice_link(new: str, old: str, source_url: str = "") -> bool:
+def _is_better_notice_link(new: str, old: str, source_url: str = "", field: str = "") -> bool:
     new_url = canonical_url(new)
     if not new_url or is_discovery_host(new_url) or is_generic_homepage(new_url):
         return False
@@ -3092,6 +3092,20 @@ def _is_better_notice_link(new: str, old: str, source_url: str = "") -> bool:
         # homepage (2026-09-12 incident: a weak listing-page link let
         # ors.gov.in/index.html in as the "better" apply link).
         return not _is_weak_public_link(new_url, source_url)
+    if field == "applyLink":
+        # AGENTS.md: applyLink must point at the online application /
+        # registration PORTAL page, never at an attachment. Once the stored
+        # applyLink is already a strong, working link (not weak), a fresh
+        # PDF must never take its place just because the old value happens
+        # not to itself be a PDF: on the CUPB non-teaching page every
+        # advertisement's PDF attachment shares the *same* recruitment
+        # portal link (https://cupnt.samarth.edu.in/...), so re-reading an
+        # older or unrelated row's document and treating "is a PDF" as
+        # sufficient reason to replace kept flipping a verified portal login
+        # link to a document link on every scheduled run (2026-09-13
+        # incident). A document can only replace a genuinely weak applyLink,
+        # handled above.
+        return False
     if is_direct_pdf_url(new_url) and not is_direct_pdf_url(old):
         return True
     return False
@@ -3231,6 +3245,22 @@ def _is_less_specific_title(new_title: Any, old_title: Any) -> bool:
         return True
     if len(new_words) < len(old_words) and not (new_words & old_words):
         return True
+    # A short refreshed subject that is mostly a subset of the verified
+    # subject's own words is a category/nav label, not new information — e.g.
+    # a listing page's own tab title "Non-Teaching Jobs" reusing two of the
+    # five distinct words already carried by the verified subject "Various
+    # Post (Contractual Non-Teaching Posts) Recruitment" (2026-09-13
+    # incident). Require the new subject to be both shorter and mostly
+    # (over half) made of words the verified subject already has, so a
+    # genuinely new but partially-overlapping subject (e.g. an updated post
+    # name) is still accepted.
+    overlap = new_words & old_words
+    if (
+        len(new_words) < len(old_words)
+        and overlap
+        and len(overlap) / len(new_words) > 0.5
+    ):
+        return True
     return False
 
 
@@ -3326,7 +3356,7 @@ def merge_job_details(existing: dict[str, Any], fresh: dict[str, Any]) -> bool:
             changed = True
 
     for field in ("pdfLink", "applyLink"):
-        if _is_better_notice_link(fresh.get(field, ""), existing.get(field, ""), source_url):
+        if _is_better_notice_link(fresh.get(field, ""), existing.get(field, ""), source_url, field):
             existing[field] = canonical_url(fresh.get(field, ""))
             changed = True
         elif is_generic_homepage(existing.get(field, "")):

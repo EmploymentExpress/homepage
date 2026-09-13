@@ -2018,6 +2018,21 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(existing["lastDate"], "15-09-2026")
         self.assertEqual(existing["applyLink"], "https://cupnt.samarth.edu.in/index.php/site/login")
 
+    def test_is_less_specific_title_flags_a_nav_label_that_overlaps_the_verified_subject(self):
+        """2026-09-13 incident: the CUPB non-teaching listing page's own tab
+        title ("Non-Teaching Jobs") shares words with the verified, specific
+        subject ("Various Post (Contractual Non-Teaching Posts) Recruitment")
+        without being longer or entirely disjoint, so neither existing branch
+        of the heuristic caught it. A short subject built mostly out of words
+        the verified subject already carries is a category label, not new
+        information."""
+        old_title = (
+            "Central University of Punjab (CUPB), Bathinda — Various Post "
+            "(Contractual Non-Teaching Posts) Recruitment"
+        )
+        new_title = "Central University of Punjab (CUPB), Bathinda — Non-Teaching Jobs"
+        self.assertTrue(monitor._is_less_specific_title(new_title, old_title))
+
     def test_merge_never_downgrades_a_verified_title_to_a_page_label(self):
         """2026-09-12 incident: an AIIMS Bathinda refresh merged the listing
         page's column heading ("Non-Faculty") over a verified result title,
@@ -3512,6 +3527,41 @@ class NonNoticeDocumentGuardTests(unittest.TestCase):
             monitor._is_better_notice_link(
                 self.DIRECTORY_URL, self.ADVERTISEMENT_URL, "https://cup.edu.in/non-teaching_jobs.php"
             )
+        )
+
+    def test_refresh_never_swaps_a_working_apply_portal_for_a_document(self):
+        """2026-09-13 incident: the CUPB non-teaching page's advertisements all
+        route "Apply Online" through the same recruitment portal
+        (cupnt.samarth.edu.in); re-reading an older or unrelated
+        advertisement's own PDF attachment must never replace an already
+        verified, working applyLink just because the fresh candidate happens
+        to be a direct PDF — applyLink must stay a portal page, never a
+        document (AGENTS.md)."""
+        old_apply = "https://cupnt.samarth.edu.in/index.php/site/login"
+        new_pdf = "https://cup.edu.in/sites/default/files/Contract NT_009_08_26.pdf"
+        source_url = "https://cup.edu.in/non-teaching_jobs.php"
+        self.assertFalse(monitor._is_better_notice_link(new_pdf, old_apply, source_url, "applyLink"))
+        # A pdfLink, unlike applyLink, is allowed to move to a fresher document.
+        self.assertTrue(monitor._is_better_notice_link(new_pdf, old_apply, source_url, "pdfLink"))
+
+    def test_merge_job_details_never_flips_a_verified_apply_portal_to_a_pdf(self):
+        """End-to-end regression for the 2026-09-13 incident: a refresh must
+        never rewrite a verified applyLink to a document link."""
+        existing = {
+            "title": "Central University of Punjab (CUPB), Bathinda — Various Post (Contractual Non-Teaching Posts) Recruitment",
+            "applyLink": "https://cupnt.samarth.edu.in/index.php/site/login",
+            "pdfLink": "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+        }
+        fresh = {
+            "title": "Central University of Punjab (CUPB), Bathinda — Non-Teaching Jobs",
+            "applyLink": "https://cup.edu.in/sites/default/files/Contract NT_009_08_26.pdf",
+            "pdfLink": "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+        }
+        monitor.merge_job_details(existing, fresh)
+        self.assertEqual(existing["applyLink"], "https://cupnt.samarth.edu.in/index.php/site/login")
+        self.assertEqual(
+            existing["title"],
+            "Central University of Punjab (CUPB), Bathinda — Various Post (Contractual Non-Teaching Posts) Recruitment",
         )
 
     def test_sanitize_pass_blanks_an_already_published_directory_attachment(self):
