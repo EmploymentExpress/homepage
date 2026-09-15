@@ -447,6 +447,92 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(len(selected), 5)
         self.assertTrue(all("jobnotices/detail" in job.url for job in selected))
 
+    def test_gadvasu_first_scan_is_seeded_so_notices_never_duplicate(self):
+        # The two big advertisements are curated inside index.html with rich
+        # detail (fee, pay levels, selection steps), while the DD-CE
+        # deputation circular, the contract Veterinary Officer and the
+        # Director-of-Research withdrawal corrigendum are curated in
+        # data/auto-jobs.json. A first live scan that bootstrapped the
+        # listing would republish all five with mechanical titles and produce
+        # duplicate homepage cards, so data/seen-notices.json seeds the
+        # 'gadvasu' source as initialized with every live candidate's
+        # fingerprint: the scan refreshes the curated entries (URL match) and
+        # publishes nothing twice.
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "gadvasu")
+        state = json.loads((root / "data" / "seen-notices.json").read_text(encoding="utf-8"))
+        seeded = state.get("sources", {}).get("gadvasu", {})
+        self.assertTrue(seeded.get("initializedAt"))
+        known = set(seeded.get("fingerprints") or [])
+
+        live_notices = [
+            monitor.Candidate(
+                "Advertisement No 04/2026 for the posts of Officer, Associate Professor, "
+                "Assistant Professor and Scientist of Guru Angad Dev Veterinary and Animal "
+                "Sciences University, Ludhiana",
+                "https://www.gadvasu.in/jobnotices/detail/13971",
+            ),
+            monitor.Candidate(
+                "Advertisement No 03/2026 for the various Non-Teaching posts of Guru Angad "
+                "Dev Veterinary and Animal Sciences University, Ludhiana",
+                "https://www.gadvasu.in/jobnotices/detail/13970",
+            ),
+            monitor.Candidate(
+                "Filling up the post of Deputy Director (Civil Engineering) on deputation, "
+                "Govt. of India, Ministry of Fisheries, Animal Husbandry and Dairying",
+                "https://www.gadvasu.in/jobnotices/detail/13871",
+            ),
+            monitor.Candidate(
+                "Vacancy Notice for the one post of Veterinary Officer on contract basis, "
+                "Director of Clinics, Dept. of Teaching Veterinary Clinical Complex, Guru "
+                "Angad Dev Veterinary & Animal Sciences University, Ldh",
+                "https://www.gadvasu.in/jobnotices/detail/13846",
+            ),
+            monitor.Candidate(
+                "Corrigendum regarding Withdrawal of the post of Director of Research "
+                "advertised vide Advt.No. 01/2024",
+                "https://www.gadvasu.in/jobnotices/detail/13805",
+            ),
+        ]
+        for candidate in live_notices:
+            with self.subTest(url=candidate.url):
+                self.assertIn(monitor.fingerprint(candidate), known)
+        self.assertEqual(len(live_notices), len(known))
+
+        # The three notices without a curated homepage card stay published in
+        # the automatic store with the university's own document/detail links.
+        store = json.loads((root / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        published = {
+            monitor.canonical_url(job.get("noticeUrl", "")): job
+            for job in store["jobs"]
+            if monitor.canonical_url(job.get("sourceUrl", ""))
+            == monitor.canonical_url(source["url"])
+        }
+        self.assertEqual(
+            sorted(published),
+            [
+                "https://www.gadvasu.in/jobnotices/detail/13805",
+                "https://www.gadvasu.in/jobnotices/detail/13846",
+                "https://www.gadvasu.in/jobnotices/detail/13871",
+            ],
+        )
+        dd = published["https://www.gadvasu.in/jobnotices/detail/13871"]
+        self.assertEqual(dd["alertType"], "recruitment")
+        self.assertEqual(dd["type"], "punjab")
+        self.assertTrue(dd["pdfLink"].startswith("https://www.gadvasu.in/"))
+        self.assertEqual(dd["lastDate"], "18-09-2026")
+        vo = published["https://www.gadvasu.in/jobnotices/detail/13846"]
+        self.assertEqual(vo["alertType"], "recruitment")
+        self.assertEqual(vo["lastDate"], "17-09-2026")
+        corrigendum = published["https://www.gadvasu.in/jobnotices/detail/13805"]
+        self.assertEqual(corrigendum["alertType"], "corrigendum")
+        self.assertEqual(corrigendum["advtNo"], "01/2024")
+        for job in (dd, vo, corrigendum):
+            self.assertFalse(monitor.is_generic_homepage(job["pdfLink"]))
+            self.assertFalse(monitor.is_generic_homepage(job["applyLink"]))
+            self.assertFalse(monitor.is_discovery_host(job["pdfLink"]))
+
     def test_cup_official_site_is_monitored(self):
         """Central University of Punjab is an enabled official source and a
         discovery-approved organisation, using the university's CUPB wording."""

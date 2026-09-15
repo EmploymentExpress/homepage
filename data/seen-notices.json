@@ -1948,6 +1948,16 @@
         "34d9b4f930a00b9daf58ee67c4cdea6b6f88133352bbdf1159391aa6e9ff06e4",
         "17246137cd96c7e99f499a2101f3a5a2401f5a61d8a14868aa1a9cb7ea9f2090"
       ]
+    },
+    "gadvasu": {
+      "initializedAt": "2026-09-15T09:37:56Z",
+      "fingerprints": [
+        "62024b0377ceb6ccc971bb3618b82af43a0bebec2f1d1bbe45a06ebd81fcba6d",
+        "17e9e97fdefff9053c2504eb90b209175dc3e55328eb0395e4ae5a65a7c4fdc9",
+        "e787cb96e1fb4e9c01a031f38552691c6173f8ebf5c928136c303867860f7c9e",
+        "6108e5814e16401d9479f4a7b22dac3a9ffdd5f1afc19e3747fd5126d794ab99",
+        "3548c269ec977c17072fc903bf78b81c98c69d3e8a47dc18dabd46ffec45b886"
+      ]
     }
   },
   "offlinePageDocuments": {
