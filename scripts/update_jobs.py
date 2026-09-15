@@ -2816,6 +2816,9 @@ PUNJAB_COLUMN_MARKERS = (
     # university, so its vacancies belong in the Punjab column exactly like
     # AIIMS Bathinda's, not in All India & Central.
     "central university of punjab",
+    # R14 extension: Guru Angad Dev Veterinary and Animal Sciences University
+    # (GADVASU), Ludhiana is a Punjab state university — same treatment.
+    "guru angad dev veterinary",
 )
 
 # Matched as regular expressions against the normalised text, so a short
@@ -2824,6 +2827,8 @@ PUNJAB_COLUMN_MARKERS = (
 PUNJAB_COLUMN_PATTERNS = (
     re.compile(r"\bcupb\b"),  # CUPB — Central University of Punjab
     re.compile(r"\bcup edu in\b"),  # cup.edu.in (normalised from the URL)
+    re.compile(r"\bgadvasu\b"),  # GADVASU — Guru Angad Dev Veterinary and Animal Sciences University
+    re.compile(r"\bgadvasu in\b"),  # gadvasu.in (normalised from the URL)
 )
 
 # R14 district extension: every district of Punjab. A notice whose details name
