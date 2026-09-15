@@ -67,6 +67,16 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
             "https://cup.edu.in/",
             "https://cup.edu.in/non-teaching_jobs.php",
             "https://cup.edu.in/sites/default/files/Contract%20NT_09_2026.pdf",
+            # R14 extension: Guru Angad Dev Veterinary and Animal Sciences
+            # University (GADVASU), Ludhiana is a Punjab state university —
+            # by name, by acronym and by its own domain.
+            "Guru Angad Dev Veterinary and Animal Sciences University (GADVASU), Ludhiana",
+            "GADVASU Steno Typist, Clerk & Storekeeper Recruitment 2026",
+            "Advertisement No 04/2026 for the posts of Officer, Associate Professor, "
+            "Assistant Professor and Scientist of Guru Angad Dev Veterinary and Animal "
+            "Sciences University, Ludhiana",
+            "https://www.gadvasu.in/jobnotices",
+            "https://www.gadvasu.in/jobnotices/detail/13971",
         ]
         for text in cases:
             with self.subTest(text=text):

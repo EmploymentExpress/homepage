@@ -680,6 +680,30 @@
         "pgimer chandigarh",
         "pgimer chd"
       ]
+    },
+    {
+      "id": "gadvasu",
+      "proxyFallback": true,
+      "name": "GADVASU",
+      "department": "Guru Angad Dev Veterinary and Animal Sciences University (GADVASU), Ludhiana",
+      "url": "https://www.gadvasu.in/jobnotices",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "gadvasu",
+        "guru angad dev veterinary and animal sciences university",
+        "guru angad dev veterinary and animal sciences university (gadvasu)",
+        "guru angad dev veterinary university",
+        "gadvasu ludhiana"
+      ]
     }
   ]
 }

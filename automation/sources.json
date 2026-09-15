@@ -1683,6 +1683,61 @@
       "proxyFallback": true,
       "timeout": 40,
       "detailTimeout": 30
+    },
+    {
+      "id": "gadvasu",
+      "enabled": true,
+      "name": "GADVASU Job Notices",
+      "department": "Guru Angad Dev Veterinary and Animal Sciences University (GADVASU), Ludhiana",
+      "url": "https://www.gadvasu.in/jobnotices",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Ludhiana, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "includeKeywords": [
+        "advertisement no",
+        "advt",
+        "applications are invited",
+        "application invited",
+        "vacancy notice",
+        "filling up",
+        "post of",
+        "posts of",
+        "walk-in",
+        "walk in interview",
+        "corrigendum",
+        "addendum"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest",
+        "execution of bond",
+        "forwarding of applications for posts outside",
+        "photo gallery",
+        "video gallery",
+        "download corner",
+        "placement cell",
+        "admission capacity",
+        "refund policy",
+        "scholarship",
+        "certificate courses",
+        "short courses"
+      ],
+      "bootstrapCount": 5,
+      "maxNewPerRun": 8,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "proxyFallback": true,
+      "timeout": 45,
+      "detailTimeout": 30
     }
   ]
 }

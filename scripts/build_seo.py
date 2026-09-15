@@ -47,6 +47,7 @@ ROBOTS_TXT = ROOT / "robots.txt"
 ARTICLE_PAGES = (
     "punjab-haryana-high-court-safai-sewak-mali-recruitment-2026.html",
     "ssc-jht-recruitment-2026.html",
+    "gadvasu-recruitment-2026.html",
 )
 
 # Link text for the article pages inside llms.txt: the freshest long-form
@@ -60,6 +61,10 @@ ARTICLE_GUIDES = (
     ("ssc-jht-recruitment-2026.html",
      "SSC Junior Hindi Translator (JHT/CHTE) 2026 — exam city intimation "
      "slip status, notification, eligibility and exam pattern details"),
+    ("gadvasu-recruitment-2026.html",
+     "GADVASU Ludhiana Recruitment 2026 — Advt. 04/2026 Officer, Associate "
+     "Professor, Assistant Professor & Scientist and Advt. 03/2026 Steno "
+     "Typist, Clerk & Storekeeper (45 posts) eligibility, fee and dates"),
 )
 
 # Pages that are internal plumbing, not content worth indexing.

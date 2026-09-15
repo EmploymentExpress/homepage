@@ -328,6 +328,125 @@ class JobMonitorTests(unittest.TestCase):
         org_ids = {org["id"] for org in orgs.get("organizations", [])}
         self.assertIn("prsc", org_ids)
 
+    def test_gadvasu_official_site_is_monitored(self):
+        """GADVASU (Guru Angad Dev Veterinary and Animal Sciences University,
+        Ludhiana) job notices must be an enabled automation source, and the
+        page-source rule applies to it. The listing is jobs-only, so the
+        source skips the admission type (an IBPS-style dedicated listing) —
+        that keeps footer/nav \"Admission Capacity\" chrome from classifying."""
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "gadvasu")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(source["url"], "https://www.gadvasu.in/jobnotices")
+        self.assertEqual(
+            source["department"],
+            "Guru Angad Dev Veterinary and Animal Sciences University (GADVASU), Ludhiana",
+        )
+        # R14: a Punjab state university, home-listed in the Punjab column.
+        self.assertEqual(source["type"], "punjab")
+        self.assertEqual(source["categorySlug"], "punjab-jobs")
+        self.assertTrue(source.get("proxyFallback"))
+        self.assertIn("recruitment", source["noticeTypes"])
+        self.assertIn("corrigendum", source["noticeTypes"])
+        self.assertNotIn("admission", source["noticeTypes"])
+        # The September 2026 listing holds five live notices; the first scan
+        # marks the whole listing as seen, so the bootstrap window must cover
+        # all of them or the tail would never publish.
+        self.assertGreaterEqual(int(source.get("bootstrapCount", 1)), 5)
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "gadvasu")
+        self.assertEqual(org["url"], source["url"])
+        self.assertEqual(org["type"], "punjab")
+        self.assertIn("gadvasu", org["aliases"])
+        self.assertIn("guru angad dev veterinary and animal sciences university", org["aliases"])
+
+    def test_gadvasu_listing_notices_classify_correctly(self):
+        # Titles copied verbatim from https://www.gadvasu.in/jobnotices (Sep 2026).
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "gadvasu")
+        cases = [
+            ("Advertisement No 04/2026 for the posts of Officer, Associate Professor, "
+             "Assistant Professor and Scientist of Guru Angad Dev Veterinary and Animal "
+             "Sciences University, Ludhiana",
+             "https://www.gadvasu.in/jobnotices/detail/13971", "recruitment"),
+            ("Advertisement No 03/2026 for the various Non-Teaching posts of Guru Angad "
+             "Dev Veterinary and Animal Sciences University, Ludhiana",
+             "https://www.gadvasu.in/jobnotices/detail/13970", "recruitment"),
+            ("Filling up the post of Deputy Director (Civil Engineering) on deputation, "
+             "Govt. of India, Ministry of Fisheries, Animal Husbandry and Dairying",
+             "https://www.gadvasu.in/jobnotices/detail/13871", "recruitment"),
+            ("Vacancy Notice for the one post of Veterinary Officer on contract basis, "
+             "Director of Clinics, Dept. of Teaching Veterinary Clinical Complex, Guru "
+             "Angad Dev Veterinary & Animal Sciences University, Ldh",
+             "https://www.gadvasu.in/jobnotices/detail/13846", "recruitment"),
+            ("Corrigendum regarding Withdrawal of the post of Director of Research "
+             "advertised vide Advt.No. 01/2024",
+             "https://www.gadvasu.in/jobnotices/detail/13805", "corrigendum"),
+            # Housekeeping and page chrome must never become notices.
+            ("Rules regarding execution of bond on fresh appointment in the University "
+             "and forwarding of applications for posts outside the University",
+             "https://www.gadvasu.in/jobnotices/detail/12225", None),
+            ("Admission Capacity", "https://www.gadvasu.in/page/admission-capacity", None),
+            ("Photo Gallery", "https://www.gadvasu.in/Welcome/photo_gallery", None),
+            ("Read More", "https://www.gadvasu.in/jobnotices/detail/13971", None),
+        ]
+        for title, url, expected in cases:
+            with self.subTest(title=title[:60]):
+                candidate = monitor.Candidate(title, url)
+                self.assertEqual(monitor.classify_notice(candidate, source), expected)
+
+    def test_gadvasu_first_scan_publishes_every_live_notice(self):
+        # All five live notices score equally (same host, current, substantive
+        # titles), so the stable bootstrap ranking keeps page order and the
+        # configured window publishes every one of them — while a generic
+        # portal link ranks below them.
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "gadvasu")
+        now = datetime(2026, 9, 15, tzinfo=timezone.utc)
+        notices = [
+            monitor.Candidate(
+                "Advertisement No 04/2026 for the posts of Officer, Associate Professor, "
+                "Assistant Professor and Scientist of Guru Angad Dev Veterinary and Animal "
+                "Sciences University, Ludhiana",
+                "https://www.gadvasu.in/jobnotices/detail/13971",
+            ),
+            monitor.Candidate(
+                "Advertisement No 03/2026 for the various Non-Teaching posts of Guru Angad "
+                "Dev Veterinary and Animal Sciences University, Ludhiana",
+                "https://www.gadvasu.in/jobnotices/detail/13970",
+            ),
+            monitor.Candidate(
+                "Filling up the post of Deputy Director (Civil Engineering) on deputation",
+                "https://www.gadvasu.in/jobnotices/detail/13871",
+            ),
+            monitor.Candidate(
+                "Vacancy Notice for the one post of Veterinary Officer on contract basis",
+                "https://www.gadvasu.in/jobnotices/detail/13846",
+            ),
+            monitor.Candidate(
+                "Corrigendum regarding Withdrawal of the post of Director of Research "
+                "advertised vide Advt.No. 01/2024",
+                "https://www.gadvasu.in/jobnotices/detail/13805",
+            ),
+            monitor.Candidate(
+                "Apply Online (Recruitment Portal)", "https://www.gadvasu.in/jobnotices"
+            ),
+        ]
+        ranked = monitor.select_bootstrap_candidates(notices, source, now)
+        self.assertEqual(ranked[:5], notices[:5])
+        self.assertEqual(ranked[5].title, "Apply Online (Recruitment Portal)")
+        selected = ranked[: max(0, int(source.get("bootstrapCount", 1)))]
+        self.assertEqual(len(selected), 5)
+        self.assertTrue(all("jobnotices/detail" in job.url for job in selected))
+
     def test_cup_official_site_is_monitored(self):
         """Central University of Punjab is an enabled official source and a
         discovery-approved organisation, using the university's CUPB wording."""
