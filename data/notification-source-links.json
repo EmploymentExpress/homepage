@@ -1116,6 +1116,60 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-12T13:16:41Z"
+    },
+    {
+      "url": "https://gate2027.iitm.ac.in/download",
+      "name": "gate2027.iitm.ac.in",
+      "department": "gate2027.iitm.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-15T06:34:10Z"
+    },
+    {
+      "url": "https://lsg.rajasthan.gov.in/home",
+      "name": "lsg.rajasthan.gov.in",
+      "department": "lsg.rajasthan.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-15T06:34:10Z"
+    },
+    {
+      "url": "https://www.incometaxindia.gov.in/home",
+      "name": "incometaxindia.gov.in",
+      "department": "incometaxindia.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-15T06:34:10Z"
     }
   ]
 }
