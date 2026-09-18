@@ -677,6 +677,42 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(chandigarh["url"], source["url"])
         self.assertIn("chandigarh administration", chandigarh["aliases"])
 
+    def test_punjab_roadways_official_site_is_monitored(self):
+        """Punjab Roadways (PRTC) official site must be an enabled automation
+        source in the Punjab column (R14), and the org must be approved for
+        discovery-headline verification."""
+        root = Path(__file__).resolve().parents[1]
+        config = json.loads((root / "automation" / "sources.json").read_text(encoding="utf-8"))
+        source = next(item for item in config["sources"] if item["id"] == "prtc")
+        self.assertTrue(source["enabled"])
+        self.assertEqual(
+            monitor.canonical_url(source["url"]),
+            "https://punjabroadways.punjab.gov.in/en/",
+        )
+        self.assertEqual(source["department"], "Punjab Roadways (PRTC)")
+        self.assertEqual(source["type"], "punjab")
+        self.assertEqual(source["categorySlug"], "punjab-jobs")
+        self.assertTrue(source.get("proxyFallback"))
+        self.assertIn("recruitment", source["noticeTypes"])
+        self.assertFalse(monitor.is_discovery_host(source["url"]))
+        self.assertEqual(len({item["id"] for item in config["sources"]}), len(config["sources"]))
+
+        org_config = json.loads(
+            (root / "automation" / "official-organizations.json").read_text(encoding="utf-8")
+        )
+        org = next(item for item in org_config["organizations"] if item["id"] == "prtc")
+        self.assertEqual(org["url"], source["url"])
+        self.assertEqual(org["type"], "punjab")
+        self.assertIn("prtc", org["aliases"])
+        self.assertIn("punjab roadways", org["aliases"])
+        # A discovery headline naming the organisation resolves to PRTC.
+        match = monitor.match_official_organization(
+            "Punjab Roadways Recruitment 2026: 641 Conductor & Driver Posts",
+            org_config["organizations"],
+        )
+        self.assertIsNotNone(match)
+        self.assertEqual(match["id"], "prtc")
+
     def test_chandigarh_linked_subject_rows_keep_title_department_and_date(self):
         """Chandigarh puts its full notice subject inside the PDF anchor."""
         markup = """

@@ -704,6 +704,30 @@
         "guru angad dev veterinary university",
         "gadvasu ludhiana"
       ]
+    },
+    {
+      "id": "prtc",
+      "proxyFallback": true,
+      "name": "Punjab Roadways",
+      "department": "Punjab Roadways (PRTC)",
+      "url": "https://punjabroadways.punjab.gov.in/en/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "prtc",
+        "punjab roadways",
+        "punjab roadways transport corporation",
+        "pepsu road transport corporation",
+        "prtc patiala"
+      ]
     }
   ]
 }
