@@ -3810,6 +3810,9 @@ DISCOVERY_STOPWORDS = {
     "job", "jobs", "vacancy", "vacancies", "recruitment", "notification", "notice",
     "apply", "online", "offline", "latest", "new", "update", "updates", "2024",
     "2025", "2026", "2027", "post", "posts", "official",
+    # Sarkari-result feed boilerplate ("... Online Form(Last Date : 03/10/2026)")
+    # must not count as overlap with an official notice title.
+    "form", "forms", "last", "date", "extended", "various",
 }
 
 
@@ -3879,13 +3882,32 @@ def looks_like_discovery_headline(candidate: Candidate) -> bool:
     if any(term in lowered for term in EXCLUDED_TERMS):
         return False
     hints = RECRUITMENT_TERMS + ADMISSION_TERMS + ANSWER_KEY_TERMS + RESULT_TERMS + UPDATE_TERMS + (
-        "jobs", "job ", " vacancy", "notification", "advt", "advertisement"
+        "jobs", "job ", " vacancy", "notification", "advt", "advertisement",
+        # Sarkari-result style feeds (punjabjobalert.com, speedjob.in) headline a
+        # vacancy as "<Board> <Post> Online Form" / "Application Form" and never
+        # print the word "recruitment".
+        "online form", "offline form", "application form", "apply online", "last date",
     )
     # Job-listing feeds such as LinkingSky often put the organisation and post
     # in separate table cells and omit words like "recruitment" entirely. The
     # row parser preserves the date cell; in a discovery feed that date plus a
     # non-generic title is sufficient evidence that this is a job lead.
-    return bool(candidate.notice_date) or any(term in lowered for term in hints)
+    #
+    # The same evidence must count when the date reaches us inside the title
+    # instead of in ``notice_date``: speedjob.in's "Department | Posts | Last
+    # Date | Click here" rows carry no PDF link, so the row parser hands them
+    # over as a plain anchor titled "PGIMER Chandigarh Nursing Officer
+    # 03.10.2026", and punjabjobalert.com prints "... Online Form(Last Date :
+    # 03/10/2026)". Both feeds answered healthy for weeks while every headline
+    # was silently dropped here (speedjob-latest: 0 fingerprints in 25 days,
+    # punjabjobalert: 3 in 30 days) — a lead is still only a lead, it is
+    # matched to an approved organisation and verified on the official website
+    # before anything is published.
+    return (
+        bool(candidate.notice_date)
+        or bool(LISTING_DATE_RE.search(title))
+        or any(term in lowered for term in hints)
+    )
 
 
 def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str, Any]]:

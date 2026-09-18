@@ -133,6 +133,20 @@ listing/page source before anything is published, and the feed host's URLs and b
 shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
 is the key `load_discovery_feeds()` reads.
 
+**Feed headline shapes (`looks_like_discovery_headline`).** Sarkari-result style feeds never say
+"recruitment": punjabjobalert.com headlines read `<Board> <Post> Online Form(Last Date :
+dd/mm/yyyy)` and speedjob.in's `/latest-job/` table (`Department | Posts | Last Date | Click
+here`) has no PDF link per row, so the row parser hands each row over as a plain anchor titled
+`PGIMER Chandigarh Nursing Officer 03.10.2026` with an empty `notice_date`. A date inside the
+title, or an "online/offline/application form" phrase, is therefore accepted as lead evidence, and
+`DISCOVERY_STOPWORDS` drops that boilerplate (`form`, `last`, `date`, …) before headline↔notice
+token matching. **Real incident (fixed 2026-09-18):** both feeds reported healthy in
+`sourceHealth` while every headline was rejected here — `speedjob-latest` sat at 0 fingerprints
+for 25 days (flagged `silentDead`) and `punjabjobalert` at 3 in 30 days. A feed that is healthy but
+never gains fingerprints is a parser/filter bug, not a quiet feed; the guard tests are
+`test_speedjob_latest_job_rows_are_discovery_headlines` and
+`test_sarkari_result_online_form_headlines_are_discovery_headlines`.
+
 ## 📡 Source reachability, mirrors & first-scan quality (mandatory behaviour)
 
 Three safeguards keep an official source from silently going stale — do not remove them:

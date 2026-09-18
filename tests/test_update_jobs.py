@@ -762,6 +762,70 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("Project Associate I", candidate.title)
         self.assertTrue(monitor.looks_like_discovery_headline(candidate))
 
+    def test_speedjob_latest_job_rows_are_discovery_headlines(self):
+        """speedjob.in/latest-job/ prints ``Department | Posts | Last Date |
+        Click here`` rows whose only link is an article page (no PDF), so the
+        row parser hands them over as a plain anchor with the date glued to the
+        title. They must still be accepted as leads: the feed answered healthy
+        for 25 days with zero fingerprints because every row was dropped here."""
+        markup = """
+        <table><tbody>
+          <tr><td><h4>PGIMER Chandigarh</h4></td><td><h4>Nursing Officer</h4></td>
+              <td><h4>03.10.2026</h4></td>
+              <td><h4><a href="https://www.speedjob.in/pgimer-chandigarh-nursing-officer-recruitment-2026/"><strong>Click here</strong></a></h4></td></tr>
+          <tr><td><h4>GADVASU</h4></td><td><h4>Steno, Clerk, Storekeeper</h4></td>
+              <td><h4>08.10.2026</h4></td>
+              <td><h4><a href="https://www.speedjob.in/gadvasu-non-teaching-recruitment-2026/"><strong>Click here</strong></a></h4></td></tr>
+        </tbody></table>
+        """
+        candidates, _ = monitor.parse_html(markup, "https://www.speedjob.in/latest-job/")
+        self.assertEqual(len(candidates), 2)
+        for candidate in candidates:
+            with self.subTest(title=candidate.title):
+                self.assertTrue(monitor.looks_like_discovery_headline(candidate))
+        self.assertIn("PGIMER Chandigarh", candidates[0].title)
+        self.assertIn("Nursing Officer", candidates[0].title)
+        # The glued-on date is boilerplate for matching purposes.
+        self.assertEqual(
+            monitor.headline_tokens(candidates[0].title),
+            {"pgimer", "chandigarh", "nursing", "officer"},
+        )
+
+    def test_sarkari_result_online_form_headlines_are_discovery_headlines(self):
+        """punjabjobalert.com headlines read ``<Board> <Post> Online Form(Last
+        Date : dd/mm/yyyy)`` and never say "recruitment"; they are job leads.
+        Portal chrome and undated non-job lines must still be rejected."""
+        accepted = (
+            "Chandigarh PGIMER Nursing Officer Online Form(Last Date : 03/10/2026)",
+            "GADVASU Stenotypist, Clerk & Storekeeper Form(Last Date : 08/10/2026)",
+            "Chandigarh PGI Group A, B, C Posts Online Form(Last Date : 19/10/2026)",
+            "India Post 23757 Gramin Dak Sevak (GDS) Online Form",
+        )
+        for title in accepted:
+            with self.subTest(title=title):
+                self.assertTrue(
+                    monitor.looks_like_discovery_headline(
+                        monitor.Candidate(title, "https://punjabjobalert.com/article/")
+                    )
+                )
+        rejected = (
+            "Join WhatsApp Channel",
+            "Be careful from similar website. Thank You",
+            "KVS Samvida Portal TGT, PGT, PRT & Various Contractual Teacher Mentioned In Page",
+        )
+        for title in rejected:
+            with self.subTest(title=title):
+                self.assertFalse(
+                    monitor.looks_like_discovery_headline(
+                        monitor.Candidate(title, "https://punjabjobalert.com/article/")
+                    )
+                )
+        # Feed boilerplate never counts as overlap with an official notice title.
+        self.assertEqual(
+            monitor.headline_tokens(accepted[0]),
+            {"pgimer", "chandigarh", "nursing", "officer"},
+        )
+
     def test_discovery_feeds_include_haryanajobs(self):
         """HaryanaJobs must be configured as a discovery headline scanner and
         never be treated as a publishable source."""
