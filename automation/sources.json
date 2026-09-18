@@ -1738,6 +1738,36 @@
       "proxyFallback": true,
       "timeout": 45,
       "detailTimeout": 30
+    },
+    {
+      "id": "prtc",
+      "enabled": true,
+      "proxyFallback": true,
+      "name": "Punjab Roadways",
+      "department": "Punjab Roadways (PRTC)",
+      "url": "https://punjabroadways.punjab.gov.in/en/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "excludeKeywords": [
+        "tender",
+        "quotation",
+        "eoi",
+        "expression of interest"
+      ],
+      "bootstrapCount": 1,
+      "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 45,
+      "detailTimeout": 30
     }
   ]
 }
