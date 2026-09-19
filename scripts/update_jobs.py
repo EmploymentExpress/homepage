@@ -1199,13 +1199,21 @@ def _download_direct(url: str, timeout: int, ssl_fallback: bool = False) -> Down
 # being probed again. One dead mirror must never starve every failing source
 # (observed Aug-Sep 2026: allorigins alone returned HTTP 422 for 8 sources on
 # 47 consecutive runs while three other mirrors were never tried).
+#
+# 2026-09-18 fix: 3 mirrors were dead for 280+ runs (allorigins raw 422,
+# codetabs, corsproxy). Added thingproxy and cors.sh as additional healthy
+# fallbacks, plus allorigins /get endpoint (JSON-wrapped) which needs special
+# handling in _download_via_mirror.
 SOURCE_MIRRORS = (
-    "https://api.allorigins.win/raw?url={quoted}",
     "https://r.jina.ai/{url}",
+    "https://thingproxy.freeboard.io/fetch/{url}",
+    "https://proxy.cors.sh/{url}",
+    "https://api.allorigins.win/get?url={quoted}",
+    "https://api.allorigins.win/raw?url={quoted}",
     "https://api.codetabs.com/v1/proxy/?quest={quoted}",
     "https://corsproxy.io/?url={quoted}",
 )
-MIRROR_RETRY_COOLDOWN_HOURS = 24
+MIRROR_RETRY_COOLDOWN_HOURS = 12
 MIRROR_MEMORY: dict[str, dict[str, Any]] = {}
 
 
@@ -1272,17 +1280,33 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
                 },
             )
             with urllib.request.urlopen(request, timeout=timeout) as response:
-                data = response.read(MAX_DOWNLOAD_BYTES + 1)
-                if len(data) > MAX_DOWNLOAD_BYTES:
+                raw_data = response.read(MAX_DOWNLOAD_BYTES + 1)
+                if len(raw_data) > MAX_DOWNLOAD_BYTES:
                     raise ValueError(f"response is larger than {MAX_DOWNLOAD_BYTES} bytes")
-                if response.status != 200 or len(data) < 256:
+                if response.status != 200 or len(raw_data) < 50:
+                    raise ValueError("mirror returned an unusable response")
+                data = raw_data
+                content_type = (response.headers.get_content_type() or "").lower()
+                # allorigins /get returns JSON {"contents": "<html>..."}
+                # thingproxy/cors.sh may also wrap; unwrap generically when possible.
+                if "allorigins.win/get" in template or content_type == "application/json" or raw_data[:1] == b"{":
+                    try:
+                        payload = json.loads(raw_data.decode("utf-8", errors="ignore"))
+                        if isinstance(payload, dict) and payload.get("contents"):
+                            extracted = payload["contents"]
+                            if isinstance(extracted, str) and len(extracted) >= 50:
+                                data = extracted.encode("utf-8")
+                                content_type = "text/html"
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        pass
+                if len(data) < 256:
                     raise ValueError("mirror returned an unusable response")
                 _remember_mirror(template, True, now)
                 # Keep the OFFICIAL url so every downstream link/fingerprint
                 # continues to point at the source, not at the mirror.
                 return Download(
                     url=url,
-                    content_type=(response.headers.get_content_type() or "").lower(),
+                    content_type=content_type,
                     data=data,
                 )
         except (OSError, ValueError, urllib.error.URLError) as exc:
@@ -2039,8 +2063,21 @@ def find_labelled_date(text: str, labels: str) -> str:
 # 04:58:44). The stamp is the document's own date — reading it lets the monitor
 # publish a notice with its real date instead of the scan date, and lets an
 # archived document be recognised as archive rather than reported as new.
+#
+# Real-world filenames also use human-readable dates such as
+# "Objection-Notice-08-08-2025.pdf" or "Notice_10_09_2025.pdf" which the old
+# YYYYMMDD-only reader missed, causing old notices to be re-published as
+# "Just In" with an empty publishedAt.
 DOCUMENT_DATE_IN_NAME = re.compile(
     r"(?<!\d)(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?:\d{6})?(?!\d)"
+)
+# DD-MM-YYYY, DD_MM_YYYY, DD.MM.YYYY, DD/MM/YYYY (and single-digit variants)
+DOCUMENT_DATE_DMY = re.compile(
+    r"(?<!\d)(0?[1-9]|[12]\d|3[01])[-_./](0?[1-9]|1[0-2])[-_./](20\d{2})(?!\d)"
+)
+# YYYY-MM-DD, YYYY_MM_DD, YYYY.MM.DD, YYYY/MM/DD
+DOCUMENT_DATE_YMD = re.compile(
+    r"(?<!\d)(20\d{2})[-_./](0?[1-9]|1[0-2])[-_./](0?[1-9]|[12]\d|3[01])(?!\d)"
 )
 
 
@@ -2049,20 +2086,72 @@ def document_date_from_url(url: str) -> str:
 
     Only a plausible calendar date that is not in the future is accepted, so a
     numeric file name that merely looks like a date is ignored.
+
+    Supports:
+    - YYYYMMDD[HHMMSS] e.g. 20241114045844.pdf
+    - YYYY-MM-DD, YYYY_MM_DD, YYYY.MM.DD, YYYY/MM/DD
+    - DD-MM-YYYY, DD_MM_YYYY, DD.MM.YYYY, DD/MM/YYYY
+    Searches both the filename and the full path (some portals encode the date
+    in folder structure like /2025/08/10/notice.pdf).
     """
-    path = urllib.parse.urlsplit(canonical_url(url) or clean_text(url)).path
-    name = urllib.parse.unquote(path.rsplit("/", 1)[-1])
+    raw = canonical_url(url) or clean_text(url)
+    if not raw:
+        return ""
+    parsed = urllib.parse.urlsplit(raw)
+    # filename
+    filename = urllib.parse.unquote(parsed.path.rsplit("/", 1)[-1])
+    # full path decoded (for /YYYY/MM/DD/ cases)
+    full_path = urllib.parse.unquote(parsed.path)
+    # also include query string decoded as fallback (rare but some download.php?date=...)
+    full_text = urllib.parse.unquote(parsed.path + " " + parsed.query)
+
     today = datetime.now(timezone.utc).date()
-    for match in DOCUMENT_DATE_IN_NAME.finditer(name):
-        year, month, day = (int(part) for part in match.groups())
-        try:
-            stamped = datetime(year, month, day).date()
-        except ValueError:
-            continue
-        if stamped > today:
-            continue
-        return stamped.strftime("%d-%m-%Y")
-    return ""
+    candidates: list[datetime] = []
+
+    def collect_from_text(text: str) -> None:
+        # YYYYMMDD
+        for m in DOCUMENT_DATE_IN_NAME.finditer(text):
+            try:
+                y, mo, d = (int(g) for g in m.groups())
+                dt = datetime(y, mo, d).date()
+                if dt <= today:
+                    candidates.append(dt)
+            except ValueError:
+                continue
+        # YYYY-MM-DD
+        for m in DOCUMENT_DATE_YMD.finditer(text):
+            try:
+                y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                dt = datetime(y, mo, d).date()
+                if dt <= today:
+                    candidates.append(dt)
+            except ValueError:
+                continue
+        # DD-MM-YYYY
+        for m in DOCUMENT_DATE_DMY.finditer(text):
+            try:
+                d, mo, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                dt = datetime(y, mo, d).date()
+                if dt <= today:
+                    candidates.append(dt)
+            except ValueError:
+                continue
+
+    # Prefer filename, but also scan full path
+    collect_from_text(filename)
+    if full_path != filename:
+        collect_from_text(full_path)
+    # Last resort: query string might contain date
+    if parsed.query:
+        collect_from_text(urllib.parse.unquote(parsed.query))
+
+    if not candidates:
+        return ""
+    # Return the most recent plausible date (document upload date is usually the
+    # latest date mentioned in its own name/path; for archive detection we will
+    # still treat it as old if that latest date is >60 days ago).
+    latest = max(candidates)
+    return latest.strftime("%d-%m-%Y")
 
 
 def iso_timestamp_from_date(value: str) -> str:
@@ -4649,11 +4738,30 @@ def job_document_date(job: dict[str, Any]) -> str:
 
 
 def notice_age_days(job: dict[str, Any], now: datetime) -> int | None:
-    """Age of the alert's own document in days; None when it has no date stamp."""
-    stamped = parse_date_token(job_document_date(job))
-    if not stamped:
-        return None
-    return (now.date() - datetime.strptime(stamped, "%d-%m-%Y").date()).days
+    """Age of the alert's own document in days; None when it has no date stamp.
+
+    Primary source is the document URL date (most reliable, from file name).
+    Fallback is the publishedAt ISO timestamp when present — this lets archive
+    pruning drop 2025 notices that slipped in with empty document dates but a
+    2025 publishedAt, and prevents them from showing as 'Just In' via
+    discoveredAt fallback.
+    """
+    # 1) Document URL date
+    doc_date = job_document_date(job)
+    stamped = parse_date_token(doc_date)
+    if stamped:
+        try:
+            return (now.date() - datetime.strptime(stamped, "%d-%m-%Y").date()).days
+        except ValueError:
+            pass
+    # 2) publishedAt ISO timestamp fallback
+    pub = parse_timestamp(clean_text(job.get("publishedAt", "")))
+    if pub:
+        try:
+            return (now.date() - pub.date()).days
+        except Exception:
+            pass
+    return None
 
 
 def max_notice_age_days(

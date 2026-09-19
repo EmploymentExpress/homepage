@@ -2240,9 +2240,15 @@
             // (interview call letters included) render in the Admit Card column.
             const allowedAlertTypes = ['recruitment', 'admission', 'answer-key', 'result', 'corrigendum', 'admit-card'];
             const alertType = allowedAlertTypes.includes(raw.alertType) ? raw.alertType : 'recruitment';
-            const publishedAt = text(raw.publishedAt, text(raw.discoveredAt, '', 40), 40);
-            const isNewNotice = isWithinHours({ publishedAt, discoveredAt: raw.discoveredAt }, NEW_NOTICE_WINDOW_HOURS);
-            const isJustIn = isWithinHours({ publishedAt, discoveredAt: raw.discoveredAt }, JUST_IN_WINDOW_HOURS);
+            // FIX 2026-09-18: publishedAt must NOT fall back to discoveredAt.
+            // Empty publishedAt + fresh discoveredAt was causing 5-day-old archive docs
+            // (e.g. Objection-Notice-08-08-2025.pdf) to show "Just In" for 0-116h.
+            // publishedAt now only comes from the official document date; Just In / NEW
+            // badges require a real publishedAt within their windows.
+            const publishedAt = text(raw.publishedAt, '', 40);
+            const discoveredAtRaw = text(raw.discoveredAt, '', 40);
+            const isNewNotice = publishedAt ? isWithinHours({ publishedAt }, NEW_NOTICE_WINDOW_HOURS) : false;
+            const isJustIn = publishedAt ? isWithinHours({ publishedAt }, JUST_IN_WINDOW_HOURS) : false;
             const presentations = {
                 recruitment: isNewNotice ? ['NEW JOB ALERT', 'bg-red-600'] : ['JOB NOTICE', 'bg-blue-600'],
                 admission: isNewNotice ? ['NEW ADMISSION', 'bg-purple-600'] : ['ADMISSION', 'bg-purple-600'],
@@ -2287,7 +2293,7 @@
                 offlineFormName: text(raw.offlineFormName, 'Offline Application Form', 80),
                 sourceName: text(raw.sourceName, 'Official website', 100),
                 publishedAt,
-                discoveredAt: text(raw.discoveredAt, '', 40),
+                discoveredAt: discoveredAtRaw,
                 originalLastDate: text(raw.originalLastDate, '', 60),
                 lastDateExtended: raw.lastDateExtended === true,
                 extendedLastDate: text(raw.extendedLastDate, '', 60),
@@ -2303,8 +2309,14 @@
         // publication and is removed automatically after that window elapses.
         const JUST_IN_WINDOW_HOURS = 48;
 
+        // FIX 2026-09-18: noticeTimestamp and freshness must be based on publishedAt
+        // only (official document date). Using discoveredAt caused archive docs
+        // re-discovered today to appear as breaking news and top-sorted as "Just In".
+        // When publishedAt is missing, timestamp is 0 so the job sorts to the bottom
+        // and never gets Just In / NEW badges (backend now backfills publishedAt from
+        // document URL date, so most jobs will have it).
         function noticeTimestamp(alert) {
-            const value = alert && (alert.publishedAt || alert.discoveredAt);
+            const value = alert && alert.publishedAt;
             if (!value) return 0;
             const timestamp = Date.parse(value);
             return Number.isFinite(timestamp) ? timestamp : 0;
@@ -2315,6 +2327,15 @@
             if (!timestamp) return false;
             const age = Date.now() - timestamp;
             return age >= 0 && age <= hours * 60 * 60 * 1000;
+        }
+
+        // For cases where we genuinely need the discovery time (e.g. fallback sort
+        // for curated entries that lack publishedAt), use this helper.
+        function discoveryTimestamp(alert) {
+            const value = alert && (alert.publishedAt || alert.discoveredAt);
+            if (!value) return 0;
+            const ts = Date.parse(value);
+            return Number.isFinite(ts) ? ts : 0;
         }
 
         function updateBreakingNews(automaticAlerts) {
@@ -2480,6 +2501,8 @@
                     ...admissionDatabase.filter(item => !admissionTitles.has(item.title.toLowerCase()))
                 ];
 
+                // FIX 2026-09-18: updatedAt must be publishedAt only so archive docs
+                // without an official date do not sort to the top of Results/Admit.
                 const resourceTitles = new Set(resultAlerts.map(alert => alert.title.toLowerCase()));
                 resultsList = [
                     ...resultAlerts.map(alert => ({
@@ -2491,7 +2514,7 @@
                             : `Official Result • ${alert.sourceName}`,
                         isNew: alert.isNewNotice,
                         isJustIn: alert.isJustIn === true,
-                        updatedAt: alert.publishedAt || alert.discoveredAt,
+                        updatedAt: alert.publishedAt,
                         link: alert.pdfLink !== '#' ? alert.pdfLink : alert.applyLink
                     })),
                     ...resultsList.filter(item => !resourceTitles.has(item.title.toLowerCase()))
@@ -2507,7 +2530,7 @@
                         source: alert.sourceName || alert.department,
                         isNew: alert.isNewNotice,
                         isJustIn: alert.isJustIn === true,
-                        updatedAt: alert.publishedAt || alert.discoveredAt,
+                        updatedAt: alert.publishedAt,
                         link: alert.applyLink !== '#' && alert.applyLink ? alert.applyLink : alert.pdfLink
                     })),
                     ...admitCards.filter(item => !admitTitles.has(item.title.toLowerCase()))
