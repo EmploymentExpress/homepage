@@ -1248,9 +1248,27 @@ def _remember_mirror(template: str, success: bool, now: datetime) -> None:
 
 
 def _ordered_mirror_templates(now: datetime) -> tuple[str, ...]:
-    """Healthy mirrors first; failing mirrors last (and only after cooldown)."""
+    """Healthy mirrors first; failing mirrors last (and only after cooldown).
 
-    def rank(template: str) -> tuple[int, int, str]:
+    Inside the healthy group the mirror that succeeded most recently is tried
+    first: R2 promises "a mirror that recently succeeded is tried first", so the
+    rotation must be ordered by *proven recency*, never by an absent failure
+    stamp. Ranking on ``lastFailureAt`` alone put every mirror with zero
+    consecutive failures — including one that has just answered, and any mirror
+    never tried at all — ahead of its most recent evidence: a recorded success
+    was ranked behind a mirror whose failure stamp was merely older or missing.
+    A mirror with no success yet stays behind the recently proven ones (declared
+    but untested transports are not preferred over working ones), and
+    ``SOURCE_MIRRORS`` order breaks any remaining tie.
+    """
+
+    def success_recency(template: str) -> float:
+        """Ascending key: most recent success first, never-proven last."""
+        stats = MIRROR_MEMORY.get(template) or {}
+        last_success = parse_timestamp(stats.get("lastSuccessAt") or "")
+        return -last_success.timestamp() if last_success else float("inf")
+
+    def rank(template: str) -> tuple[int, float, int, float]:
         stats = MIRROR_MEMORY.get(template) or {}
         failures = int(stats.get("consecutiveFailures") or 0)
         last_failure = parse_timestamp(stats.get("lastFailureAt") or "")
@@ -1259,7 +1277,12 @@ def _ordered_mirror_templates(now: datetime) -> tuple[str, ...]:
             and failures >= 2
             and (now - last_failure).total_seconds() < MIRROR_RETRY_COOLDOWN_HOURS * 3600
         )
-        return (1 if cooling_down else 0, failures, last_failure.isoformat() if last_failure else "")
+        return (
+            1 if cooling_down else 0,
+            success_recency(template),
+            failures,
+            last_failure.timestamp() if last_failure else 0.0,
+        )
 
     return tuple(sorted(SOURCE_MIRRORS, key=rank))
 

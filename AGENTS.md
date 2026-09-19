@@ -175,10 +175,14 @@ runs because a single dead mirror was the only one ever tried). The same section
    at all is a **failure**: `fetch_source_listing()` retries it through a read-only mirror when
    the source opts in, otherwise records it in `sourceHealth`. PGIMER stayed "healthy" with zero
    published notices for a week before this rule existed.
-5. **Mirror rotation with memory (R2).** `SOURCE_MIRRORS` holds four read-only mirrors
-   (allorigins, r.jina.ai, codetabs, corsproxy). Per-mirror health persists in
-   `mirrorHealth` across runs: a mirror that fails twice is skipped for 24 hours instead of
-   being retried on every fetch. One dead mirror must never starve every failing source.
+5. **Mirror rotation with memory (R2).** `SOURCE_MIRRORS` holds seven read-only mirrors
+   (r.jina.ai, thingproxy, cors.sh, allorigins `/get` and `/raw`, codetabs, corsproxy).
+   Per-mirror health persists in `mirrorHealth` across runs: a mirror that fails twice is
+   skipped for 12 hours instead of being retried on every fetch, and within the healthy
+   group the mirror that **succeeded most recently is tried first** — `_ordered_mirror_templates()`
+   ranks on proven recency, never on an absent failure stamp, so a mirror that has just
+   answered can never be ranked behind an untried one. One dead mirror must never starve
+   every failing source.
 6. **Transient 5xx retry (R3) and opt-in SSL fallback (R4).** Server errors and 429s earn one
    extra direct attempt with backoff (AIIMS Bathinda answers one request with 500 and the next
    with the real page). Sources with broken certificate chains may set `"sslFallback": true`

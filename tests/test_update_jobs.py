@@ -5,7 +5,7 @@ import tempfile
 import unittest
 import urllib.error
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -3373,6 +3373,31 @@ class VerifiedReliabilityRuleTests(unittest.TestCase):
         # A success resets the mirror to the front of the rotation.
         monitor._remember_mirror(allorigins, True, now)
         self.assertEqual(monitor._ordered_mirror_templates(now)[0], allorigins)
+
+    def test_ordered_mirrors_rank_by_proven_recency_not_by_a_failure_stamp(self):
+        # R2: "a mirror that recently succeeded is tried first". Ranking on
+        # lastFailureAt alone made every mirror whose failure stamp is older —
+        # or missing entirely, because it never failed — outrank the mirror
+        # that just answered, so the rotation ignored its freshest evidence.
+        monitor.MIRROR_MEMORY.clear()
+        self.addCleanup(monitor.MIRROR_MEMORY.clear)
+        now = datetime.now(timezone.utc)
+        jina = "https://r.jina.ai/{url}"
+        allorigins = "https://api.allorigins.win/raw?url={quoted}"
+        allorigins_get = "https://api.allorigins.win/get?url={quoted}"
+        stale = now - timedelta(hours=monitor.MIRROR_RETRY_COOLDOWN_HOURS + 1)
+        for _ in range(2):
+            monitor._remember_mirror(jina, False, stale)
+        ordered = monitor._ordered_mirror_templates(now)
+        # Nothing has succeeded yet: the stale-failure mirror is probed later
+        # than the never-failed mirrors, but its cooldown has expired so it is
+        # still in the rotation.
+        self.assertEqual(ordered[-1], jina)
+        self.assertIn(allorigins_get, ordered)
+        monitor._remember_mirror(allorigins, True, now)
+        ordered = monitor._ordered_mirror_templates(now)
+        self.assertEqual(ordered[0], allorigins, "the mirror that just succeeded goes first")
+        self.assertLess(ordered.index(allorigins), ordered.index(jina))
 
     def test_mirror_memory_round_trips_through_state(self):
         monitor.MIRROR_MEMORY.clear()
