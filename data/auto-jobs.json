@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-19T10:58:15Z",
+  "updatedAt": "2026-09-19T15:52:46Z",
   "jobs": [
     {
       "id": 136827400961426,
@@ -1098,8 +1098,8 @@
       "location": "Ludhiana, Punjab",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "advtNo": "See Official Notice",
@@ -1136,7 +1136,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "admission",
-      "badge": "NEW ADMISSION",
+      "badge": "ADMISSION",
       "badgeColor": "bg-purple-600",
       "type": "central",
       "categorySlug": "central",
@@ -1174,8 +1174,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "CRPD/SCO/2026-27/20",
