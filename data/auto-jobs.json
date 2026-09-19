@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-19T15:52:46Z",
+  "updatedAt": "2026-09-19T20:39:37Z",
   "jobs": [
     {
       "id": 136827400961426,
@@ -794,8 +794,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -832,7 +832,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "result",
-      "badge": "NEW RESULT",
+      "badge": "RESULT",
       "badgeColor": "bg-rose-600",
       "type": "central",
       "categorySlug": "central",
