@@ -13,7 +13,7 @@ Each link below opens one static page for a single government vacancy or notice.
 ## Latest Punjab government jobs
 
 - [AIIMS Bathinda: 13) List of Stage-I Marks for the post of Tutor/Cinical Instructor](https://employmentexpress.github.io/homepage/share/job-136827400961426.html) — 35 Posts; eligibility 8th/10th
-- [PAU Ludhiana: Post of Ground Helper (Last date for submission of application 15-10-2026) - Director Students' Welfare](https://employmentexpress.github.io/homepage/share/job-102851129958755.html) — last date 15-10-2026; eligibility 8th/10th
+- [PAU Ludhiana: Post of Ground Helper (Last date for submission of application 15-10-2026) - Director Students' Welfare](https://employmentexpress.github.io/homepage/share/job-102851129958755.html) — 15 Posts; last date 15-10-2026; eligibility 8th/10th
 - [Punjab All India: ECHS Ferozepur Recruitment 2026 Application Form](https://employmentexpress.github.io/homepage/share/job-238551255168358.html) — last date 05-10-2026; eligibility Graduate
 - [GADVASU Ludhiana: Corrigendum-I for Advertisement No 03/2026 for the various Non-Teaching posts of Guru Angad Dev Veterinary and Animal Sciences University, Ludhiana](https://employmentexpress.github.io/homepage/share/job-162883099549181.html) — eligibility Diploma/ITI
 - [PAU Ludhiana: Post of Senior Research Fellow (Last date for submission of application 24-09-2026 and appear for interview on 28-09-2026 at 11.00 AM) - Department of Plant Pathology](https://employmentexpress.github.io/homepage/share/job-150999024392903.html) — last date 24-09-2026; eligibility Graduate
@@ -128,4 +128,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-09-19
+Last updated: 2026-09-20
