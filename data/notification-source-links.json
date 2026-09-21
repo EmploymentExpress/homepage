@@ -1224,6 +1224,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-21T04:54:48Z"
+    },
+    {
+      "url": "https://www.assamrifles.gov.in/join-assam-rifles",
+      "name": "assamrifles.gov.in",
+      "department": "assamrifles.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-21T12:47:17Z"
     }
   ]
 }
