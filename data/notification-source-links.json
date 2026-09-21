@@ -1206,6 +1206,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-18T11:13:32Z"
+    },
+    {
+      "url": "https://davrecruit.davcmc.in/index.html",
+      "name": "davrecruit.davcmc.in",
+      "department": "davrecruit.davcmc.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-21T04:54:48Z"
     }
   ]
 }

@@ -265,7 +265,9 @@
         "2c522f5463d7873b26529ae74db55b50217cb7483067e97691a0afba57398d28",
         "1608f3f40572da7b74d9efb16159ebb1a4a8cf026f58c088129be07aea9a4226",
         "34e0f6eea86a19fda4cbb2927cf8a735696e7407c23841d7d53eca24cb79f28f",
-        "4e457588ca5979d0bd4c25f6df69999e73ac60652a4557ee1402cf181a2a605e"
+        "4e457588ca5979d0bd4c25f6df69999e73ac60652a4557ee1402cf181a2a605e",
+        "0d7976b2f9c528893c8a956e061087a362b785dc7bc59a0ec449d12f9d02dedd",
+        "54f2b89db5f5dd3a16ee493c01f33aed88bcc0333d70d05c8e10cd162bc1e5d7"
       ]
     },
     "punjabjobalert": {
@@ -403,7 +405,9 @@
         "d85df6606a164aab56e0796f25732d52b96a24eae8054609f6ede4a2c3708b38",
         "c1d6c3c307d0ca45b3acd9792b89c7eb9ed3cfcda6a8cd898f3e86b3ed6127f5",
         "67ef2d06e22579d82fcb7d90bdc05bd86d557f9343ad73de37ded58e056f35f9",
-        "aeedeb18c73d96d1e39b5fccb7996b2aea3cb34f0ebe42ca0305d6b36aa300b5"
+        "aeedeb18c73d96d1e39b5fccb7996b2aea3cb34f0ebe42ca0305d6b36aa300b5",
+        "9a7050282c56b45827a7fa942bc722a8a8202b6f9da79362fc8f1e6bb41b5b75",
+        "e0842f1bd1412562500c71aa40c90b95ac5b83d8d06aa61f5792334fdda1d740"
       ]
     },
     "cup": {
@@ -937,7 +941,15 @@
         "fdb1324440e916647bd4ecbe713a7e0bfe7ea057e5960f2c0eab4114adb4d21e",
         "f7cf6d84acb4491b5ff32f3e5b4523570e1bf9070633eb66753f1d7772b7b26c",
         "876c180e2dc685d52815023c2a81fa76bed7d8ec96b90dae9f98013ef1bd257b",
-        "924c1348c783178a94fe17ae1542706b2ac55a8f779f90efd2c1c8473fdc851f"
+        "924c1348c783178a94fe17ae1542706b2ac55a8f779f90efd2c1c8473fdc851f",
+        "7c46b6c3db8e6279615753de26f8fbcf1069ad9977fa9d91841bd3f3bcb78122",
+        "7c092f7808f0451d2e5e1e549f1ed322a98d16e4765d27d5744823e26c28e6ba",
+        "5defc07b1bd98ec8f1658a01079dfa1d62341d7915a19aeac548f02028926917",
+        "e562a4a525afb3f5a92ed0a7ed3e71c286dd726b5268d905bcd4beb974b18a5b",
+        "fe186c9476ec2b0921734f7f501f04ccb68d809f24b84e35b382f88fa6919954",
+        "7ef8ec934877203d577ebeb09cd117e8916c613f5c9003e4fe6b2eff7adb0e89",
+        "501ea44f6c6c0ce337ddacda31043ce5ff092445cdf499b623a5419c45bae89e",
+        "397ff30b5e48cd6d45a80f82aa544e3bb2ac4baa000bcb9b893f96c5a3d362cc"
       ]
     },
     "indiapost-gds": {
@@ -8670,9 +8682,9 @@
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
+      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "punjab-legal-services-authority": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
@@ -8695,28 +8707,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
+      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "punjab-health": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "chdsw": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
+      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "pilbs": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "punjab-sports": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "tmc": {
@@ -8737,9 +8749,9 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
+      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "chandigarh-administration-public-notices": {
       "consecutiveFailures": 0,
@@ -8758,13 +8770,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -8773,13 +8785,13 @@
       "silentDead": true
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -8787,8 +8799,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 84,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 85,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -8814,24 +8826,22 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
-      "lastSuccessAt": "2026-09-18T11:13:32Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "official listing answered HTTP 200 with no notice links"
+      "lastSuccessAt": "2026-09-21T04:54:48Z",
+      "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
@@ -8852,30 +8862,28 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1010)>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
-      "lastSuccessAt": "2026-09-18T11:13:32Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "official listing answered HTTP 200 with no notice links"
+      "lastSuccessAt": "2026-09-21T04:54:48Z",
+      "consecutiveFailures": 0
     },
     "custom-09b7c46162c2": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [Errno -3] Temporary failure in name resolution>"
     },
     "custom-aefc6db87072": {
@@ -8887,18 +8895,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 86,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 87,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 82,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "mirror fetch failed: HTTP Error 500: Internal Server Error"
+      "consecutiveFailures": 83,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
+      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 82,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 83,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -8914,8 +8922,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 81,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 82,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
@@ -8923,14 +8931,14 @@
       "consecutiveFailures": 0
     },
     "custom-ac818ccf7e1c": {
-      "consecutiveFailures": 74,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 75,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-1c5eb2ad0b22": {
-      "consecutiveFailures": 67,
+      "consecutiveFailures": 68,
       "lastSuccessAt": "2026-09-01T12:30:31Z",
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>",
       "silentDead": true
     },
@@ -8940,8 +8948,8 @@
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-501ebf7f4ad9": {
-      "consecutiveFailures": 73,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 74,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-9a97990dc80b": {
@@ -8949,8 +8957,8 @@
       "consecutiveFailures": 0
     },
     "custom-5df32e916383": {
-      "consecutiveFailures": 71,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 72,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dc214c99342a": {
@@ -8962,31 +8970,31 @@
       "consecutiveFailures": 0
     },
     "custom-4e8822c8e2c1": {
-      "consecutiveFailures": 69,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 70,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)"
     },
     "custom-5758e613fcd0": {
-      "consecutiveFailures": 69,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 70,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-ea47f2a4f8e2": {
       "lastSuccessAt": "2026-09-08T06:32:33Z",
-      "consecutiveFailures": 44,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 45,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [Errno -2] Name or service not known>"
     },
     "pgimer": {
       "lastSuccessAt": "2026-09-04T18:26:52Z",
-      "consecutiveFailures": 39,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 40,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)",
       "silentDead": true
     },
     "custom-bff0bd9d1cf9": {
-      "consecutiveFailures": 56,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 57,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dd40f8b9f110": {
@@ -9018,20 +9026,16 @@
       "consecutiveFailures": 0
     },
     "punjabjobalert": {
-      "lastSuccessAt": "2026-09-18T11:13:32Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "official listing answered HTTP 200 with no notice links"
+      "lastSuccessAt": "2026-09-21T04:54:48Z",
+      "consecutiveFailures": 0
     },
     "haryanajobs": {
       "lastSuccessAt": "2026-09-17T04:51:56Z",
       "consecutiveFailures": 0
     },
     "onlineforms-latest": {
-      "lastSuccessAt": "2026-09-18T11:13:32Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
-      "lastError": "official listing answered HTTP 200 with no notice links"
+      "lastSuccessAt": "2026-09-21T04:54:48Z",
+      "consecutiveFailures": 0
     },
     "speedjob-latest": {
       "lastSuccessAt": "2026-09-17T04:51:56Z",
@@ -9051,13 +9055,13 @@
       "consecutiveFailures": 0
     },
     "custom-de40f5f21bb7": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-a7bad566b2f7": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "gadvasu": {
@@ -9070,69 +9074,69 @@
       "silentDead": true
     },
     "custom-c69d86cd23b9": {
-      "consecutiveFailures": 22,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 23,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-2b69a49239e9": {
-      "consecutiveFailures": 22,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 23,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "prtc": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "custom-ef07d2b951bc": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-437e791ef952": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-09-20T20:48:41Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-09-21T04:54:48Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     }
   },
   "mirrorHealth": {
     "https://api.allorigins.win/raw?url={quoted}": {
-      "consecutiveFailures": 356,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 365,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     },
     "https://r.jina.ai/{url}": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:23:11.519021Z"
+      "lastSuccessAt": "2026-09-21T05:31:40.813896Z"
     },
     "https://api.codetabs.com/v1/proxy/?quest={quoted}": {
-      "consecutiveFailures": 355,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 364,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     },
     "https://corsproxy.io/?url={quoted}": {
-      "consecutiveFailures": 355,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 364,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     },
     "https://thingproxy.freeboard.io/fetch/{url}": {
-      "consecutiveFailures": 75,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 84,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     },
     "https://proxy.cors.sh/{url}": {
-      "consecutiveFailures": 75,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 84,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     },
     "https://api.allorigins.win/get?url={quoted}": {
-      "consecutiveFailures": 75,
-      "lastFailureAt": "2026-09-20T21:11:10.777127Z"
+      "consecutiveFailures": 84,
+      "lastFailureAt": "2026-09-21T05:18:40.329789Z"
     }
   },
   "detailFetchHealth": {
     "cdnbbsr.s3waas.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T20:51:28.291642Z"
+      "lastSuccessAt": "2026-09-21T04:57:44.042917Z"
     },
     "aiimsbathinda.edu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T20:51:54.776025Z"
+      "lastSuccessAt": "2026-09-21T04:58:15.059792Z"
     },
     "collegeadmissions.gndu.ac.in": {
       "consecutiveFailures": 0,
@@ -9158,7 +9162,7 @@
     },
     "ibpsreg.ibps.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:09:33.894741Z"
+      "lastSuccessAt": "2026-09-21T05:17:02.699833Z"
     },
     "www.nal.res.in": {
       "consecutiveFailures": 0,
@@ -9174,7 +9178,7 @@
     },
     "sbi.bank.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:21:10.039332Z"
+      "lastSuccessAt": "2026-09-21T05:29:33.579083Z"
     },
     "uco.bank.in": {
       "consecutiveFailures": 0,
@@ -9186,7 +9190,7 @@
     },
     "sahitya-akademi.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:24:16.323536Z"
+      "lastSuccessAt": "2026-09-21T05:32:47.876487Z"
     },
     "cup.edu.in": {
       "consecutiveFailures": 0,
@@ -9198,7 +9202,7 @@
     },
     "hau.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:20:53.734590Z"
+      "lastSuccessAt": "2026-09-21T05:29:12.866543Z"
     },
     "rampur.nic.in": {
       "consecutiveFailures": 0,
@@ -9206,15 +9210,15 @@
     },
     "bfuhs.ggsmch.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:05:01.664087Z"
+      "lastSuccessAt": "2026-09-21T05:11:56.555730Z"
     },
     "desgpc.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:05:07.461857Z"
+      "lastSuccessAt": "2026-09-21T05:12:03.683466Z"
     },
     "www.gadvasu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-09-20T21:09:38.974645Z"
+      "lastSuccessAt": "2026-09-21T05:17:08.461597Z"
     },
     "gadvasu.in": {
       "consecutiveFailures": 0,
