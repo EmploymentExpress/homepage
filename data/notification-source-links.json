@@ -1260,6 +1260,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-22T05:29:40Z"
+    },
+    {
+      "url": "https://www.presscouncil.nic.in/Openings.aspx",
+      "name": "presscouncil.nic.in",
+      "department": "presscouncil.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T11:37:15Z"
     }
   ]
 }
