@@ -42,6 +42,16 @@
       "maxHeadlines": 40,
       "maxNewPerRun": 8,
       "proxyFallback": true
+    },
+    {
+      "id": "indgovtjobs",
+      "name": "IndGovtJobs - Indian Government Jobs",
+      "url": "https://www.indgovtjobs.in/feeds/posts/default?alt=rss",
+      "maxHeadlines": 80,
+      "maxNewPerRun": 8,
+      "bootstrapCount": 8,
+      "proxyFallback": true,
+      "websiteUrl": "https://www.indgovtjobs.in/"
     }
   ]
 }

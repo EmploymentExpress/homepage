@@ -50,6 +50,12 @@ concurrency:
 
 jobs:
 
+  source-access:
+    name: Read-only official source diagnostics
+    permissions:
+      contents: read
+    uses: ./.github/workflows/source-access.yml
+
   update:
 
     if: github.repository == 'EmploymentExpress/homepage'
@@ -91,6 +97,10 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Check official websites for new alerts
+
+        # The always-running final step writes one summary, even on failure.
+        env:
+          GITHUB_STEP_SUMMARY: ""
 
         run: python scripts/update_jobs.py
 
@@ -317,3 +327,7 @@ jobs:
           echo "Failed to rebase and push SEO discovery files after 3 attempts" >&2
 
           exit 1
+
+      - name: Report source health and unresolved discovery leads
+        if: always()
+        run: python scripts/source_health_summary.py

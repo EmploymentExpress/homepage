@@ -54,7 +54,7 @@ REDIRECT_PAGE = "redirect.html"
 # The homepage layout is FROZEN for AI agents and humans alike — content-only
 # updates; see AGENTS.md and tests/test_layout_order.py before editing index.html.
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
-DISCOVERY_HOSTS = {"haryanajobs.in", "linkingsky.com", "punjabjobalert.com", "rozgarnews.com"}
+DISCOVERY_HOSTS = {"haryanajobs.in", "linkingsky.com", "punjabjobalert.com", "rozgarnews.com", "indgovtjobs.in"}
 # Job blogs / aggregators, social platforms and shorteners: an "Official Website"
 # row pointing at one of these is never an official website and is never
 # auto-registered as a monitor source.
@@ -74,7 +74,7 @@ OFFICIAL_WEBSITE_DOMAIN_SUFFIXES = (
     ".org.in", ".net.in", ".co.in", ".edu", ".org", ".in",
 )
 
-DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "punjabjobalert", "punjab job alert", "punjabjobalert.com", "rozgarnews", "rozgar news")
+DISCOVERY_BRAND_TERMS = ("haryanajobs", "haryana jobs", "punjabjobalert", "punjab job alert", "punjabjobalert.com", "rozgarnews", "rozgar news", "indgovtjobs.in", "indgovtjobs", "ind govt jobs")
 # Aggregator branding that must never surface in a published alert title or
 # source name (the offline-form portals host the forms but are never credited).
 OFFLINE_BRAND_TERMS = (
@@ -496,6 +496,10 @@ EXCLUDED_TERMS = (
 # non-teaching job alert whose listing page only said "Will be Updated
 # Shortly." — a published job post whose only attachment was a phone book.
 NON_NOTICE_DOCUMENT_TERMS = (
+    "cookie policy",
+    "privacy policy",
+    "terms of use",
+    "terms and conditions",
     "telephone directory",
     "telephone list",
     "contact directory",
@@ -1132,6 +1136,11 @@ def document_wording(value: Any) -> str:
 def is_non_notice_document(*values: Any) -> bool:
     """True when any URL / link label names an administrative document, not a notice."""
     for value in values:
+        path = urllib.parse.unquote(urllib.parse.urlsplit(str(value or "")).path).lower()
+        if re.search(r"/(?:how[-_ ]?to[-_ ]?apply|application[-_ ]?guide)(?:[._ -]|$)", path):
+            return True
+        # Filenames often use CookiePolicy_v1.pdf / PrivacyPolicy.pdf.
+        value = re.sub(r"([a-z])([A-Z])", r"\1 \2", str(value or ""))
         words = document_wording(value)
         if words and NON_NOTICE_DOCUMENT_RE.search(words):
             return True
@@ -1721,6 +1730,43 @@ def parse_html(text: str, base_url: str) -> tuple[list[Candidate], NoticeHTMLPar
     return candidates, parser
 
 
+def discovery_candidates(download: Download) -> list[Candidate]:
+    """Read feed rows with HTML article links (not just official PDF tables).
+
+    Deadlines are context for identifying leads, never an official publication
+    date. The official page alone supplies every field of a published job.
+    """
+    text = decode_document(download)
+    feed_items = parse_feed(text, download.url)
+    if feed_items:
+        return feed_items
+    candidates, parser = parse_html(text, download.url)
+    rows: list[Candidate] = []
+    claimed: set[str] = set()
+    for row in parser.rows:
+        cells = [clean_text(cell.get("text", "")) for cell in row.get("cells", [])]
+        date = _row_notice_date(row)
+        if not date:
+            continue
+        subjects = [cell for cell in cells if cell and not parse_date_token(cell)
+                    and cell.lower() not in ATTACHMENT_LABELS
+                    and cell.lower() not in GENERIC_TITLES]
+        # Require separate organisation/post cells; don't collapse a whole
+        # homepage's multi-column job grid into one enormous headline.
+        if len(subjects) < 2 or len(subjects) > 6:
+            continue
+        links = list(dict.fromkeys(canonical_url(url) for url, _ in row.get("links", [])))
+        links = [url for url in links if url and not is_generic_homepage(url)]
+        if len(links) != 1:
+            continue
+        title = clean_title(" — ".join(subjects))
+        if len(title) > 400:
+            continue
+        rows.append(Candidate(title, links[0], "Recruitment listing; deadline " + date))
+        claimed.add(links[0])
+    return rows + [candidate for candidate in candidates if candidate.url not in claimed]
+
+
 def source_candidates(download: Download) -> list[Candidate]:
     text = decode_document(download)
     feed_items = parse_feed(text, download.url)
@@ -2215,7 +2261,7 @@ def detect_extension(text: str) -> tuple[bool, str]:
 def infer_vacancies(text: str) -> str:
     patterns = (
         r"(?i)\brecruitment\s+(?:of|for)\s+([1-9]\d{0,5}(?:,\d{3})?)(?:\s+[a-z][a-z&/()'-]*){0,8}\s+(?:vacancies|vacancy|posts?|positions?)\b",
-        r"(?i)\b([1-9]\d{0,5}(?:,\d{3})?)\s+(?:vacancies|vacancy|posts?|positions?)\b",
+        r"(?i)(?<![\w/.-])([1-9]\d{0,5}(?:,\d{3})?)\s+(?:vacancies|vacancy|posts?|positions?)\b",
         r"(?i)\b(?:vacancies|vacancy|posts?|positions?)\s*(?:are|is|:|-)?\s*([1-9]\d{0,5}(?:,\d{3})?)\b",
     )
     for pattern in patterns:
@@ -2531,7 +2577,7 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
     for url, label in parser.links:
         if re.search(r"(?i)\b(?:apply online|online application|register now|new registration|click here to apply|apply now|candidate registration|application form|online portal|apply|registration)\b", label or ""):
             safe = canonical_url(url)
-            if safe:
+            if safe and not is_non_notice_document(safe, label):
                 apply_url = safe
                 break
     if apply_url == candidate.url:
@@ -2539,7 +2585,7 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
             path_lower = urllib.parse.urlsplit(url).path.lower()
             if any(term in path_lower for term in ("/apply", "/register", "/registration", "/online")):
                 safe = canonical_url(url)
-                if safe:
+                if safe and not is_non_notice_document(safe):
                     apply_url = safe
                     break
     # Find the strongest PDF on the detail page for the Official Notice button.
@@ -3987,6 +4033,14 @@ def looks_like_discovery_headline(candidate: Candidate) -> bool:
     title = strip_discovery_branding(candidate.title)
     if len(title) < 12 or title.lower() in GENERIC_TITLES:
         return False
+    # Category/navigation links are not individual job leads (notably the
+    # IndGovtJobs menu returned by blocked/incomplete listing responses).
+    if re.fullmatch(
+        r"(?i)(?:(?:latest |all india |indian )?(?:government|govt|bank|railway|"
+        r"public sector company|state wise govt|degree govt|engineer govt|"
+        r"10th 12th pass govt) jobs|employment news|free job alert)", title
+    ):
+        return False
     lowered = f"{title} {candidate.summary}".lower()
     if any(term in lowered for term in EXCLUDED_TERMS):
         return False
@@ -4015,13 +4069,21 @@ def load_discovery_feeds(path: Path = DEFAULT_DISCOVERY_FEEDS) -> list[dict[str,
         # portal's own URLs/branding are never shown on the homepage.
         if not url or not feed_id or not (is_discovery_host(url) or is_offline_form_url(url)):
             continue
-        feeds.append({
+        feed = {
             "id": feed_id,
             "name": clean_text(entry.get("name") or feed_id),
             "url": url,
             "maxHeadlines": int(entry.get("maxHeadlines") or registry.get("maxHeadlinesPerFeed", 40)),
             "maxNewPerRun": int(entry.get("maxNewPerRun") or registry.get("maxNewPerFeed", 5)),
-        })
+            "bootstrapCount": max(0, int(entry.get("bootstrapCount", 0))),
+        }
+        for flag in ("proxyFallback", "sslFallback"):
+            if flag in entry:
+                feed[flag] = bool(entry[flag])
+        for key in ("timeout", "detailTimeout"):
+            if key in entry:
+                feed[key] = int(entry[key])
+        feeds.append(feed)
     return feeds
 
 
@@ -4072,13 +4134,15 @@ def process_discovery_feeds(
             # sourceHealth so a dead feed is visible instead of silently
             # skipped.
             download = fetch_source_listing(feed, feed["url"])
-            if record_source_success(state, feed["id"], now):
-                state_changed = True
             headlines = deduplicate_candidates(
                 candidate
-                for candidate in source_candidates(download)[: feed["maxHeadlines"]]
+                for candidate in discovery_candidates(download)
                 if looks_like_discovery_headline(candidate)
-            )
+            )[: feed["maxHeadlines"]]
+            if not headlines:
+                raise RuntimeError("Discovery listing contains no usable job headlines")
+            if record_source_success(state, feed["id"], now):
+                state_changed = True
         except Exception as exc:
             if record_source_failure(state, feed["id"], now, str(exc)):
                 state_changed = True
@@ -4086,27 +4150,43 @@ def process_discovery_feeds(
             continue
 
         source_state = state_sources.setdefault(feed["id"], {"initializedAt": None, "fingerprints": []})
-        known = set(source_state.get("fingerprints") or [])
-        unseen = [headline for headline in headlines if fingerprint(headline) not in known]
         first_success = not source_state.get("initializedAt")
-        selected = unseen[: 0 if first_success else feed["maxNewPerRun"]]
-        source_state["fingerprints"] = list(dict.fromkeys(
-            (source_state.get("fingerprints") or []) + [fingerprint(item) for item in (headlines if first_success else selected)]
-        ))[-2000:]
+        # Old fingerprints included failed verification attempts. Reconsider the
+        # currently visible leads once after upgrading, without erasing official
+        # fingerprints (which still prevent duplicate publication).
+        if source_state.get("discoveryVersion") != 2:
+            source_state["fingerprints"] = []
+            source_state["discoveryVersion"] = 2
+            state_changed = True
+        known = set(source_state.get("fingerprints") or [])
+        pending = source_state.setdefault("pending", {})
+        visible = {fingerprint(item) for item in headlines}
+        pending = {key: value for key, value in pending.items() if key in visible and key not in known}
+        source_state["pending"] = pending
+        unseen = [headline for headline in headlines if fingerprint(headline) not in known]
+        # Retry oldest attempts first, so one blocked board cannot starve the
+        # rest of a feed. Unattempted leads have priority over retries.
+        unseen.sort(key=lambda item: pending.get(fingerprint(item), {}).get("lastAttemptAt", ""))
+        limit = int(feed.get("maxNewPerRun", 5))
+        bootstrap = min(limit, int(feed.get("bootstrapCount", 0)))
         if first_success:
             source_state["initializedAt"] = now.isoformat().replace("+00:00", "Z")
-        if first_success or selected:
             state_changed = True
-
-        print(
-            f"  Found {len(headlines)} headline(s), {len(unseen)} unseen, "
-            f"{'baselining only' if first_success else f'resolving {len(selected)}'}"
-        )
-        if first_success:
-            continue
-
+            if not bootstrap:
+                source_state["fingerprints"] = [fingerprint(item) for item in headlines]
+                print(f"  Found {len(headlines)} headline(s), baselining only")
+                continue
+        selected = unseen[:bootstrap if first_success else limit]
+        print(f"  Found {len(headlines)} headline(s), {len(unseen)} unresolved, resolving {len(selected)}")
         published_this_feed = 0
         for headline in selected:
+            headline_key = fingerprint(headline)
+            attempt = pending.setdefault(headline_key, {})
+            attempt.update(title=headline.title, url=headline.url,
+                           lastAttemptAt=now.isoformat().replace("+00:00", "Z"),
+                           attempts=int(attempt.get("attempts", 0)) + 1,
+                           lastError="No verified official notice yet")
+            state_changed = True
             # Official-website auto-registration: the article behind a discovery
             # headline prints an "Official Website" row next to its notification
             # links. Whenever that row holds a real official domain, register it
@@ -4117,6 +4197,7 @@ def process_discovery_feeds(
             )
             official = match_official_organization(headline.title, organizations)
             if official is None:
+                attempt["lastError"] = "No approved organisation matched headline"
                 print(f"  Skipped unmatched headline: {headline.title[:90]}")
                 continue
             official_url = canonical_url(official.get("url", ""))
@@ -4161,6 +4242,7 @@ def process_discovery_feeds(
                     )
                     matches = raw_matches
             if not matches:
+                attempt["lastError"] = "Official listing unavailable or no matching notice"
                 print(f"  No official notice matched {official.get('name')} for: {headline.title[:80]}")
                 continue
             official_source_state = state_sources.setdefault(
@@ -4168,6 +4250,7 @@ def process_discovery_feeds(
                 {"initializedAt": now.isoformat().replace("+00:00", "Z"), "fingerprints": []},
             )
             known_official = set(official_source_state.get("fingerprints") or [])
+            resolved = True
             for official_candidate in matches:
                 key = fingerprint(official_candidate)
                 if key in known_official:
@@ -4176,12 +4259,22 @@ def process_discovery_feeds(
                     job = job_from_candidate(official_candidate, official, now)
                 except Exception as exc:
                     print(f"  Could not build official job from {official_candidate.url}: {exc}", file=sys.stderr)
+                    resolved = False
+                    attempt["lastError"] = str(exc)[:300]
                     continue
                 if any(
                     is_discovery_host(str(job.get(field, ""))) or is_offline_form_url(str(job.get(field, "")))
                     for field in ("pdfLink", "applyLink", "sourceUrl")
                 ):
                     print(f"  Dropped job that still pointed at a discovery host: {job.get('title')}")
+                    resolved = False
+                    attempt["lastError"] = "Rejected non-official job links"
+                    continue
+                if is_archive_notice(job, now, max_notice_age_days({}, official)) or (
+                    job.get("alertType") in {"recruitment", "admission"}
+                    and _dated_notice_is_active(job.get("lastDate", ""), now) is False
+                ):
+                    known_official.add(key)
                     continue
                 if offline_vacancy_covered_by_portal(job, offline_pool):
                     print(
@@ -4199,6 +4292,12 @@ def process_discovery_feeds(
             ))[-2000:]
             if official_source_state.get("initializedAt") is None:
                 official_source_state["initializedAt"] = now.isoformat().replace("+00:00", "Z")
+            if resolved:
+                known.add(headline_key)
+                pending.pop(headline_key, None)
+                source_state["fingerprints"] = list(dict.fromkeys(
+                    source_state.get("fingerprints", []) + [headline_key]
+                ))[-2000:]
         print(f"  Published {published_this_feed} official alert(s) from discovery")
 
     return jobs, added, state_changed

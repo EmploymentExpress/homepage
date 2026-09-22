@@ -1,0 +1,109 @@
+name: Check official source access (read-only)
+
+on:
+  workflow_call:
+    inputs:
+      source_ids:
+        required: false
+        default: ''
+        type: string
+  workflow_dispatch:
+    inputs:
+      source_ids:
+        description: 'Optional comma-separated source IDs (for example ssc,ibps,ntpc); empty checks all'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-access-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    if: github.repository == 'EmploymentExpress/homepage'
+    # Optional JSON repository variable: ["self-hosted","linux","x64","india"]
+    # This does not provision a runner or guarantee its egress location.
+    runs-on: ${{ fromJSON(vars.SOURCE_CHECK_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 35
+    env:
+      PYTHONUNBUFFERED: '1'
+      SOURCE_IDS: ${{ inputs.source_ids || '' }}
+    steps:
+      - name: Check out diagnostic code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+
+      - name: Prepare isolated browser storage
+        shell: bash
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/source-access-browsers" >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: automation/source-access-requirements.txt
+
+      - name: Install browser diagnostic dependencies
+        id: dependencies
+        timeout-minutes: 3
+        continue-on-error: true
+        run: python -m pip install --disable-pip-version-check -r automation/source-access-requirements.txt
+
+      - name: Install Chromium and hosted runner libraries
+        timeout-minutes: 5
+        if: steps.dependencies.outcome == 'success' && runner.environment == 'github-hosted'
+        continue-on-error: true
+        run: python -m playwright install --with-deps chromium
+
+      - name: Install Chromium on self-hosted runner
+        timeout-minutes: 5
+        if: steps.dependencies.outcome == 'success' && runner.environment == 'self-hosted'
+        continue-on-error: true
+        # The administrator must preinstall Chromium's OS libraries. No sudo here.
+        run: python -m playwright install chromium
+
+      - name: Test read-only diagnostic safeguards
+        run: python -m unittest discover -s tests -p 'test_source_access.py' -v
+
+      - name: Check direct access, browser rendering, mirrors and official alternatives
+        timeout-minutes: 18
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/source-access"
+          python scripts/check_source_access.py \
+            --source-ids "$SOURCE_IDS" \
+            --output "$RUNNER_TEMP/source-access" \
+            2>&1 | tee "$RUNNER_TEMP/source-access/run.log"
+
+      - name: Publish diagnostic summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/source-access/report.md" ]; then
+            cat "$RUNNER_TEMP/source-access/report.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## Source access diagnostic did not complete' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Check setup/test logs; absence of a report is not a successful source check.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload source access evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-access-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/source-access/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove temporary browser and diagnostic data
+        if: always()
+        shell: bash
+        run: rm -rf -- "$RUNNER_TEMP/source-access" "$PLAYWRIGHT_BROWSERS_PATH"

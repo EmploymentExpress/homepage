@@ -179,7 +179,7 @@
     },
     {
       "id": "nvs",
-      "enabled": false,
+      "enabled": true,
       "name": "Navodaya Vidyalaya Samiti",
       "department": "Navodaya Vidyalaya Samiti (NVS)",
       "url": "https://navodaya.gov.in/nvs/en/Recruitment/",
@@ -195,11 +195,12 @@
         "admit-card"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 5
+      "maxNewPerRun": 5,
+      "proxyFallback": true
     },
     {
       "id": "nvs-admission-updates",
-      "enabled": false,
+      "enabled": true,
       "name": "NVS Admission and JNVST Updates",
       "department": "Navodaya Vidyalaya Samiti (NVS / JNVST)",
       "url": "https://navodaya.gov.in/nvs/en/Home1/index.html",
@@ -215,11 +216,12 @@
         "admit-card"
       ],
       "bootstrapCount": 0,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "proxyFallback": true
     },
     {
       "id": "ssc",
-      "enabled": false,
+      "enabled": true,
       "name": "Staff Selection Commission",
       "department": "Staff Selection Commission (SSC)",
       "url": "https://ssc.gov.in/home/noticeboard",
@@ -235,11 +237,12 @@
         "admit-card"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "proxyFallback": true
     },
     {
       "id": "upsc",
-      "enabled": false,
+      "enabled": true,
       "name": "Union Public Service Commission",
       "department": "Union Public Service Commission (UPSC)",
       "url": "https://upsc.gov.in/recruitment/recruitment-advertisement",
@@ -255,7 +258,8 @@
         "admit-card"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 5
+      "maxNewPerRun": 5,
+      "proxyFallback": true
     },
     {
       "id": "rrb-chandigarh",
