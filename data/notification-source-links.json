@@ -1494,6 +1494,186 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://careers.ntpc.co.in/recruitment/",
+      "name": "careers.ntpc.co.in",
+      "department": "careers.ntpc.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
+      "name": "sssb.punjab.gov.in",
+      "department": "sssb.punjab.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://www.upsc.gov.in/",
+      "name": "upsc.gov.in",
+      "department": "upsc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://iimcat.ac.in/",
+      "name": "iimcat.ac.in",
+      "department": "iimcat.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://www.hpbose.org/Home.aspx",
+      "name": "hpbose.org",
+      "department": "hpbose.org",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://bpsc.bihar.gov.in/",
+      "name": "bpsc.bihar.gov.in",
+      "department": "bpsc.bihar.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://birac.nic.in/desc_new.php?id=1355",
+      "name": "birac.nic.in",
+      "department": "birac.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://birac.nic.in/",
+      "name": "birac.nic.in",
+      "department": "birac.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://www.nic.gov.in/",
+      "name": "nic.gov.in",
+      "department": "nic.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://www.joinindiannavy.gov.in/",
+      "name": "joinindiannavy.gov.in",
+      "department": "joinindiannavy.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T21:18:22Z"
     }
   ]
 }
