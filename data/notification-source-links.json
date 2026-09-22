@@ -1278,6 +1278,222 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-22T11:37:15Z"
+    },
+    {
+      "url": "https://jam.iitkgp.ac.in/",
+      "name": "jam.iitkgp.ac.in",
+      "department": "jam.iitkgp.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://gate2027.iitm.ac.in/",
+      "name": "gate2027.iitm.ac.in",
+      "department": "gate2027.iitm.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://navodaya.gov.in/nvs/en/Home1/",
+      "name": "navodaya.gov.in",
+      "department": "navodaya.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://bankofbaroda.bank.in/career/current-opportunities",
+      "name": "bankofbaroda.bank.in",
+      "department": "bankofbaroda.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://rrb.indianrailways.gov.in/",
+      "name": "rrb.indianrailways.gov.in",
+      "department": "rrb.indianrailways.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://drdo.gov.in/drdo/en/offerings/vacancies/dipr-delhi-invites-eligible-candidates-engagement-iti-pass-out-aprentices",
+      "name": "drdo.gov.in",
+      "department": "drdo.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://rect.crpf.gov.in/",
+      "name": "rect.crpf.gov.in",
+      "department": "rect.crpf.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://www.nal.res.in/en/career",
+      "name": "nal.res.in",
+      "department": "nal.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://www.nspcl.co.in/page/10",
+      "name": "nspcl.co.in",
+      "department": "nspcl.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://bcplonline.co.in/",
+      "name": "bcplonline.co.in",
+      "department": "bcplonline.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://www.seci.co.in/",
+      "name": "seci.co.in",
+      "department": "seci.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
+    },
+    {
+      "url": "https://www.curaj.ac.in/",
+      "name": "curaj.ac.in",
+      "department": "curaj.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T16:56:55Z"
     }
   ]
 }
