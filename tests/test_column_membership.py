@@ -18,15 +18,51 @@ import re
 import shutil
 import subprocess
 import unittest
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "index.html"
 AUTO_JOBS = ROOT / "data" / "auto-jobs.json"
 
+_DEADLINE = re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})(?:\s+(\d{1,2}):(\d{2}))?")
+
+
+def _deadline_still_open(value) -> bool:
+    """Mirror index.html's parseLastDate()/isActiveApplication().
+
+    A notice stays on the board until end of day (default 23:59) of its
+    readable DD-MM-YYYY last date; an unreadable deadline keeps it listed.
+    """
+    if not isinstance(value, str):
+        return True
+    match = _DEADLINE.search(value.strip())
+    if not match:
+        return True
+    day, month, year = int(match[1]), int(match[2]), int(match[3])
+    hour = int(match[4]) if match[4] is not None else 23
+    minute = int(match[5]) if match[5] is not None else 59
+    try:
+        deadline = datetime(year, month, day, hour, minute)
+    except ValueError:
+        return True
+    return deadline >= datetime.now()
+
+
 # The published store's cross-listed alerts, read once for the data-side checks.
+# Only alerts whose deadline is still open are render-asserted below: a
+# cross-listed alert whose last date has just passed is already off the live
+# board (prepareVisibleVacancies filters it from every column) and
+# sanitize_published_jobs() purges it from the store on the next monitoring
+# run — but the workflow's "Test alert parser" step runs BEFORE that update
+# step, so a lapsed record otherwise deadlocks the pipeline the night its
+# deadline falls between two scheduled runs (run 35688651782, 2026-09-22).
 STORE = json.loads(AUTO_JOBS.read_text(encoding="utf8"))
-FLAGGED = sorted(job["id"] for job in STORE["jobs"] if job.get("alsoInPunjab") is True)
+FLAGGED = sorted(
+    job["id"]
+    for job in STORE["jobs"]
+    if job.get("alsoInPunjab") is True and _deadline_still_open(job.get("lastDate"))
+)
 
 _CARDS = re.compile(r"openJobDetail\((\d+)\)")
 
@@ -128,7 +164,7 @@ runner(document, window, global.fetch).then(r => process.stdout.write(JSON.strin
     def test_cross_listed_alert_renders_in_both_columns(self):
         if not FLAGGED:
             self.skipTest(
-                "no alsoInPunjab alert in the store; re-curate one to exercise cross-listing"
+                "no listed alsoInPunjab alert in the store; re-curate one to exercise cross-listing"
             )
         for job_id in FLAGGED:
             self.assertIn(job_id, self.out["punjabCards"], "cross-listed alert missing from Punjab column")
