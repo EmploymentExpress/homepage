@@ -113,6 +113,20 @@ def build_report(state: dict, output: dict) -> str:
         lines.append(f"| {field} | {count} / {len(jobs)} |")
     lines.append("")
 
+    pending = [(sid, item) for sid, source in sources.items()
+               for item in (source.get("pending", {}) or {}).values()]
+    if pending:
+        lines.extend(["### Unresolved discovery leads", "",
+                      "Leads are retried; none is published without official verification.", "",
+                      "| Feed | Headline | Attempts | Last error |", "| --- | --- | --- | --- |"])
+        for sid, item in pending[:40]:
+            title = str(item.get("title", "")).replace("|", "/").replace("\n", " ")[:100]
+            error = str(item.get("lastError", "")).replace("|", "/").replace("\n", " ")[:100]
+            lines.append(f"| `{sid}` | {title} | {item.get('attempts', 0)} | {error} |")
+        if len(pending) > 40:
+            lines.append(f"| … | {len(pending) - 40} more unresolved leads | | |")
+        lines.append("")
+
     mirror_health = state.get("mirrorHealth", {}) or {}
     if mirror_health:
         lines.append("### 🪞 Read-only mirror rotation (R2)")

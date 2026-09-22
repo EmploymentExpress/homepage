@@ -1,0 +1,11 @@
+{
+  "directAttempts": 2,
+  "timeoutSeconds": 12,
+  "browser": true,
+  "browserTimeoutSeconds": 20,
+  "browserWaitMs": 2000,
+  "maxMirrors": 2,
+  "maxAlternatives": 2,
+  "workers": 4,
+  "budgetSeconds": 900
+}

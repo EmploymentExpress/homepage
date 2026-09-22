@@ -170,20 +170,34 @@ The monitor currently has these official recruitment sources enabled:
 16. **Chandigarh Administration Public Notices** — `https://chandigarh.gov.in/public-notice`
 17. **Central University of Punjab (CUPB), Bathinda** — `https://cup.edu.in/`
 
-The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are additionally enabled under the special `offline-forms` role. All other boards that were previously configured (PSSSB, PPSC, Punjab Police, PSPCL, PNRC, NVS, SSC, UPSC, RRB Chandigarh, RCF Kapurthala, AIIMS Bathinda Non-Faculty/Project, PGIMER Chandigarh) are still listed in `automation/sources.json` but are switched off with `"enabled": false`. The discovery headline feeds (LinkingSky, Punjab Job Alert, HaryanaJobs) run as **headline scanners only** (`automation/discovery-feeds.json`) — they are never published sources. To enable another board, set its `enabled` flag to `true`; to add a discovery feed, append its object to `automation/discovery-feeds.json`. District court / eCourts pages are not monitored.
+The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are also enabled under the special `offline-forms` role. Source switches in `automation/sources.json` are authoritative; SSC, UPSC, NVS recruitment and NVS admission monitoring are enabled with read-only mirror fallback. Enabling a source does not imply it is reachable: failures remain visible in `sourceHealth`.
 
-#### Discovery-only feeds (LinkingSky / Punjab Job Alert / HaryanaJobs)
+#### Discovery-only feeds
 
-`automation/discovery-feeds.json` lists **headline scanners only**. They are not published sources. **Currently the `feeds` list contains LinkingSky (Punjab & All-India Government Jobs), Punjab Job Alert and HaryanaJobs (Haryana & Punjab Government Jobs)**; discovery publishes only official notices that match an approved official organisation. This is how it behaves:
+`automation/discovery-feeds.json` contains LinkingSky, Punjab Job Alert, HaryanaJobs, OnlineForms, SpeedJob and **IndGovtJobs**. These supply leads only, never publishable job details.
 
-1. The monitor reads headlines from LinkingSky, Punjab Job Alert and HaryanaJobs.
-2. It extracts the recruiting organisation name from the headline.
-3. It matches that name against the approved official list (`automation/sources.json` plus `automation/official-organizations.json`).
-4. On a match, it opens the **official** government recruitment page and extracts dates, vacancies, qualifications, PDFs and apply links from that page.
-5. If no approved official organisation matches, the headline is skipped.
-6. Aggregator URLs, branding and article text are never stored in `data/auto-jobs.json` and never shown on the website.
+IndGovtJobs is scanned through `https://www.indgovtjobs.in/feeds/posts/default?alt=rss`: its homepage returned navigation only during verification on 22 September 2026, while the RSS endpoint returned current recruitment articles. It scans up to 80 eligible headlines and resolves at most 8 per run, including its first scan.
 
-Add another official board by appending an object to `automation/official-organizations.json` (`id`, `name`, `url`, `aliases`). Do **not** put aggregator URLs in `automation/sources.json` or `data/notification-source-links.json`.
+1. Parse RSS/Atom entries or HTML job rows, preserving employer and post names. Filter navigation and duplicates **before** applying `maxHeadlines`.
+2. Match the recruiting organisation against `automation/sources.json` and `automation/official-organizations.json`.
+3. Read the organisation's official listing and, if necessary, its raw page source. Only that source supplies published details and links.
+4. Keep unmatched leads, unavailable official sources and failed enrichment in a bounded, oldest-attempt-first retry queue. Mark a headline resolved only after official verification/duplicate checks or an explicit archive/expiry decision.
+5. Preserve `proxyFallback`, `sslFallback` and fetch timeouts from feed configuration. Navigation-only responses are failures, not healthy empty scans.
+6. Keep aggregator URLs, branding and article text out of published alerts. Diagnostic lead URLs exist only in `data/seen-notices.json`.
+
+`discoveryVersion: 2` migrates older feed state by reconsidering currently visible headlines once. Official-notice fingerprints are retained to avoid duplicate alerts. New feeds default to baseline-only first scans; set `bootstrapCount` explicitly to process a bounded first batch. Unresolved leads and source failures appear in the Actions summary, including when a previous workflow step fails.
+
+Add another official board to `automation/official-organizations.json` (`id`, `name`, `url`, `aliases`). **Do not put aggregator URLs in `automation/sources.json` or `data/notification-source-links.json`.** Adding a feed or enabling a board never bypasses official verification.
+
+See [the September discovery repair notes](docs/DISCOVERY_REPAIR_2026-09-22.md) for verification evidence and remaining external-source blockers.
+
+#### Recurring access diagnostics (read-only)
+
+Every updater run now also invokes **Check official source access (read-only)** in parallel. It checks registered targets with bounded direct retries, a JavaScript-capable Chromium browser, opted-in mirrors and same-host alternative links observed on official pages. It records access failures, sanitized HTML, screenshots and redacted API request metadata as seven-day workflow artifacts. This job never publishes browser/aggregator data or modifies the live website.
+
+It can also be dispatched separately with source IDs such as `ssc,ibps,ntpc`. To use a separately provisioned India-hosted Linux runner, set the repository variable `SOURCE_CHECK_RUNNER_LABELS` to `["self-hosted","linux","x64","india"]`; the default remains `ubuntu-latest`. An India label does not itself provide India egress, and this setting changes diagnostics only.
+
+See [setup, safety limits and manual-run instructions](docs/SOURCE_ACCESS_WORKFLOW.md). Changes take effect for scheduled runs after merging the workflow into the default branch.
 
 #### Add another website or RSS/Atom feed
 

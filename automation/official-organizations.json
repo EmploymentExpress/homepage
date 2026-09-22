@@ -66,7 +66,8 @@
       "aliases": [
         "upsc",
         "union public service commission"
-      ]
+      ],
+      "proxyFallback": true
     },
     {
       "id": "ssc",
@@ -87,7 +88,8 @@
       "aliases": [
         "ssc",
         "staff selection commission"
-      ]
+      ],
+      "proxyFallback": true
     },
     {
       "id": "dsssb",
@@ -728,6 +730,179 @@
         "pepsu road transport corporation",
         "prtc patiala"
       ]
+    },
+    {
+      "id": "ntpc",
+      "name": "NTPC Limited",
+      "department": "NTPC Limited",
+      "url": "https://careers.ntpc.co.in/recruitment/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "ntpc",
+        "national thermal power corporation"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "cpri",
+      "name": "Central Power Research Institute (CPRI)",
+      "department": "Central Power Research Institute (CPRI)",
+      "url": "https://cpri.res.in/en/career",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "cpri",
+        "central power research institute"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "bmhrc",
+      "name": "ICMR - Bhopal Memorial Hospital and Research Centre",
+      "department": "ICMR - Bhopal Memorial Hospital and Research Centre",
+      "url": "https://bmhrc.ac.in/content/Hindi/2532_1_Advertisement.aspx",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "bmhrc",
+        "icmr-bmhrc",
+        "bhopal memorial hospital"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "assam-rifles",
+      "name": "Assam Rifles",
+      "department": "Assam Rifles",
+      "url": "https://www.assamrifles.gov.in/join-assam-rifles",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "assam rifles",
+        "assam rifle"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "indian-army",
+      "name": "Indian Army",
+      "department": "Indian Army",
+      "url": "https://www.joinindianarmy.nic.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "indian army",
+        "army dental corps",
+        "army tgc"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "itbp",
+      "name": "Indo-Tibetan Border Police Force (ITBP)",
+      "department": "Indo-Tibetan Border Police Force (ITBP)",
+      "url": "https://recruitment.itbpolice.nic.in/",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "itbp",
+        "indo-tibetan border police"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "csir-ngri",
+      "name": "CSIR - National Geophysical Research Institute",
+      "department": "CSIR - National Geophysical Research Institute",
+      "url": "https://www.ngri.res.in/openings-at-ngri.php",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "csir-ngri",
+        "csir ngri",
+        "ngri",
+        "national geophysical research institute"
+      ],
+      "proxyFallback": true
+    },
+    {
+      "id": "uiic",
+      "name": "United India Insurance Company Limited",
+      "department": "United India Insurance Company Limited",
+      "url": "https://uiic.co.in/web/careers/recruitment",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "recruitment",
+        "corrigendum",
+        "admit-card",
+        "result",
+        "answer-key"
+      ],
+      "aliases": [
+        "uiic",
+        "uiicl",
+        "united india insurance"
+      ],
+      "proxyFallback": true
     }
   ]
 }
