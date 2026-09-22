@@ -1242,6 +1242,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-21T12:47:17Z"
+    },
+    {
+      "url": "https://joinindianarmy.nic.in/Authentication.aspx",
+      "name": "joinindianarmy.nic.in",
+      "department": "joinindianarmy.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-22T05:29:40Z"
     }
   ]
 }
