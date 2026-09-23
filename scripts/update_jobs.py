@@ -5381,13 +5381,21 @@ def register_official_website_link(
     host = host_name(normalized)
     label = strip_discovery_branding(clean_text(name)) or host
     org = strip_discovery_branding(clean_text(department)) or label
+    # R14 Punjab column rule: a Punjab-column organisation (AIIMS Bathinda, a
+    # Chandigarh organisation, CUPB, the Punjab state or one of its districts,
+    # matched on the URL, the department and the name — banks merely named
+    # Punjab stay central) must be registered in the Punjab column too, or the
+    # guard test in tests/test_punjab_column_rule.py
+    # (StoreClassificationTests.test_registered_official_links_use_punjab_column_values)
+    # fails the next run.
+    is_punjab = is_punjab_column_organisation(normalized, org, label)
     registry["links"].append({
         "url": normalized,
         "name": label,
         "department": org,
-        "type": "central",
-        "categorySlug": "central",
-        "location": "All India",
+        "type": "punjab" if is_punjab else "central",
+        "categorySlug": "punjab-jobs" if is_punjab else "central",
+        "location": "Punjab" if is_punjab else "All India",
         "noticeTypes": sorted(DEFAULT_NOTICE_TYPES),
         "addedBy": "discovery-official-website",
         "addedAt": (now or datetime.now(timezone.utc)).replace(microsecond=0)

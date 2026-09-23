@@ -1418,6 +1418,42 @@ class JobMonitorTests(unittest.TestCase):
                 )
             )
 
+    def test_punjab_official_website_is_registered_in_the_punjab_column(self):
+        """A Punjab-column official website is never auto-registered as central.
+
+        Regression guard: on 2026-09-22 the discovery run auto-registered
+        sssb.punjab.gov.in (a bare URL with the hostname as its only label) as
+        ``central``, and the next run failed
+        StoreClassificationTests.test_registered_official_links_use_punjab_column_values.
+        Registration must apply the R14 Punjab column rule up front — and a
+        genuinely central site must stay central.
+        """
+        now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "links.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
+                    name="sssb.punjab.gov.in",
+                    department="sssb.punjab.gov.in",
+                    path=path,
+                    now=now,
+                )
+            )
+            entry = json.loads(path.read_text(encoding="utf-8"))["links"][0]
+            self.assertEqual(entry["type"], "punjab")
+            self.assertEqual(entry["categorySlug"], "punjab-jobs")
+            # A non-Punjab official website keeps the central column values.
+            path2 = Path(folder) / "central.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://ssc.gov.in/notice-board", path=path2, now=now
+                )
+            )
+            central = json.loads(path2.read_text(encoding="utf-8"))["links"][0]
+            self.assertEqual(central["type"], "central")
+            self.assertEqual(central["categorySlug"], "central")
+
     def test_dry_run_never_writes_the_registered_official_website(self):
         now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as folder:
