@@ -316,3 +316,60 @@ print(f'Ends with valid suffix: {any(headline.endswith(s) for s in [\"Result\", 
 
 The workflow is healthy otherwise (pages build and deployment succeeds consistently).
 
+
+---
+
+## Issue 4: Punjab Official Website Auto-Registered As Central (CRITICAL) — RESOLVED 2026-09-23
+
+> **Status: RESOLVED 2026-09-23.** `register_official_website_link()` now applies
+> the R14 Punjab column rule at registration time, and the mis-classified
+> registry entry was repaired in place.
+
+### Failure Details
+- **Affected Test:** `test_registered_official_links_use_punjab_column_values`
+- **Location:** `tests/test_punjab_column_rule.py` (`StoreClassificationTests`)
+- **Affected Run:** [Sept 23, 04:44 UTC](https://github.com/EmploymentExpress/homepage/actions/runs/35819531115) — `Update job alerts`, step **Test alert parser**
+- **Recurring:** the failure repeats on every scheduled run until fixed (test reads committed data)
+
+### Root Cause
+On **Sept 22, 21:18 UTC** the discovery run auto-registered the official link
+`https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083` (found on a
+discovery article) with **hostname-only metadata** (`name`/`department` =
+`sssb.punjab.gov.in`) and the hard-coded defaults from
+`register_official_website_link()`:
+
+```python
+"type": "central",
+"categorySlug": "central",
+"location": "All India",
+```
+
+The R14 Punjab column rule (AGENTS.md → "Punjab column rule") requires
+`sssb.punjab.gov.in` — a Punjab Subordinate Services Selection Board property —
+to publish in the **Latest Punjab Jobs column** (`type: "punjab"`,
+`categorySlug: "punjab-jobs"`). The guard test
+`test_registered_official_links_use_punjab_column_values` enforces this over
+`data/notification-source-links.json`, so the next scheduled run failed with:
+
+```
+AssertionError: 'central' != 'punjab'
+```
+
+### Fix
+1. **`scripts/update_jobs.py`** — `register_official_website_link()` now calls
+   `is_punjab_column_organisation(url, department, name)` before appending and
+   stores `punjab` / `punjab-jobs` / `Punjab` when the rule matches (banks merely
+   *named* Punjab stay central, exactly like the guard test).
+2. **`data/notification-source-links.json`** — the already-registered PSSSB
+   vacancy-page entry was repaired in place (`central` → `punjab`,
+   `punjab-jobs`, location `Punjab`).
+3. **`tests/test_update_jobs.py`** — new regression test
+   `test_punjab_official_website_is_registered_in_the_punjab_column` asserts the
+   registration path itself classifies correctly (Punjab URL → punjab column;
+   `ssc.gov.in` → central).
+
+### Verification
+```bash
+python -m unittest discover -s tests -v
+# Ran 339 tests ... OK (skipped=3)
+```
