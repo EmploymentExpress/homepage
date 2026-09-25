@@ -1429,6 +1429,40 @@ class JobMonitorTests(unittest.TestCase):
             )
             self.assertFalse(path.exists())
 
+    def test_registered_official_website_keeps_its_own_column(self):
+        """R14: an auto-registered Punjab website is never stored as all-India.
+
+        The registry is read straight off disk by
+        tests/test_punjab_column_rule.py, so a hardcoded "central" here lands in
+        data/notification-source-links.json and fails the alert-parser step of
+        the "Update job alerts" workflow on the next scheduled run.
+        """
+        now = datetime(2026, 9, 22, 21, 18, 22, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            punjab_path = Path(folder) / "punjab-links.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
+                    path=punjab_path,
+                    now=now,
+                )
+            )
+            punjab = json.loads(punjab_path.read_text(encoding="utf-8"))["links"][0]
+            self.assertEqual(punjab["type"], "punjab")
+            self.assertEqual(punjab["categorySlug"], "punjab-jobs")
+            self.assertNotEqual(punjab["location"], "All India")
+            # An all-India authority keeps the all-India column.
+            central_path = Path(folder) / "central-links.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://www.upsc.gov.in/", path=central_path, now=now
+                )
+            )
+            central = json.loads(central_path.read_text(encoding="utf-8"))["links"][0]
+            self.assertEqual(central["type"], "central")
+            self.assertEqual(central["categorySlug"], "central")
+            self.assertEqual(central["location"], "All India")
+
     def test_offline_run_registers_the_official_website_from_the_page(self):
         """End to end: reading a notification page stores its official website."""
         page = monitor.Download(
