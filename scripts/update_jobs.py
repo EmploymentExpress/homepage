@@ -5381,13 +5381,24 @@ def register_official_website_link(
     host = host_name(normalized)
     label = strip_discovery_branding(clean_text(name)) or host
     org = strip_discovery_branding(clean_text(department)) or label
+    # R14: classify the newly found website with the same Punjab-column rule
+    # every published notice goes through, so a Punjab / Chandigarh authority
+    # discovered on a notification page is never stored as an all-India source.
+    # The same three values are re-checked by
+    # tests/test_punjab_column_rule.py::test_registered_official_links_use_punjab_column_values,
+    # which reads this registry straight off disk — a hardcoded "central" here
+    # fails the alert-parser test step on the next scheduled run.
+    if is_punjab_column_organisation(normalized, org, label):
+        column, category_slug, location = "punjab", "punjab-jobs", "Punjab"
+    else:
+        column, category_slug, location = "central", "central", "All India"
     registry["links"].append({
         "url": normalized,
         "name": label,
         "department": org,
-        "type": "central",
-        "categorySlug": "central",
-        "location": "All India",
+        "type": column,
+        "categorySlug": category_slug,
+        "location": location,
         "noticeTypes": sorted(DEFAULT_NOTICE_TYPES),
         "addedBy": "discovery-official-website",
         "addedAt": (now or datetime.now(timezone.utc)).replace(microsecond=0)
