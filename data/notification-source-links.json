@@ -1926,6 +1926,114 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://sr.indianrailways.gov.in/index.jsp?lang=0",
+      "name": "sr.indianrailways.gov.in",
+      "department": "sr.indianrailways.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://www.upessc.up.gov.in/",
+      "name": "upessc.up.gov.in",
+      "department": "upessc.up.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://iafrecruitment.edcil.co.in/airmen/",
+      "name": "iafrecruitment.edcil.co.in",
+      "department": "iafrecruitment.edcil.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://indiannavy.gov.in/",
+      "name": "indiannavy.gov.in",
+      "department": "indiannavy.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://sahitya-akademi.gov.in/recruitment/vacancy.jsp",
+      "name": "sahitya-akademi.gov.in",
+      "department": "sahitya-akademi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://nests.tribal.gov.in/show_content.php?lang=1&level=1&ls_id=949&lid=550",
+      "name": "nests.tribal.gov.in",
+      "department": "nests.tribal.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T16:57:39Z"
     }
   ]
 }
