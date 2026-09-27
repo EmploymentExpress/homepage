@@ -1674,6 +1674,258 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-22T21:18:22Z"
+    },
+    {
+      "url": "https://exams.nta.nic.in/rmscet/",
+      "name": "exams.nta.nic.in",
+      "department": "exams.nta.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://gdsrect.indiapost.gov.in/gdscandidate",
+      "name": "gdsrect.indiapost.gov.in",
+      "department": "gdsrect.indiapost.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://app.indiapost.gov.in/gdscandidate",
+      "name": "app.indiapost.gov.in",
+      "department": "app.indiapost.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://www.indiapost.gov.in/gdsonlineengagement",
+      "name": "indiapost.gov.in",
+      "department": "indiapost.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://www.ngri.res.in/openings-at-ngri.php",
+      "name": "ngri.res.in",
+      "department": "ngri.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://upsc.gov.in/whats-new",
+      "name": "upsc.gov.in",
+      "department": "upsc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://btsc.bihar.gov.in/node/1231",
+      "name": "btsc.bihar.gov.in",
+      "department": "btsc.bihar.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://sskunjpura.org/detail.php?mid=Nw%3D%3D&sid=NzA%3D",
+      "name": "sskunjpura.org",
+      "department": "sskunjpura.org",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://www.ignou.ac.in/announcement/Career?nav=5",
+      "name": "ignou.ac.in",
+      "department": "ignou.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://www.nlcindia.in/website/en/careers/jobs/currentopenings.html",
+      "name": "nlcindia.in",
+      "department": "nlcindia.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://indiancoastguard.gov.in/recruitment",
+      "name": "indiancoastguard.gov.in",
+      "department": "indiancoastguard.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://uiic.co.in/",
+      "name": "uiic.co.in",
+      "department": "uiic.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://jharkhandhighcourt.nic.in/",
+      "name": "jharkhandhighcourt.nic.in",
+      "department": "jharkhandhighcourt.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
+    },
+    {
+      "url": "https://lsg.rajasthan.gov.in/lsg/",
+      "name": "lsg.rajasthan.gov.in",
+      "department": "lsg.rajasthan.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-27T12:01:23Z"
     }
   ]
 }
