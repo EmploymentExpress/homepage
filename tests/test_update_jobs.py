@@ -1392,6 +1392,37 @@ class JobMonitorTests(unittest.TestCase):
             self.assertEqual(sources[0]["url"], "https://indianarmy.nic.in/")
             self.assertTrue(sources[0]["id"].startswith("custom-"))
 
+    def test_official_website_registration_classifies_punjab_organisations(self):
+        # Regression: an auto-discovered Punjab official website (e.g.
+        # sssb.punjab.gov.in, sighted 2026-09-22) was stored as central and
+        # broke the R14 store-classification guard, blocking every scheduled
+        # update run. Punjab organisations must register in the Punjab column.
+        now = datetime(2026, 9, 22, 21, 18, 22, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "links.json"
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
+                    path=path,
+                    now=now,
+                )
+            )
+            entry = json.loads(path.read_text(encoding="utf-8"))["links"][0]
+            self.assertEqual(entry["type"], "punjab")
+            self.assertEqual(entry["categorySlug"], "punjab-jobs")
+            self.assertEqual(entry["location"], "Punjab")
+            # A genuine all-India organisation still registers as central.
+            self.assertTrue(
+                monitor.register_official_website_link(
+                    "https://careers.ntpc.co.in/recruitment/", path=path, now=now
+                )
+            )
+            entries = json.loads(path.read_text(encoding="utf-8"))["links"]
+            central = next(e for e in entries if e["url"].endswith("ntpc.co.in/recruitment/"))
+            self.assertEqual(central["type"], "central")
+            self.assertEqual(central["categorySlug"], "central")
+            self.assertEqual(central["location"], "All India")
+
     def test_official_website_registration_skips_blogs_portals_and_known_sources(self):
         now = datetime(2026, 8, 23, 6, 0, 0, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as folder:

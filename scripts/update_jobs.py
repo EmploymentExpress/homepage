@@ -5381,13 +5381,19 @@ def register_official_website_link(
     host = host_name(normalized)
     label = strip_discovery_branding(clean_text(name)) or host
     org = strip_discovery_branding(clean_text(department)) or label
+    # R14 Punjab column rule: a discovered official website that is a Punjab
+    # organisation (e.g. sssb.punjab.gov.in) must register in the Punjab
+    # column from the start — never as central. The store-classification guard
+    # test checks the same fields with the same matcher, so classify here
+    # exactly like the test does.
+    is_punjab = is_punjab_column_organisation(normalized, org, label)
     registry["links"].append({
         "url": normalized,
         "name": label,
         "department": org,
-        "type": "central",
-        "categorySlug": "central",
-        "location": "All India",
+        "type": "punjab" if is_punjab else "central",
+        "categorySlug": "punjab-jobs" if is_punjab else "central",
+        "location": "Punjab" if is_punjab else "All India",
         "noticeTypes": sorted(DEFAULT_NOTICE_TYPES),
         "addedBy": "discovery-official-website",
         "addedAt": (now or datetime.now(timezone.utc)).replace(microsecond=0)
