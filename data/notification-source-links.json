@@ -1517,9 +1517,9 @@
       "url": "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
       "name": "sssb.punjab.gov.in",
       "department": "sssb.punjab.gov.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
       "noticeTypes": [
         "admission",
         "admit-card",
