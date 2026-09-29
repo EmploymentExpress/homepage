@@ -2160,6 +2160,114 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://cetonline.karnataka.gov.in/kea/",
+      "name": "cetonline.karnataka.gov.in",
+      "department": "cetonline.karnataka.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://samvida-sathi.kvs.gov.in/",
+      "name": "samvida-sathi.kvs.gov.in",
+      "department": "samvida-sathi.kvs.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://bfuhs.ac.in/",
+      "name": "bfuhs.ac.in",
+      "department": "bfuhs.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://www.kvic.gov.in/",
+      "name": "kvic.gov.in",
+      "department": "kvic.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://www.sac.gov.in/",
+      "name": "sac.gov.in",
+      "department": "sac.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://dtl.gov.in/",
+      "name": "dtl.gov.in",
+      "department": "dtl.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T12:51:49Z"
     }
   ]
 }
