@@ -2034,6 +2034,132 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-27T16:57:39Z"
+    },
+    {
+      "url": "https://recruitment.itbpolice.nic.in/",
+      "name": "recruitment.itbpolice.nic.in",
+      "department": "recruitment.itbpolice.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://indianrailways.gov.in/railwayboard/view_section.jsp?lang=0&id=0%2C7%2C1281",
+      "name": "indianrailways.gov.in",
+      "department": "indianrailways.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://www.canarabank.bank.in/engagement-of-graduate-apprentices-in-canara-bank-under%c2%a0apprentices-act-1961-for-fy-2026-27.",
+      "name": "canarabank.bank.in",
+      "department": "canarabank.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://upsssc.gov.in/",
+      "name": "upsssc.gov.in",
+      "department": "upsssc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://bel-india.in/",
+      "name": "bel-india.in",
+      "department": "bel-india.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://www.indiapost.gov.in/",
+      "name": "indiapost.gov.in",
+      "department": "indiapost.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
+    },
+    {
+      "url": "https://gate2027ib.iitm.ac.in/",
+      "name": "GATE 2027 Notification, Registration, Exam Date, Eligibility, Syllabus",
+      "department": "GATE 2027 Notification, Registration, Exam Date, Eligibility, Syllabus",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-29T05:43:23Z"
     }
   ]
 }
