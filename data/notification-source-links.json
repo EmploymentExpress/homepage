@@ -2268,6 +2268,96 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-29T12:51:49Z"
+    },
+    {
+      "url": "https://aud.delhi.gov.in/careers",
+      "name": "aud.delhi.gov.in",
+      "department": "aud.delhi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T05:32:06Z"
+    },
+    {
+      "url": "https://upsssc.gov.in/Default.aspx",
+      "name": "upsssc.gov.in",
+      "department": "upsssc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T05:32:06Z"
+    },
+    {
+      "url": "https://www.aiimsexams.ac.in/info/Recruitments_new.html",
+      "name": "aiimsexams.ac.in",
+      "department": "aiimsexams.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T05:32:06Z"
+    },
+    {
+      "url": "https://www.maitreyi.ac.in/",
+      "name": "maitreyi.ac.in",
+      "department": "maitreyi.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T05:32:06Z"
+    },
+    {
+      "url": "https://www.du.ac.in/",
+      "name": "du.ac.in",
+      "department": "du.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T05:32:06Z"
     }
   ]
 }
