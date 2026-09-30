@@ -2358,6 +2358,42 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-30T05:32:06Z"
+    },
+    {
+      "url": "https://sssb.punjab.gov.in/index.html",
+      "name": "sssb.punjab.gov.in",
+      "department": "sssb.punjab.gov.in",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T12:34:03Z"
+    },
+    {
+      "url": "https://bseh.org.in/home",
+      "name": "bseh.org.in",
+      "department": "bseh.org.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-09-30T12:34:03Z"
     }
   ]
 }
