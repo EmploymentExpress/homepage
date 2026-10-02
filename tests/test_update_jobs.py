@@ -16,6 +16,56 @@ assert SPEC.loader
 sys.modules[SPEC.name] = monitor
 SPEC.loader.exec_module(monitor)
 
+# Fixture deadlines must be built relative to the day the suite runs. A
+# hardcoded "30 September 2026" silently turns into an expired deadline, and
+# the monitor is *supposed* to drop expired notices — so the guard goes red
+# without anyone changing the pipeline (every scheduled run failed from
+# 1 October 2026 until the fixtures were made relative). Month names are
+# spelled out here instead of using ``%B`` so the fixtures do not depend on the
+# runner's locale.
+_MONTH_NAMES = (
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+)
+
+
+def _date_in_days(days: int):
+    """``date`` object for today (UTC) plus ``days`` (negative for the past)."""
+    return datetime.now(timezone.utc).date() + timedelta(days=days)
+
+
+def _deadline_pair_in_days(days: int) -> tuple[str, str]:
+    """``(listing text, stored token)`` for today + ``days`` from one clock read.
+
+    ``("30 September 2026", "30-09-2026")`` — the two shapes the monitor reads
+    and writes for the same deadline.
+    """
+    day = _date_in_days(days)
+    return (
+        f"{day.day} {_MONTH_NAMES[day.month - 1]} {day.year}",
+        day.strftime("%d-%m-%Y"),
+    )
+
+
+def _long_date_in_days(days: int) -> str:
+    """Listing-page style deadline text: ``30 September 2026``."""
+    return _deadline_pair_in_days(days)[0]
+
+
+def _document_stamp_in_days(days: int, clock: str = "000000") -> str:
+    """Official-file style date stamp: ``20260910090000`` (``YYYYMMDDHHMMSS``)."""
+    return f"{_date_in_days(days).strftime('%Y%m%d')}{clock}"
+
 
 class JobMonitorTests(unittest.TestCase):
     def test_layout_guard_restores_changes_and_removes_new_assets(self):
@@ -1969,11 +2019,37 @@ class JobMonitorTests(unittest.TestCase):
         self.assertIn("onlineforms.in", hosts)
         self.assertIn("speedjob.in", hosts)
 
+    def test_relative_fixture_dates_stay_parseable_and_move_with_the_calendar(self):
+        # Guard the guards. Every deadline-driven fixture below is built from
+        # these helpers; if one stopped producing a date the monitor can parse,
+        # the deadline guards would fail with a confusing count ("1 != 2")
+        # instead of naming the date. They must also track today, which is the
+        # whole point: a fixture pinned to one calendar day expires and breaks a
+        # green suite on a scheduled run (see the 1 October 2026 outage).
+        text, token = _deadline_pair_in_days(45)
+        self.assertEqual(monitor.parse_date_token(text), token)
+        self.assertEqual(monitor.parse_date_token(_long_date_in_days(45)), token)
+        self.assertEqual(monitor.parse_date_token(_long_date_in_days(-5)), _date_in_days(-5).strftime("%d-%m-%Y"))
+        self.assertEqual(
+            monitor.document_date_from_url(
+                "https://aiimsbathinda.edu.in/images/Reqruitment/"
+                f"{_document_stamp_in_days(-5, '090000')}.pdf"
+            ),
+            _date_in_days(-5).strftime("%d-%m-%Y"),
+        )
+        self.assertEqual((_date_in_days(45) - _date_in_days(0)).days, 45)
+        self.assertGreater(_date_in_days(45), datetime.now(timezone.utc).date())
+
     def test_catch_up_publishes_seen_but_unpublished_active_notice(self):
-        page = b"""
-        <a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts. Last date 30 September 2026</a>
-        <a href='/driver.pdf'>Advertisement No. 9/2026 for recruitment of 12 Driver posts. Last date 15 October 2026</a>
-        """
+        # Both deadlines stay in the future relative to the run date: catch-up
+        # only publishes notices that are still open, so a fixture deadline in
+        # the past would (correctly) be skipped and the guard would fail.
+        page = (
+            "<a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts. "
+            f"Last date {_long_date_in_days(45)}</a>\n"
+            "<a href='/driver.pdf'>Advertisement No. 9/2026 for recruitment of 12 Driver posts. "
+            f"Last date {_long_date_in_days(60)}</a>\n"
+        ).encode("utf-8")
         source = {
             "id": "example",
             "name": "Example",
@@ -2458,10 +2534,15 @@ class JobMonitorTests(unittest.TestCase):
         self.assertEqual(jobs[0]["applyLink"], "")
 
     def test_seen_notice_is_refreshed_instead_of_left_stale(self):
-        listing = b"""
-        <a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts.
-        Last date of online registration: 30 September 2026. Age limit: 18 to 37 Years.</a>
-        """
+        # The refreshed deadline is relative to the run date: the sanitizer
+        # drops an expired recruitment alert, so a hardcoded past deadline
+        # would empty the store and fail the guard instead of testing refresh.
+        deadline, expected_last_date = _deadline_pair_in_days(45)
+        listing = (
+            "<a href='/clerk.pdf'>Advertisement No. 8/2026 for recruitment of 40 Clerk posts.\n"
+            f"        Last date of online registration: {deadline}. Age limit: 18 to 37 Years.</a>\n"
+            "        "
+        ).encode("utf-8")
         source = {
             "id": "example",
             "name": "Example",
@@ -2520,7 +2601,7 @@ class JobMonitorTests(unittest.TestCase):
             fingerprint = monitor.fingerprint(
                 monitor.Candidate(
                     "Advertisement No. 8/2026 for recruitment of 40 Clerk posts. "
-                    "Last date of online registration: 30 September 2026. Age limit: 18 to 37 Years.",
+                    f"Last date of online registration: {deadline}. Age limit: 18 to 37 Years.",
                     "https://example.gov.in/clerk.pdf",
                 )
             )
@@ -2551,7 +2632,7 @@ class JobMonitorTests(unittest.TestCase):
             job = updated["jobs"][0]
             self.assertEqual(job["id"], 1)
             self.assertEqual(job["discoveredAt"], "2026-08-18T00:00:00Z")
-            self.assertEqual(job["lastDate"], "30-09-2026")
+            self.assertEqual(job["lastDate"], expected_last_date)
             self.assertEqual(job["vacancies"], "40 Posts")
             self.assertEqual(job["advtNo"], "8/2026")
             self.assertEqual(job["age"], "18 to 37 Years")
@@ -3938,10 +4019,15 @@ class ArchivedNoticeFreshnessTests(unittest.TestCase):
         )
 
     def test_archived_notice_is_never_published_or_badged_as_new(self):
-        page = b"""
-        <a href='/images/Reqruitment/20250829033442.pdf'>7) Provisional Result Notification</a>
-        <a href='/images/Reqruitment/20260910090000.pdf'>8) Final Result Notification</a>
-        """
+        # The "current" notice is stamped relative to the run date: with a
+        # hardcoded stamp it silently ages past `maxNoticeAgeDays` and the guard
+        # stops having a publishable notice to keep (it would fail from 10 Nov 2026).
+        current_stamp = _document_stamp_in_days(-5, "090000")
+        page = (
+            "<a href='/images/Reqruitment/20250829033442.pdf'>7) Provisional Result Notification</a>\n"
+            f"        <a href='/images/Reqruitment/{current_stamp}.pdf'>8) Final Result Notification</a>\n"
+            "        "
+        ).encode("utf-8")
         source = {
             "id": "aiims-bathinda-non-faculty",
             "name": "AIIMS Bathinda (Non-Faculty)",

@@ -641,5 +641,15 @@ removed automatically once that window elapses.
 python -m unittest discover -s tests -v   # must pass, including layout-order tests
 ```
 
+**Fixture dates must be relative to the run date, never hardcoded.** The monitor is
+*supposed* to drop an expired deadline and to archive a notice older than the freshness
+window, so a fixture that hardcodes `30 September 2026` turns into a broken guard the day
+the calendar passes it — no code change, just a red workflow. (That is exactly what turned
+every scheduled run red from 1 October 2026.) Build fixture deadlines with the helpers at the top
+of `tests/test_update_jobs.py`: `_long_date_in_days()`, `_deadline_pair_in_days()` and
+`_document_stamp_in_days()`. Absolute dates are fine only when the test also fixes `now`
+itself (e.g. `now = datetime(2026, 9, 12, tzinfo=timezone.utc)`), because that pair cannot
+drift apart.
+
 Keep diffs minimal: the changed lines in your PR should be recognisable as exactly the content
 you were asked to update. If a diff touches section structure, stop and reconsider.
