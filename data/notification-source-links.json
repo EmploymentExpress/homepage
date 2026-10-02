@@ -2394,6 +2394,96 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-30T12:34:03Z"
+    },
+    {
+      "url": "https://canarabank.bank.in/pages/Recruitment",
+      "name": "canarabank.bank.in",
+      "department": "canarabank.bank.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-02T12:33:39Z"
+    },
+    {
+      "url": "https://natboard.edu.in/recruitment",
+      "name": "natboard.edu.in",
+      "department": "natboard.edu.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-02T12:33:39Z"
+    },
+    {
+      "url": "https://www.rrcjaipur.in/",
+      "name": "rrcjaipur.in",
+      "department": "rrcjaipur.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-02T12:33:39Z"
+    },
+    {
+      "url": "https://www.itbpolice.nic.in/",
+      "name": "itbpolice.nic.in",
+      "department": "itbpolice.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-02T12:33:39Z"
+    },
+    {
+      "url": "https://www.iitg.ac.in/",
+      "name": "iitg.ac.in",
+      "department": "iitg.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-02T12:33:39Z"
     }
   ]
 }
