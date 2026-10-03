@@ -2592,6 +2592,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-03T11:39:00Z"
+    },
+    {
+      "url": "https://sssc.gov.in/",
+      "name": "sssc.gov.in",
+      "department": "sssc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T16:17:14Z"
     }
   ]
 }
