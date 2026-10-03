@@ -169,6 +169,7 @@ The monitor currently has these official recruitment sources enabled:
 15. **Punjab Remote Sensing Centre (PRSC)** — `https://prsc.punjab.gov.in/Recruitment.aspx`
 16. **Chandigarh Administration Public Notices** — `https://chandigarh.gov.in/public-notice`
 17. **Central University of Punjab (CUPB), Bathinda** — `https://cup.edu.in/`
+18. **District Court Bathinda (Office of the District & Sessions Judge)** — `https://bathinda.dcourts.gov.in/notice-category/recruitments/` (registered as `bathinda-district-court` with mirror fallback; the court's Recruitments notice table is read on every run, and its raw page source is re-read when the table shows nothing new)
 
 The offline-application-form portals (`onlineforms.in` and `speedjob.in`) are also enabled under the special `offline-forms` role. Source switches in `automation/sources.json` are authoritative; SSC, UPSC, NVS recruitment and NVS admission monitoring are enabled with read-only mirror fallback. Enabling a source does not imply it is reachable: failures remain visible in `sourceHealth`.
 

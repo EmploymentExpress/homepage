@@ -903,6 +903,35 @@
         "united india insurance"
       ],
       "proxyFallback": true
+    },
+    {
+      "id": "bathinda-district-court",
+      "name": "Bathinda District Court",
+      "department": "District Court Bathinda (Office of the District & Sessions Judge)",
+      "url": "https://bathinda.dcourts.gov.in/notice-category/recruitments/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Bathinda, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "bathinda district court",
+        "district court bathinda",
+        "district & sessions judge, bathinda",
+        "district and sessions judge bathinda",
+        "office of the district & sessions judge bathinda",
+        "district legal services authority bathinda",
+        "dlsa bathinda",
+        "bathinda.dcourts.gov.in",
+        "bathinda sessions division"
+      ],
+      "proxyFallback": true
     }
   ]
 }
