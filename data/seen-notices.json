@@ -158,7 +158,9 @@
         "ccf1f9f693a66176f7e5b8d1432e918244412c736a36c626099d2e33f700c1e3",
         "3e78babf839b8b46383433fd91070a3daf9969a5b3ba525ce51833b46c88ffc9",
         "28b2dc32d52d5e20f4389b7ebba196716270e0b981e38b1ad4f94b07c667247b",
-        "3ce09d0402526376f8ca8f2a4f960c96f09440e26000ed23c7fc6280f968794b"
+        "3ce09d0402526376f8ca8f2a4f960c96f09440e26000ed23c7fc6280f968794b",
+        "dd22cd8c80c4255044c2732698d41174d443fa44059200d5b4548d0a32d84610",
+        "c8dbe12033f2205a19de7baa6e89c5a5d37489437458fb5b95259e25cf963ed7"
       ],
       "discoveryVersion": 2,
       "pending": {
@@ -168,13 +170,6 @@
           "lastAttemptAt": "2026-10-03T16:17:14Z",
           "attempts": 5,
           "lastError": "Official listing unavailable or no matching notice"
-        },
-        "0e3faf142338d6baacf537ff15876b1108ec3651aad2faf4e7109454fffc567a": {
-          "title": "Punjab State eGovernance Society (PSEGS) — 1 Deputy General Manager (Cyber Security) — Graduates, Post Graduates, Engineers, Post Graduate Diploma — Experience",
-          "url": "https://linkingsky.com/Docs/PSeGS-1-2026.pdf",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 4,
-          "lastError": "No approved organisation matched headline"
         },
         "b9c8fbe13ee0747bbf7837e3f9bd02f8a3c48891598b3700e79124e200c87c20": {
           "title": "Export Import Bank of India (EXIM Bank) — 12 Business Development Officer — Post Graduates — Experience",
@@ -260,47 +255,54 @@
           "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
-        "d74e0b94c19a4cd9263f99713b8eaae93501e09761c08ce49177ddf92306d612": {
-          "title": "Union Public Service Commission (UPSC) — 490 Engineering Services Exam 2027 — Engineers — Fresher — 06-10-2026 ( 3 days left)",
-          "url": "https://linkingsky.com/Docs/upsc-ece-2027.pdf",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 2,
-          "lastError": "Official listing unavailable or no matching notice"
-        },
-        "fef9187214b4e2576eea4b0b3120ef6d25a54093a363ceccc1504b0edb6ddf4a": {
-          "title": "India Optel Limited — 160 Project Technician, Junior Project Engineer, Welfare Officer and Consultant — ITI, Graduates, Post Graduates, Post Graduate Diploma — Fresher, Experience — Today",
-          "url": "https://linkingsky.com/Docs/INDIA-OPTEL-1-2026.pdf",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 2,
-          "lastError": "No approved organisation matched headline"
-        },
-        "a413a47f14259b386b409db468e638954b0abf12897d0ee764a8439135341377": {
-          "title": "Post Graduate Institute of Medical Education and Research Chandigarh (PGIMER Chandigarh) — 243 Nursing Officer — Doctors — Fresher, Experience — Today",
-          "url": "https://linkingsky.com/Docs/pgimer-nursing-officer-recruitment-2026.pdf",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 2,
-          "lastError": "Official listing unavailable or no matching notice"
-        },
-        "73baab295c3251755729e924993ab1f050f9fe1bd7aa541a8c620f34476b0e9a": {
-          "title": "Staff Selection Commission (SSC) — Combined Higher Secondary Level Exam 2026 for 2536 Posts — Intermediate, Servicemen — Fresher — 07-10-2026 ( 4 days left)",
-          "url": "https://linkingsky.com/Docs/SSC-CHSL-2026-AD.pdf",
-          "lastAttemptAt": "2026-10-03T16:17:14Z",
-          "attempts": 2,
-          "lastError": "Official listing unavailable or no matching notice"
-        },
-        "e863daa0616d8e7f563195c7dbda3f1f4404bfc2c9545224d04419a19c445570": {
-          "title": "Graduate Aptitude Test in Engineering (GATE) — Graduate Aptitude Test in Engineering (GATE 2027) — Graduates, Post Graduates, Engineers, Doctors — Fresher — 05-10-2026 ( 2 days left)",
-          "url": "https://gate2027.iitm.ac.in/important_dates",
-          "lastAttemptAt": "2026-10-03T16:17:14Z",
-          "attempts": 2,
-          "lastError": "No approved organisation matched headline"
-        },
         "60e7e2f2fd2d52a38c4312abe18dd516c188b22beb9997da13c8a0bcbc64b16c": {
           "title": "Supreme Court of India — 250 Junior Court Assistant — Graduates — Fresher",
           "url": "https://linkingsky.com/Docs/supreme-court-jca-2026.pdf",
           "lastAttemptAt": "2026-10-03T11:39:00Z",
           "attempts": 1,
           "lastError": "No approved organisation matched headline"
+        },
+        "c06baaace0cfeb48cce594900d064948673d3b312ba7db8ea7bf5efbef4d2815": {
+          "title": "Indo Tibetan Border Police Force (ITBP) — 21 Head Constable (Motor Mechanic) — ITI, Diploma — Fresher",
+          "url": "https://linkingsky.com/Docs/itbp-head-constable-motor-mechanic-2026.pdf",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "Official listing unavailable or no matching notice"
+        },
+        "c12d41d3a71f305a6f9076a7ce5a9414d42f869ff8f3f85a6280c7726ce09948": {
+          "title": "Assam Rifles — 354 Technical and Tradesman Recruitment Rally — Intermediate, ITI, Matriculation, Engineers, Diploma — Fresher",
+          "url": "https://linkingsky.com/Docs/assam-rifles-tradesman-2026.pdf",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "Official listing unavailable or no matching notice"
+        },
+        "d10791aebdfccc3c064f4c9098e034324d72cbb0131e5c6795d756cefa91109d": {
+          "title": "Canara Bank — 3500 Graduate Apprentices — Graduates — Fresher",
+          "url": "https://www.canarabank.bank.in/engagement-of-graduate-apprentices-in-canara-bank-under-apprentices-act-1961-for-fy-2026-27",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "a36efa6673784e600d7c06e7ad6b09d390699b58b7ebb3d96e7ebfdd5f3472f0": {
+          "title": "Indo Tibetan Border Police Force (ITBP) — 16 Head Constable (Education & Stress Counsellor) — Servicemen, Graduates — Fresher",
+          "url": "https://linkingsky.com/Docs/itbp-head-constable-education-and-stesss-counselor-2026.pdf",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "Official listing unavailable or no matching notice"
+        },
+        "d6bc52d4bf5e2049584b512bd20ff31c6834748dc1b338911c737fb9f9e9a712": {
+          "title": "Punjab State eGovernance Society (PSEGS) — 1 Deputy General Manager (Cyber Security) — Graduates, Post Graduates, Engineers, Post Graduate Diploma — Experience — 08-10-2026 ( 4 days left)",
+          "url": "https://linkingsky.com/Docs/PSeGS-1-2026.pdf",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "c51c3d2e30d0f92a9f42ae5a1c344b2b6f54a4a179c72f616f9791e2c512a54b": {
+          "title": "Union Public Service Commission (UPSC) — 490 Engineering Services Exam 2027 — Engineers — Fresher — 06-10-2026 ( 2 days left)",
+          "url": "https://linkingsky.com/Docs/upsc-ece-2027.pdf",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "Official listing unavailable or no matching notice"
         }
       }
     },
@@ -318,8 +320,8 @@
         "41499adf0bb3cadec07619ab40422e0ec668d67c8e438eb067427717c85e2938": {
           "title": "Up Coming Jobs",
           "url": "https://punjabjobalert.com/up-coming-jobs/",
-          "lastAttemptAt": "2026-10-02T22:13:37Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "25b5dbc0ed0bbb2a973a612d0ec8960c2ac03fb8f276bca36eef88185f550c0c": {
@@ -472,8 +474,8 @@
         "b8eb875ebf9f46ab5eea3a91d0a1dff918fd926e68c13e87204e4592ec378cbf": {
           "title": "NVS Class 11th Admission 2027 Online Form (Last Date : 30/09/2026)",
           "url": "https://punjabjobalert.com/nvs-class-11th-admission/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 2,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 3,
           "lastError": "No approved organisation matched headline"
         },
         "ea8e9fee398e15090e0188d0a14e57f0cc3a9b88e574d57ba3c024d4ad814de5": {
@@ -521,43 +523,43 @@
         "727d3c932b90a27143f7526932e7ba396d766e0c56763ce22df55421a4dbbce7": {
           "title": "Canara Bank 3500 Apprentice Vacancy Online Form",
           "url": "https://punjabjobalert.com/canara-bank-apprentice-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "bf652f7c9322d7af54f745db14e7f250cccd4acbf80421abdefd1ae2729bbbce": {
           "title": "PSSSB Advt 13/2026 Group B Posts Online Form (Last Date : 22/10/2026)",
           "url": "https://punjabjobalert.com/psssb-group-b-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "18b8340e2749851d315f5ebbdd476e3d5d21b3be6385bc328c4513f2b93001ad": {
           "title": "RRC NWR 2008 Apprentice Vacancy Online Form (Starting Date : 07/10/2026)",
           "url": "https://punjabjobalert.com/rrc-nwr-apprentice-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "d675340cc8a30d08bfcc00731675568d2206d8a9e42e6d1507a63463d7d555bc": {
           "title": "UPSSSC Sports Directorate Vacancy Online Form (Starting Date : 14/10/2026)",
           "url": "https://punjabjobalert.com/upsssc-sports-directorate-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "fbc7b6f66d526361e68984cf39758a40bee888d64af895954b7bc8f4742faed0": {
           "title": "UKSSSC 200 Scaler Vacancy Online Form 2026 (Last Date : 22/10/2026)",
           "url": "https://punjabjobalert.com/uksssc-scaler-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "be12c7f824044e44d36c22caab96fa30edf671bec5fded7b8c2bf0b154981c86": {
           "title": "MPESB 7500 Constable Vacancy Online Form (Last Date : 06/10/2026)",
           "url": "https://punjabjobalert.com/mpesb-constable-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "32422767d330e9a06373ebf144414f512b452c6c667cc6ad326c0ca9e472c8e9": {
@@ -656,43 +658,43 @@
         "363d78b2f688024d3304189df667e2031e724a126d3e82dc0ef8de564dee0935": {
           "title": "PCI Recruitment 2026",
           "url": "https://haryanajobs.in/pci-recruitment-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "6c2d559bc9065d527d55a7ec096c1bee580196e9585f4f4928d016332a956687": {
           "title": "Indian Army TGC-145 Recruitment 2026",
           "url": "https://haryanajobs.in/indian-army-tgc-145-recruitment-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "215f678dce7a6a97dcd96f3204d6ff0f7bebfa731a018e0a6fbe11f63cf0a9db": {
           "title": "Army Dental Corps Recruitment 2026",
           "url": "https://haryanajobs.in/army-dental-corps-recruitment-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "0f5f1c7a4e471e573de478876630fd777bef7cd9d9cbbe27facffb460a96f300": {
           "title": "Assam Rifles Technical and Tradesman Recruitment Rally 2026",
           "url": "https://haryanajobs.in/assam-rifles-technical-and-tradesman-recruitment-rally-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "9a7050282c56b45827a7fa942bc722a8a8202b6f9da79362fc8f1e6bb41b5b75": {
           "title": "Delhi DAV School Recruitment 2026",
           "url": "https://haryanajobs.in/delhi-dav-school-recruitment-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "e0842f1bd1412562500c71aa40c90b95ac5b83d8d06aa61f5792334fdda1d740": {
           "title": "Haryana DAV School Recruitment 2026",
           "url": "https://haryanajobs.in/haryana-dav-school-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "352226c0eda3cdfd59e2be43cd9fa6278b58a4fa32d8ef9a3925fae768676235": {
@@ -705,15 +707,15 @@
         "6ee42f8caf7fc80fc72229d6fc829768e11e57facdd461cec0635b8f04cf1577": {
           "title": "DRDO DIPR Delhi Recruitment 2026",
           "url": "https://haryanajobs.in/drdo-dipr-delhi-recruitment-2026/",
-          "lastAttemptAt": "2026-09-30T22:15:32Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "1d9a4dad094d9bbfbc8304e29049e18b18f67cf4a8b36c0f3cba2a95d57493e2": {
           "title": "CRPF Sports Quota Recruitment 2026",
           "url": "https://haryanajobs.in/crpf-sports-quota-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "c121117ff6b96017e6ea1ea613bfaab6556f8d0daeb71c4a9320b4271967017d": {
@@ -960,8 +962,8 @@
         "a0c498a9c0e15e3d1c242082bb5b39279d01db3d1d2aa27587bd47ec48aadc8d": {
           "title": "Defence Jobs",
           "url": "https://onlineforms.in/defence-jobs/",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 7,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 8,
           "lastError": "No approved organisation matched headline"
         },
         "1e5532f02fc848cfc6412fb11c8ab2d31f30c957e8f0c35aa3d67e1a9f5da938": {
@@ -1002,22 +1004,22 @@
         "f4c035a4cd519107e381bf7ec54b9e28d39425c79b0b5dddad4589f278213c22": {
           "title": "Canara Bank Apprentice Recruitment 2026 | 3500 Vacancy",
           "url": "https://onlineforms.in/canara-bank-apprentice-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 4,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 5,
           "lastError": "No approved organisation matched headline"
         },
         "ec3052093ffd3edbac339cd1b80079264ac4ded9c2828e5b5daa52e47b4dfbfa": {
           "title": "Sainik School Kunjpura Recruitment 2026",
           "url": "https://onlineforms.in/sainik-school-kunjpura-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 4,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 5,
           "lastError": "No approved organisation matched headline"
         },
         "6ba6a7c3abbd2d097bb734cc8c78780464b935a8d2dedb090bbeae066a6f3e57": {
           "title": "ECHS Ferozepur Recruitment 2026 Application Form",
           "url": "https://onlineforms.in/echs-ferozepur-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 4,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 5,
           "lastError": "No approved organisation matched headline"
         },
         "84bbcd220c4048e74df469466c5e46de55f381bacda934b8cfc8cb80e333b69c": {
@@ -1030,8 +1032,8 @@
         "22dd708822f0f4bfe806d2ee5b777c037d57a8752e61e345b11c9ac6ebd5a917": {
           "title": "CSIR NCL MTS Recruitment 2026 Apply Online",
           "url": "https://onlineforms.in/csir-ncl-mts-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 3,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 4,
           "lastError": "No approved organisation matched headline"
         },
         "acedb235307135f7c6c172d10585713dc45456827df8987b587ddd6ee9b0cf0e": {
@@ -1065,22 +1067,22 @@
         "5537007aa736d01e0d6c62fdb0c7a80df6cf37cc99515dcdef3cd1ad06117506": {
           "title": "HPSC Food Safety Officer Recruitment 2026 Apply Online",
           "url": "https://onlineforms.in/hpsc-food-safety-officer-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 2,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 3,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "7980bc6fedc764922a9e8edaa1a6a3f6c014ac27beb377e83f6d0673995486b5": {
           "title": "Delhi District Court Recruitment 2026 | 641 Vacancy",
           "url": "https://onlineforms.in/delhi-district-court-recruitment/",
-          "lastAttemptAt": "2026-10-03T05:18:05Z",
-          "attempts": 2,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 3,
           "lastError": "No approved organisation matched headline"
         },
         "fd362ea034a19c50487e026acf251919a69f53e8df65303d90be6bd595ac62fe": {
           "title": "SCI Junior Court Assistant Recruitment 2026 | 250 Vacancies",
           "url": "https://onlineforms.in/sci-junior-court-assistant-recruitment/",
-          "lastAttemptAt": "2026-10-03T11:39:00Z",
-          "attempts": 2,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 3,
           "lastError": "No approved organisation matched headline"
         },
         "4e1d1f72de19a200849e60ad5b63ed088ebbf26f2f3fa5f576b4ae7c05d93f98": {
@@ -1307,8 +1309,8 @@
         "4729b449f3d92066e91e3ce7646d8dfde28beff5d291f4a690e1ffa1206869c3": {
           "title": "ITBP — Constable (General Duty) – Sports Quota",
           "url": "https://www.speedjob.in/itbp-constable-sports-quota-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 2,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 3,
           "lastError": "Official listing unavailable or no matching notice"
         },
         "44ba343b57eec8befb6e06d7cd4fe1b75573b3f8c58bed1c75ccd405deab3c69": {
@@ -1335,50 +1337,50 @@
         "efae9dffacd2d5925477fe4db00fc9e723030559e4c9f285ebc910064d8fd03c": {
           "title": "Bhiwani Roadways — Apprentice",
           "url": "https://www.speedjob.in/bhiwani-roadways-apprentice-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "2ac5036670a112c4af7b82091f0d6935c5bc551c6dfb0f630c2a07e133496e5d": {
           "title": "Haryana Overseas Department HKRN — AC Technician, Carpenter and Electrician",
           "url": "https://www.speedjob.in/haryana-overseas-placement-portal/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "8529019f00320207b89cc108986c654a5ad509357ea8b5ba529a1f94747823ec": {
           "title": "MP ESB — Group-3 – Various Post",
           "url": "https://www.speedjob.in/mpesb-group-3-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "7b608d41810b6ab15ba7cefd17d2a4affc4db2be12c929b9fe166e0f9eceeffc": {
           "title": "RRC NWR — 2008 – Apprentice",
           "url": "https://www.speedjob.in/rrc-nwr-apprentice-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "2ab9a44fbee753988315ffbc934cfe40065caf2d14e199fb501149bef7c3f46d": {
           "title": "DRDO RCI — Apprentice",
           "url": "https://www.speedjob.in/drdo-rci-apprentice-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "8ab2c81441d5e25148330130a7108db9e955c00a9ef611ec8412a4079f41804b": {
           "title": "HKRN — Para-Legal Associates",
           "url": "https://www.speedjob.in/hkrn-para-legal-associates-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "d3af40a27f29bf06a9ebfd3876d6abc39f7180b407d740a8d6792e3f67cb3ab3": {
           "title": "NIT Raipur — Office Attendant, Sr. Tech., Sr. Asstt., Technician & Various",
           "url": "https://www.speedjob.in/nit-raipur-non-teaching-recruitment-2026/",
-          "lastAttemptAt": "2026-10-02T12:33:39Z",
-          "attempts": 1,
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 2,
           "lastError": "No approved organisation matched headline"
         },
         "51c443c52090a690a73d97a8d9f804eafa1be2d060ce77e981a8160b3aeba761": {
@@ -2039,7 +2041,10 @@
         "cc272ab8d5e6473f35e9bb30ac39bf0d5a36cddba60501ce255de529ca433b12",
         "8e1f0a59a19496f139be854f35beec467b88cefcbf44ad316f9ea832a2db9a67",
         "022e804adb39914a6dd740f9357efb925ff40f57d54675835fdc89a689ab3c7e",
-        "45a37afe41a7b3681f2d1040ad4cce5cb32ee21388dae8fa1b8f21bcab5a5036"
+        "45a37afe41a7b3681f2d1040ad4cce5cb32ee21388dae8fa1b8f21bcab5a5036",
+        "4a9cfd25e6cc9883b9144e972a851bd7ea0636954547f12f92314859db027dd8",
+        "d43847b874ad2679e573c85a8185f527c1d7448442245324fb22a8d087c18195",
+        "103cff858010e14025ba09774bdae1b20747b5a8905a882e72acdfe5a4a0ff09"
       ]
     },
     "indiapost-gds": {
@@ -3490,6 +3495,62 @@
           "lastAttemptAt": "2026-10-03T16:17:14Z",
           "attempts": 1,
           "lastError": "No approved organisation matched headline"
+        },
+        "5956163cea4b91f7f8830dbcd8d00288bb3cfc7197e089cab5ec392f1d275fc5": {
+          "title": "Latest MTS Govt Jobs 2026 (10000+ Vacancies Open Now)",
+          "url": "https://www.indgovtjobs.in/2019/10/MTS-Jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "4bad9cf0bde90c49109e24c2a7037f2e1d94bde602372d85d46515c8619a4406": {
+          "title": "5th October 2026 Closing Govt Jobs – Notifications, Apply Online Link",
+          "url": "https://www.indgovtjobs.in/2024/02/last-date-government-jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "e721a1fd511ef55a571912da10588a948e0fa4e1eca4283f60b29aae13c9e46e": {
+          "title": "Latest Assistant Govt Jobs 2026 (12500+ Vacancies Open Now)",
+          "url": "https://www.indgovtjobs.in/2019/08/Assistant-Govt-Jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "6b32a39e686c4837cf02685479498637ac34be90c7f41b84c4510f85c0864924": {
+          "title": "Insurance Company Jobs 2026 | Finance Govt Jobs | 500+ Vacancies",
+          "url": "https://www.indgovtjobs.in/2025/08/Insurance-Company-Jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "634aa7c3a93b2d28f0f96224310b529b7117416ff9faf2732af7ffff52d31c27": {
+          "title": "State wise Govt Jobs 2026 – Latest State Sarkari Naukri Vacancies",
+          "url": "https://www.indgovtjobs.in/2014/03/state-wise-govt-jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "c56499e389b0f3aae4c09cb020af67c71cc894e9826474f2d0cc336de4252e70": {
+          "title": "Latest Online Jobs in India 2026 - Free Work From Home Opportunities",
+          "url": "https://www.indgovtjobs.in/2020/05/Online-Jobs-India-Lockdown.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "4dc27085e17fec4377cbe6e4fbde785994435c9c142d0ad2877d0cf9ae26d79d": {
+          "title": "PSU Govt Jobs 2026 (1000+ Vacancies Open Now)",
+          "url": "https://www.indgovtjobs.in/2019/07/PSU-Govt-Jobs.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "No approved organisation matched headline"
+        },
+        "c72df09baffae55ee57fe84f0d6e1392664d6c95426e9f640e1fe435ceaa097d": {
+          "title": "NTPC Limited Assistant Officer Vacancy 2026: Apply Online for 15 Posts | Last Date 05-10-2026",
+          "url": "https://www.indgovtjobs.in/2026/09/ntpc-limited-assistant-officer-vacancy.html",
+          "lastAttemptAt": "2026-10-03T21:13:49Z",
+          "attempts": 1,
+          "lastError": "Official listing unavailable or no matching notice"
         }
       }
     },
@@ -4004,7 +4065,8 @@
         "e48a19a5693dd5b5d97c976d1c6751d594f285f43f59baa43af9f9bf4c7fcb9e",
         "34e24f3af0f90d312550c1b58ffe765e2e56e5b4fb9f24a016d997a354464115",
         "9eb3eab28d2bdbeb60dff31cf7f32a8b6b6e09325646b26c5b0d28fc7ea63951",
-        "b49373bc2918b9c2310fb7a8cee6be3962a91e6e8dd5fadf11bf1ae3ca0d53e5"
+        "b49373bc2918b9c2310fb7a8cee6be3962a91e6e8dd5fadf11bf1ae3ca0d53e5",
+        "37a6af5491095edf4e22e85a4346ada7884e3b0abb9e06ccaae03be1ce9cb628"
       ]
     },
     "custom-3c8d85c70b29": {
@@ -4015,6 +4077,18 @@
         "050f9a056f7c42fd16e30bc49354ea6ff0e20967b57ae1b12f54f19d9be2ca09",
         "02cbf2d33022fca3f055c19e45202464ab3ffa91ef2c343f383eaa014453f24e",
         "3079df84777dfd9378b2cffc4db9f1b54bb10daee33d42370cbde7918f9ffac1"
+      ]
+    },
+    "custom-dadb34974726": {
+      "initializedAt": "2026-10-03T21:13:49Z",
+      "fingerprints": [
+        "022e8421d7d3db5bdeb46f32427dba2480668edcf53120c182aaa51827e5eac0",
+        "861ff85387997f24ae893beb1ffd95e32b9142edb6c31d9e516680e3b582b1f5",
+        "0a5fe3a78d6827b767aa684c4e1e747b7b49f13f1375677fcaf19bb31f4e8bc9",
+        "233d0321e5504da2ed52c353b995848f830585575414c49696abd12c6d20fd43",
+        "2f1c769e1a888e0dec6432c9007c193274ba5960b76d4d8c857c624fd6b4d012",
+        "fcdad5482bbc1dab468b6963ae804deddfd47eeed85ca3e8f6278320a9b7d87e",
+        "8386dce7a8c1d6d499b5c34497f1cafcadc67ec7cd87ed720441d3b8182f8be6"
       ]
     }
   },
@@ -11302,9 +11376,9 @@
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "punjab-legal-services-authority": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
@@ -11327,29 +11401,29 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "punjab-health": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "chdsw": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: The read operation timed out"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "pilbs": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "punjab-sports": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "tmc": {
       "lastSuccessAt": "2026-10-02T22:13:37Z",
@@ -11362,8 +11436,8 @@
     },
     "grau": {
       "lastSuccessAt": "2026-09-17T04:51:56Z",
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "desgpc": {
@@ -11371,9 +11445,9 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "chandigarh-administration-public-notices": {
       "consecutiveFailures": 0,
@@ -11392,13 +11466,13 @@
       "consecutiveFailures": 0
     },
     "custom-7a1583c5d69f": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-3df1532f0e08": {
@@ -11407,13 +11481,13 @@
       "silentDead": true
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-48fb363bf153": {
@@ -11421,8 +11495,8 @@
       "consecutiveFailures": 0
     },
     "custom-129b32e84d14": {
-      "consecutiveFailures": 104,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 105,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-1603115d4a87": {
@@ -11448,13 +11522,13 @@
       "consecutiveFailures": 0
     },
     "custom-f2289426aa8f": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-2700aab06e21": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-2be7d60af96d": {
@@ -11462,8 +11536,8 @@
       "consecutiveFailures": 0
     },
     "custom-3c7cb10343cc": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-c8770f2e6b8f": {
@@ -11484,18 +11558,18 @@
       "consecutiveFailures": 0
     },
     "custom-d34a36e0adff": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1010)>"
     },
     "custom-b0104cf2acf3": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-bd7b73fbad8f": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-7f34a04f79b4": {
@@ -11515,18 +11589,18 @@
       "consecutiveFailures": 0
     },
     "custom-1b6f1f840915": {
-      "consecutiveFailures": 106,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 107,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 102,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 103,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "custom-44e4f9b99c38": {
-      "consecutiveFailures": 102,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 103,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-d660335da32c": {
@@ -11542,8 +11616,8 @@
       "consecutiveFailures": 0
     },
     "custom-9d0905e7e341": {
-      "consecutiveFailures": 101,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 102,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-49bf338af839": {
@@ -11551,14 +11625,14 @@
       "consecutiveFailures": 0
     },
     "custom-ac818ccf7e1c": {
-      "consecutiveFailures": 94,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 95,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-1c5eb2ad0b22": {
-      "consecutiveFailures": 87,
+      "consecutiveFailures": 88,
       "lastSuccessAt": "2026-09-01T12:30:31Z",
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>",
       "silentDead": true
     },
@@ -11568,8 +11642,8 @@
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-501ebf7f4ad9": {
-      "consecutiveFailures": 93,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 94,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-9a97990dc80b": {
@@ -11577,8 +11651,8 @@
       "consecutiveFailures": 0
     },
     "custom-5df32e916383": {
-      "consecutiveFailures": 91,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 92,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dc214c99342a": {
@@ -11590,31 +11664,31 @@
       "consecutiveFailures": 0
     },
     "custom-4e8822c8e2c1": {
-      "consecutiveFailures": 89,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 90,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)"
     },
     "custom-5758e613fcd0": {
-      "consecutiveFailures": 89,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 90,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-ea47f2a4f8e2": {
       "lastSuccessAt": "2026-09-08T06:32:33Z",
-      "consecutiveFailures": 64,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 65,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno -2] Name or service not known>"
     },
     "pgimer": {
       "lastSuccessAt": "2026-09-04T18:26:52Z",
-      "consecutiveFailures": 59,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 60,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)",
       "silentDead": true
     },
     "custom-bff0bd9d1cf9": {
-      "consecutiveFailures": 76,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 77,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dd40f8b9f110": {
@@ -11674,13 +11748,13 @@
       "consecutiveFailures": 0
     },
     "custom-de40f5f21bb7": {
-      "consecutiveFailures": 51,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 52,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-a7bad566b2f7": {
-      "consecutiveFailures": 51,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 52,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "gadvasu": {
@@ -11693,28 +11767,28 @@
       "silentDead": true
     },
     "custom-c69d86cd23b9": {
-      "consecutiveFailures": 42,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 43,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-2b69a49239e9": {
-      "consecutiveFailures": 42,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 43,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "prtc": {
-      "consecutiveFailures": 32,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 33,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "custom-ef07d2b951bc": {
-      "consecutiveFailures": 30,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 31,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-437e791ef952": {
-      "consecutiveFailures": 30,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 31,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-41217f21e5cf": {
@@ -11722,33 +11796,33 @@
       "consecutiveFailures": 0
     },
     "custom-1c2125c4c30d": {
-      "consecutiveFailures": 18,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 19,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "nvs": {
-      "consecutiveFailures": 16,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 17,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 408: Request Timeout"
     },
     "nvs-admission-updates": {
-      "consecutiveFailures": 16,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 17,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "ssc": {
-      "consecutiveFailures": 16,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 17,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)"
     },
     "upsc": {
-      "consecutiveFailures": 16,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 17,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "custom-5b14f4463a7e": {
-      "consecutiveFailures": 16,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 17,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "indgovtjobs": {
@@ -11756,8 +11830,8 @@
       "consecutiveFailures": 0
     },
     "custom-2533a8e90394": {
-      "consecutiveFailures": 15,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 16,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.presscouncil.nic.in'. (_ssl.c:1010)>"
     },
     "custom-a0e3df51f934": {
@@ -11769,8 +11843,8 @@
       "consecutiveFailures": 0
     },
     "custom-a0521067d033": {
-      "consecutiveFailures": 14,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 15,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno 101] Network is unreachable>"
     },
     "custom-1016f39e8b3d": {
@@ -11778,8 +11852,8 @@
       "lastSuccessAt": "2026-09-30T05:32:06Z"
     },
     "custom-b006be5d23ac": {
-      "consecutiveFailures": 14,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 15,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-756fab026729": {
@@ -11787,8 +11861,8 @@
       "consecutiveFailures": 0
     },
     "custom-554ea6d161f7": {
-      "consecutiveFailures": 14,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 15,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-6d928cdd9125": {
@@ -11813,34 +11887,34 @@
       "consecutiveFailures": 0
     },
     "custom-8c27593ffa32": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-7be419f6d3ca": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-f10101879e33": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-7255c2509510": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-677ff9ce6d24": {
       "lastSuccessAt": "2026-10-03T05:18:05Z",
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9a29c5bc0e17": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-c0379675e687": {
@@ -11852,19 +11926,19 @@
       "consecutiveFailures": 0
     },
     "custom-6717bfaa8e69": {
-      "consecutiveFailures": 13,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 14,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-d789e2fe0d62": {
-      "consecutiveFailures": 11,
+      "consecutiveFailures": 12,
       "lastSuccessAt": "2026-09-27T16:57:39Z",
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9aff539db76b": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-ef2f40438d7a": {
@@ -11873,8 +11947,8 @@
       "silentDead": true
     },
     "custom-36fb4d353f47": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b40f5f76ef1d": {
@@ -11884,11 +11958,13 @@
     },
     "custom-7837e0c7bdb4": {
       "lastSuccessAt": "2026-09-27T16:57:39Z",
-      "consecutiveFailures": 0
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)>"
     },
     "custom-8dd0b866a1d3": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-d06a65da666f": {
@@ -11904,48 +11980,48 @@
       "consecutiveFailures": 0
     },
     "custom-9f3edf97b31f": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-dc6fd6246e3a": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-61f3f4d72610": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-05958890a07c": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-2e313a3446ec": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-a60fc889756c": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-577261eb9793": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-950ab29fe775": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-c81c9d8ddc7a": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-596e8b863c6c": {
@@ -11957,28 +12033,28 @@
       "consecutiveFailures": 0
     },
     "custom-a55f9d3d253e": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-4bf4be0bb68e": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [Errno 111] Connection refused>"
     },
     "custom-c3ba91775703": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 404: Not Found"
     },
     "custom-322903e345da": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-5a6963b1e443": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-61b6f0daf13a": {
@@ -11986,18 +12062,18 @@
       "consecutiveFailures": 0
     },
     "custom-4cc52f17375d": {
-      "consecutiveFailures": 10,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 11,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-44586c366838": {
-      "consecutiveFailures": 9,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 10,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-6c9211544fcd": {
-      "consecutiveFailures": 9,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 10,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>"
     },
     "custom-acf768f11865": {
@@ -12018,13 +12094,13 @@
       "consecutiveFailures": 0
     },
     "custom-aaaef482f704": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-64a91fc6b654": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-b0962bfa5503": {
@@ -12040,8 +12116,8 @@
       "consecutiveFailures": 0
     },
     "custom-36340325c611": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-398be32815f3": {
@@ -12061,8 +12137,8 @@
       "consecutiveFailures": 0
     },
     "custom-4d43138c9c09": {
-      "consecutiveFailures": 4,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 5,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-a82e2518d47e": {
@@ -12070,22 +12146,22 @@
       "consecutiveFailures": 0
     },
     "bathinda-district-court": {
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
-      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "mirror fetch failed: HTTP Error 401: Unauthorized"
     },
     "custom-04d670225abc": {
       "lastSuccessAt": "2026-10-03T11:39:00Z",
       "consecutiveFailures": 0
     },
     "custom-ffdf451fcf55": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-99a7d9d82bc2": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-e6005d7e44b9": {
@@ -12093,55 +12169,61 @@
       "consecutiveFailures": 0
     },
     "custom-980be4db7820": {
-      "consecutiveFailures": 1,
-      "lastFailureAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 2,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
       "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
     },
     "custom-3c8d85c70b29": {
       "lastSuccessAt": "2026-10-03T16:17:14Z",
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-10-03T21:13:49Z",
+      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)>"
+    },
+    "custom-dadb34974726": {
+      "lastSuccessAt": "2026-10-03T21:13:49Z",
       "consecutiveFailures": 0
     }
   },
   "mirrorHealth": {
     "https://api.allorigins.win/raw?url={quoted}": {
-      "consecutiveFailures": 660,
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 17,
+      "lastSuccessAt": "2026-10-03T21:18:28.206493Z",
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     },
     "https://r.jina.ai/{url}": {
-      "consecutiveFailures": 4,
-      "lastSuccessAt": "2026-10-03T17:33:46.092170Z",
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 0,
+      "lastSuccessAt": "2026-10-03T22:35:04.904498Z"
     },
     "https://api.codetabs.com/v1/proxy/?quest={quoted}": {
-      "consecutiveFailures": 659,
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 678,
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     },
     "https://corsproxy.io/?url={quoted}": {
-      "consecutiveFailures": 659,
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 678,
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     },
     "https://thingproxy.freeboard.io/fetch/{url}": {
-      "consecutiveFailures": 380,
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 399,
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     },
     "https://proxy.cors.sh/{url}": {
-      "consecutiveFailures": 380,
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "consecutiveFailures": 399,
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     },
     "https://api.allorigins.win/get?url={quoted}": {
-      "consecutiveFailures": 65,
+      "consecutiveFailures": 84,
       "lastSuccessAt": "2026-10-02T22:19:13.153462Z",
-      "lastFailureAt": "2026-10-03T17:40:10.325946Z"
+      "lastFailureAt": "2026-10-03T22:32:24.026813Z"
     }
   },
   "detailFetchHealth": {
     "cdnbbsr.s3waas.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:26:00.354435Z"
+      "lastSuccessAt": "2026-10-03T21:21:45.185285Z"
     },
     "aiimsbathinda.edu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:29:09.535896Z"
+      "lastSuccessAt": "2026-10-03T21:24:35.860423Z"
     },
     "collegeadmissions.gndu.ac.in": {
       "consecutiveFailures": 0,
@@ -12153,7 +12235,7 @@
     },
     "pau.edu": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:29:24.835678Z"
+      "lastSuccessAt": "2026-10-03T21:24:55.881493Z"
     },
     "www.indiapost.gov.in": {
       "consecutiveFailures": 0,
@@ -12171,7 +12253,7 @@
     },
     "www.nal.res.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:14:40.092079Z"
+      "lastSuccessAt": "2026-10-03T22:05:02.130887Z"
     },
     "www.sainikschoolamaravathinagar.edu.in": {
       "consecutiveFailures": 0,
@@ -12183,7 +12265,7 @@
     },
     "sbi.bank.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:05:41.267137Z"
+      "lastSuccessAt": "2026-10-03T21:55:55.162754Z"
     },
     "uco.bank.in": {
       "consecutiveFailures": 0,
@@ -12195,19 +12277,19 @@
     },
     "sahitya-akademi.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:24:18.903328Z"
+      "lastSuccessAt": "2026-10-03T22:14:45.806285Z"
     },
     "cup.edu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:45:55.062675Z"
+      "lastSuccessAt": "2026-10-03T21:41:11.148981Z"
     },
     "chandigarh.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:45:42.765574Z"
+      "lastSuccessAt": "2026-10-03T21:40:58.229566Z"
     },
     "hau.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:05:26.195277Z"
+      "lastSuccessAt": "2026-10-03T21:55:40.255962Z"
     },
     "rampur.nic.in": {
       "consecutiveFailures": 0,
@@ -12215,15 +12297,15 @@
     },
     "bfuhs.ggsmch.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:43:15.530444Z"
+      "lastSuccessAt": "2026-10-03T21:38:36.074155Z"
     },
     "desgpc.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:43:21.158817Z"
+      "lastSuccessAt": "2026-10-03T21:38:43.374164Z"
     },
     "www.gadvasu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T16:52:45.199776Z"
+      "lastSuccessAt": "2026-10-03T21:43:59.692279Z"
     },
     "gadvasu.in": {
       "consecutiveFailures": 0,
@@ -12268,7 +12350,7 @@
     },
     "nests.tribal.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:24:25.547040Z"
+      "lastSuccessAt": "2026-10-03T22:14:52.467113Z"
     },
     "bfuhs.ac.in": {
       "consecutiveFailures": 3,
@@ -12281,15 +12363,15 @@
     },
     "www.maitreyi.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:29:15.011730Z"
+      "lastSuccessAt": "2026-10-03T22:19:45.906290Z"
     },
     "ssghorakhal.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:04:02.137570Z"
+      "lastSuccessAt": "2026-10-03T21:54:15.377121Z"
     },
     "rrcjaipur.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-03T17:31:07.978345Z"
+      "lastSuccessAt": "2026-10-03T22:21:40.113053Z"
     },
     "www.canarabank.bank.in": {
       "consecutiveFailures": 1,
@@ -12302,6 +12384,10 @@
     "cdn.digialm.com": {
       "consecutiveFailures": 0,
       "lastSuccessAt": "2026-10-03T12:56:26.951850Z"
+    },
+    "bfuhsonline.ggsmch.org": {
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-10-03T21:38:10.399285Z"
     }
   }
 }
