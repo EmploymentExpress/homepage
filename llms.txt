@@ -45,6 +45,8 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [iitg: iitg recruitment](https://employmentexpress.github.io/homepage/share/job-219997676994360.html) — eligibility Graduate
+- [Recruitment Project - 2/2020 - Specialist Officers & Special: Recruitment Project - 2/2020 - Specialist Officers & Special Recruitment Drive under ST Category](https://employmentexpress.github.io/homepage/share/job-170430433820467.html) — eligibility 8th/10th
 - [Uttarakhand All India: new Regular vacancy of TGT(Maths)](https://employmentexpress.github.io/homepage/share/job-253470320914379.html) — eligibility B.Ed/ETT
 - [IBPS All India: CRP-CSA-XVI](https://employmentexpress.github.io/homepage/share/job-231628182118626.html) — eligibility 8th/10th
 - [Indian Coast Guard, Noida: Indian Coast Guard Noida Recruitment 2026 | Foreman of Stores](https://employmentexpress.github.io/homepage/share/job-108566266838728.html) — last date 03-11-2026; eligibility Graduate
@@ -73,8 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [IBPS All India: Corrigendum dated 25.09.2026 in connection with CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-248411249248830.html) — eligibility 8th/10th
 - [IBPS All India: Updated Vacancies as on 25.09.2026 for Common Recruitment Process for CRP-RRBs-XV](https://employmentexpress.github.io/homepage/share/job-224323427462288.html) — eligibility 8th/10th
 - [Haryana All India: by Roopesh Rajput Last Date: 31 October 2026, Sainik School Kunjpura, Karnal (Haryana) — Teaching Job](https://employmentexpress.github.io/homepage/share/job-206841546606053.html) — last date 31-10-2026; eligibility Graduate
-- [67 Vacancies 26/09/2026 by Roopesh Rajput Last Date: 25 October 2026, Southern Railway, RRC Chennai: Graduate](https://employmentexpress.github.io/homepage/share/job-202449947381959.html) — 67 Posts; last date 25-10-2026; eligibility Graduate
-- [Haryana All India: Sainik School Kunjpura Recruitment 2026](https://employmentexpress.github.io/homepage/share/job-182306963432342.html) — last date 31-10-2026; eligibility Graduate
 
 ## Admit cards and call letters
 
@@ -168,4 +168,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-10-02
+Last updated: 2026-10-03
