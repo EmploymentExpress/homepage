@@ -2502,6 +2502,96 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-03T05:18:05Z"
+    },
+    {
+      "url": "https://www.punjabpolice.gov.in/",
+      "name": "punjabpolice.gov.in",
+      "department": "punjabpolice.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T11:39:00Z"
+    },
+    {
+      "url": "https://nta.ac.in/",
+      "name": "nta.ac.in",
+      "department": "nta.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T11:39:00Z"
+    },
+    {
+      "url": "https://kvsangathan.nic.in/en/",
+      "name": "kvsangathan.nic.in",
+      "department": "kvsangathan.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T11:39:00Z"
+    },
+    {
+      "url": "https://www.iitj.ac.in/",
+      "name": "iitj.ac.in",
+      "department": "iitj.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T11:39:00Z"
+    },
+    {
+      "url": "https://www.ngri.res.in/",
+      "name": "ngri.res.in",
+      "department": "ngri.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-03T11:39:00Z"
     }
   ]
 }
