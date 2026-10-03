@@ -383,6 +383,54 @@
       "detailTimeout": 25
     },
     {
+      "id": "bathinda-district-court",
+      "enabled": true,
+      "proxyFallback": true,
+      "name": "Bathinda District Court Recruitments",
+      "department": "District Court Bathinda (Office of the District & Sessions Judge)",
+      "url": "https://bathinda.dcourts.gov.in/notice-category/recruitments/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Bathinda, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "includeKeywords": [
+        "employment notice",
+        "engagement of",
+        "applications are invited",
+        "application invited",
+        "walk-in",
+        "walk in interview",
+        "contract basis",
+        "advt",
+        "post of",
+        "posts of"
+      ],
+      "excludeKeywords": [
+        "action plan",
+        "adjournment",
+        "cause list",
+        "master roll",
+        "call report",
+        "punctual hearing",
+        "local holidays",
+        "telephone directory"
+      ],
+      "defaultNoticeType": "recruitment",
+      "bootstrapCount": 2,
+      "maxNewPerRun": 5,
+      "maxRefreshPerRun": 12,
+      "maxCatchUpPerRun": 12,
+      "timeout": 45,
+      "detailTimeout": 30
+    },
+    {
       "id": "aiims-exams",
       "enabled": true,
       "name": "AIIMS Examinations",
