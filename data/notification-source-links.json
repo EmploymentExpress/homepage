@@ -2317,6 +2317,150 @@
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-04T05:51:41Z",
       "sslFallback": true
+    },
+    {
+      "url": "https://uppbpb.gov.in/Home/Notice",
+      "name": "uppbpb.gov.in",
+      "department": "uppbpb.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://ojas.gujarat.gov.in/",
+      "name": "ojas.gujarat.gov.in",
+      "department": "ojas.gujarat.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://delhihighcourt.nic.in/",
+      "name": "delhihighcourt.nic.in",
+      "department": "delhihighcourt.nic.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://iafrecruitment.edcil.co.in/",
+      "name": "Air Force Non-Combatant Recruitment 2026 Offline Form",
+      "department": "Indian Air Force (IAF)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://ccrs.ayush.gov.in/",
+      "name": "CCRS Recruitment 2026 Apply for Clerk & Social Worker",
+      "department": "Central Council for Research in Siddha (CCRS)",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://www.joinindianarmy.nic.in/",
+      "name": "Indian Army Sports Quota Recruitment 2026 | Havildar & Naib Subedar",
+      "department": "Indian Army (Ministry of Defence) Notification No. 06/ 2026",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://indianairforce.nic.in/",
+      "name": "Indian Air Force MTS Recruitment 2026 Application Form PDF",
+      "department": "Indian Air Force (IAF) Command HQ Maintenance Command, IAF",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
+    },
+    {
+      "url": "https://ludhiana.dcourts.gov.in/",
+      "name": "District Court Ludhiana Recruitment 2026 Apply for 56 Clerk Vacancies",
+      "department": "District Court, Ludhiana (Punjab)",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Punjab",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T12:20:43Z"
     }
   ]
 }
