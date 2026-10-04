@@ -1223,16 +1223,62 @@ def _download_direct(url: str, timeout: int, ssl_fallback: bool = False) -> Down
 #
 # 2026-10-04 fix: corsproxy.io moved to API-key-only (401 without key),
 # thingproxy.freeboard.io DNS is dead (NXDOMAIN), and proxy.cors.sh requires
-# an API key header.  Replaced with cors.lol (free, no key) and kept only
-# mirrors that still work without authentication.  Raised cooldown from 12 h
-# to 24 h so a temporarily rate-limited mirror is not hammered on every cycle.
-SOURCE_MIRRORS = (
+# an API key header. Replaced with cors.lol (free, no key). The AI health
+# monitor may temporarily disable repeatedly failing entries in the small,
+# repository-owned allowlist at automation/mirrors.json; it cannot add hosts.
+DEFAULT_SOURCE_MIRRORS = (
     "https://r.jina.ai/{url}",
     "https://api.cors.lol/?url={quoted}",
     "https://api.allorigins.win/get?url={quoted}",
     "https://api.allorigins.win/raw?url={quoted}",
     "https://api.codetabs.com/v1/proxy/?quest={quoted}",
 )
+MIRROR_CONFIG_PATH = ROOT / "automation" / "mirrors.json"
+
+
+def load_source_mirrors(path: Path = MIRROR_CONFIG_PATH, now: datetime | None = None) -> tuple[str, ...]:
+    """Load an enabled subset of the built-in mirror allowlist.
+
+    The config can only turn known HTTPS mirror templates on or off; it cannot
+    introduce a new transport. A valid all-disabled config intentionally means
+    no mirror fallback. Missing/malformed config preserves the built-in list.
+    """
+    if not path.exists():
+        return DEFAULT_SOURCE_MIRRORS
+    try:
+        config = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return DEFAULT_SOURCE_MIRRORS
+    entries = config.get("mirrors") if isinstance(config, dict) else None
+    if not isinstance(entries, list):
+        return DEFAULT_SOURCE_MIRRORS
+    now = now or datetime.now(timezone.utc)
+    active = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        template = entry.get("template")
+        if template not in DEFAULT_SOURCE_MIRRORS or entry.get("enabled", True) is False:
+            continue
+        until = entry.get("disabledUntil")
+        if until:
+            try:
+                disabled_until = datetime.fromisoformat(str(until).replace("Z", "+00:00"))
+                if disabled_until.tzinfo is None:
+                    disabled_until = disabled_until.replace(tzinfo=timezone.utc)
+                if disabled_until > now:
+                    continue
+            except ValueError:
+                # An invalid temporary-disable date must not disable a mirror
+                # indefinitely; the repository allowlist and health tests are
+                # the authority, not an unparseable timestamp.
+                pass
+        if template not in active:
+            active.append(template)
+    return tuple(active)
+
+
+SOURCE_MIRRORS = load_source_mirrors()
 MIRROR_RETRY_COOLDOWN_HOURS = 24
 MIRROR_MEMORY: dict[str, dict[str, Any]] = {}
 
@@ -5531,6 +5577,7 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
             stored_name = stored_department or host
         source = {
             "id": source_id,
+            "enabled": entry.get("enabled", True),
             "name": stored_name or "Additional job notification source",
             "department": stored_department,
             "url": url,
@@ -5551,8 +5598,10 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
             source["proxyFallback"] = True
         # R4: opt-in unverified-SSL fetch for official sites that serve their
         # public listing over a broken certificate chain.
-        if entry.get("sslFallback"):
-            source["sslFallback"] = True
+        if "sslFallback" in entry:
+            source["sslFallback"] = bool(entry.get("sslFallback"))
+        if isinstance(entry.get("_aiHealth"), dict):
+            source["_aiHealth"] = dict(entry["_aiHealth"])
         for key in ("timeout", "detailTimeout"):
             if key in entry:
                 source[key] = int(entry[key])

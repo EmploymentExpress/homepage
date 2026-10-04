@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "mirrors": [
+    {
+      "id": "jina-reader",
+      "template": "https://r.jina.ai/{url}",
+      "enabled": true
+    },
+    {
+      "id": "cors-lol",
+      "template": "https://api.cors.lol/?url={quoted}",
+      "enabled": true
+    },
+    {
+      "id": "allorigins-get",
+      "template": "https://api.allorigins.win/get?url={quoted}",
+      "enabled": true
+    },
+    {
+      "id": "allorigins-raw",
+      "template": "https://api.allorigins.win/raw?url={quoted}",
+      "enabled": true
+    },
+    {
+      "id": "codetabs",
+      "template": "https://api.codetabs.com/v1/proxy/?quest={quoted}",
+      "enabled": true
+    }
+  ]
+}

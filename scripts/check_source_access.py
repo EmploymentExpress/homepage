@@ -281,7 +281,7 @@ def load_sources() -> list[dict]:
     config = monitor.read_json(monitor.DEFAULT_CONFIG, {}).get("sources", [])
     official = monitor.read_json(monitor.DEFAULT_OFFICIAL_ORGS, {}).get("organizations", [])
     entries = [s for s in config if s.get("enabled", True) and not s.get("role")]
-    entries += official + monitor.additional_link_sources()
+    entries += [s for s in official + monitor.additional_link_sources() if s.get("enabled", True)]
     entries += [dict(feed, discovery=True) for feed in monitor.load_discovery_feeds()]
     unique = {}
     for source in entries:

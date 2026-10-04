@@ -1,0 +1,104 @@
+name: AI health monitor
+
+on:
+  schedule:
+    # Daily UTC. The recruitment updater runs every six hours and supplies the
+    # health history consumed here.
+    - cron: "43 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-health-monitor-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  diagnose-and-repair:
+    if: github.repository == 'EmploymentExpress/homepage'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Test the health monitor
+        run: python -m unittest discover -s tests -p 'test_ai_health_monitor.py' -v
+
+      - name: Diagnose and apply deterministic repairs
+        env:
+          AI_HEALTH_LLM_API_KEY: ${{ secrets.AI_HEALTH_LLM_API_KEY }}
+          AI_HEALTH_LLM_MODEL: ${{ vars.AI_HEALTH_LLM_MODEL || 'gemini-2.5-flash-lite' }}
+        run: >-
+          python scripts/ai_health_monitor.py
+          --apply
+          --report-dir "$RUNNER_TEMP/ai-health-monitor"
+
+      - name: Publish health report
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/ai-health-monitor/report.md" ]; then
+            cat "$RUNNER_TEMP/ai-health-monitor/report.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## AI health monitor did not complete' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Check the workflow logs; missing report is not an all-clear.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-health-monitor-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ai-health-monitor/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Commit deterministic configuration repairs
+        shell: bash
+        run: |
+          git checkout "${GITHUB_REF_NAME}"
+
+          CONFIG_FILES=(
+            automation/sources.json
+            automation/mirrors.json
+            data/notification-source-links.json
+          )
+          if [ -z "$(git status --porcelain -- "${CONFIG_FILES[@]}")" ]; then
+            echo "No deterministic configuration changes to commit."
+            exit 0
+          fi
+
+          git config user.name "employment-express-health-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "${CONFIG_FILES[@]}"
+          git commit -m "chore: repair recurring source monitor failures [skip ci]"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Unexpected changes remain outside the source/mirror config files:" >&2
+            git status --short >&2
+            exit 1
+          fi
+
+          for attempt in 1 2 3; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && \
+               git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Rebase/push attempt $attempt failed; retrying in 5 seconds..." >&2
+              sleep 5
+            fi
+          done
+
+          echo "Failed to rebase and push after 3 attempts" >&2
+          exit 1

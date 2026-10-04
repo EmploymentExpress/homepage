@@ -192,6 +192,10 @@ Add another official board to `automation/official-organizations.json` (`id`, `n
 
 See [the September discovery repair notes](docs/DISCOVERY_REPAIR_2026-09-22.md) for verification evidence and remaining external-source blockers.
 
+#### AI health monitor & deterministic self-repair
+
+The separate **AI health monitor** workflow runs daily, reads the updater's existing source/mirror health history, and applies only bounded configuration fixes for repeated TLS-certificate errors, dead mirrors and official endpoints returning persistent 404/410 responses. It never changes job data or the website. Its optional Gemini integration only diagnoses unfamiliar failures; model output is sanitized and report-only. The engine and its network-free test suite work without any API key. See [the AI health monitor guide](docs/AI_HEALTH_MONITOR.md) for thresholds, safety limits, local commands and optional LLM setup.
+
 #### Recurring access diagnostics (read-only)
 
 Every updater run now also invokes **Check official source access (read-only)** in parallel. It checks registered targets with bounded direct retries, a JavaScript-capable Chromium browser, opted-in mirrors and same-host alternative links observed on official pages. It records access failures, sanitized HTML, screenshots and redacted API request metadata as seven-day workflow artifacts. This job never publishes browser/aggregator data or modifies the live website.
