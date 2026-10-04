@@ -7,5 +7,6 @@ venv/
 # Local review artifacts (sample thumbnails, user-uploaded reference images)
 /uploads/
 
-# Local read-only source diagnostics; CI uploads these as artifacts, never commits them.
+# Local read-only source diagnostics and AI health reports; CI uploads reports as artifacts, never commits them.
 .cache/source-access/
+.cache/ai-health-monitor/
