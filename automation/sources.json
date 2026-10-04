@@ -29,7 +29,8 @@
       ],
       "defaultNoticeType": "corrigendum",
       "bootstrapCount": 1,
-      "maxNewPerRun": 5
+      "maxNewPerRun": 5,
+      "sslFallback": true
     },
     {
       "id": "psssb-home",
@@ -64,7 +65,8 @@
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
       "maxRefreshPerRun": 12,
-      "maxCatchUpPerRun": 12
+      "maxCatchUpPerRun": 12,
+      "sslFallback": true
     },
     {
       "id": "psssb-results",
@@ -84,7 +86,8 @@
         "admit-card"
       ],
       "bootstrapCount": 0,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "sslFallback": true
     },
     {
       "id": "ppsc",
@@ -109,7 +112,8 @@
       ],
       "defaultNoticeType": "corrigendum",
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "sslFallback": true
     },
     {
       "id": "punjab-police",
@@ -196,7 +200,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "nvs-admission-updates",
@@ -217,7 +222,8 @@
       ],
       "bootstrapCount": 0,
       "maxNewPerRun": 8,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "ssc",
@@ -238,7 +244,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "upsc",
@@ -259,7 +266,8 @@
       ],
       "bootstrapCount": 1,
       "maxNewPerRun": 5,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "rrb-chandigarh",
@@ -279,13 +287,14 @@
         "admit-card"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "sslFallback": true
     },
     {
       "id": "rcf-kapurthala",
       "enabled": false,
       "name": "Rail Coach Factory Kapurthala",
-      "department": "Rail Coach Factory (RCF), Kapurthala \u2014 Ministry of Railways",
+      "department": "Rail Coach Factory (RCF), Kapurthala — Ministry of Railways",
       "url": "https://rcf.indianrailways.gov.in/?lang=1",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
@@ -307,7 +316,8 @@
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "pgimer",
@@ -342,7 +352,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 45,
-      "detailTimeout": 45
+      "detailTimeout": 45,
+      "sslFallback": true
     },
     {
       "id": "punjab-legal-services-authority",
@@ -380,7 +391,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "bathinda-district-court",
@@ -428,7 +440,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 45,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "aiims-exams",
@@ -450,7 +463,8 @@
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
       "maxRefreshPerRun": 12,
-      "maxCatchUpPerRun": 12
+      "maxCatchUpPerRun": 12,
+      "sslFallback": true
     },
     {
       "id": "dsssb",
@@ -470,7 +484,8 @@
         "admit-card"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 8
+      "maxNewPerRun": 8,
+      "sslFallback": true
     },
     {
       "id": "rajasthan-lsg",
@@ -495,7 +510,8 @@
         "advertisement"
       ],
       "bootstrapCount": 1,
-      "maxNewPerRun": 5
+      "maxNewPerRun": 5,
+      "sslFallback": true
     },
     {
       "id": "aiims-exams-courses",
@@ -517,7 +533,8 @@
       "bootstrapCount": 1,
       "maxNewPerRun": 8,
       "maxRefreshPerRun": 12,
-      "maxCatchUpPerRun": 12
+      "maxCatchUpPerRun": 12,
+      "sslFallback": true
     },
     {
       "id": "aiims-bathinda-faculty",
@@ -564,7 +581,8 @@
         "interview rescheduled",
         "discrepanc",
         "application status"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "id": "aiims-bathinda-sr-jr",
@@ -611,7 +629,8 @@
         "interview rescheduled",
         "discrepanc",
         "application status"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "id": "aiims-bathinda-non-faculty",
@@ -663,7 +682,8 @@
       "detailTimeout": 25,
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "aiims-bathinda-project",
@@ -716,7 +736,8 @@
       "detailTimeout": 25,
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
-      "proxyFallback": true
+      "proxyFallback": true,
+      "sslFallback": true
     },
     {
       "id": "onlineforms-offline-forms",
@@ -794,7 +815,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 45,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "pau-recruitment",
@@ -877,7 +899,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "punjab-health",
@@ -920,7 +943,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "chdsw",
@@ -967,7 +991,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "pilbs",
@@ -1014,7 +1039,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "punjab-sports",
@@ -1057,13 +1083,14 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "tmc",
       "enabled": true,
       "name": "Tata Memorial Centre Careers",
-      "department": "Tata Memorial Centre (TMC), Mumbai \u2014 Department of Atomic Energy, Government of India",
+      "department": "Tata Memorial Centre (TMC), Mumbai — Department of Atomic Energy, Government of India",
       "url": "https://tmc.gov.in/postmaster/Careers",
       "type": "central",
       "categorySlug": "central",
@@ -1099,7 +1126,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "bfuhs",
@@ -1277,7 +1305,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 25
+      "detailTimeout": 25,
+      "sslFallback": true
     },
     {
       "id": "chandigarh-administration-public-notices",
@@ -1378,7 +1407,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 35,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "cup-teaching",
@@ -1436,7 +1466,8 @@
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
       "timeout": 35,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "cup-non-teaching",
@@ -1495,7 +1526,8 @@
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
       "timeout": 35,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "cup-project",
@@ -1555,7 +1587,8 @@
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
       "timeout": 35,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "indiapost-gds",
@@ -1596,13 +1629,14 @@
       "maxRefreshPerRun": 8,
       "maxCatchUpPerRun": 8,
       "timeout": 35,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "punjab-haryana-high-court-staff",
       "enabled": true,
       "proxyFallback": true,
-      "name": "Punjab and Haryana High Court Recruitments \u2014 Administrative Staff",
+      "name": "Punjab and Haryana High Court Recruitments — Administrative Staff",
       "department": "High Court of Punjab and Haryana at Chandigarh",
       "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
       "type": "punjab",
@@ -1649,7 +1683,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 45,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     },
     {
       "id": "union-bank",
@@ -1819,7 +1854,8 @@
       "maxRefreshPerRun": 12,
       "maxCatchUpPerRun": 12,
       "timeout": 45,
-      "detailTimeout": 30
+      "detailTimeout": 30,
+      "sslFallback": true
     }
   ]
 }
