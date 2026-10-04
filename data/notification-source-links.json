@@ -2610,6 +2610,24 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-03T16:17:14Z"
+    },
+    {
+      "url": "https://www.hil.gov.in/",
+      "name": "hil.gov.in",
+      "department": "hil.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-04T05:51:41Z"
     }
   ]
 }
