@@ -980,6 +980,13 @@ def is_junk_job_title(value: str) -> bool:
         subject = parts[1].strip(" .:-–—")
         if subject in GENERIC_TITLES or subject in OFFLINE_LISTING_JUNK_TITLES:
             return True
+    # Listing-page chrome: a title that is just a count + date + author name
+    # scraped from a portal's table row (e.g. "67 Vacancies 26/09/2026 by
+    # Roopesh Rajput Last Date: 25 October 2026") is never a real notice name.
+    if re.search(r"\b\d+\s+(?:vacancies|posts?)\s+\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+by\s+[a-z]", title):
+        return True
+    if re.search(r"^\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+by\s+[a-z]", title):
+        return True
     return False
 
 
@@ -1213,16 +1220,20 @@ def _download_direct(url: str, timeout: int, ssl_fallback: bool = False) -> Down
 # codetabs, corsproxy). Added thingproxy and cors.sh as additional healthy
 # fallbacks, plus allorigins /get endpoint (JSON-wrapped) which needs special
 # handling in _download_via_mirror.
+#
+# 2026-10-04 fix: corsproxy.io moved to API-key-only (401 without key),
+# thingproxy.freeboard.io DNS is dead (NXDOMAIN), and proxy.cors.sh requires
+# an API key header.  Replaced with cors.lol (free, no key) and kept only
+# mirrors that still work without authentication.  Raised cooldown from 12 h
+# to 24 h so a temporarily rate-limited mirror is not hammered on every cycle.
 SOURCE_MIRRORS = (
     "https://r.jina.ai/{url}",
-    "https://thingproxy.freeboard.io/fetch/{url}",
-    "https://proxy.cors.sh/{url}",
+    "https://api.cors.lol/?url={quoted}",
     "https://api.allorigins.win/get?url={quoted}",
     "https://api.allorigins.win/raw?url={quoted}",
     "https://api.codetabs.com/v1/proxy/?quest={quoted}",
-    "https://corsproxy.io/?url={quoted}",
 )
-MIRROR_RETRY_COOLDOWN_HOURS = 12
+MIRROR_RETRY_COOLDOWN_HOURS = 24
 MIRROR_MEMORY: dict[str, dict[str, Any]] = {}
 
 
@@ -1302,15 +1313,16 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
     for template in _ordered_mirror_templates(now):
         mirror_url = template.format(quoted=urllib.parse.quote(url, safe=""), url=url)
         try:
-            request = urllib.request.Request(
-                mirror_url,
-                headers={
-                    "User-Agent": USER_AGENT,
-                    "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.5",
-                    "Accept-Language": "en-IN,en;q=0.8",
-                    "X-Return-Format": "html",
-                },
-            )
+            headers: dict[str, str] = {
+                "User-Agent": USER_AGENT,
+                "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.5",
+                "Accept-Language": "en-IN,en;q=0.8",
+            }
+            # r.jina.ai converts pages to markdown by default; asking for raw
+            # HTML keeps the parsed result usable by the listing parser.
+            if "jina.ai" in template:
+                headers["X-Return-Format"] = "html"
+            request = urllib.request.Request(mirror_url, headers=headers)
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 raw_data = response.read(MAX_DOWNLOAD_BYTES + 1)
                 if len(raw_data) > MAX_DOWNLOAD_BYTES:
@@ -1320,7 +1332,8 @@ def _download_via_mirror(url: str, timeout: int) -> Download:
                 data = raw_data
                 content_type = (response.headers.get_content_type() or "").lower()
                 # allorigins /get returns JSON {"contents": "<html>..."}
-                # thingproxy/cors.sh may also wrap; unwrap generically when possible.
+                # cors.lol and other generic proxies return raw HTML; unwrap
+                # generically when the response looks like JSON.
                 if "allorigins.win/get" in template or content_type == "application/json" or raw_data[:1] == b"{":
                     try:
                         payload = json.loads(raw_data.decode("utf-8", errors="ignore"))
@@ -3612,6 +3625,12 @@ def backfill_extracted_fields(jobs: list[dict[str, Any]]) -> bool:
             if stamped:
                 job["publishedAt"] = stamped
                 changed = True
+            elif clean_text(job.get("discoveredAt", "")):
+                # No document date stamp available: fall back to discovery time
+                # so the 72-hour NEW badge window is anchored to a real
+                # timestamp instead of the current scan time on every run.
+                job["publishedAt"] = job["discoveredAt"]
+                changed = True
     return changed
 
 
@@ -4744,6 +4763,7 @@ def offline_job_from_entry(
         ),
         "sourceName": department,
         "sourceUrl": url,
+        "noticeUrl": url,
         "publishedAt": "",
         "discoveredAt": discovered,
         "isExtension": False,
@@ -4780,6 +4800,17 @@ def gather_offline_forms_pool(config: dict[str, Any]) -> list[dict[str, Any]]:
             for cand in source_candidates(download)[: int(source.get("maxLinks", 600))]:
                 cand_url = canonical_url(cand.url)
                 if not cand_url or not is_offline_form_url(cand_url):
+                    continue
+                # Category/tag/page listing URLs are portal navigation, not
+                # individual vacancy pages — skip them so they never enter the
+                # pool as published alerts with listing-chrome titles.
+                _portal = urllib.parse.urlsplit(cand_url)
+                _ppath = (_portal.path or "").rstrip("/").lower()
+                if re.search(
+                    r"^/(?:category|tag|page|author|latest-job|latest-jobs"
+                    r"|latest-offline-forms|latest-online-forms)\b",
+                    _ppath,
+                ):
                     continue
                 # The portal's own branding must never reach a published alert.
                 listing_last_date = _offline_listing_last_date(cand.title)

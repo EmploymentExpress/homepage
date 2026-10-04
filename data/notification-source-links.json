@@ -15,7 +15,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://pau.edu/index.php?_act=manageVacancy&DO=viewVacancy&intSubID=147",
@@ -31,7 +32,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://pmidc.punjab.gov.in/recruitment/",
@@ -47,7 +49,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://health.punjab.gov.in/?q=node/952",
@@ -63,7 +66,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://chdsw.gov.in/index.php/recruitments/index",
@@ -79,7 +83,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://pilbs.punjab.gov.in/en/",
@@ -95,7 +100,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://pbsports.punjab.gov.in/",
@@ -111,7 +117,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://tmc.gov.in/postmaster/Careers",
@@ -127,7 +134,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://bfuhs.ggsmch.org/",
@@ -143,7 +151,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://graupunjab.org/jobs/",
@@ -159,7 +168,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://www.desgpc.org/",
@@ -175,7 +185,8 @@
         "answer-key",
         "corrigendum",
         "admit-card"
-      ]
+      ],
+      "sslFallback": true
     },
     {
       "url": "https://www.nal.res.in/",
@@ -193,43 +204,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://ccrs.ayush.gov.in/",
-      "name": "CCRS Recruitment 2026 Apply for Clerk & Social Worker",
-      "department": "Central Council for Research in Siddha (CCRS)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://iafrecruitment.edcil.co.in/",
-      "name": "Air Force Non-Combatant Recruitment 2026 Offline Form",
-      "department": "Indian Air Force (IAF)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ddpmod.gov.in/",
@@ -247,43 +223,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://www.joinindianarmy.nic.in/",
-      "name": "Indian Army Sports Quota Recruitment 2026 | Havildar & Naib Subedar",
-      "department": "Indian Army (Ministry of Defence) Notification No. 06/ 2026",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://indianairforce.nic.in/",
-      "name": "Indian Air Force MTS Recruitment 2026 Application Form PDF",
-      "department": "Indian Air Force (IAF) Command HQ Maintenance Command, IAF",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://bro.gov.in/",
@@ -301,25 +242,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://ludhiana.dcourts.gov.in/",
-      "name": "District Court Ludhiana Recruitment 2026 Apply for 56 Clerk Vacancies",
-      "department": "District Court, Ludhiana (Punjab)",
-      "type": "punjab",
-      "categorySlug": "punjab-jobs",
-      "location": "Ludhiana, Punjab",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://wcdhry.gov.in/",
@@ -337,7 +261,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://munitionsindia.in/",
@@ -355,7 +280,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.maavaishnodevi.org/",
@@ -373,7 +299,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.echs.gov.in/",
@@ -391,7 +318,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.sainikschoolamaravathinagar.edu.in/",
@@ -409,43 +337,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://indianarmy.nic.in/",
-      "name": "Indian Army CDM Recruitment 2026 Apply for Driver, Cook, MTS & Steno",
-      "department": "College of Defence Management (CDM)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://yamunanagar.dcourts.gov.in/",
-      "name": "Yamunanagar Court Recruitment 2026 Apply for Peon",
-      "department": "District & Session Judge, Jagadhri (Yamuna Nagar)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.sainikschoolnalanda.edu.in/",
@@ -463,25 +356,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://ids.nic.in/",
-      "name": "Defence Services Staff College Recruitment 2026 | LDC, MTS, Driver, Steno, etc.",
-      "department": "Defence Services Staff College (DSSC) Notification No. CBC10111/11/0001/2627, EN 08/11",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.idsj.org/",
@@ -499,7 +375,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://gonda.kvk4.in/",
@@ -517,7 +394,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://rampur.nic.in/",
@@ -535,7 +413,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.sainikschoolpunglwa.nic.in/",
@@ -553,61 +432,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://dgfscdhg.gov.in/uttrakhand-0",
-      "name": "Uttarakhand Home Guard Recruitment 2026 | 920 Vacancy",
-      "department": "Office of District Commandant, Homeguards (Uttarakhand)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://kanpurnagar.dcourts.gov.in/",
-      "name": "District Court Kanpur Nagar Recruitment 2026 Apply for Sweeper",
-      "department": "District & Sessions Court, Kanpur Nagar (Uttar Pradesh)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
-    },
-    {
-      "url": "https://ambala.dcourts.gov.in/",
-      "name": "Ambala District Court Recruitment 2026 Apply Offline for Clerk",
-      "department": "District & Sessions Judge, Ambala (Haryana)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://ssghorakhal.org/",
@@ -625,7 +451,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T06:07:19Z"
+      "addedAt": "2026-08-24T06:07:19Z",
+      "sslFallback": true
     },
     {
       "url": "https://sssb.punjab.gov.in/",
@@ -643,7 +470,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-24T14:27:46Z"
+      "addedAt": "2026-08-24T14:27:46Z",
+      "sslFallback": true
     },
     {
       "url": "https://bceceboard.bihar.gov.in/BSFCIndex.php",
@@ -661,7 +489,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-25T08:23:52Z"
+      "addedAt": "2026-08-25T08:23:52Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.iob.bank.in/en/Careers",
@@ -679,7 +508,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-25T08:23:52Z"
+      "addedAt": "2026-08-25T08:23:52Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.iitbhu.ac.in/recruitment_nf",
@@ -697,43 +527,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-26T08:24:49Z"
-    },
-    {
-      "url": "https://rewari.dcourts.gov.in/",
-      "name": "rewari.dcourts.gov.in",
-      "department": "rewari.dcourts.gov.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-28T01:47:01Z"
-    },
-    {
-      "url": "https://www.indianarmy.nic.in/",
-      "name": "indianarmy.nic.in",
-      "department": "indianarmy.nic.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T06:18:36Z"
+      "addedAt": "2026-08-26T08:24:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.iob.bank.in/en/careers",
@@ -751,7 +546,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T06:18:36Z"
+      "addedAt": "2026-08-29T06:18:36Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.highcourtchd.gov.in/?mod=recr_staff",
@@ -769,7 +565,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T06:18:36Z"
+      "addedAt": "2026-08-29T06:18:36Z",
+      "sslFallback": true
     },
     {
       "url": "https://hau.ac.in/",
@@ -787,7 +584,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T12:18:37Z"
+      "addedAt": "2026-08-29T12:18:37Z",
+      "sslFallback": true
     },
     {
       "url": "https://sbi.bank.in/web/careers/Current-openings",
@@ -805,25 +603,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T12:18:37Z"
-    },
-    {
-      "url": "https://www.incometaxindia.gov.in/en/recruitment-notices",
-      "name": "incometaxindia.gov.in",
-      "department": "incometaxindia.gov.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T12:18:37Z"
+      "addedAt": "2026-08-29T12:18:37Z",
+      "sslFallback": true
     },
     {
       "url": "https://uco.bank.in/job-opportunities",
@@ -841,43 +622,8 @@
         "admit-card"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-29T12:18:37Z"
-    },
-    {
-      "url": "https://bankofindia.bank.in/career/recruitment-notice",
-      "name": "bankofindia.bank.in",
-      "department": "bankofindia.bank.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T06:18:29Z"
-    },
-    {
-      "url": "https://pucb.in/index.html",
-      "name": "pucb.in",
-      "department": "pucb.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T06:18:29Z"
+      "addedAt": "2026-08-29T12:18:37Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ibps.in/",
@@ -901,24 +647,6 @@
       "sslFallback": true
     },
     {
-      "url": "https://www.bgss.in/careers/all",
-      "name": "bgss.in",
-      "department": "bgss.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T12:18:34Z"
-    },
-    {
       "url": "https://sssc.uk.gov.in/",
       "name": "sssc.uk.gov.in",
       "department": "sssc.uk.gov.in",
@@ -933,23 +661,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-08-31T18:18:53Z"
-    },
-    {
-      "url": "https://sangrur.dcourts.gov.in/notice-category/recruitments/",
-      "name": "Sangrur District Court Recruitments",
-      "department": "District & Sessions Judge / District Legal Services Authority (DLSA), Sangrur",
-      "type": "punjab",
-      "categorySlug": "punjab-jobs",
-      "location": "Sangrur, Punjab",
-      "noticeTypes": [
-        "recruitment",
-        "admission",
-        "result",
-        "answer-key",
-        "corrigendum",
-        "admit-card"
-      ]
+      "addedAt": "2026-08-31T18:18:53Z",
+      "sslFallback": true
     },
     {
       "url": "https://pgimer.edu.in/PGIMER_PORTAL/PGIMERPORTAL/home.jsp",
@@ -972,80 +685,6 @@
       "proxyFallback": true
     },
     {
-      "url": "https://esb.mp.gov.in/e_default.html",
-      "name": "esb.mp.gov.in",
-      "department": "esb.mp.gov.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T18:28:20Z",
-      "sslFallback": true,
-      "proxyFallback": true
-    },
-    {
-      "url": "https://jkssb.nic.in/Whatsnew.html",
-      "name": "jkssb.nic.in",
-      "department": "jkssb.nic.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-01T18:28:20Z"
-    },
-    {
-      "url": "https://www.mecl.co.in/ContentPageMecl.aspx?page=advertisement-notices-and-results&Antispam=a59a01dc-844f-446f-ae7a-32d90ea95d08&ControlID=61&Lng=EN&MyAntispam=2df5925d-4711-43eb-9f4e-702ab42850ac",
-      "name": "mecl.co.in",
-      "department": "mecl.co.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-03T06:32:21Z"
-    },
-    {
-      "url": "https://pucb.bank.in/",
-      "name": "pucb.bank.in",
-      "department": "pucb.bank.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-05T06:29:04Z"
-    },
-    {
       "url": "https://www.delhihighcourt.nic.in/web/job-openings",
       "name": "delhihighcourt.nic.in",
       "department": "delhihighcourt.nic.in",
@@ -1061,7 +700,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-05T12:28:39Z"
+      "addedAt": "2026-09-05T12:28:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://sahitya-akademi.gov.in/",
@@ -1079,43 +719,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-08T12:33:16Z"
-    },
-    {
-      "url": "https://www.incometaxindia.gov.in/",
-      "name": "incometaxindia.gov.in",
-      "department": "incometaxindia.gov.in",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-12T01:53:42Z"
-    },
-    {
-      "url": "https://balangir.dcourts.gov.in/",
-      "name": "District Court Balangir Recruitment 2026 Apply Offline",
-      "department": "District Court, Balangir (Odisha)",
-      "type": "central",
-      "categorySlug": "central",
-      "location": "All India",
-      "noticeTypes": [
-        "admission",
-        "admit-card",
-        "answer-key",
-        "corrigendum",
-        "recruitment",
-        "result"
-      ],
-      "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-12T13:16:41Z"
+      "addedAt": "2026-09-08T12:33:16Z",
+      "sslFallback": true
     },
     {
       "url": "https://gate2027.iitm.ac.in/download",
@@ -1133,7 +738,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-15T06:34:10Z"
+      "addedAt": "2026-09-15T06:34:10Z",
+      "sslFallback": true
     },
     {
       "url": "https://lsg.rajasthan.gov.in/home",
@@ -1151,7 +757,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-15T06:34:10Z"
+      "addedAt": "2026-09-15T06:34:10Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.incometaxindia.gov.in/home",
@@ -1169,7 +776,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-15T06:34:10Z"
+      "addedAt": "2026-09-15T06:34:10Z",
+      "sslFallback": true
     },
     {
       "url": "https://bmhrc.ac.in/content/Hindi/2532_1_Advertisement.aspx",
@@ -1187,7 +795,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-18T11:13:32Z"
+      "addedAt": "2026-09-18T11:13:32Z",
+      "sslFallback": true
     },
     {
       "url": "https://ssc.gov.in/",
@@ -1205,7 +814,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-18T11:13:32Z"
+      "addedAt": "2026-09-18T11:13:32Z",
+      "sslFallback": true
     },
     {
       "url": "https://davrecruit.davcmc.in/index.html",
@@ -1223,7 +833,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-21T04:54:48Z"
+      "addedAt": "2026-09-21T04:54:48Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.assamrifles.gov.in/join-assam-rifles",
@@ -1241,7 +852,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-21T12:47:17Z"
+      "addedAt": "2026-09-21T12:47:17Z",
+      "sslFallback": true
     },
     {
       "url": "https://joinindianarmy.nic.in/Authentication.aspx",
@@ -1259,7 +871,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T05:29:40Z"
+      "addedAt": "2026-09-22T05:29:40Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.presscouncil.nic.in/Openings.aspx",
@@ -1277,7 +890,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T11:37:15Z"
+      "addedAt": "2026-09-22T11:37:15Z",
+      "sslFallback": true
     },
     {
       "url": "https://jam.iitkgp.ac.in/",
@@ -1295,7 +909,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://gate2027.iitm.ac.in/",
@@ -1313,7 +928,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://navodaya.gov.in/nvs/en/Home1/",
@@ -1331,7 +947,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://bankofbaroda.bank.in/career/current-opportunities",
@@ -1349,7 +966,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://rrb.indianrailways.gov.in/",
@@ -1367,7 +985,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://drdo.gov.in/drdo/en/offerings/vacancies/dipr-delhi-invites-eligible-candidates-engagement-iti-pass-out-aprentices",
@@ -1385,7 +1004,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://rect.crpf.gov.in/",
@@ -1403,7 +1023,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.nal.res.in/en/career",
@@ -1421,7 +1042,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.nspcl.co.in/page/10",
@@ -1439,7 +1061,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://bcplonline.co.in/",
@@ -1457,7 +1080,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.seci.co.in/",
@@ -1475,7 +1099,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.curaj.ac.in/",
@@ -1493,7 +1118,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T16:56:55Z"
+      "addedAt": "2026-09-22T16:56:55Z",
+      "sslFallback": true
     },
     {
       "url": "https://careers.ntpc.co.in/recruitment/",
@@ -1511,7 +1137,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://sssb.punjab.gov.in/vacancy/?key=vacancy_group_d&value=1083",
@@ -1529,7 +1156,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.upsc.gov.in/",
@@ -1547,7 +1175,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://iimcat.ac.in/",
@@ -1565,7 +1194,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.hpbose.org/Home.aspx",
@@ -1583,7 +1213,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://bpsc.bihar.gov.in/",
@@ -1601,7 +1232,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://birac.nic.in/desc_new.php?id=1355",
@@ -1619,7 +1251,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://birac.nic.in/",
@@ -1637,7 +1270,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.nic.gov.in/",
@@ -1655,7 +1289,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.joinindiannavy.gov.in/",
@@ -1673,7 +1308,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-22T21:18:22Z"
+      "addedAt": "2026-09-22T21:18:22Z",
+      "sslFallback": true
     },
     {
       "url": "https://exams.nta.nic.in/rmscet/",
@@ -1691,7 +1327,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://gdsrect.indiapost.gov.in/gdscandidate",
@@ -1709,7 +1346,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://app.indiapost.gov.in/gdscandidate",
@@ -1727,7 +1365,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.indiapost.gov.in/gdsonlineengagement",
@@ -1745,7 +1384,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ngri.res.in/openings-at-ngri.php",
@@ -1763,7 +1403,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://upsc.gov.in/whats-new",
@@ -1781,7 +1422,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://btsc.bihar.gov.in/node/1231",
@@ -1799,7 +1441,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://sskunjpura.org/detail.php?mid=Nw%3D%3D&sid=NzA%3D",
@@ -1817,7 +1460,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ignou.ac.in/announcement/Career?nav=5",
@@ -1835,7 +1479,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.nlcindia.in/website/en/careers/jobs/currentopenings.html",
@@ -1853,7 +1498,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://indiancoastguard.gov.in/recruitment",
@@ -1871,7 +1517,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://uiic.co.in/",
@@ -1889,7 +1536,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://jharkhandhighcourt.nic.in/",
@@ -1907,7 +1555,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://lsg.rajasthan.gov.in/lsg/",
@@ -1925,7 +1574,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T12:01:23Z"
+      "addedAt": "2026-09-27T12:01:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://sr.indianrailways.gov.in/index.jsp?lang=0",
@@ -1943,7 +1593,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.upessc.up.gov.in/",
@@ -1961,7 +1612,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://iafrecruitment.edcil.co.in/airmen/",
@@ -1979,7 +1631,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://indiannavy.gov.in/",
@@ -1997,7 +1650,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://sahitya-akademi.gov.in/recruitment/vacancy.jsp",
@@ -2015,7 +1669,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://nests.tribal.gov.in/show_content.php?lang=1&level=1&ls_id=949&lid=550",
@@ -2033,7 +1688,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-27T16:57:39Z"
+      "addedAt": "2026-09-27T16:57:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://recruitment.itbpolice.nic.in/",
@@ -2051,7 +1707,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://indianrailways.gov.in/railwayboard/view_section.jsp?lang=0&id=0%2C7%2C1281",
@@ -2069,7 +1726,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.canarabank.bank.in/engagement-of-graduate-apprentices-in-canara-bank-under%c2%a0apprentices-act-1961-for-fy-2026-27.",
@@ -2087,7 +1745,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://upsssc.gov.in/",
@@ -2105,7 +1764,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://bel-india.in/",
@@ -2123,7 +1783,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.indiapost.gov.in/",
@@ -2141,7 +1802,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://gate2027ib.iitm.ac.in/",
@@ -2159,7 +1821,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T05:43:23Z"
+      "addedAt": "2026-09-29T05:43:23Z",
+      "sslFallback": true
     },
     {
       "url": "https://cetonline.karnataka.gov.in/kea/",
@@ -2177,7 +1840,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://samvida-sathi.kvs.gov.in/",
@@ -2195,7 +1859,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://bfuhs.ac.in/",
@@ -2213,7 +1878,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.kvic.gov.in/",
@@ -2231,7 +1897,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.sac.gov.in/",
@@ -2249,7 +1916,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://dtl.gov.in/",
@@ -2267,7 +1935,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-29T12:51:49Z"
+      "addedAt": "2026-09-29T12:51:49Z",
+      "sslFallback": true
     },
     {
       "url": "https://aud.delhi.gov.in/careers",
@@ -2285,7 +1954,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T05:32:06Z"
+      "addedAt": "2026-09-30T05:32:06Z",
+      "sslFallback": true
     },
     {
       "url": "https://upsssc.gov.in/Default.aspx",
@@ -2303,7 +1973,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T05:32:06Z"
+      "addedAt": "2026-09-30T05:32:06Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.aiimsexams.ac.in/info/Recruitments_new.html",
@@ -2321,7 +1992,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T05:32:06Z"
+      "addedAt": "2026-09-30T05:32:06Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.maitreyi.ac.in/",
@@ -2339,7 +2011,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T05:32:06Z"
+      "addedAt": "2026-09-30T05:32:06Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.du.ac.in/",
@@ -2357,7 +2030,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T05:32:06Z"
+      "addedAt": "2026-09-30T05:32:06Z",
+      "sslFallback": true
     },
     {
       "url": "https://sssb.punjab.gov.in/index.html",
@@ -2375,7 +2049,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T12:34:03Z"
+      "addedAt": "2026-09-30T12:34:03Z",
+      "sslFallback": true
     },
     {
       "url": "https://bseh.org.in/home",
@@ -2393,7 +2068,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-09-30T12:34:03Z"
+      "addedAt": "2026-09-30T12:34:03Z",
+      "sslFallback": true
     },
     {
       "url": "https://canarabank.bank.in/pages/Recruitment",
@@ -2411,7 +2087,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-02T12:33:39Z"
+      "addedAt": "2026-10-02T12:33:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://natboard.edu.in/recruitment",
@@ -2429,7 +2106,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-02T12:33:39Z"
+      "addedAt": "2026-10-02T12:33:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.rrcjaipur.in/",
@@ -2447,7 +2125,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-02T12:33:39Z"
+      "addedAt": "2026-10-02T12:33:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.itbpolice.nic.in/",
@@ -2465,7 +2144,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-02T12:33:39Z"
+      "addedAt": "2026-10-02T12:33:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.iitg.ac.in/",
@@ -2483,7 +2163,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-02T12:33:39Z"
+      "addedAt": "2026-10-02T12:33:39Z",
+      "sslFallback": true
     },
     {
       "url": "https://nidmp.ac.in/",
@@ -2501,7 +2182,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T05:18:05Z"
+      "addedAt": "2026-10-03T05:18:05Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.punjabpolice.gov.in/",
@@ -2519,7 +2201,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T11:39:00Z"
+      "addedAt": "2026-10-03T11:39:00Z",
+      "sslFallback": true
     },
     {
       "url": "https://nta.ac.in/",
@@ -2537,7 +2220,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T11:39:00Z"
+      "addedAt": "2026-10-03T11:39:00Z",
+      "sslFallback": true
     },
     {
       "url": "https://kvsangathan.nic.in/en/",
@@ -2555,7 +2239,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T11:39:00Z"
+      "addedAt": "2026-10-03T11:39:00Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.iitj.ac.in/",
@@ -2573,7 +2258,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T11:39:00Z"
+      "addedAt": "2026-10-03T11:39:00Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ngri.res.in/",
@@ -2591,7 +2277,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T11:39:00Z"
+      "addedAt": "2026-10-03T11:39:00Z",
+      "sslFallback": true
     },
     {
       "url": "https://sssc.gov.in/",
@@ -2609,7 +2296,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-03T16:17:14Z"
+      "addedAt": "2026-10-03T16:17:14Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.hil.gov.in/",
@@ -2627,7 +2315,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-04T05:51:41Z"
+      "addedAt": "2026-10-04T05:51:41Z",
+      "sslFallback": true
     }
   ]
 }

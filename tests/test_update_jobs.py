@@ -3481,7 +3481,7 @@ class VerifiedReliabilityRuleTests(unittest.TestCase):
         self.assertEqual(ordered[-1], allorigins)
         # Mirrors beyond the original two exist (R2: rotation pool).
         self.assertIn("https://api.codetabs.com/v1/proxy/?quest={quoted}", ordered)
-        self.assertIn("https://corsproxy.io/?url={quoted}", ordered)
+        self.assertIn("https://api.cors.lol/?url={quoted}", ordered)
         # A success resets the mirror to the front of the rotation.
         monitor._remember_mirror(allorigins, True, now)
         self.assertEqual(monitor._ordered_mirror_templates(now)[0], allorigins)
