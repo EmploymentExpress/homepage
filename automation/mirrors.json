@@ -9,7 +9,16 @@
     {
       "id": "cors-lol",
       "template": "https://api.cors.lol/?url={quoted}",
-      "enabled": true
+      "enabled": false,
+      "disabledUntil": "2026-10-07T09:37:15Z",
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-10-05T09:37:15Z",
+        "disabledUntil": "2026-10-07T09:37:15Z",
+        "failuresAtDisable": 53,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      }
     },
     {
       "id": "allorigins-get",
@@ -19,12 +28,30 @@
     {
       "id": "allorigins-raw",
       "template": "https://api.allorigins.win/raw?url={quoted}",
-      "enabled": true
+      "enabled": false,
+      "disabledUntil": "2026-10-07T09:37:15Z",
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-10-05T09:37:15Z",
+        "disabledUntil": "2026-10-07T09:37:15Z",
+        "failuresAtDisable": 36,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      }
     },
     {
       "id": "codetabs",
       "template": "https://api.codetabs.com/v1/proxy/?quest={quoted}",
-      "enabled": true
+      "enabled": false,
+      "disabledUntil": "2026-10-07T09:37:15Z",
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-10-05T09:37:15Z",
+        "disabledUntil": "2026-10-07T09:37:15Z",
+        "failuresAtDisable": 747,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      }
     }
   ]
 }
