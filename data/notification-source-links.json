@@ -2705,6 +2705,132 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://iitj.ac.in/office-of-recruitment-nf/en/non-teaching-staff-recruitment",
+      "name": "iitj.ac.in",
+      "department": "iitj.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://iiitdwd.ac.in/careers/",
+      "name": "iiitdwd.ac.in",
+      "department": "iiitdwd.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://joinindiancoastguard.cdac.in/",
+      "name": "joinindiancoastguard.cdac.in",
+      "department": "joinindiancoastguard.cdac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://ssc.gov.in/home",
+      "name": "ssc.gov.in",
+      "department": "ssc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://portal.mphc.gov.in/recruitment-result",
+      "name": "portal.mphc.gov.in",
+      "department": "portal.mphc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://www.gims.ac.in/",
+      "name": "gims.ac.in",
+      "department": "gims.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://cihts.ac.in/",
+      "name": "cihts.ac.in",
+      "department": "cihts.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T18:21:59Z"
     }
   ]
 }
