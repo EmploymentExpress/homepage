@@ -2487,7 +2487,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-04T21:23:53Z"
+      "addedAt": "2026-10-04T21:23:53Z",
+      "sslFallback": true
     },
     {
       "url": "https://www.ncl-india.org/",
