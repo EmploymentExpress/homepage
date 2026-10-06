@@ -2524,6 +2524,186 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-05T05:38:46Z"
+    },
+    {
+      "url": "https://cdac.in/index.aspx?id=current_jobs",
+      "name": "cdac.in",
+      "department": "cdac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://uok.ac.in/",
+      "name": "uok.ac.in",
+      "department": "uok.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://www.mha.gov.in/notifications/vacancies",
+      "name": "mha.gov.in",
+      "department": "mha.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://dsssb.delhi.gov.in/",
+      "name": "dsssb.delhi.gov.in",
+      "department": "dsssb.delhi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://ubse.uk.gov.in/",
+      "name": "ubse.uk.gov.in",
+      "department": "ubse.uk.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "http://hpsc.gov.in/en-us/",
+      "name": "hpsc.gov.in",
+      "department": "hpsc.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://careers.cdac.in/",
+      "name": "careers.cdac.in",
+      "department": "careers.cdac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://www.aiimsmangalagiri.edu.in/",
+      "name": "aiimsmangalagiri.edu.in",
+      "department": "aiimsmangalagiri.edu.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://www.nlcindia.in/",
+      "name": "nlcindia.in",
+      "department": "nlcindia.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
+    },
+    {
+      "url": "https://dcpcr.delhi.gov.in/",
+      "name": "dcpcr.delhi.gov.in",
+      "department": "dcpcr.delhi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-06T06:46:45Z"
     }
   ]
 }
