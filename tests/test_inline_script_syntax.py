@@ -121,6 +121,24 @@ class InlineScriptSyntaxTest(unittest.TestCase):
         run = subprocess.run(["node", "-e", script], capture_output=True, timeout=30)
         self.assertEqual(run.returncode, 0, run.stderr.decode("utf-8", "replace"))
 
+    def test_admit_card_and_result_badges_expire_from_their_own_date(self):
+        # Regression (Oct 2026): curated admit-card/result entries carried a
+        # hardcoded `isJustIn: true` that the renderers used verbatim, so
+        # months-old, long-expired notices wore "Just In" forever. Freshness
+        # must be recomputed from publishedAt/updatedAt on every render.
+        self.assertIn("function resourceFreshness(item)", self.html)
+        self.assertIn("isWithinHours(probe, JUST_IN_WINDOW_HOURS)", self.html)
+        self.assertIn("isWithinHours(probe, NEW_NOTICE_WINDOW_HOURS)", self.html)
+        self.assertIn(
+            ".map(item => ({ ...item, ...resourceFreshness(item) }));", self.html
+        )
+        self.assertGreaterEqual(
+            self.html.count("...resourceFreshness(item)"),
+            2,
+            "renderAdmitCards and renderResults must both recompute badge freshness",
+        )
+        self.assertNotIn("isJustIn: true", self.html)
+
     def test_extended_deadlines_are_excluded_from_last_date_reminders(self):
         self.assertIn(".filter(job => job.lastDateExtended !== true)", self.html)
 

@@ -247,6 +247,11 @@ Every notice is now dated by the notice itself, and history is never published:
    and `sanitize_published_jobs()` removes it from the store. **An old advertisement whose
    verified deadline is still open stays published** — the window must never delete a live
    vacancy — and an alert with no readable document date is never treated as archive.
+   A year/month upload folder in the document path (`/wp-content/uploads/2026/01/`, read by
+   `document_month_from_url()`) counts as month-precision archive evidence — measured from the
+   month's last day, the youngest the document can be — so a years-old file that carries no day
+   stamp (a BFUHS January-2026 schedule republished in October 2026 wearing "Just In") is still
+   recognised as history. Month evidence never feeds `publishedAt`: a badge date needs a real day.
 3. **A stage document is a result, never a job.** The same tables point straight at a paper trail
    — "8) Eligibility Notification for the posts of …", "Final Result Notification" — whose only
    description is the attachment label. Such a link belongs in the Results column: `RESULT_TERMS`

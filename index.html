@@ -2584,8 +2584,8 @@
                 link: "https://ibpsreg.ibps.in/ubijul26/oecla_aug26/login.php?appid=e86e69203d8c7f71a2897baeeb2fcd5c",
                 updatedAt: "2026-08-31T18:06:00+05:30",
                 publishedAt: "2026-08-31T18:06:00+05:30",
-                isJustIn: true,
-                isNew: true
+                isJustIn: false,
+                isNew: false
             },
             {
                 title: "SSC Stenographer Grade C & D 2026 Exam City Intimation Slip",
@@ -2594,8 +2594,8 @@
                 link: "https://ssc.gov.in/login",
                 updatedAt: "2026-08-31T18:57:00+05:30",
                 publishedAt: "2026-08-31T18:57:00+05:30",
-                isJustIn: true,
-                isNew: true
+                isJustIn: false,
+                isNew: false
             },
             {
                 title: "SSC JHT (Junior Hindi Translator) 2026 Exam City Intimation Slip",
@@ -2604,8 +2604,8 @@
                 link: "https://ssc.gov.in/login",
                 updatedAt: "2026-08-31T18:57:00+05:30",
                 publishedAt: "2026-08-31T18:57:00+05:30",
-                isJustIn: true,
-                isNew: true
+                isJustIn: false,
+                isNew: false
             },
             {
                 title: "RRB Group D (Level-1) E-Call Letter 2026",
@@ -2632,8 +2632,8 @@
                 link: "https://dsssb.delhi.gov.in/doit/dsssb/latest-result",
                 updatedAt: "2026-08-31T17:46:00+05:30",
                 publishedAt: "2026-08-31T17:46:00+05:30",
-                isJustIn: true,
-                isNew: true
+                isJustIn: false,
+                isNew: false
             },
             { title: "NVS Chandigarh Teaching/Non-Teaching Shortlist 2026", score: "Empanelment Merit PDF", isNew: true },
             { title: "JNVST Class 6th Selection Test Merit List 2026", score: "District-wise List PDF", isNew: true },
@@ -2812,9 +2812,27 @@
 
         let renderedAdmitCards = admitCards;
 
+        // Freshness for admit-card / result items is recomputed from the item's
+        // own date on every render, so the "Just In" (48h) and NEW (72h) badges
+        // expire automatically — a stored isJustIn/isNew flag alone must never
+        // keep a badge alive forever. Items without any parseable date keep
+        // their stored flags (nothing to measure against).
+        function resourceFreshness(item) {
+            const stamp = item && (item.publishedAt || item.updatedAt);
+            if (stamp && Number.isFinite(Date.parse(stamp))) {
+                const probe = { publishedAt: stamp };
+                return {
+                    isJustIn: isWithinHours(probe, JUST_IN_WINDOW_HOURS),
+                    isNew: isWithinHours(probe, NEW_NOTICE_WINDOW_HOURS)
+                };
+            }
+            return { isJustIn: item.isJustIn === true, isNew: item.isNew === true };
+        }
+
         function renderAdmitCards() {
             const list = document.getElementById('admit-cards-list');
-            renderedAdmitCards = sortResourcesNewestFirst(admitCards);
+            renderedAdmitCards = sortResourcesNewestFirst(admitCards)
+                .map(item => ({ ...item, ...resourceFreshness(item) }));
             list.innerHTML = renderedAdmitCards.map((item, index) => `
                 <div class="p-3 hover:bg-emerald-50/60 transition cursor-pointer flex items-center justify-between gap-2" role="link" tabindex="0" onclick="openAdmitCardItem(${index})" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openAdmitCardItem(${index}); }">
                     <div>
@@ -2855,7 +2873,8 @@
 
         function renderResults() {
             const list = document.getElementById('results-list');
-            renderedResultsList = sortResourcesNewestFirst(resultsList);
+            renderedResultsList = sortResourcesNewestFirst(resultsList)
+                .map(item => ({ ...item, ...resourceFreshness(item) }));
             list.innerHTML = renderedResultsList.map((item, index) => `
                 <div class="p-3 hover:bg-rose-50/60 transition cursor-pointer flex items-center justify-between" onclick="openResultItem(${index})">
                     <div>

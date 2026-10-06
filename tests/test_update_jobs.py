@@ -4018,6 +4018,149 @@ class ArchivedNoticeFreshnessTests(unittest.TestCase):
             monitor.document_date_from_url("https://example.gov.in/files/99990101.pdf"), ""
         )
 
+    def test_upload_folder_year_month_is_archive_evidence_but_not_a_badge_date(self):
+        # WordPress upload folders carry a year and month but no day: the
+        # day-precision reader must keep ignoring them (a badge date needs a
+        # real day) while the month reader picks them up for archive detection.
+        old_upload = (
+            "https://bfuhs.ggsmch.org/wp-content/uploads/2026/01/"
+            "Schedule-of-Document-VerificationWebsite-merged.pdf"
+        )
+        self.assertEqual(monitor.document_date_from_url(old_upload), "")
+        self.assertEqual(monitor.document_month_from_url(old_upload), (2026, 1))
+        # A full YYYY/MM/DD path is a day stamp, not a bare month.
+        self.assertIsNone(
+            monitor.document_month_from_url("https://example.gov.in/2026/09/15/notice.pdf")
+        )
+        self.assertEqual(
+            monitor.document_date_from_url("https://example.gov.in/2026/09/15/notice.pdf"),
+            "15-09-2026",
+        )
+        # A current-or-future month is not evidence of anything.
+        far_future = "https://example.gov.in/wp-content/uploads/2099/01/notice.pdf"
+        self.assertIsNone(monitor.document_month_from_url(far_future))
+        self.assertEqual(monitor.document_date_from_url(far_future), "")
+
+    def test_month_stamped_archive_doc_is_never_published_or_badged_as_new(self):
+        # Real incident: a BFUHS January-2026 document-verification schedule was
+        # republished in October 2026 wearing a "Just In" badge, because its URL
+        # carries only a /2026/01/ folder. The months are relative to the run
+        # date so this guard cannot age out.
+        old_month = _date_in_days(-90)
+        old_folder = f"{old_month.year}/{old_month.month:02d}"
+        page = (
+            f"<a href='/wp-content/uploads/{old_folder}/Provisional-Result-Notification.pdf'>"
+            "7) Provisional Result Notification</a>\n"
+            f"<a href='/{_document_stamp_in_days(-5, '090000')}.pdf'>8) Final Result Notification</a>\n"
+            "        "
+        ).encode("utf-8")
+        source = {
+            "id": "example-month-archive",
+            "name": "Example Board (Month Archive)",
+            "department": "Example Board",
+            "url": "https://example.gov.in/recruitment",
+            "type": "central",
+            "categorySlug": "central",
+            "location": "New Delhi",
+            "enrichDetails": False,
+            "bootstrapCount": 2,
+            "maxNewPerRun": 5,
+            "includeKeywords": ["result", "provisional", "final"],
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(
+                json.dumps({"maxNoticeAgeDays": 60, "sources": [source]}), encoding="utf-8"
+            )
+            download = monitor.Download(
+                "https://example.gov.in/recruitment", "text/html", page
+            )
+            with patch.object(monitor, "fetch_url", return_value=download):
+                monitor.run(config, output, state)
+
+            jobs = json.loads(output.read_text(encoding="utf-8"))["jobs"]
+            titles = [job["title"] for job in jobs]
+            # The 90-day-old upload is history: not published at all …
+            self.assertEqual(len(jobs), 1)
+            self.assertIn("Final Result Notification", titles[0])
+            self.assertNotIn(old_folder, json.dumps(jobs))
+            # … but recorded as seen, so it is never re-examined or republished.
+            fingerprints = json.loads(state.read_text(encoding="utf-8"))["sources"][
+                "example-month-archive"
+            ]["fingerprints"]
+            self.assertIn(
+                monitor.fingerprint(
+                    monitor.Candidate(
+                        "7) Provisional Result Notification",
+                        f"https://example.gov.in/wp-content/uploads/{old_folder}/"
+                        "Provisional-Result-Notification.pdf",
+                    )
+                ),
+                fingerprints,
+            )
+
+    def test_month_archive_check_keeps_an_advertisement_with_an_open_deadline(self):
+        now = datetime(2026, 10, 6, tzinfo=timezone.utc)
+        # The January upload is archive material even though the monitor only
+        # discovered it (and stamped publishedAt) in October.
+        old_result = {
+            "title": "BFUHS Faridkot — Schedule of Document Verification for MPHW(M)",
+            "alertType": "result",
+            "lastDate": "30-01-2026",
+            "publishedAt": "2026-10-05T05:38:46Z",
+            "discoveredAt": "2026-10-05T05:38:46Z",
+            "noticeUrl": (
+                "https://bfuhs.ggsmch.org/wp-content/uploads/2026/01/"
+                "Schedule-of-Document-VerificationWebsite-merged.pdf"
+            ),
+        }
+        self.assertTrue(monitor.is_archive_notice(old_result, now, 60))
+        # This month's upload is news, whatever day of the month it is.
+        fresh_result = {
+            "title": "Example Board — Provisional Result Notification",
+            "alertType": "result",
+            "lastDate": "See Notification",
+            "noticeUrl": "https://example.gov.in/wp-content/uploads/2026/10/result.pdf",
+        }
+        self.assertFalse(monitor.is_archive_notice(fresh_result, now, 60))
+        # An old advertisement whose deadline is still open stays published.
+        open_advertisement = {
+            "title": "Example Board — Clerk Recruitment",
+            "alertType": "recruitment",
+            "lastDate": "30-10-2026",
+            "noticeUrl": "https://example.gov.in/wp-content/uploads/2026/01/advert.pdf",
+        }
+        self.assertFalse(monitor.is_archive_notice(open_advertisement, now, 60))
+        # … but the same old advertisement with a closed deadline is archive.
+        closed_advertisement = dict(open_advertisement, lastDate="30-01-2026")
+        self.assertTrue(monitor.is_archive_notice(closed_advertisement, now, 60))
+        # The store cleanup drops the month-archived alert on the next run.
+        stored = [
+            {
+                "id": 1,
+                "title": "Baba Farid University of Health Sciences (BFUHS), Faridkot — Schedule of Document Verification for MPHW(M)",
+                "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
+                "alertType": "result",
+                "lastDate": "30-01-2026",
+                "publishedAt": "2026-10-05T05:38:46Z",
+                "discoveredAt": "2026-10-05T05:38:46Z",
+                "sourceUrl": "https://bfuhs.ggsmch.org/",
+                "noticeUrl": (
+                    "https://bfuhs.ggsmch.org/wp-content/uploads/2026/01/"
+                    "Schedule-of-Document-VerificationWebsite-merged.pdf"
+                ),
+                "pdfLink": (
+                    "https://bfuhs.ggsmch.org/wp-content/uploads/2026/01/"
+                    "Schedule-of-Document-VerificationWebsite-merged.pdf"
+                ),
+            }
+        ]
+        self.assertTrue(monitor.sanitize_published_jobs(stored, now, 60))
+        self.assertEqual(stored, [])
+
     def test_archived_notice_is_never_published_or_badged_as_new(self):
         # The "current" notice is stamped relative to the run date: with a
         # hardcoded stamp it silently ages past `maxNoticeAgeDays` and the guard
@@ -4166,3 +4309,4 @@ class ArchivedNoticeFreshnessTests(unittest.TestCase):
         self.assertIn("maxNoticeAgeDays", agents)
         self.assertIn("is_archive_notice", agents)
         self.assertIn("document_date_from_url", agents)
+        self.assertIn("document_month_from_url", agents)
