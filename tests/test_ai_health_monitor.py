@@ -219,12 +219,21 @@ class AIHealthMonitorTests(unittest.TestCase):
             for index, template in enumerate(templates[:4])
         }}
         _, planned, _, _, fixes, _ = health.analyze_health(source_config(), mirrors, state, NOW)
-        active = [entry for entry in planned["mirrors"] if entry["enabled"]]
-        inactive = [entry for entry in planned["mirrors"] if not entry["enabled"]]
-        self.assertEqual(len(active), health.MIN_ACTIVE_MIRRORS)
-        self.assertEqual(len(inactive), len(templates) - health.MIN_ACTIVE_MIRRORS)
-        self.assertEqual(len([fix for fix in fixes if fix["kind"] == "cooldown_dead_mirror"]), len(inactive))
-        self.assertIn(templates[3], [entry["template"] for entry in inactive])
+        # The health monitor no longer sets enabled=False; instead it marks
+        # mirrors with _aiHealth.phase="disabled" and a disabledUntil date.
+        def _in_cooldown(entry):
+            meta = entry.get("_aiHealth", {})
+            return meta.get("phase") == "disabled" and "disabledUntil" in meta
+
+        cooling = [entry for entry in planned["mirrors"] if _in_cooldown(entry)]
+        not_cooling = [entry for entry in planned["mirrors"] if not _in_cooldown(entry)]
+        # Mirrors stay enabled=True even during cooldown; the runtime rotation
+        # deprioritises them.  The monitor still tracks MIN_ACTIVE_MIRRORS via
+        # _aiHealth metadata rather than the enabled flag.
+        self.assertEqual(len(not_cooling), health.MIN_ACTIVE_MIRRORS)
+        self.assertEqual(len(cooling), len(templates) - health.MIN_ACTIVE_MIRRORS)
+        self.assertEqual(len([fix for fix in fixes if fix["kind"] == "cooldown_dead_mirror"]), len(cooling))
+        self.assertIn(templates[3], [entry["template"] for entry in cooling])
 
     def test_mirror_requires_repeated_recent_failures(self):
         template = updater.DEFAULT_SOURCE_MIRRORS[0]
@@ -276,7 +285,11 @@ class AIHealthMonitorTests(unittest.TestCase):
         _, third, _, _, third_fixes, _ = health.analyze_health(
             source_config(), second, fresh_failures, NOW + timedelta(days=3)
         )
-        self.assertFalse(third["mirrors"][0]["enabled"])
+        # The health monitor no longer sets enabled=False; cooldown is tracked
+        # via _aiHealth.phase="disabled" and disabledUntil.
+        third_meta = third["mirrors"][0].get("_aiHealth", {})
+        self.assertEqual(third_meta.get("phase"), "disabled")
+        self.assertIn("disabledUntil", third_meta)
         self.assertIn("cooldown_dead_mirror", [fix["kind"] for fix in third_fixes])
 
     def test_updater_consumes_mirror_cooldown_config(self):

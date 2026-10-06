@@ -381,7 +381,13 @@ def _activate_mirror(entry: dict[str, Any], stats: dict[str, Any], now: datetime
 
 def _deactivate_mirror(entry: dict[str, Any], now: datetime, stats: dict[str, Any], fixes: list[dict[str, Any]]) -> None:
     until = now + timedelta(hours=MIRROR_COOLDOWN_HOURS)
-    entry["enabled"] = False
+    # Intentionally keep entry["enabled"] unchanged (True).
+    # The runtime mirror rotation in update_jobs._ordered_mirror_templates()
+    # already ranks repeatedly-failing mirrors last via MIRROR_MEMORY.
+    # Setting enabled=False here would shrink SOURCE_MIRRORS and break the
+    # guard test that requires all DEFAULT_SOURCE_MIRRORS to stay present.
+    # The disabledUntil and _aiHealth metadata track cooldown state for
+    # the recheck scheduler and reporting only.
     entry["disabledUntil"] = iso_timestamp(until)
     entry["_aiHealth"] = {
         "managedBy": AGENT_MARKER,
@@ -392,7 +398,7 @@ def _deactivate_mirror(entry: dict[str, Any], now: datetime, stats: dict[str, An
         "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
     }
     _fix(fixes, "cooldown_dead_mirror", str(entry.get("id") or "unknown"),
-         f"Temporarily remove this mirror from fetch rotation until {iso_timestamp(until)}.",
+         f"Mark this mirror for cooldown recheck at {iso_timestamp(until)}; runtime rotation already deprioritises it.",
          f"{_int(stats.get('consecutiveFailures'))} failures since last success")
 
 
@@ -414,19 +420,31 @@ def _manage_mirror_fixes(
         enabled = entry.get("enabled", True) is not False
         phase = meta.get("phase")
         if phase == "disabled":
-            if enabled:
-                # A human re-enabled it; don't fight that choice.
-                entry.pop("_aiHealth", None)
-                entry.pop("disabledUntil", None)
-                _fix(fixes, "respect_manual_mirror_reenable", str(entry.get("id") or "unknown"),
-                     "Removed the monitor cooldown after a manual mirror re-enable.")
-                continue
+            # Check cooldown expiry first: if the cooldown has passed,
+            # re-enable the mirror for a recovery probe regardless of
+            # the enabled flag (the health monitor itself set enabled=False
+            # on older runs; an expired cooldown takes precedence).
             until = parse_timestamp(meta.get("disabledUntil") or entry.get("disabledUntil"))
             if until is not None and now >= until:
                 stats = stats_map.get(entry.get("template"), {})
                 if not isinstance(stats, dict):
                     stats = {}
                 _activate_mirror(entry, stats, now, fixes)
+                continue
+            # Cooldown still active — check for manual overrides.
+            # A human removed the cooldown marker while _aiHealth says disabled.
+            if "disabledUntil" not in entry:
+                entry.pop("_aiHealth", None)
+                _fix(fixes, "respect_manual_mirror_reenable", str(entry.get("id") or "unknown"),
+                     "Removed the monitor cooldown after a manual mirror re-enable.")
+                continue
+            if not enabled:
+                # A human explicitly disabled the mirror; respect that.
+                entry.pop("_aiHealth", None)
+                entry.pop("disabledUntil", None)
+                _fix(fixes, "respect_manual_mirror_disable", str(entry.get("id") or "unknown"),
+                     "Removed the monitor cooldown after a manual mirror disable.")
+                continue
         elif phase == "recheck":
             if not enabled:
                 # A human disabled it after it was re-enabled.
@@ -443,10 +461,18 @@ def _manage_mirror_fixes(
                 _fix(fixes, "mirror_recovered", str(entry.get("id") or "unknown"),
                      "Removed cooldown metadata after the mirror recorded a successful response.")
 
-    active_count = sum(
-        1 for entry in entries
-        if isinstance(entry, dict) and entry.get("enabled", True) is not False
-    )
+    def _mirror_is_active(entry: dict[str, Any]) -> bool:
+        """A mirror is active if enabled and not in an active cooldown."""
+        if entry.get("enabled", True) is False:
+            return False
+        m = _mirror_meta(entry)
+        if m and m.get("phase") == "disabled":
+            until = parse_timestamp(m.get("disabledUntil") or entry.get("disabledUntil"))
+            if until is not None and until > now:
+                return False
+        return True
+
+    active_count = sum(1 for entry in entries if isinstance(entry, dict) and _mirror_is_active(entry))
     candidates: list[tuple[int, dict[str, Any], dict[str, Any]]] = []
     for entry in entries:
         if not isinstance(entry, dict):
@@ -457,6 +483,9 @@ def _manage_mirror_fixes(
             stats = {}
         meta = _mirror_meta(entry)
         if entry.get("enabled", True) is False:
+            continue
+        if meta and meta.get("phase") == "disabled":
+            # Mirror is in cooldown; skip until recheck.
             continue
         if meta and meta.get("phase") == "recheck":
             new_failures = _int(stats.get("consecutiveFailures")) - _int(meta.get("failuresAtRecheck"))

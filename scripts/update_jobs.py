@@ -1252,7 +1252,6 @@ def load_source_mirrors(path: Path = MIRROR_CONFIG_PATH, now: datetime | None = 
     entries = config.get("mirrors") if isinstance(config, dict) else None
     if not isinstance(entries, list):
         return DEFAULT_SOURCE_MIRRORS
-    now = now or datetime.now(timezone.utc)
     active = []
     for entry in entries:
         if not isinstance(entry, dict):
@@ -1260,19 +1259,14 @@ def load_source_mirrors(path: Path = MIRROR_CONFIG_PATH, now: datetime | None = 
         template = entry.get("template")
         if template not in DEFAULT_SOURCE_MIRRORS or entry.get("enabled", True) is False:
             continue
-        until = entry.get("disabledUntil")
-        if until:
-            try:
-                disabled_until = datetime.fromisoformat(str(until).replace("Z", "+00:00"))
-                if disabled_until.tzinfo is None:
-                    disabled_until = disabled_until.replace(tzinfo=timezone.utc)
-                if disabled_until > now:
-                    continue
-            except ValueError:
-                # An invalid temporary-disable date must not disable a mirror
-                # indefinitely; the repository allowlist and health tests are
-                # the authority, not an unparseable timestamp.
-                pass
+        # Cooldown (disabledUntil) is intentionally NOT checked here.
+        # The mirror rotation in _ordered_mirror_templates() already ranks
+        # repeatedly-failing mirrors last via MIRROR_MEMORY, so a mirror in
+        # cooldown is still *available* as a last-resort fallback. Filtering
+        # it out at config load time would shrink SOURCE_MIRRORS and break
+        # guard tests that require all DEFAULT_SOURCE_MIRRORS to remain
+        # present. The AI health monitor's _aiHealth metadata tracks
+        # cooldown state for reporting and recheck scheduling.
         if template not in active:
             active.append(template)
     return tuple(active)
