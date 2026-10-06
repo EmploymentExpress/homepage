@@ -10,6 +10,7 @@ being guessed. A temporary source failure is reported but does not remove alerts
 from __future__ import annotations
 
 import argparse
+import calendar
 import hashlib
 import importlib.util
 import html
@@ -2201,6 +2202,13 @@ DOCUMENT_DATE_DMY = re.compile(
 DOCUMENT_DATE_YMD = re.compile(
     r"(?<!\d)(20\d{2})[-_./](0?[1-9]|1[0-2])[-_./](0?[1-9]|[12]\d|3[01])(?!\d)"
 )
+# YYYY-MM / YYYY/MM upload folders (WordPress: /wp-content/uploads/2026/01/).
+# Month precision only — no day — so this never feeds ``publishedAt``; it is
+# archive-detection evidence only (see ``document_month_from_url``). The
+# trailing guard keeps a full YYYY-MM-DD path from matching as a bare month.
+DOCUMENT_YEAR_MONTH_IN_PATH = re.compile(
+    r"(?<!\d)(20\d{2})[-_./](0?[1-9]|1[0-2])(?![-_./]?\d)"
+)
 
 
 def document_date_from_url(url: str) -> str:
@@ -2274,6 +2282,36 @@ def document_date_from_url(url: str) -> str:
     # still treat it as old if that latest date is >60 days ago).
     latest = max(candidates)
     return latest.strftime("%d-%m-%Y")
+
+
+def document_month_from_url(url: str) -> tuple[int, int] | None:
+    """(year, month) upload folder in a document's path, else None.
+
+    WordPress-style upload folders (``/wp-content/uploads/2026/01/file.pdf``)
+    carry a year and month but no day, so ``document_date_from_url`` cannot
+    date them — and an 8-month-old file then looks brand new (real incident:
+    a BFUHS January-2026 document-verification schedule republished in October
+    2026 wearing a "Just In" badge). The pair is archive-detection evidence
+    ONLY (``notice_age_days`` measures from the last day of that month, the
+    youngest the document can possibly be). It never feeds ``publishedAt`` —
+    a badge date needs a real day — and a current or future month is ignored.
+    """
+    raw = canonical_url(url) or clean_text(url)
+    if not raw:
+        return None
+    path = urllib.parse.unquote(urllib.parse.urlsplit(raw).path)
+    today = datetime.now(timezone.utc).date()
+    candidates: list[tuple[int, int]] = []
+    for match in DOCUMENT_YEAR_MONTH_IN_PATH.finditer(path):
+        year, month = int(match.group(1)), int(match.group(2))
+        if month < 1 or month > 12:
+            continue
+        if (year, month) > (today.year, today.month):
+            continue
+        candidates.append((year, month))
+    if not candidates:
+        return None
+    return max(candidates)
 
 
 def iso_timestamp_from_date(value: str) -> str:
@@ -3974,8 +4012,13 @@ def sanitize_published_jobs(
             # window existed (AIIMS Bathinda's 2021–2025 results and eligibility
             # lists). It leaves the store on the next run instead of lingering
             # in the Results/Jobs lists as a fresh alert.
+            published_evidence = job_document_date(job)
+            if not published_evidence:
+                month_stamp = job_document_month(job)
+                if month_stamp:
+                    published_evidence = f"{month_stamp[1]:02d}-{month_stamp[0]}"
             print(
-                f"  Dropped archived alert published {job_document_date(job)}: "
+                f"  Dropped archived alert published {published_evidence or 'unknown date'}: "
                 f"{clean_text(job.get('title', ''))[:80]}"
             )
             changed = True
@@ -4930,14 +4973,28 @@ def job_document_date(job: dict[str, Any]) -> str:
     return ""
 
 
+def job_document_month(job: dict[str, Any]) -> tuple[int, int] | None:
+    """(year, month) upload folder on the alert's own document, else None.
+
+    Same field order as ``job_document_date``. Used only for archive detection
+    when no full day-date stamp is readable (see ``document_month_from_url``).
+    """
+    for field in ("noticeUrl", "pdfLink", "applyLink"):
+        stamped = document_month_from_url(job.get(field) or "")
+        if stamped:
+            return stamped
+    return None
+
+
 def notice_age_days(job: dict[str, Any], now: datetime) -> int | None:
     """Age of the alert's own document in days; None when it has no date stamp.
 
     Primary source is the document URL date (most reliable, from file name).
-    Fallback is the publishedAt ISO timestamp when present — this lets archive
-    pruning drop 2025 notices that slipped in with empty document dates but a
-    2025 publishedAt, and prevents them from showing as 'Just In' via
-    discoveredAt fallback.
+    Month-only upload folders (``/2026/01/``) come next, measured from the last
+    day of that month — the youngest the document can be. Final fallback is the
+    publishedAt ISO timestamp when present — this lets archive pruning drop 2025
+    notices that slipped in with empty document dates but a 2025 publishedAt,
+    and prevents them from showing as 'Just In' via discoveredAt fallback.
     """
     # 1) Document URL date
     doc_date = job_document_date(job)
@@ -4945,6 +5002,21 @@ def notice_age_days(job: dict[str, Any], now: datetime) -> int | None:
     if stamped:
         try:
             return (now.date() - datetime.strptime(stamped, "%d-%m-%Y").date()).days
+        except ValueError:
+            pass
+    # 1b) Upload-folder year/month (WordPress /wp-content/uploads/YYYY/MM/).
+    # No day is known, so the age runs from the last day of that month: a
+    # notice is never aged a day more than the evidence proves. Only archive
+    # detection uses this — publishedAt still needs a real day stamp.
+    month_stamp = job_document_month(job)
+    if month_stamp:
+        try:
+            year, month = month_stamp
+            last_day = calendar.monthrange(year, month)[1]
+            return (
+                now.date()
+                - datetime(year, month, last_day, tzinfo=timezone.utc).date()
+            ).days
         except ValueError:
             pass
     # 2) publishedAt ISO timestamp fallback
@@ -4978,9 +5050,11 @@ def is_archive_notice(
     """True for an alert that is history rather than news.
 
     Judged only on evidence the alert itself carries — the date stamped in its
-    official document's file name. An alert with no readable stamp is never
-    treated as archive, and an old advertisement whose deadline is verifiably
-    still open keeps its place in the vacancy columns.
+    official document's file name, or failing that the year/month upload folder
+    in its path (measured from the month's last day). An alert with no readable
+    stamp of either kind is never treated as archive, and an old advertisement
+    whose deadline is verifiably still open keeps its place in the vacancy
+    columns.
     """
     limit = DEFAULT_MAX_NOTICE_AGE_DAYS if max_age_days is None else max(1, int(max_age_days))
     age = notice_age_days(job, now)
