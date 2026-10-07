@@ -2831,6 +2831,132 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-06T18:21:59Z"
+    },
+    {
+      "url": "https://jind.dcourts.gov.in/notice-category/recruitments/",
+      "name": "jind.dcourts.gov.in",
+      "department": "jind.dcourts.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://nationalinsurance.nic.co.in/recruitment",
+      "name": "nationalinsurance.nic.co.in",
+      "department": "nationalinsurance.nic.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://ampri.res.in/en/?page_id=12066",
+      "name": "ampri.res.in",
+      "department": "ampri.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://esb.mp.gov.in/e_default.html",
+      "name": "esb.mp.gov.in",
+      "department": "esb.mp.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://gate2027.iitg.ac.in/",
+      "name": "gate2027.iitg.ac.in",
+      "department": "gate2027.iitg.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://vvgnli.gov.in/",
+      "name": "vvgnli.gov.in",
+      "department": "vvgnli.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://www.glidersindia.in/",
+      "name": "glidersindia.in",
+      "department": "glidersindia.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T05:58:14Z"
     }
   ]
 }
