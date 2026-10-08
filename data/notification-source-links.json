@@ -2957,6 +2957,60 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-07T05:58:14Z"
+    },
+    {
+      "url": "https://hal-india.co.in/career",
+      "name": "hal-india.co.in",
+      "department": "hal-india.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T23:05:00Z"
+    },
+    {
+      "url": "https://nationalinsurance.nic.co.in/",
+      "name": "nationalinsurance.nic.co.in",
+      "department": "nationalinsurance.nic.co.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T23:05:00Z"
+    },
+    {
+      "url": "https://www.tiss.ac.in/",
+      "name": "tiss.ac.in",
+      "department": "tiss.ac.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-07T23:05:00Z"
     }
   ]
 }
