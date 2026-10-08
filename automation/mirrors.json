@@ -10,47 +10,56 @@
       "id": "cors-lol",
       "template": "https://api.cors.lol/?url={quoted}",
       "enabled": true,
-      "disabledUntil": "2026-10-08T09:26:03Z",
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-06T09:26:03Z",
-        "disabledUntil": "2026-10-08T09:26:03Z",
         "failuresAtDisable": 73,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-08T09:29:15Z",
+        "failuresAtRecheck": 34
       }
     },
     {
       "id": "allorigins-get",
       "template": "https://api.allorigins.win/get?url={quoted}",
       "enabled": true,
-      "disabledUntil": "2026-10-08T09:26:03Z",
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-06T09:26:03Z",
-        "disabledUntil": "2026-10-08T09:26:03Z",
         "failuresAtDisable": 39,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-08T09:29:15Z",
+        "failuresAtRecheck": 16
       }
     },
     {
       "id": "allorigins-raw",
       "template": "https://api.allorigins.win/raw?url={quoted}",
-      "enabled": true
+      "enabled": true,
+      "disabledUntil": "2026-10-10T09:29:15Z",
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-10-08T09:29:15Z",
+        "disabledUntil": "2026-10-10T09:29:15Z",
+        "failuresAtDisable": 68,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      }
     },
     {
       "id": "codetabs",
       "template": "https://api.codetabs.com/v1/proxy/?quest={quoted}",
       "enabled": true,
-      "disabledUntil": "2026-10-08T09:26:03Z",
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-06T09:26:03Z",
-        "disabledUntil": "2026-10-08T09:26:03Z",
         "failuresAtDisable": 767,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-08T09:29:15Z",
+        "failuresAtRecheck": 813
       }
     }
   ]

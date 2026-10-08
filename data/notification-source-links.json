@@ -2722,7 +2722,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-06T18:21:59Z"
+      "addedAt": "2026-10-06T18:21:59Z",
+      "sslFallback": true
     },
     {
       "url": "https://iiitdwd.ac.in/careers/",

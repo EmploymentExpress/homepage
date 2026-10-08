@@ -321,7 +321,7 @@
     },
     {
       "id": "pgimer",
-      "enabled": true,
+      "enabled": false,
       "proxyFallback": true,
       "name": "PGIMER Chandigarh",
       "department": "Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh",
@@ -353,7 +353,15 @@
       "maxCatchUpPerRun": 12,
       "timeout": 45,
       "detailTimeout": 45,
-      "sslFallback": true
+      "sslFallback": true,
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-10-08T09:29:15Z",
+        "disabledUntil": "2026-10-15T09:29:15Z",
+        "failuresAtDisable": 68,
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; recheck after a temporary quarantine"
+      }
     },
     {
       "id": "punjab-legal-services-authority",
