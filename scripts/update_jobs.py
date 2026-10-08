@@ -217,6 +217,10 @@ OFFLINE_LISTING_JUNK_TITLES = {
     "offline forms",
     "latest offline form",
     "latest offline forms",
+    # Generic portal utility pages (form/receipt download), not notices.
+    "your recruitment form and fee receipt",
+    "download your recruitment form and fee receipt",
+    "recruitment form and fee receipt",
     "admit card",
     "admit cards",
     "answer key",
@@ -397,6 +401,21 @@ ADMIT_CARD_TERMS = (
     "city slip",
     "roll number slip",
     "roll no slip",
+    # Roll-number / rollno sheets are admit cards. Board link labels usually say
+    # "Rollno for <post> recruitment test on <date>" — the word "recruitment"
+    # there names the test, not a new vacancy, so these must not be caught by
+    # the recruitment terms (they would publish in the job columns as NEW JOB).
+    "rollno",
+    "roll nos",
+    "roll no",
+    "roll number",
+    "roll numbers",
+    # A test that is being conducted / scheduled is exam territory:
+    "conduct of test",
+    "conduct of the test",
+    "conduct of trade test",
+    "revised schedule",
+    "test schedule",
     "exam date and city",
     "city status",
     "exam date",
@@ -420,6 +439,17 @@ ADMIT_CARD_TERMS = (
     "exam timetable",
 )
 UPDATE_TERMS = ("corrigendum", "addendum")
+# Postponement / rescheduling notices are recruitment updates (they change the
+# timetable of an already-published recruitment), never new vacancies.
+POSTPONEMENT_TERMS = (
+    "postponed",
+    "postponement",
+    "postpones",
+    "deferred",
+    "rescheduled",
+    "reschedule of",
+    "to be rescheduled",
+)
 
 _EXAM_SCHEDULE_RE = re.compile(
     r"(?i)(?:(?:written\s+test|written\s+examination?|online\s+test|online\s+written\s+test|"
@@ -428,6 +458,16 @@ _EXAM_SCHEDULE_RE = re.compile(
     r"scheduled\s+on|tentative\s+date|announc\w+))"
     r"|(?:(?:date|schedule|reschedul\w*|postpon\w*)\b[^.;|]{0,30}?"
     r"(?:written\s+test|written\s+examination?|online\s+test|cbt|exam(?:ination)?)\b)"
+    # Any named test (practical / skill / typing / trade / qualifying /
+    # recruitment / selection ...) that the board says is *to be held*,
+    # *dated* or *conducted on* a date is an exam-schedule announcement
+    # (admit-card territory), e.g. "Practical Test to be held on 07th October,
+    # 2026 for the post of Bee Keeper" or "Rollno ... test on 28-02-2025".
+    # A vacancy ad that merely mentions the selection test ("... selection via
+    # written test") carries no holding/date cue and stays a recruitment.
+    r"|(?:(?:\w+\s+){0,2}test\b[^.;|]{0,60}?"
+    r"(?:to\s+be\s+held|held\s+on|dated\s*\d|conducted\s+on\s*\d|"
+    r"on\s+\d{1,2}\s*[-./]\s*\d{1,2}))"
 )
 
 
@@ -438,7 +478,7 @@ def _announces_exam_schedule(lowered: str) -> bool:
     # A vacancy ad merely stating "selection will be by written examination" is
     # not an exam-date announcement unless it carries a scheduling cue.
     if "recruitment" in lowered or "vacanc" in lowered:
-        if not re.search(r"\b(date|schedule|reschedul|postpon|timetable|time table|held|scheduled)\b", lowered):
+        if not re.search(r"\b(date|dated|schedule|reschedul|postpon|timetable|time table|held|scheduled)\b", lowered):
             return False
     return True
 # Phrases used by official corrigenda/addenda when the application deadline is
@@ -987,6 +1027,14 @@ def is_junk_job_title(value: str) -> bool:
     if re.search(r"\b\d+\s+(?:vacancies|posts?)\s+\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+by\s+[a-z]", title):
         return True
     if re.search(r"^\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\s+by\s+[a-z]", title):
+        return True
+    # A single all-lowercase word (no digits, no separators) is a portal page
+    # name or link artifact ("maintest.aspx", "showresult.aspx"), never a
+    # notice name. Real notices are phrases ("Rollno for Staff Nurse ...") or
+    # file names that carry digits/separators ("advt-07-2026"); official post
+    # names are capitalised ("Staff Nurse", "DEO"), so nothing genuine is
+    # rejected by this rule.
+    if re.fullmatch(r"[a-z]{8,}", title):
         return True
     return False
 
@@ -2090,6 +2138,11 @@ def classify_notice(candidate: Candidate, source: dict[str, Any]) -> str | None:
         notice_type = "result"
     elif any(term in lowered for term in ADMIT_CARD_TERMS) or _announces_exam_schedule(lowered):
         notice_type = "admit-card"
+    elif any(term in lowered for term in POSTPONEMENT_TERMS):
+        # "Postponed of the screening committee ... (Now be held on 8.10.2026)"
+        # is a recruitment update, not a new vacancy — publishing it as
+        # recruitment would add a fake NEW JOB to the job columns.
+        notice_type = "corrigendum"
     elif any(term in lowered for term in UPDATE_TERMS) and any(
         term in lowered for term in ADMISSION_TERMS
     ):

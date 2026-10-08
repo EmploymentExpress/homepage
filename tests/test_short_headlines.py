@@ -145,6 +145,31 @@ class PostNameRuleTests(unittest.TestCase):
             "PGIMER Chandigarh Recruitment | Apply Online",
         )
 
+    def test_portal_page_name_is_never_a_post_name(self):
+        """The reported defect: "BFUHS Faridkot Maintest Recruitment | Apply Online".
+
+        BFUHS names its application-portal pages "maintest.aspx"; the raw
+        page name must never be title-cased into a post name. The headline
+        falls back to the department-only form.
+        """
+        bfuhs = "Baba Farid University of Health Sciences (BFUHS), Faridkot"
+        self.assertEqual(
+            short_job_headline(f"{bfuhs} — maintest", bfuhs, "recruitment",
+                               "See Notification", "Online / As Notified"),
+            "BFUHS Faridkot Recruitment | Apply Online",
+        )
+        self.assertEqual(
+            short_job_headline(f"{bfuhs} — showresult", bfuhs, "result",
+                               "See Notification", "Online / As Notified"),
+            "BFUHS Faridkot Result",
+        )
+        # Capitalised single-word post names (and acronyms) are still kept.
+        self.assertEqual(
+            short_job_headline("Punjab Police Constable", "Punjab Police",
+                               "recruitment", "100 Posts", "Online"),
+            "Punjab Police Constable Recruitment | Apply Online",
+        )
+
     def test_vacancy_count_is_never_in_the_headline(self):
         headline = short_job_headline(
             "PSSSB Clerk, Typist & Data Entry Operator 2026",
@@ -350,7 +375,11 @@ class IndexHeadlineWiringTests(unittest.TestCase):
                   "vacancies": "120 Posts", "applyMode": "Online"},
                  {"title": "PGIMER Chandigarh — Recruitment of MTS, DEO, Pharmacist, Steno, Driver 2026",
                   "department": PGIMER, "alertType": "recruitment",
-                  "vacancies": "300 Posts", "applyMode": "Offline"}]
+                  "vacancies": "300 Posts", "applyMode": "Offline"},
+                 {"title": "Baba Farid University of Health Sciences (BFUHS), Faridkot — maintest",
+                  "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
+                  "alertType": "recruitment", "vacancies": "See Notification",
+                  "applyMode": "Online / As Notified"}]
         cases += [
             {
                 "title": job.get("title", ""),

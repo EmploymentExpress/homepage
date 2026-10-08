@@ -202,6 +202,69 @@ class JobMonitorTests(unittest.TestCase):
         )
         self.assertEqual(monitor.classify_notice(candidate, {}), "recruitment")
 
+    def test_roll_number_sheets_and_test_schedules_go_to_admit_card_column(self):
+        """Rollno / test-date link labels are admit cards, never new jobs.
+
+        BFUHS publishes roll-number sheets labelled "Rollno for <post>
+        recruitment test on <date>". The word "recruitment" there names the
+        test, not a vacancy — these used to publish in the job columns with a
+        NEW JOB ALERT badge. Same for "Practical Test to be held on ..."
+        schedule notices (PAU) and revised test schedules.
+        """
+        admit_notices = {
+            "Rollno for Senior Scale Stenographer recruitment test on 28-02-2025 under advt.No 24/22": "admit-card",
+            "Rollno for Recruitment test for Demonstrator MPT (Sports) dated 29-05-2025": "admit-card",
+            "RollNo for Staff Nurse, (Advt. No. BFU-25/20) test dated 05-10-2025": "admit-card",
+            "Rollno for Accounts Clerk, (Advt. No. BFU-24/23) test dated 01-10-2025": "admit-card",
+            "Practical Test to be held on 07th October, 2026 for the post of Bee Keeper": "admit-card",
+            "Qualifying test of Punjabi Language & Written test for the post(s) of Clerk (Advt. No. 01/2026) - Revised schedule": "admit-card",
+            "Conduct of Trade Test for recruitment to the posts of Technician-1 against Advt. No.05/2025": "admit-card",
+        }
+        for title, expected in admit_notices.items():
+            with self.subTest(title=title):
+                candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
+                self.assertEqual(monitor.classify_notice(candidate, {}), expected)
+
+        # A fresh vacancy ad that names posts and an application window stays a
+        # recruitment even when it describes the selection test.
+        candidate = monitor.Candidate(
+            "Apply online for the post of Staff Nurse — last date for submission of application 31-10-2026, "
+            "selection by written test and interview",
+            "https://example.gov.in/advt.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(candidate, {}), "recruitment")
+
+    def test_postponement_notices_are_recruitment_updates_not_new_jobs(self):
+        for title in (
+            "Postponed of the screening committee for verification of the post of Junior Field/ Lab "
+            "Helper (Now be held on 8.10.2026 at 2.30 P.M.)",
+            "Postponed of the screening committee for verification of original documents for selection "
+            "of the post of Jr. Field/ Lab Helper (Now be held on 8.10.2026 at 11.30 A.M.)",
+        ):
+            with self.subTest(title=title[:50]):
+                candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
+                self.assertEqual(monitor.classify_notice(candidate, {}), "corrigendum")
+
+    def test_portal_page_name_labels_are_never_published_as_notices(self):
+        """A lone lowercase page name ("maintest" from maintest.aspx) is junk."""
+        for label in ("maintest", "showresult", "printrollno"):
+            with self.subTest(label=label):
+                self.assertTrue(monitor.is_junk_job_title(label))
+                candidate = monitor.Candidate(label, "https://example.gov.in/portal/maintest.aspx")
+                self.assertIsNone(monitor.classify_notice(candidate, {}))
+        # Generic portal utility pages (form/receipt download) are not notices.
+        self.assertTrue(monitor.is_junk_job_title("your recruitment form and fee receipt"))
+        candidate = monitor.Candidate(
+            "your recruitment form and fee receipt", "https://example.gov.in/application-form-download/"
+        )
+        self.assertIsNone(monitor.classify_notice(candidate, {}))
+        # Document names that carry digits/separators are still real notices
+        # (never rejected as portal artifacts).
+        self.assertFalse(monitor.is_junk_job_title("advt-07-2026"))
+        source = {"includeKeywords": ["advt"]}
+        candidate = monitor.Candidate("advt-07-2026", "https://example.gov.in/files/advt-07-2026.pdf")
+        self.assertEqual(monitor.classify_notice(candidate, source), "recruitment")
+
     def test_website_address_is_never_a_department(self):
         for value in ("sbi.gov.in", "https://iitbhu.ac.in", "www.hau.ac.in/", "iitbhu.aci.in"):
             with self.subTest(value=value):
