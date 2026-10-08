@@ -416,6 +416,23 @@ def _strip_leading_authority_words(subject: str, department: str) -> str:
     return _clean(" ".join(words)) or _clean(subject)
 
 
+def _is_portal_artifact(part: str) -> bool:
+    """True for a leftover that is a portal page/link name, never a post.
+
+    A single token of 8+ characters with no capital letter and no digit
+    ("maintest", "showresult", "printrollno") is a page name or anchor
+    artifact. Official post names are capitalised ("Staff Nurse", "Clerk") or
+    ALL-CAPS acronyms ("DEO", "MTS"), so genuine names always survive.
+    """
+    token = _clean(part).strip(" ,;:|\u2013\u2014-<>")
+    if " " in token or len(token) < 8:
+        return False
+    letters = re.findall(r"[A-Za-z]", token)
+    if not letters or any(c.isdigit() for c in token):
+        return False
+    return all(c.islower() for c in letters)
+
+
 def headline_posts(title: str, department: str = "", vacancies: str = "") -> list[str]:
     """Post name(s) for the headline: at most 4 names, or ["Various Post"] when more."""
     subject = _strip_date_blurbs(title)
@@ -459,6 +476,11 @@ def headline_posts(title: str, department: str = "", vacancies: str = "") -> lis
              if not (dept_words and {w.lower() for w in re.findall(r"[A-Za-z]{3,}", p)}
                      and {w.lower() for w in re.findall(r"[A-Za-z]{3,}", p)} <= dept_words)]
     parts = [p for p in parts if re.search(r"[A-Za-z]{2,}", p)]
+    # Portal artifact gate: a single all-lowercase token left behind after the
+    # department name is stripped is a page/link name ("maintest" from
+    # maintest.aspx), not a post — never title-case it into the headline. The
+    # headline falls back to the department-only form instead.
+    parts = [p for p in parts if not _is_portal_artifact(p)]
     kept = [p for p in parts if p.lower() not in GENERIC_POSTS]
 
     various_cue = (

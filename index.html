@@ -2218,10 +2218,20 @@
             subject = headlineClean(subject).replace(HEADLINE_STRIP_CHARS, '');
 
             const deptWords = new Set((headlineClean(department).match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase()));
+            // Portal artifact gate (mirrors short_headlines._is_portal_artifact):
+            // a single 8+ char all-lowercase token left after the department is
+            // stripped is a page/link name ("maintest"), never a post.
+            const isPortalArtifact = (part) => {
+                const token = headlineClean(part).replace(/^[,;:|\-–—<>\s]+|[ ,;:|–—<>-]+$/g, '');
+                if (token.includes(' ') || token.length < 8) return false;
+                const letters = token.match(/[A-Za-z]/g) || [];
+                if (!letters.length || /\d/.test(token)) return false;
+                return letters.every(c => c === c.toLowerCase());
+            };
             let parts = splitPosts(subject).filter(part => {
                 const words = (part.match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase());
                 return !(deptWords.size && words.length && words.every(word => deptWords.has(word)));
-            }).filter(part => /[A-Za-z]{2,}/.test(part));
+            }).filter(part => /[A-Za-z]{2,}/.test(part)).filter(part => !isPortalArtifact(part));
             const kept = parts.filter(part => !HEADLINE_GENERIC_POSTS.has(part.toLowerCase()));
 
             const variousCue = kept.length > 4
