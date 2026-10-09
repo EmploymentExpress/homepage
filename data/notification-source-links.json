@@ -3004,6 +3004,96 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-10-07T23:05:00Z"
+    },
+    {
+      "url": "https://dsssb.delhi.gov.in/dsssb/vacancy-notice-advertisement-no-052026-0",
+      "name": "dsssb.delhi.gov.in",
+      "department": "dsssb.delhi.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-09T13:15:55Z"
+    },
+    {
+      "url": "https://davrecruit.davcmc.in/",
+      "name": "davrecruit.davcmc.in",
+      "department": "davrecruit.davcmc.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-09T13:15:55Z"
+    },
+    {
+      "url": "https://iicb.res.in/",
+      "name": "iicb.res.in",
+      "department": "iicb.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-09T13:15:55Z"
+    },
+    {
+      "url": "https://www.nppa.gov.in/",
+      "name": "nppa.gov.in",
+      "department": "nppa.gov.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-09T13:15:55Z"
+    },
+    {
+      "url": "https://www.iasri.res.in/",
+      "name": "iasri.res.in",
+      "department": "iasri.res.in",
+      "type": "central",
+      "categorySlug": "central",
+      "location": "All India",
+      "noticeTypes": [
+        "admission",
+        "admit-card",
+        "answer-key",
+        "corrigendum",
+        "recruitment",
+        "result"
+      ],
+      "addedBy": "discovery-official-website",
+      "addedAt": "2026-10-09T13:15:55Z"
     }
   ]
 }
