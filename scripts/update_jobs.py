@@ -55,6 +55,11 @@ REDIRECT_PAGE = "redirect.html"
 # The homepage layout is FROZEN for AI agents and humans alike — content-only
 # updates; see AGENTS.md and tests/test_layout_order.py before editing index.html.
 PROTECTED_LAYOUT_PATHS = ("index.html", "assets")
+# Marker written by scripts/ai_health_monitor.py next to a quarantine. The
+# monitor must never flip a configured source to enabled=false (the guard
+# tests gate every alert run on sources staying enabled), so the updater
+# reads this marker instead. Keep it in sync with ai_health_monitor.AGENT_MARKER.
+AI_HEALTH_MARKER = "ai-health-monitor"
 DISCOVERY_HOSTS = {"haryanajobs.in", "linkingsky.com", "punjabjobalert.com", "rozgarnews.com", "indgovtjobs.in"}
 # Job blogs / aggregators, social platforms and shorteners: an "Official Website"
 # row pointing at one of these is never an official website and is never
@@ -5663,6 +5668,27 @@ def register_official_website_from_article(
     return registered
 
 
+def source_quarantined_until(source: dict[str, Any]) -> datetime | None:
+    """Return the end of an active AI-health-monitor source quarantine.
+
+    The health monitor must never flip a configured official source to
+    ``enabled: false``: the guard tests in ``tests/test_update_jobs.py``
+    require sources such as PGIMER and AIIMS Bathinda to stay enabled, and
+    the "Update job alerts" workflow runs those tests as a gate before every
+    alert run (a disabled source used to fail the gate and stop the whole
+    pipeline for the length of the quarantine). It records the quarantine in
+    ``_aiHealth`` metadata instead, so honour that metadata here: a dead
+    official site is skipped until its recheck date instead of being
+    refetched every six hours.
+    """
+    meta = source.get("_aiHealth")
+    if not isinstance(meta, dict) or meta.get("managedBy") != AI_HEALTH_MARKER:
+        return None
+    if meta.get("phase") != "disabled":
+        return None
+    return parse_timestamp(meta.get("disabledUntil") or "")
+
+
 def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
     """Turn user-added and auto-discovered notification URLs into monitor sources.
 
@@ -5769,6 +5795,17 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
 
     for source in config["sources"]:
         if source.get("enabled", True) is False:
+            continue
+        # The AI health monitor quarantines a repeatedly dead official source in
+        # _aiHealth metadata (it must not set enabled=false — the guard tests
+        # gate this run on sources staying enabled). Skip it until the
+        # quarantine expires rather than refetching a dead URL every six hours.
+        quarantine_until = source_quarantined_until(source)
+        if quarantine_until is not None and quarantine_until > now:
+            print(
+                f"Skipping {source.get('name') or source.get('id')}: "
+                f"quarantined by the AI health monitor until {quarantine_until.isoformat()}"
+            )
             continue
         if source.get("role") == "discovery" or source.get("role") == "offline-forms" or is_discovery_host(
             source.get("url", "")

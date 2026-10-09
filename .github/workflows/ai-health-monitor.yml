@@ -30,6 +30,14 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Install updater test dependencies
+        # The guard tests below import the thumbnail/QR builders, so the
+        # updater's dependency set is needed even though this workflow only
+        # repairs configuration.
+        run: python -m pip install --disable-pip-version-check -r automation/requirements.txt
 
       - name: Test the health monitor
         run: python -m unittest discover -s tests -p 'test_ai_health_monitor.py' -v
@@ -62,6 +70,15 @@ jobs:
           path: ${{ runner.temp }}/ai-health-monitor/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Verify the repaired config still passes the updater gate
+        # This workflow edits automation/sources.json and
+        # data/notification-source-links.json, and the "Update job alerts"
+        # workflow runs these same tests as its gate. A repair that flips a
+        # guarded source to enabled=false used to be committed here and then
+        # fail every updater run for a week. Run the identical gate before
+        # committing so a breaking repair is caught here, where it is visible.
+        run: python -m unittest discover -s tests -v
 
       - name: Commit deterministic configuration repairs
         shell: bash

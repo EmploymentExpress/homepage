@@ -133,6 +133,48 @@ listing/page source before anything is published, and the feed host's URLs and b
 shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
 is the key `load_discovery_feeds()` reads.
 
+## 🩺 AI health monitor: a quarantine must never set `enabled: false` (Mandatory)
+
+`scripts/ai_health_monitor.py --apply` (`.github/workflows/ai-health-monitor.yml`)
+repairs source transport configuration automatically. It may **only** write
+transport and lifecycle metadata — and it must **never flip a configured
+official source to `"enabled": false`**.
+
+Why: the "Update job alerts" workflow runs `python -m unittest discover -s tests`
+as a gate before every alert run, and `tests/test_update_jobs.py` contains guard
+tests that require configured sources to stay **enabled with their mirrors**
+(for example `test_pgimer_source_stays_enabled_with_mirrors` and the AIIMS
+Bathinda rule). A quarantine that set `enabled: false` committed cleanly from the
+health monitor, then failed that gate on **every** subsequent updater run — no
+alerts, no share pages, no SEO refresh — for the whole quarantine window. This
+already happened to PGIMER (68 consecutive HTTP 404s → 7 days of broken runs).
+
+The rule, for both sources and mirrors:
+
+1. **Quarantine is metadata-only.** `_disable_source()` records
+   `_aiHealth = {managedBy: "ai-health-monitor", phase: "disabled", disabledUntil: …}`
+   and leaves `enabled` at `true`. `_deactivate_mirror()` does the same with
+   `disabledUntil` (this half was fixed earlier; the sources half is now aligned).
+2. **The updater honours the metadata.** `scripts/update_jobs.py`
+   (`source_quarantined_until()`) skips a quarantined source until `disabledUntil`
+   passes, so a dead official site is not refetched every six hours, and
+   `load_source_mirrors()`/`_ordered_mirror_templates()` deprioritise cooled-down
+   mirrors. Coverage is never silently lost — the quarantine always expires into
+   a `recheck` probe.
+3. **A human override still wins.** If an operator sets `enabled: false`, the
+   monitor drops its lifecycle marker (`respect_manual_source_disable`) instead of
+   fighting them.
+4. **The health monitor runs the updater's gate before committing.** The
+   "Verify the repaired config still passes the updater gate" step runs the same
+   `python -m unittest discover -s tests` command the updater runs, so a repair
+   that would break the alert workflow fails *there*, visibly, instead of on
+   `main`.
+
+Never remove or bypass any of these four points, and keep
+`tests/test_ai_health_monitor.py` (`test_quarantine_keeps_the_source_enabled_and_the_updater_skips_it`)
+and `tests/test_update_jobs.py` (`test_health_monitor_never_disables_a_guarded_source`,
+`test_quarantined_source_is_skipped_without_disabling_the_config`) green.
+
 ## 📡 Source reachability, mirrors & first-scan quality (mandatory behaviour)
 
 Three safeguards keep an official source from silently going stale — do not remove them:
