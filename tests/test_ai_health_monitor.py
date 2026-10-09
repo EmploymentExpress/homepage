@@ -110,11 +110,42 @@ class AIHealthMonitorTests(unittest.TestCase):
             mirror_config(), state, NOW,
         )
         by_id = {item["id"]: item for item in sources["sources"]}
-        self.assertFalse(by_id["gone"]["enabled"])
+        # A quarantine must never flip a configured source to enabled=False:
+        # tests/test_update_jobs.py gates every "Update job alerts" run on
+        # sources such as PGIMER staying enabled with their mirrors.
+        self.assertTrue(by_id["gone"]["enabled"])
         self.assertEqual(by_id["gone"]["_aiHealth"]["phase"], "disabled")
+        self.assertTrue(by_id["gone"]["_aiHealth"]["quarantined"])
+        self.assertIn("disabledUntil", by_id["gone"]["_aiHealth"])
         self.assertTrue(by_id["mirror-problem"]["enabled"])
         self.assertTrue(by_id["not-yet"]["enabled"])
         self.assertEqual([fix["target"] for fix in fixes], ["gone"])
+
+    def test_quarantine_keeps_the_source_enabled_and_the_updater_skips_it(self):
+        """The health monitor and the updater must agree on metadata-only quarantine."""
+        state = {"sourceHealth": {"gone": {
+            "consecutiveFailures": 5, "lastFailureAt": stamp(NOW), "lastError": "HTTP Error 404: Not Found",
+        }}}
+        sources, _, _, _, _, _ = health.analyze_health(
+            source_config({"id": "gone", "enabled": True, "url": "https://gone.gov.in/jobs"}),
+            mirror_config(), state, NOW,
+        )
+        quarantined = sources["sources"][0]
+        self.assertTrue(quarantined["enabled"])
+        # The updater honours the marker instead of a disabled flag.
+        until = updater.source_quarantined_until(quarantined)
+        self.assertIsNotNone(until)
+        self.assertGreater(until, NOW)
+        # An expired quarantine lets the updater fetch the source again.
+        expired = dict(quarantined, _aiHealth=dict(
+            quarantined["_aiHealth"], disabledUntil=stamp(NOW - timedelta(hours=1))
+        ))
+        self.assertLess(updater.source_quarantined_until(expired), NOW)
+        # Unmanaged or rechecking metadata never skips a source.
+        self.assertIsNone(updater.source_quarantined_until({"id": "plain", "url": "https://board.gov.in"}))
+        self.assertIsNone(updater.source_quarantined_until(
+            {"id": "rechecking", "_aiHealth": {"managedBy": health.AGENT_MARKER, "phase": "recheck"}}
+        ))
 
     def test_quarantined_source_reenables_for_probe_without_reusing_stale_404(self):
         source = {
@@ -146,7 +177,10 @@ class AIHealthMonitorTests(unittest.TestCase):
         next_sources, _, _, _, next_fixes, _ = health.analyze_health(
             source_config(reenabled), mirror_config(), {"sourceHealth": {"gone": new_health}}, NOW + timedelta(hours=2)
         )
-        self.assertFalse(next_sources["sources"][0]["enabled"])
+        # Re-quarantined through metadata only; the source itself stays enabled.
+        requarantined = next_sources["sources"][0]
+        self.assertTrue(requarantined["enabled"])
+        self.assertEqual(requarantined["_aiHealth"]["phase"], "disabled")
         self.assertIn("quarantine_dead_source", [fix["kind"] for fix in next_fixes])
         self.assertIsNotNone(old_since)
 
@@ -186,15 +220,17 @@ class AIHealthMonitorTests(unittest.TestCase):
             source_config(), mirror_config(), state, NOW, links
         )
         configured = planned_links["links"][0]
-        self.assertFalse(configured["enabled"])
         self.assertEqual(configured["_aiHealth"]["phase"], "disabled")
         self.assertIn("quarantine_dead_source", [fix["kind"] for fix in fixes])
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "links.json"
             path.write_text(json.dumps(planned_links), encoding="utf-8")
             generated = updater.additional_link_sources(path)[0]
-        self.assertFalse(generated["enabled"])
+        # The generated source keeps the quarantine marker the updater honours.
         self.assertIn("_aiHealth", generated)
+        until = updater.source_quarantined_until(generated)
+        self.assertIsNotNone(until)
+        self.assertGreater(until, NOW)
 
     def test_successful_source_probe_clears_quarantine_metadata(self):
         source = {

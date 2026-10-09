@@ -3768,6 +3768,61 @@ class VerifiedReliabilityRuleTests(unittest.TestCase):
         self.assertTrue(pgimer.get("enabled", True))
         self.assertTrue(pgimer.get("proxyFallback"))
 
+    def test_health_monitor_never_disables_a_guarded_source(self):
+        # Regression: scripts/ai_health_monitor.py used to quarantine a dead
+        # source with enabled=false, which failed this file's guard tests and
+        # broke every "Update job alerts" run for the whole quarantine. The
+        # quarantine must live in _aiHealth metadata instead.
+        meta = {"managedBy": "ai-health-monitor", "phase": "disabled"}
+        self.assertIsNone(monitor.source_quarantined_until({"id": "plain", "url": "https://board.gov.in"}))
+        self.assertIsNone(monitor.source_quarantined_until(
+            {"id": "rechecking", "_aiHealth": dict(meta, phase="recheck")}))
+        self.assertIsNone(monitor.source_quarantined_until(
+            {"id": "foreign", "_aiHealth": dict(meta, managedBy="someone-else")}))
+        active = monitor.source_quarantined_until(
+            {"id": "gone", "_aiHealth": dict(meta, disabledUntil="2099-01-01T00:00:00Z")})
+        self.assertIsNotNone(active)
+        self.assertEqual(active.year, 2099)
+
+    def test_quarantined_source_is_skipped_without_disabling_the_config(self):
+        page = b"""
+        <a href='/a.pdf'>Advertisement No. 1/2026 for recruitment of 10 Clerk posts</a>
+        """
+        quarantined = {
+            "id": "quarantined", "name": "Quarantined Board", "department": "Quarantined Board",
+            "url": "https://quarantined.gov.in/jobs", "type": "central", "categorySlug": "central",
+            "bootstrapCount": 1, "maxNewPerRun": 5,
+            "_aiHealth": {
+                "managedBy": "ai-health-monitor", "phase": "disabled",
+                "disabledUntil": "2099-01-01T00:00:00Z",
+            },
+        }
+        live = {
+            "id": "example", "name": "Example", "department": "Example Board",
+            "url": "https://example.gov.in/jobs", "type": "central", "categorySlug": "central",
+            "bootstrapCount": 1, "maxNewPerRun": 5,
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state = root / "seen.json"
+            config.write_text(json.dumps({"sources": [quarantined, live]}), encoding="utf-8")
+            before = config.read_text(encoding="utf-8")
+            with patch.object(
+                monitor, "fetch_url",
+                return_value=monitor.Download("https://example.gov.in/jobs", "text/html", page),
+            ) as fetch:
+                monitor.run(config, output, state)
+            fetched = [call.args[0] for call in fetch.call_args_list if call.args]
+            self.assertNotIn("https://quarantined.gov.in/jobs", fetched)
+            self.assertIn("https://example.gov.in/jobs", fetched)
+            jobs = json.loads(output.read_text(encoding="utf-8"))["jobs"]
+            self.assertEqual(len(jobs), 1)
+            # The quarantine skips the source at runtime; it never rewrites the
+            # config (and never flips the source to enabled=false).
+            self.assertEqual(config.read_text(encoding="utf-8"), before)
+
     def test_update_jobs_appends_workflow_summary(self):
         # R11/R12: the update run itself appends the source-health report to
         # $GITHUB_STEP_SUMMARY, so no separate workflow step (or workflow-file

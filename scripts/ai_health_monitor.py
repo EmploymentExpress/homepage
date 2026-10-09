@@ -259,20 +259,36 @@ def _source_succeeded_after(health: dict[str, Any], stamp: datetime | None) -> b
 
 def _disable_source(source: dict[str, Any], health: dict[str, Any], now: datetime, fixes: list[dict[str, Any]]) -> None:
     until = now + timedelta(days=SOURCE_QUARANTINE_DAYS)
-    source["enabled"] = False
+    # Intentionally leave source["enabled"] untouched (True).
+    #
+    # The updater's guard tests (tests/test_update_jobs.py — e.g.
+    # test_pgimer_source_stays_enabled_with_mirrors and the AIIMS Bathinda
+    # rule) require configured official sources to stay enabled, and the
+    # "Update job alerts" workflow runs those tests as a gate before every
+    # alert run. Flipping enabled=False here therefore broke the *entire*
+    # pipeline for the length of the quarantine: no alerts, no share pages,
+    # no SEO refresh. The quarantine is carried in _aiHealth metadata
+    # instead, and update_jobs.source_quarantined_until() makes the updater
+    # skip the source until disabledUntil passes. This mirrors the
+    # metadata-only cooldown already used for mirrors (`_deactivate_mirror`).
     source["_aiHealth"] = {
         "managedBy": AGENT_MARKER,
         "phase": "disabled",
+        "quarantined": True,
         "disabledAt": iso_timestamp(now),
         "disabledUntil": iso_timestamp(until),
         "failuresAtDisable": _int(health.get("consecutiveFailures")),
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; recheck after a temporary quarantine",
+        "reason": (
+            "Five consecutive source failures ending in a direct HTTP 404/410; "
+            "the updater skips this source until the quarantine expires, then rechecks it"
+        ),
     }
     _fix(
         fixes,
         "quarantine_dead_source",
         str(source.get("id") or "unknown"),
-        f"Temporarily disable this source until {iso_timestamp(until)}; updater will recheck it afterwards.",
+        f"Quarantine this source until {iso_timestamp(until)}; it stays enabled in the config "
+        "while the updater skips it, then is rechecked afterwards.",
         f"{_int(health.get('consecutiveFailures'))} consecutive source failures; latest is direct HTTP 404/410",
     )
 
@@ -285,32 +301,34 @@ def _manage_source_quarantine(
     if not meta:
         return False
 
-    enabled = source.get("enabled", True) is not False
+    source_id = str(source.get("id") or "unknown")
     phase = meta.get("phase")
     if phase == "disabled":
-        # A manual re-enable wins over an outstanding agent quarantine.
-        if enabled:
-            source.pop("_aiHealth", None)
-            _fix(fixes, "respect_manual_reenable", str(source.get("id") or "unknown"),
-                 "Removed the monitor's quarantine marker after a manual re-enable.")
-            return True
         until = parse_timestamp(meta.get("disabledUntil"))
+        # Expiry is checked first: an elapsed quarantine always earns a probe,
+        # even on a legacy config that still carries enabled=False from before
+        # the quarantine became metadata-only.
         if until is not None and now >= until:
-            since = iso_timestamp(now)
             source["enabled"] = True
             meta["phase"] = "recheck"
-            meta["recheckSince"] = since
+            meta["recheckSince"] = iso_timestamp(now)
             meta["failuresAtRecheck"] = _int(health.get("consecutiveFailures"))
             meta.pop("disabledUntil", None)
-            _fix(fixes, "recheck_dead_source", str(source.get("id") or "unknown"),
+            meta.pop("quarantined", None)
+            _fix(fixes, "recheck_dead_source", source_id,
                  "Re-enable the source for a scheduled recovery check.")
+            return True
+        # The quarantine is still active. A quarantine never disables a source,
+        # so a source switched off here was disabled by a human — respect that
+        # choice and drop the lifecycle marker (the mirror cooldown behaves the
+        # same way).
+        if source.get("enabled", True) is False:
+            source.pop("_aiHealth", None)
+            _fix(fixes, "respect_manual_source_disable", source_id,
+                 "Removed the monitor's quarantine marker after a manual source disable.")
         return True
 
     if phase == "recheck":
-        if not enabled:
-            # A human has chosen to leave it disabled; drop our lifecycle marker.
-            source.pop("_aiHealth", None)
-            return True
         since = parse_timestamp(meta.get("recheckSince"))
         if _source_succeeded_after(health, since):
             source.pop("_aiHealth", None)
@@ -767,7 +785,7 @@ def build_markdown_report(report: dict[str, Any]) -> str:
     lines += [
         "### Safety boundaries",
         "",
-        "- `--apply` can change only source transport/enablement metadata in `automation/sources.json`, `automation/mirrors.json`, and `data/notification-source-links.json`; it never changes source URLs.",
+        "- `--apply` can change only source transport metadata in `automation/sources.json`, `automation/mirrors.json`, and `data/notification-source-links.json`; it never changes source URLs and never flips a configured source to `enabled: false` (a quarantine is recorded in `_aiHealth` metadata so the updater's guard tests keep passing).",
         "- SSL fallback is source-specific and only proposed for repeated certificate-chain verification errors; it bypasses certificate validation for that public listing and should be reviewed.",
         "- Dead sources require repeated direct HTTP 404/410 responses and are re-enabled for a later probe. Mirrors are cooled down only while at least two configured mirrors remain active.",
         "- LLM suggestions are untrusted, sanitized, and report-only. Job data, site HTML/layout, and source URLs are never rewritten by the agent.",
