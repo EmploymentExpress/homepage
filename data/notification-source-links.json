@@ -2895,7 +2895,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-07T05:58:14Z"
+      "addedAt": "2026-10-07T05:58:14Z",
+      "sslFallback": true
     },
     {
       "url": "https://gate2027.iitg.ac.in/",
