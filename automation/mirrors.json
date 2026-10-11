@@ -38,14 +38,14 @@
       "id": "allorigins-raw",
       "template": "https://api.allorigins.win/raw?url={quoted}",
       "enabled": true,
-      "disabledUntil": "2026-10-10T09:29:15Z",
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-08T09:29:15Z",
-        "disabledUntil": "2026-10-10T09:29:15Z",
         "failuresAtDisable": 68,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-11T09:19:33Z",
+        "failuresAtRecheck": 85
       }
     },
     {
