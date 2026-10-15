@@ -2689,6 +2689,13 @@ def enrich_candidate(candidate: Candidate, source: dict[str, Any]) -> tuple[str,
     if source.get("enrichDetails", True) is False:
         return combined, description_source, apply_url, pdf_url
 
+    # Run budget: never START a new detail fetch after the cutoff. The job is
+    # still published (or refreshed) from listing data and the next run's
+    # refresh pass backfills the details, so one runaway source can no longer
+    # eat the whole budget in enrichment probes.
+    if run_budget_exhausted():
+        return combined, description_source, apply_url, pdf_url
+
     # R5: skip the detail fetch while this host is in its daily-probe cooldown.
     if _detail_fetch_cooldown_active(candidate.url, datetime.now(timezone.utc)):
         print(
@@ -5756,7 +5763,64 @@ def additional_link_sources(path: Path | None = None) -> list[dict[str, Any]]:
     return generated
 
 
-def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = False) -> int:
+# ---------------------------------------------------------------------------
+# Run wall-clock budget (keeps the "Update job alerts" job under its GitHub
+# Actions timeout).
+#
+# The monitor walks every configured official website plus every registered
+# notification link, and each walk can cost up to ~4 minutes when a source
+# refuses direct connections and every mirror must be probed. Without a
+# budget a growing registry silently outgrows the workflow's timeout-minutes
+# and the job is cancelled mid-scan — killing the commit steps that follow it
+# too (observed: every run from 2026-10-07 onward died at the 90-minute cap
+# and published nothing). The budget is a SOFT cutoff at work-item boundaries:
+# once it is exhausted no new source scan or detail fetch is started, the run
+# finishes its local bookkeeping, and it publishes whatever it already found.
+# Sources left unchecked are the first to be examined on the next run (round
+# robin via state["nextSourceIndex"]), so the tail of the ever-growing
+# registry is never starved. The default must stay at or below the workflow's
+# timeout-minutes minus RUN_BUDGET_JOB_RESERVE_SECONDS — guard-tested in
+# tests/test_update_jobs.py (RunBudgetTests).
+RUN_BUDGET_ENV_VAR = "UPDATE_JOBS_BUDGET_SECONDS"
+DEFAULT_RUN_BUDGET_SECONDS = 70 * 60
+# Minutes kept in reserve for checkout, dependency install, the test gate, one
+# in-flight fetch chain that may overshoot the cutoff, and the commit +
+# share-page + SEO steps that run after this script.
+RUN_BUDGET_JOB_RESERVE_SECONDS = 20 * 60
+
+_run_started_at: float | None = None
+_run_budget_seconds: float = float("inf")
+
+
+def configure_run_budget(budget_seconds: float | None = None, started_at: float | None = None) -> float:
+    """Start a fresh run budget. ``None`` reads ``UPDATE_JOBS_BUDGET_SECONDS``.
+
+    A budget of ``0`` means "start exhausted": no new fetch work is started.
+    Before the first call the budget is infinite, so direct calls to
+    ``enrich_candidate``/``job_from_candidate`` (tests, tools) are unaffected.
+    """
+    global _run_started_at, _run_budget_seconds
+    if budget_seconds is None:
+        raw = os.environ.get(RUN_BUDGET_ENV_VAR, "").strip()
+        try:
+            budget_seconds = float(raw) if raw else None
+        except ValueError:
+            budget_seconds = None
+    if budget_seconds is None:
+        budget_seconds = float(DEFAULT_RUN_BUDGET_SECONDS)
+    _run_budget_seconds = max(0.0, float(budget_seconds))
+    _run_started_at = time.monotonic() if started_at is None else float(started_at)
+    return _run_budget_seconds
+
+
+def run_budget_exhausted() -> bool:
+    """True when this run must stop starting new fetch work."""
+    if _run_started_at is None:
+        return False
+    return time.monotonic() - _run_started_at >= _run_budget_seconds
+
+
+def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = False, budget_seconds: float | None = None) -> int:
     config = read_json(config_path, {})
     if not isinstance(config.get("sources"), list):
         raise RuntimeError(f"{config_path} must contain a sources array")
@@ -5780,6 +5844,18 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     jobs = list(output.get("jobs") or [])
     state_sources = state.setdefault("sources", {})
     now = datetime.now(timezone.utc).replace(microsecond=0)
+    # Run wall-clock budget: stop starting new fetch work once it is spent and
+    # publish whatever was found instead of being cancelled by the workflow's
+    # job timeout mid-scan.
+    configure_run_budget(budget_seconds)
+    # Round-robin start position: when a previous run's budget cut the scan
+    # short, the next run resumes at the first unchecked source instead of
+    # always starving the tail of the registry. A complete pass visits every
+    # slot and returns the marker to where it started (no state churn).
+    all_sources = config["sources"]
+    total_sources = len(all_sources)
+    start_index = int(state.get("nextSourceIndex") or 0) % total_sources if total_sources else 0
+    ordered_sources = all_sources[start_index:] + all_sources[:start_index]
     # R2/R5: per-mirror and per-endpoint health persists across runs in
     # seen-notices.json so a dead mirror or a blocked file endpoint is not
     # re-probed on every six-hourly cycle.
@@ -5792,8 +5868,17 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     added = 0
     archived = 0
     successful_sources = 0
+    budget_skipped_sources = 0
+    slots_visited = 0
 
-    for source in config["sources"]:
+    for source in ordered_sources:
+        if run_budget_exhausted():
+            # Soft cutoff: this slot is not consumed, so the next run starts
+            # here. The loop keeps walking the list only to count what the
+            # budget deferred.
+            budget_skipped_sources += 1
+            continue
+        slots_visited += 1
         if source.get("enabled", True) is False:
             continue
         # The AI health monitor quarantines a repeatedly dead official source in
@@ -5918,7 +6003,7 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
                 f"{notice_age_limit} day(s) — already recorded as seen"
             )
 
-        if not first_success:
+        if not first_success and not run_budget_exhausted():
             if refresh_published_source_jobs(jobs, discovered, known, source, now):
                 jobs_changed = True
             caught_up = publish_unpublished_seen_notices(
@@ -5936,16 +6021,27 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         for source in config.get("sources", [])
     )
     offline_pool: list[dict[str, Any]] = []
-    if offline_source_active:
-        offline_pool = gather_offline_forms_pool(config)
+    discovery_jobs: list[dict[str, Any]] = []
+    discovery_added = 0
+    discovery_state_changed = False
+    if run_budget_exhausted():
+        # Soft cutoff: the fetch-heavy pipelines are deferred to the next run.
+        # Everything below this point is local bookkeeping and always runs.
+        print(
+            "Run budget exhausted; skipping the offline-form and discovery-feed "
+            "pipelines this run (they resume on the next run)"
+        )
+    else:
+        if offline_source_active:
+            offline_pool = gather_offline_forms_pool(config)
 
-    discovery_jobs, discovery_added, discovery_state_changed = process_discovery_feeds(
-        approved_official_organizations(config["sources"]),
-        state,
-        now,
-        dry_run,
-        offline_pool,
-    )
+        discovery_jobs, discovery_added, discovery_state_changed = process_discovery_feeds(
+            approved_official_organizations(config["sources"]),
+            state,
+            now,
+            dry_run,
+            offline_pool,
+        )
     if discovery_jobs:
         jobs.extend(discovery_jobs)
         added += discovery_added
@@ -5954,9 +6050,15 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
         state_changed = True
 
     if offline_source_active:
-        offline_added, offline_changed = process_offline_forms(
-            config, jobs, state, now, dry_run, offline_pool
-        )
+        if run_budget_exhausted():
+            # The cutoff happened while the discovery pipeline ran; the
+            # truncation is already visible in the Finished line below and in
+            # state["runBudget"], so no extra message is needed here.
+            offline_added, offline_changed = 0, False
+        else:
+            offline_added, offline_changed = process_offline_forms(
+                config, jobs, state, now, dry_run, offline_pool
+            )
         if offline_added:
             added += offline_added
             jobs_changed = True
@@ -6014,10 +6116,39 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     if save_detail_fetch_health(state):
         state_changed = True
 
+    # Run-budget accounting: persist the round-robin marker only when it moved
+    # (the budget cut the scan short), and record the truncation so the
+    # workflow summary can surface it. A later complete pass clears both.
+    if total_sources:
+        next_index = (start_index + slots_visited) % total_sources
+        if next_index != start_index:
+            state["nextSourceIndex"] = next_index
+            state_changed = True
+    if budget_skipped_sources or run_budget_exhausted():
+        budget_record = {
+            "exhausted": True,
+            "budgetSeconds": int(_run_budget_seconds)
+            if _run_budget_seconds != float("inf")
+            else None,
+            "checkedSources": slots_visited,
+            "skippedSources": budget_skipped_sources,
+        }
+        if state.get("runBudget") != budget_record:
+            state["runBudget"] = budget_record
+            state_changed = True
+    elif "runBudget" in state:
+        del state["runBudget"]
+        state_changed = True
+
     print(
         f"Finished: {successful_sources} source(s) available, {added} new alert(s), "
         f"{archived} archived notice(s) skipped, {len(jobs)} automatic alert(s) stored."
     )
+    if budget_skipped_sources:
+        print(
+            f"Run budget exhausted after {slots_visited} source slot(s); "
+            f"{budget_skipped_sources} slot(s) left for the next run."
+        )
     if dry_run:
         print("Dry run: no files written.")
         return 0
@@ -6098,11 +6229,21 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--state", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--budget-seconds",
+        type=float,
+        default=None,
+        help=(
+            "wall-clock budget for fetch work before the run starts deferring "
+            f"sources to the next run (default: ${RUN_BUDGET_ENV_VAR} or "
+            f"{int(DEFAULT_RUN_BUDGET_SECONDS // 60)} minutes)"
+        ),
+    )
     args = parser.parse_args()
     layout_snapshot = capture_protected_layout()
     try:
         try:
-            result = run(args.config, args.output, args.state, args.dry_run)
+            result = run(args.config, args.output, args.state, args.dry_run, args.budget_seconds)
         finally:
             if capture_protected_layout() != layout_snapshot:
                 restore_protected_layout(layout_snapshot)

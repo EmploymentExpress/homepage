@@ -62,6 +62,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # scripts/update_jobs.py stops starting new fetch work after its run
+    # budget (70 minutes by default; override with UPDATE_JOBS_BUDGET_SECONDS
+    # or --budget-seconds) and commits whatever it found, so this job always
+    # reaches the commit/share-page/SEO steps instead of being cancelled at the
+    # cap below. Keep the budget at or below timeout-minutes minus a ~20 minute
+    # reserve (guard-tested in tests/test_update_jobs.py, RunBudgetTests).
     timeout-minutes: 90
 
     steps:
