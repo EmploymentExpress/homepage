@@ -133,6 +133,47 @@ listing/page source before anything is published, and the feed host's URLs and b
 shown on the homepage. Use the key `maxNewPerRun` (not `maxNewPerFeed`) for per-feed limits — it
 is the key `load_discovery_feeds()` reads.
 
+## ⏱️ Run wall-clock budget: the monitor always finishes (Mandatory)
+
+`scripts/update_jobs.py` runs under a **wall-clock run budget** so the
+"Update job alerts" job always reaches its commit steps instead of being
+cancelled at the workflow's `timeout-minutes` cap mid-scan (which is exactly
+what happened to every run from 2026-10-07 onward until the budget existed:
+the registry outgrew 90 minutes, the job was killed inside the fetch step, and
+**nothing was published for eight days**).
+
+Behaviour (guard-tested in `tests/test_update_jobs.py`, `RunBudgetTests`):
+
+- **Default budget: 70 minutes** of fetch work per run
+  (`DEFAULT_RUN_BUDGET_SECONDS`), measured from the start of `run()`. Override
+  per run with the `UPDATE_JOBS_BUDGET_SECONDS` environment variable or the
+  `--budget-seconds` CLI flag. The default **must stay at or below the
+  workflow's `timeout-minutes` minus `RUN_BUDGET_JOB_RESERVE_SECONDS`** (20
+  minutes of reserve for checkout/install/tests, one in-flight fetch chain
+  that may overshoot the cutoff, and the commit + share-page + SEO steps).
+- **Soft cutoff at work-item boundaries.** Once the budget is spent, no new
+  source scan (`run()`'s source loop), detail fetch (`enrich_candidate`), or
+  offline/discovery pipeline step is *started*; work already in flight
+  finishes. Local bookkeeping (sanitise, reclassify, retention, state writes)
+  always runs, and everything already found **is published** — a truncated run
+  commits its partial results instead of losing them to a job timeout.
+- **Round-robin resume.** Sources the budget deferred are the first examined
+  on the next run (`state["nextSourceIndex"]` rotates the scan start), so the
+  tail of the ever-growing `data/notification-source-links.json` registry is
+  never starved. A complete pass returns the marker to where it started, so an
+  untruncated run leaves the state file untouched.
+- **Details are backfilled, never lost.** A job published without enrichment
+  (listing data only) is completed later by the normal refresh pass
+  (`refresh_published_source_jobs`) on a run that still has budget.
+- **Visible in the workflow summary.** A truncated run records
+  `state["runBudget"]` and `scripts/source_health_summary.py` renders a
+  "Run budget exhausted (partial scan)" section; the next complete pass
+  clears it.
+
+Never "fix" a slow run by raising the job timeout alone — if the budget is
+raised, raise it only alongside the reserve check, and prefer cutting per-source
+work (mirrors, retries, `maxLinks`) first.
+
 ## 🩺 AI health monitor: a quarantine must never set `enabled: false` (Mandatory)
 
 `scripts/ai_health_monitor.py --apply` (`.github/workflows/ai-health-monitor.yml`)

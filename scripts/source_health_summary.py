@@ -65,6 +65,25 @@ def build_report(state: dict, output: dict) -> str:
     )
     lines.append("")
 
+    run_budget = state.get("runBudget") if isinstance(state.get("runBudget"), dict) else None
+    if run_budget and run_budget.get("exhausted"):
+        lines.append("### ⏳ Run budget exhausted (partial scan)")
+        lines.append("")
+        budget_minutes = run_budget.get("budgetSeconds")
+        minutes_note = (
+            f"{int(budget_minutes) // 60} minute budget"
+            if isinstance(budget_minutes, (int, float))
+            else "run budget"
+        )
+        lines.append(
+            f"The monitor stopped starting new fetch work at its {minutes_note} and "
+            f"published what it had already checked: "
+            f"{int(run_budget.get('checkedSources') or 0)} source slot(s) scanned, "
+            f"{int(run_budget.get('skippedSources') or 0)} deferred to the next run "
+            f"(which resumes at the first unchecked source)."
+        )
+        lines.append("")
+
     if failing:
         lines.append("### ❌ Failing sources (consecutive failed runs)")
         lines.append("")

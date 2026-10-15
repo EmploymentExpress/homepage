@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 import re
 import tempfile
 import unittest
@@ -4428,3 +4429,183 @@ class ArchivedNoticeFreshnessTests(unittest.TestCase):
         self.assertIn("is_archive_notice", agents)
         self.assertIn("document_date_from_url", agents)
         self.assertIn("document_month_from_url", agents)
+
+
+class RunBudgetTests(unittest.TestCase):
+    """Run wall-clock budget: the monitor always finishes and publishes.
+
+    Real incident: from 2026-10-07 to 2026-10-15 every scheduled run of the
+    "Update job alerts" workflow was cancelled at the job's 90-minute
+    ``timeout-minutes`` cap inside ``python scripts/update_jobs.py``, and the
+    commit / share-page / SEO steps below it were skipped — nothing was
+    published for eight days. The budget turns that hard kill into a soft
+    cutoff at work-item boundaries: what was checked is published, the rest is
+    deferred, and the next run resumes at the first unchecked source.
+    """
+
+    def tearDown(self):
+        # These tests deliberately leave the module budget exhausted; restore
+        # the never-exhausted default so direct-call tests are unaffected.
+        monitor.configure_run_budget(float("inf"))
+
+    @staticmethod
+    def _source(source_id: str, url: str) -> dict:
+        return {
+            "id": source_id,
+            "name": f"Example {source_id.upper()}",
+            "department": f"Example {source_id.upper()} Board",
+            "url": url,
+            "type": "central",
+            "categorySlug": "central",
+            "location": "New Delhi",
+            "enrichDetails": True,
+            "bootstrapCount": 1,
+            "maxNewPerRun": 5,
+        }
+
+    def test_run_budget_stays_under_the_workflow_job_timeout_and_is_documented(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github" / "workflows" / "update-job-alerts.yml").read_text(
+            encoding="utf-8"
+        )
+        match = re.search(r"timeout-minutes:\s*(\d+)", workflow)
+        self.assertIsNotNone(match, "the update job must declare timeout-minutes")
+        job_timeout_seconds = int(match.group(1)) * 60
+        # The budget must be large enough to actually scan sources …
+        self.assertGreaterEqual(monitor.DEFAULT_RUN_BUDGET_SECONDS, 30 * 60)
+        # … and still leave the checkout/install/test/commit/share-page
+        # reserve so the job reaches its commit steps before the cap above.
+        self.assertLessEqual(
+            monitor.DEFAULT_RUN_BUDGET_SECONDS + monitor.RUN_BUDGET_JOB_RESERVE_SECONDS,
+            job_timeout_seconds,
+        )
+        agents = " ".join((root / "AGENTS.md").read_text(encoding="utf-8").split())
+        self.assertIn("Run wall-clock budget", agents)
+        self.assertIn("UPDATE_JOBS_BUDGET_SECONDS", agents)
+        self.assertIn("nextSourceIndex", agents)
+
+    def test_exhausted_budget_publishes_partial_results_then_resumes_round_robin(self):
+        source_a = self._source("source-a", "https://a.gov.in/jobs")
+        source_b = self._source("source-b", "https://b.gov.in/jobs")
+        page_a = b"<a href='/a.pdf'>Advertisement No. 1/2026 for recruitment of 10 Clerk posts</a>"
+        page_b = b"<a href='/b.pdf'>Advertisement No. 2/2026 for recruitment of 20 Driver posts</a>"
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state_path = root / "seen.json"
+            config.write_text(json.dumps({"sources": [source_a, source_b]}), encoding="utf-8")
+
+            calls: list[str] = []
+
+            def burn_budget(url, *args, **kwargs):
+                calls.append(url)
+                if "a.gov.in" in url:
+                    # The budget runs out while source-a is being fetched: the
+                    # run must finish source-a without enrichment, never touch
+                    # source-b, and still write its output for the commit step.
+                    monitor.configure_run_budget(0)
+                    return monitor.Download("https://a.gov.in/jobs", "text/html", page_a)
+                if "b.gov.in" in url:
+                    return monitor.Download("https://b.gov.in/jobs", "text/html", page_b)
+                return monitor.Download(url, "text/html", b"<html><body></body></html>")
+
+            with patch.object(monitor, "fetch_url", side_effect=burn_budget):
+                result = monitor.run(config, output, state_path)
+
+            self.assertEqual(result, 0)
+            self.assertFalse(
+                [url for url in calls if "b.gov.in" in url],
+                "no fetch may start for a source after the budget cutoff",
+            )
+            # What was already checked is published instead of being lost to
+            # the workflow's job timeout …
+            jobs = json.loads(output.read_text(encoding="utf-8"))["jobs"]
+            self.assertEqual(len(jobs), 1)
+            self.assertIn("Clerk", jobs[0]["title"])
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertTrue(state["runBudget"]["exhausted"])
+            self.assertEqual(state["runBudget"]["checkedSources"], 1)
+            self.assertEqual(state["runBudget"]["skippedSources"], 1)
+            # … and the deferred slot is where the next run starts.
+            self.assertEqual(state["nextSourceIndex"], 1)
+
+            def healthy_fetch(url, *args, **kwargs):
+                calls.append(url)
+                if "a.gov.in" in url:
+                    return monitor.Download("https://a.gov.in/jobs", "text/html", page_a)
+                if "b.gov.in" in url:
+                    return monitor.Download("https://b.gov.in/jobs", "text/html", page_b)
+                return monitor.Download(url, "text/html", b"<html><body></body></html>")
+
+            calls.clear()
+            with patch.object(monitor, "fetch_url", side_effect=healthy_fetch):
+                result = monitor.run(config, output, state_path)
+
+            self.assertEqual(result, 0)
+            self.assertLess(
+                calls.index("https://b.gov.in/jobs"),
+                calls.index("https://a.gov.in/jobs"),
+                "the next run must resume at the first unchecked source",
+            )
+            jobs = json.loads(output.read_text(encoding="utf-8"))["jobs"]
+            self.assertEqual(len(jobs), 2)
+            self.assertTrue(any("Driver" in job["title"] for job in jobs))
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertNotIn("runBudget", state, "a complete pass clears the truncation marker")
+
+    def test_zero_budget_run_fetches_nothing_but_still_writes_its_output(self):
+        source_a = self._source("source-a", "https://a.gov.in/jobs")
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            config = root / "sources.json"
+            output = root / "auto-jobs.json"
+            state_path = root / "seen.json"
+            config.write_text(json.dumps({"sources": [source_a]}), encoding="utf-8")
+
+            with patch.object(monitor, "fetch_url") as fetch:
+                result = monitor.run(config, output, state_path, budget_seconds=0)
+
+            fetch.assert_not_called()
+            self.assertEqual(result, 0)
+            self.assertTrue(output.exists(), "the commit step needs an output payload")
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertTrue(state["runBudget"]["exhausted"])
+            self.assertEqual(state["runBudget"]["checkedSources"], 0)
+            self.assertEqual(state["runBudget"]["skippedSources"], 1)
+            # No slot was consumed, so the next run still starts at the top.
+            self.assertNotIn("nextSourceIndex", state)
+
+    def test_detail_enrichment_is_skipped_after_the_cutoff(self):
+        candidate = monitor.Candidate(
+            "Advertisement No. 9/2026 for recruitment of 5 Clerk posts",
+            "https://x.gov.in/notice",
+        )
+        source = self._source("x", "https://x.gov.in/listing")
+        monitor.configure_run_budget(0)
+        with patch.object(monitor, "fetch_url") as fetch:
+            searchable, description_source, apply_url, pdf_url = monitor.enrich_candidate(
+                candidate, source
+            )
+        fetch.assert_not_called()
+        self.assertEqual(apply_url, candidate.url)
+        self.assertEqual(pdf_url, candidate.url)
+        self.assertIn("Clerk", searchable)
+
+    def test_env_var_and_defaults_wire_the_budget(self):
+        with patch.dict(os.environ, {monitor.RUN_BUDGET_ENV_VAR: "0"}):
+            self.assertEqual(monitor.configure_run_budget(), 0.0)
+            self.assertTrue(monitor.run_budget_exhausted())
+        with patch.dict(os.environ):
+            os.environ.pop(monitor.RUN_BUDGET_ENV_VAR, None)
+            self.assertEqual(
+                monitor.configure_run_budget(), float(monitor.DEFAULT_RUN_BUDGET_SECONDS)
+            )
+            self.assertFalse(monitor.run_budget_exhausted())
+        # A garbage value falls back to the default instead of breaking the run.
+        with patch.dict(os.environ, {monitor.RUN_BUDGET_ENV_VAR: "not-a-number"}):
+            self.assertEqual(
+                monitor.configure_run_budget(), float(monitor.DEFAULT_RUN_BUDGET_SECONDS)
+            )
+        self.assertEqual(monitor.configure_run_budget(12.5), 12.5)
+        self.assertFalse(monitor.run_budget_exhausted())
