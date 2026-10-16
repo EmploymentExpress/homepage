@@ -1974,9 +1974,13 @@
             /\bto be conducted\b[^,]*/gi, /\bconducted (on|at)\b[^,]*/gi,
             /\b\d{1,2}:\d{2}\s*(AM|PM)\b/gi, /\b\d{1,2}[.\/-]\d{1,2}([.\/-]\d{2,4})?\.?\b/gi,
             /\bon (a )?(regular|contract|deputation|part-?time)\s+basis\b/gi,
+            // Mirrors short_headlines.NOISE_PATTERNS: an advertisement/reference
+            // number fragment such as the "27/COM-02" tail of
+            // "HO/HRM/RECR/2026-27/COM-02" is never a post name.
+            /\b\d{1,2}[-./][A-Za-z]{3,}[-./]\d{2,4}\b/gi,
             /\b(schedule|phase)\s*-?\s*[ivx]+\b/gi, /\b(schedule|phase)\b/gi,
             /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi,
-            /\((Rajasthan|Punjab|Haryana|Himachal Pradesh|Chandigarh|Delhi|U\.?T\.?)\)/gi,
+            /\((Rajasthan|Punjab|Haryana|Himachal Pradesh|Chandigarh|Delhi|U\.T\.?)\)/gi,
             /\([^)]*\b(revised|tentative|amended|schedule|phase|extended)\b[^)]*\)/gi
         ];
         // Notice-type cue words must never survive into the post-name list.
