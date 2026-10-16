@@ -243,7 +243,9 @@ class SourceAccessTests(unittest.TestCase):
         self.assertIn('persist-credentials: false',workflow)
         self.assertIn('SOURCE_CHECK_RUNNER_LABELS',workflow)
         self.assertIn('if: always()',workflow)
-        self.assertIn('actions/upload-artifact@v4',workflow)
+        # Assert the evidence-upload step exists, not a specific major: this is
+        # a read-only diagnostic whose report must still be retrievable.
+        self.assertIn('actions/upload-artifact@',workflow)
         self.assertIn('retention-days: 7',workflow)
         for forbidden in ('git push','git commit','scripts/update_jobs.py','contents: write','secrets: inherit'):
             self.assertNotIn(forbidden,workflow)

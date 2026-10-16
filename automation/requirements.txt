@@ -1,7 +1,13 @@
-pypdf>=5.0,<7.0
+# Publishing pipeline. Floors track the newest release each dependency shipped
+# as of 2026-10-16; CI installs the latest matching wheel on every run, so
+# these are minimums, not pins.
+pypdf>=6.20,<7.0
 # Social-share thumbnail generation + QR code test (scripts/thumbnail_generator.py,
 # scripts/build_share_pages.py, tests/test_thumbnail_generator.py).
-Pillow>=10.0
-qrcode>=7.4
+Pillow>=12.3
+qrcode>=8.2
+# numpy 2.5 declares requires-python >=3.12. Raising this floor would make the
+# file uninstallable on Python 3.11 while changing nothing in CI (which runs
+# 3.15 and already resolves to the newest numpy), so the floor stays permissive.
 numpy>=1.26
-opencv-python-headless>=4.8
+opencv-python-headless>=5.0

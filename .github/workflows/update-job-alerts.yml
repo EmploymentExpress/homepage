@@ -60,7 +60,7 @@ jobs:
 
     if: github.repository == 'EmploymentExpress/homepage'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # scripts/update_jobs.py stops starting new fetch work after its run
     # budget (70 minutes by default; override with UPDATE_JOBS_BUDGET_SECONDS
@@ -74,7 +74,7 @@ jobs:
 
       - name: Check out website
 
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
         with:
 
@@ -84,11 +84,11 @@ jobs:
 
       - name: Set up Python
 
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
 
         with:
 
-          python-version: "3.12"
+          python-version: "3.15"
 
           cache: pip
 

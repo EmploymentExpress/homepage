@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from short_headlines import (  # noqa: E402
+    NOISE_PATTERNS,
     NOTICE_SUFFIXES,
     apply_mode_suffix,
     headline_posts,
@@ -338,6 +339,54 @@ class IndexHeadlineWiringTests(unittest.TestCase):
         self.assertGreaterEqual(INDEX.count("escapeHtml(jobDisplayHeadline(job))"), 3)
         # Every rendered heading keeps the full official title as a tooltip.
         self.assertGreaterEqual(INDEX.count('title="${escapeHtml(job.title)}"'), 3)
+
+    def test_index_headline_noise_patterns_match_the_python_list(self):
+        """AGENTS.md: the JS mirror must never silently drop a noise pattern.
+
+        Real incident (2026-10-15): index.html's HEADLINE_NOISE array was
+        missing short_headlines.NOISE_PATTERNS' advertisement-number rule
+        (\\b\\d{1,2}[-./][A-Za-z]{3,}[-./]\\d{2,4}\\b), so the browser kept the
+        "/COM-02" tail of "ADVERTISEMENT NO: HO/HRM/RECR/2026-27/COM-02" in the
+        heading while Python stripped it. The output-parity test below only
+        fires once a published alert happens to exercise the missing rule, so
+        this compares the two lists directly — same patterns, same order, since
+        both implementations apply them sequentially.
+        """
+        if not shutil.which("node"):
+            self.skipTest("node executable not available")
+        start = INDEX.index("// Short job-details headline generator (JS mirror")
+        end = INDEX.index("function normalizeAutomaticJob(", start)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "mirror.js").write_text(INDEX[start:end], encoding="utf-8")
+            (root / "dump.js").write_text(
+                "const fs=require('fs');\n"
+                "const code=fs.readFileSync(process.argv[2],'utf8');\n"
+                "const list=new Function(code+'\\nreturn HEADLINE_NOISE;')();\n"
+                "process.stdout.write(JSON.stringify(list.map((r) => r.source)));\n",
+                encoding="utf-8",
+            )
+            dumped = subprocess.run(
+                ["node", str(root / "dump.js"), str(root / "mirror.js")],
+                capture_output=True, text=True, timeout=60, check=False,
+            )
+            self.assertEqual(dumped.returncode, 0, f"node failed: {dumped.stderr[-800:]}")
+            js_sources = json.loads(dumped.stdout)
+
+        def canonical(pattern: str) -> str:
+            """Normalise the notational differences that are not real ones.
+
+            The JS mirror writes bare capture groups where Python writes
+            non-capturing ones, and escapes "/" and "-" inside character
+            classes; both spellings compile to the same matcher.
+            """
+            pattern = re.sub(r"(?<!\\)\((?!\?)", "(?:", pattern)
+            return pattern.replace("\\-", "-").replace("\\/", "/")
+
+        self.assertEqual(
+            [canonical(source) for source in js_sources],
+            [canonical(getattr(p, "pattern", p)) for p in NOISE_PATTERNS],
+        )
 
     def test_admit_card_alert_type_is_allowed_and_routed_to_the_admit_column(self):
         """Interview call letters must reach the Admit Card column, not become recruitment."""
