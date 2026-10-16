@@ -27,14 +27,14 @@ jobs:
     if: github.repository == 'EmploymentExpress/homepage'
     # Optional JSON repository variable: ["self-hosted","linux","x64","india"]
     # This does not provision a runner or guarantee its egress location.
-    runs-on: ${{ fromJSON(vars.SOURCE_CHECK_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    runs-on: ${{ fromJSON(vars.SOURCE_CHECK_RUNNER_LABELS || '["ubuntu-26.04"]') }}
     timeout-minutes: 35
     env:
       PYTHONUNBUFFERED: '1'
       SOURCE_IDS: ${{ inputs.source_ids || '' }}
     steps:
       - name: Check out diagnostic code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
           persist-credentials: false
@@ -44,9 +44,9 @@ jobs:
         run: echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/source-access-browsers" >> "$GITHUB_ENV"
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
+          python-version: '3.15'
           cache: pip
           cache-dependency-path: automation/source-access-requirements.txt
 
@@ -96,7 +96,7 @@ jobs:
 
       - name: Upload source access evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: source-access-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/source-access/

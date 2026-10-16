@@ -200,7 +200,7 @@ The separate **AI health monitor** workflow runs daily, reads the updater's exis
 
 Every updater run now also invokes **Check official source access (read-only)** in parallel. It checks registered targets with bounded direct retries, a JavaScript-capable Chromium browser, opted-in mirrors and same-host alternative links observed on official pages. It records access failures, sanitized HTML, screenshots and redacted API request metadata as seven-day workflow artifacts. This job never publishes browser/aggregator data or modifies the live website.
 
-It can also be dispatched separately with source IDs such as `ssc,ibps,ntpc`. To use a separately provisioned India-hosted Linux runner, set the repository variable `SOURCE_CHECK_RUNNER_LABELS` to `["self-hosted","linux","x64","india"]`; the default remains `ubuntu-latest`. An India label does not itself provide India egress, and this setting changes diagnostics only.
+It can also be dispatched separately with source IDs such as `ssc,ibps,ntpc`. To use a separately provisioned India-hosted Linux runner, set the repository variable `SOURCE_CHECK_RUNNER_LABELS` to `["self-hosted","linux","x64","india"]`; the default remains `ubuntu-26.04`. An India label does not itself provide India egress, and this setting changes diagnostics only.
 
 See [setup, safety limits and manual-run instructions](docs/SOURCE_ACCESS_WORKFLOW.md). Changes take effect for scheduled runs after merging the workflow into the default branch.
 

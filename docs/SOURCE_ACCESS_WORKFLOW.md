@@ -64,7 +64,7 @@ Use `--no-browser` to intentionally skip Chromium. By default, artifacts go into
 
 ## India-based runner (requires administrator setup)
 
-GitHub-hosted `ubuntu-latest` is the default. **GitHub Actions cannot guarantee India egress or create an Indian network simply by setting a country flag.**
+GitHub-hosted `ubuntu-26.04` is the default. **GitHub Actions cannot guarantee India egress or create an Indian network simply by setting a country flag.**
 
 To use an India-based network:
 
@@ -77,7 +77,7 @@ To use an India-based network:
 
 5. Dispatch the read-only workflow and verify artifact results. This setting affects diagnostics only, not the existing publishing runner.
 
-If no matching self-hosted runner is online, the job queues; GitHub does not silently fall back to another region. Remove the variable to return to `ubuntu-latest`.
+If no matching self-hosted runner is online, the job queues; GitHub does not silently fall back to another region. Remove the variable to return to `ubuntu-26.04`.
 
 The code rejects private/local URLs, embedded credentials, private DNS answers and unsafe browser methods. These checks are defence in depth, **not a substitute for network isolation/firewall rules on a self-hosted runner**. Browser pages may load public third-party resources. Never provide private credentials to this workflow or disable TLS verification to make a source appear healthy. Temporary browser/artifact directories are cleaned up at the end of the job; ephemeral runners should also be destroyed after use, including after hard cancellation.
 

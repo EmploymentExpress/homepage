@@ -1,2 +1,2 @@
 # Isolated from publishing dependencies: diagnostics remain read-only.
-playwright>=1.55,<2.0
+playwright>=1.64,<2.0
