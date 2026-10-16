@@ -1,0 +1,51 @@
+name: Tests
+
+# Guard-suite gate for pull requests.
+#
+# The three workflows in this directory all trigger on schedule or manual
+# dispatch, so until this file existed nothing ran the guard suite before a
+# change landed on main — the only signal was the six-hourly scheduled run,
+# after the fact. AGENTS.md already describes several of these tests as
+# "fails CI"; this is the CI that makes that true.
+#
+# It is deliberately read-only: no writes, no secrets, no commits. The full
+# suite runs in a few seconds and needs only the publishing dependencies
+# (the source-access tests stub out playwright), so it never installs a
+# browser.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guard-suite:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+          cache: pip
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Install publishing dependencies
+        run: python -m pip install --disable-pip-version-check -r automation/requirements.txt
+
+      # node ships on the GitHub-hosted runner image and is required by the
+      # index.html headline-mirror parity tests; those skip cleanly without it.
+      - name: Report the node version used by the mirror parity tests
+        run: node --version
+
+      - name: Run the guard suite
+        run: python -m unittest discover -s tests -v
