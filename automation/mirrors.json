@@ -12,13 +12,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-06T09:26:03Z",
-        "failuresAtDisable": 73,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-10-08T09:29:15Z",
-        "failuresAtRecheck": 34
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-10-16T07:32:37Z",
+        "disabledUntil": "2026-10-18T07:32:37Z",
+        "failuresAtDisable": 81,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-10-18T07:32:37Z"
     },
     {
       "id": "allorigins-get",
@@ -26,13 +26,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-06T09:26:03Z",
-        "failuresAtDisable": 39,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-10-08T09:29:15Z",
-        "failuresAtRecheck": 16
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-10-16T07:32:37Z",
+        "disabledUntil": "2026-10-18T07:32:37Z",
+        "failuresAtDisable": 63,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-10-18T07:32:37Z"
     },
     {
       "id": "allorigins-raw",
@@ -54,13 +54,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-06T09:26:03Z",
-        "failuresAtDisable": 767,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-10-08T09:29:15Z",
-        "failuresAtRecheck": 813
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-10-16T07:32:37Z",
+        "disabledUntil": "2026-10-18T07:32:37Z",
+        "failuresAtDisable": 859,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-10-18T07:32:37Z"
     }
   ]
 }
