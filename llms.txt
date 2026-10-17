@@ -45,6 +45,8 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [Invite applications for the various Posts on direct: Invite applications for the various Posts on direct recruitment basis. (Last Date: 21 October 2026)](https://employmentexpress.github.io/homepage/share/job-254699097193735.html) — last date 21-10-2026; eligibility 8th/10th
+- [UPSC All India: Notice regarding change in recruitment process for six (06) posts advertised vide Advt. No. 13-2025](https://employmentexpress.github.io/homepage/share/job-127206263248079.html) — eligibility 8th/10th
 - [Advertisement for the Post of: Advertisement for the Post of Accounts Assistant](https://employmentexpress.github.io/homepage/share/job-263927313252199.html) — eligibility 8th/10th
 - [visibility View : 266_71_288-1_no.pdf: opens in a new window — Title draft RECRUITMENT NOTIFICATION NO. CGRHQ(WEST)/01/2026](https://employmentexpress.github.io/homepage/share/job-173600916438470.html) — last date 03-11-2026; eligibility Diploma/ITI
 - [visibility View: opens in a new window — Title draft RECRUITMENT OF GROUP ‘B’ CIVILIAN PERSONNEL - 2026](https://employmentexpress.github.io/homepage/share/job-168103852651443.html) — 5 Posts; eligibility Diploma/ITI
@@ -73,8 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [HAU All India: Young & Professional-II Interview Postponed (COA) 30-09-2026](https://employmentexpress.github.io/homepage/share/job-25489607093132.html) — eligibility 8th/10th
 - [Office of The District and Session Judge, Jind: Jind Court Stenographer](https://employmentexpress.github.io/homepage/share/job-127450770949361.html) — last date 30-10-2026; eligibility Graduate
 - [IIIT Dharwad: IIIT Dharwad Recruitment Non Teaching Positions](https://employmentexpress.github.io/homepage/share/job-74580791919658.html) — eligibility Diploma/ITI
-- [IBPS All India: Addendum dated 06.10.2026 in respect of Recruitment of Banker Faculty, Banker Faculty (Technical) And Executive Secretary to Director On Fixed Term Contract Basis](https://employmentexpress.github.io/homepage/share/job-253666623250106.html) — eligibility 8th/10th
-- [IBPS All India: MPA Recruitment of Class I & II Posts Registration From 29-Sep-2026](https://employmentexpress.github.io/homepage/share/job-246691063549228.html) — last date 12-11-2026; eligibility Graduate
 
 ## Admit cards and call letters
 
@@ -183,4 +183,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-10-16
+Last updated: 2026-10-17
