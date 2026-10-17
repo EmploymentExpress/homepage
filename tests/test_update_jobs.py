@@ -4609,3 +4609,118 @@ class RunBudgetTests(unittest.TestCase):
             )
         self.assertEqual(monitor.configure_run_budget(12.5), 12.5)
         self.assertFalse(monitor.run_budget_exhausted())
+
+
+class StoredDepartmentRepairTests(unittest.TestCase):
+    """A Central/NVS or Results card must always show the recruiting authority.
+
+    Born from a real homepage defect (fixed 2026-10-17): ~40 stored alerts
+    carried a slice of the notice title ("Recruitment of Group 'B' Civilian",
+    "➤ Haryana", "iitg", "Result for the post") as their department, so the
+    headline showed no department and results read as a bare "Result".
+    """
+
+    def test_title_fragments_are_never_departments(self):
+        for fragment in (
+            "Recruitment of Group 'B' Civilian",
+            "Result for the post of",
+            "➤ Haryana",
+            "Punjab",
+            "iitg",
+            "Notice regarding change in",
+            "visibility View : RECRUITMENT",
+            "Advertisement No. 1/2026 for the",
+            "266_71_288-1_no.pdf",
+            "12.10.2026",
+            "",
+        ):
+            with self.subTest(fragment=fragment):
+                self.assertTrue(monitor.is_department_fragment(fragment))
+                self.assertFalse(monitor.is_specific_department(fragment))
+
+    def test_real_authorities_are_not_fragments(self):
+        for department in (
+            "Punjab Agricultural University (PAU), Ludhiana",
+            "Staff Selection Commission (SSC)",
+            "Indian Coast Guard",
+            "Maitreyi College, University of Delhi",
+            "High Court of Punjab and Haryana at Chandigarh",
+            "Chandigarh Administration",
+        ):
+            with self.subTest(department=department):
+                self.assertFalse(monitor.is_department_fragment(department))
+
+    def test_infer_recruiting_department_rejects_fragments(self):
+        self.assertEqual(
+            monitor.infer_recruiting_department("Recruitment of Group 'B' Civilian Personnel — Apply by post"),
+            "",
+        )
+
+    def test_organization_from_title_tail(self):
+        self.assertEqual(
+            monitor.organization_from_title_tail(
+                "Result for the post of Assistant Professor (Botany) — Maitreyi College, University of Delhi"
+            ),
+            "University of Delhi",
+        )
+        self.assertEqual(monitor.organization_from_title_tail("Result for the post of Peon"), "")
+
+    def test_registered_hosts_resolve_to_their_organisation(self):
+        self.assertEqual(monitor.organization_from_host("iitj.ac.in"), "Indian Institute of Technology (IIT), Jodhpur")
+        self.assertEqual(monitor.organization_from_host("maitreyi.ac.in"), "Maitreyi College, University of Delhi")
+        self.assertEqual(monitor.organization_from_host("indiancoastguard.gov.in"), "Indian Coast Guard")
+
+    def test_file_link_furniture_is_stripped_from_titles(self):
+        self.assertEqual(
+            monitor.strip_file_link_furniture("➤ Haryana Steno Results (PDF, 222.49 KB) - opens in a new window"),
+            "➤ Haryana Steno Results",
+        )
+        self.assertEqual(
+            monitor.clean_title("➤ Haryana Steno Results (PDF, 222.49 KB) - opens in a new window"),
+            "Haryana Steno Results",
+        )
+        self.assertEqual(
+            monitor.strip_file_link_furniture(
+                "visibility View : RECRUITMENT OF GROUP 'B' CIVILIAN PERSONNEL - 2026 (PDF, 313.27 KB) "
+                "— opens in a new window — Title draft RECRUITMENT OF GROUP 'B' CIVILIAN PERSONNEL - 2026"
+            ),
+            "RECRUITMENT OF GROUP 'B' CIVILIAN PERSONNEL - 2026",
+        )
+        # A file name in front of the caption is never the notice name.
+        self.assertEqual(
+            monitor.strip_file_link_furniture(
+                "visibility View : 266_71_288-1_no.pdf (PDF, 222.49 KB) — opens in a new window "
+                "— Title draft RECRUITMENT NOTIFICATION NO. CGRHQ(WEST)/01/2026"
+            ),
+            "RECRUITMENT NOTIFICATION NO. CGRHQ(WEST)/01/2026",
+        )
+
+    def test_resolve_stored_department_uses_official_links_then_title_tail(self):
+        self.assertEqual(
+            monitor.resolve_stored_department({
+                "title": "Result for the post of Peon",
+                "sourceUrl": "https://highcourtchd.gov.in/recruitment",
+                "sourceName": "PHHC",
+            }),
+            "High Court of Punjab and Haryana at Chandigarh",
+        )
+        self.assertEqual(
+            monitor.resolve_stored_department({
+                "title": "Result for the post of Assistant Professor — Maitreyi College, University of Delhi",
+                "sourceUrl": "", "sourceName": "example",
+            }),
+            "University of Delhi",
+        )
+        self.assertEqual(
+            monitor.resolve_stored_department({"title": "Result for the post of Peon", "sourceUrl": "", "sourceName": "highcourtchd.gov.in"}),
+            "",
+        )
+
+    def test_published_store_has_no_fragment_departments(self):
+        data = json.loads((Path(__file__).resolve().parents[1] / "data" / "auto-jobs.json").read_text(encoding="utf-8"))
+        offenders = [
+            (job.get("department"), job.get("title", "")[:60])
+            for job in data.get("jobs", [])
+            if monitor.is_department_fragment(job.get("department", ""))
+        ]
+        self.assertEqual(offenders, [])

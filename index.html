@@ -1887,7 +1887,8 @@
         // See AGENTS.md -> "Job-details headline rule".
         // Recruitment:  <Department> <Post name(s)> Recruitment | Apply Online/Offline
         //               (2-4 posts listed; 5+ -> "Various Post"; none -> department only)
-        // Other notices: <Department> <Notice type>  (e.g. "SBI Admit Card").
+        // Other notices: <Department> <Post name(s)> <Notice type>  (e.g. "PHHC Peon Result",
+        //               "SBI Admit Card" when the notice names no post).
         const SHORT_DEPARTMENT_MAX = 34;
         const HEADLINE_STATES = ['Punjab', 'Haryana', 'Himachal Pradesh', 'Chandigarh', 'Delhi', 'Rajasthan',
             'Uttar Pradesh', 'Madhya Pradesh', 'Gujarat', 'Bihar', 'Maharashtra', 'Karnataka',
@@ -1897,7 +1898,12 @@
             'Mohali', 'SAS Nagar', 'Panchkula', 'Faridkot', 'Kapurthala', 'Ferozepur',
             'Delhi', 'New Delhi', 'Mumbai', 'Pune', 'Kolkata', 'Chennai', 'Hyderabad',
             'Bengaluru', 'Jaipur', 'Lucknow', 'Kanpur', 'Varanasi', 'Prayagraj',
-            'Ahmedabad', 'Surat', 'Bhopal', 'Indore', 'Dehradun', 'Shimla', 'Guwahati'];
+            'Ahmedabad', 'Surat', 'Bhopal', 'Indore', 'Dehradun', 'Shimla', 'Guwahati',
+            'Jodhpur', 'Hisar', 'Rohtak', 'Greater Noida', 'Noida', 'Dharwad', 'Roorkee',
+            'Kharagpur', 'Jammu', 'Srinagar', 'Meerut', 'Nagpur', 'Patna', 'Ranchi', 'Raipur',
+            'Bhubaneswar', 'Kochi', 'Coimbatore', 'Vadodara', 'Gandhinagar', 'Ambala', 'Karnal',
+            'Hoshiarpur', 'Gurdaspur', 'Sangrur', 'Moga', 'Pathankot', 'Fazilka', 'Mansa',
+            'Barnala', 'Rupnagar', 'Ropar', 'Muktsar', 'Tarn Taran', 'Fatehgarh Sahib', 'Malerkotla'];
         const SMART_SMALL_WORDS = new Set(['of', 'and', 'for', 'the', 'in', 'at', 'on', 'to', 'a', 'an', 'by', 'cum', 'as']);
         const HEADLINE_AUTHORITY_FILLERS = new Set(['board', 'boards', 'department', 'dept', 'dept.', 'commission',
             'recruitment', 'authority', 'corporation', 'university', 'samiti', 'office', 'of', 'the']);
@@ -1918,7 +1924,12 @@
             [/central university of punjab/i, 'CUPB'],
             [/high court of punjab and haryana|punjab and haryana high court/i, 'PHHC'],
             [/local audit department/i, 'Local Audit Dept.'],
-            [/department of industries/i, 'Industries Dept.']
+            [/department of industries/i, 'Industries Dept.'],
+            // Council labs publish a hyphenated short form; the bare "CSIR"/"ICMR"
+            // head would name the parent council instead of the recruiting lab.
+            [/national geophysical research institute/i, 'CSIR-NGRI'],
+            [/national aerospace laboratories/i, 'CSIR-NAL'],
+            [/bhopal memorial hospital/i, 'ICMR-BMHRC']
         ];
         const HEADLINE_WORD_ABBREVIATIONS = [
             [/\bDepartment\b/gi, 'Dept.'], [/\bUniversity\b/gi, 'Univ.'], [/\bInstitute\b/gi, 'Inst.'],
@@ -1956,45 +1967,98 @@
             'admission': 'Admission', 'admit-card': 'Admit Card', 'recruitment': 'Recruitment'
         };
         const HEADLINE_NOISE = [
-            /\b(recruitment|engagement|appointment)\s+(of|for)\b/gi,
-            /\bPDF\s*\d+(\.\d+)?\s*(KB|MB)\b/gi, /-?\s*opens? in a new window/gi, /\bclick here\b/gi,
+            /\b(?:recruitment|engagement|appointment)\s+(?:of|for)\b/gi,
+            /\(?\bPDF,?\s*\d+(?:[.,]\d+)?\s*(?:KB|MB)\b\)?/gi, /-?\s*opens? in a new window/gi, /\bclick here\b/gi,
             /\bdownload\b/gi, /\bview\b/gi, /\bapplication form\b/gi, /\bonline form\b/gi,
             /\bapply online\b/gi, /\bofficial notification\b/gi, /\bnotification\b/gi,
-            /\badvertisement\b/gi, /\blast date\b/gi, /\bregarding\b/gi, /\bapply (for|online)\b/gi, /\bapply\b/gi,
-            /\bengagement\b/gi, /\blink download\b/gi, /\btentative\b/gi,
-            /\bby (post|hand)\b/gi, /\bthrough (online|offline) mode\b/gi,
+            /\badvertisement\b/gi, /\blast date\b/gi, /\bregarding\b/gi, /\bapply (?:for|online)\b/gi, /\bapply\b/gi,
+            /\bengagement\b/gi, /\blink download\b/gi, /\blinks?\b/gi, /\btentative\b/gi,
+            /\bby (?:post|hand)\b/gi, /\bthrough (?:online|offline) mode\b/gi,
             /\bwritten test\b/gi, /\bqualifying test\b/gi,
             /\bexams?\b/gi, /\bexaminations?\b/gi, /\bonline\b/gi, /\boffline\b/gi,
-            /\bregistration (from|on|opens?|starts?|begins?)\b[^,]*/gi,
-            /\bscheduled to be held\b[^,]*/gi, /\bto be held (on|at)\b[^,]*/gi,
+            /\bregistration (?:from|on|opens?|starts?|begins?)\b[^,]*/gi,
+            /\bscheduled to be held\b[^,]*/gi, /\bto be held (?:on|at)\b[^,]*/gi,
             /\brequest for proposal\b/gi, /\bpre-?bid\b/gi,
-            /\bupdated vacancies\b/gi, /\bas on \d{1,2}[.\/-]\d{1,2}([.\/-]\d{2,4})?\b/gi,
-            /\bcommon (recruitment )?process\b/gi, /\bfor audit year\b[^,]*/gi,
-            /\bNo\.?\s*[A-Z]{1,6}([\/-]\w+)+\b/gi,
-            /\bto be conducted\b[^,]*/gi, /\bconducted (on|at)\b[^,]*/gi,
-            /\b\d{1,2}:\d{2}\s*(AM|PM)\b/gi, /\b\d{1,2}[.\/-]\d{1,2}([.\/-]\d{2,4})?\.?\b/gi,
-            /\bon (a )?(regular|contract|deputation|part-?time)\s+basis\b/gi,
+            /\bupdated vacancies\b/gi, /\bas on \d{1,2}[.\/-]\d{1,2}(?:[.\/-]\d{2,4})?\b/gi,
+            /\bcommon (?:recruitment )?process\b/gi, /\bfor audit year\b[^,]*/gi,
+            /\bNo(?:\.\s*|\s+)[A-Z]{1,6}(?:[\/-]\w+)+\b/gi,
+            /\bto be conducted\b[^,]*/gi, /\bconducted (?:on|at)\b[^,]*/gi,
+            /\b\d{1,2}:\d{2}\s*(?:AM|PM)\b/gi, /\b\d{1,2}[.\/-]\d{1,2}(?:[.\/-]\d{2,4})?\.?\b/gi,
+            /\bon (?:a )?(?:fixed[- ]term\s+)?(?:regular|contract(?:ual)?|deputation|part-?time|direct recruitment|direct|temporary|ad-?hoc|tenure|permanent|outsourc\w+)(?:\s*\/\s*(?:regular|contract(?:ual)?|deputation|part-?time|temporary|ad-?hoc|tenure|permanent))*\s+basis\b/gi,
             // Mirrors short_headlines.NOISE_PATTERNS: an advertisement/reference
             // number fragment such as the "27/COM-02" tail of
             // "HO/HRM/RECR/2026-27/COM-02" is never a post name.
             /\b\d{1,2}[-./][A-Za-z]{3,}[-./]\d{2,4}\b/gi,
-            /\b(schedule|phase)\s*-?\s*[ivx]+\b/gi, /\b(schedule|phase)\b/gi,
-            /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi,
-            /\((Rajasthan|Punjab|Haryana|Himachal Pradesh|Chandigarh|Delhi|U\.T\.?)\)/gi,
-            /\([^)]*\b(revised|tentative|amended|schedule|phase|extended)\b[^)]*\)/gi
+            /\b(?:schedule|phase)\s*-?\s*[ivx]+\b/gi, /\b(?:schedule|phase)\b/gi,
+            /\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\b/gi,
+            /\((?:Rajasthan|Punjab|Haryana|Himachal Pradesh|Chandigarh|Delhi|U\.T\.?)\)/gi,
+            /\([^)]*\b(?:revised|tentative|amended|schedule|phase|extended)\b[^)]*\)/gi,
+            // Result / admit-card / answer-key wording: the post name must survive,
+            // the exam-stage, candidate-list and venue wording must not.
+            /\bvisibility\b/gi, /\btitle draft\b/gi, /[\w-]*\.pdf\b/gi,
+            /\bresults?\s*\/\s*scores?\s*sheets?\b/gi, /\bresults?\s+status\b/gi, /\bscores?\s*sheets?\b/gi,
+            /\b(?:preliminary|prelims?|mains?|tier\s*-?\s*[ivx\d]+|stage\s*-?\s*[ivx\d]+)\b/gi,
+            /\bpersonal interview\b/gi, /\bdocument verification\b[^,]*/gi, /\bomr based\b/gi,
+            /\b(?:recruitment|trade|skill|typing|practical|screening|physical|endurance|efficiency|competency|aptitude|computer|proficiency|qualifying)\s+tests?\b/gi,
+            /\btests?\b/gi, /\bwritten\b/gi, /\bmodel answer keys?\b/gi, /\broll\s*(?:nos?\.?|numbers?)\b/gi,
+            /\bissuance of\b/gi, /\bto the candidates\b/gi,
+            /\bcandidates?\s+(?:provisionally\s+)?(?:selected|shortlisted|eligible|qualified|not shortlisted)\b[^,]*/gi,
+            /\b(?:provisionally\s+)?(?:eligible|ineligible|selected|shortlisted|not shortlisted|qualified)\s+(?:and\s+(?:ineligible|not shortlisted)\s+)?candidates\b/gi,
+            /\baward list\b/gi, /\blists?\s+of\b/gi, /\blists?\b/gi, /\bcandidates\b/gi, /\bprovisionally\b/gi, /\bprovisional\b/gi, /\bfinal\b/gi,
+            /\bheld (?:on|at|in|from)\b[^,]*/gi, /\bissued (?:by|under|on)\b[^,]*/gi, /\bdated\b[^,]*/gi,
+            /\b(?:in|under) the (?:scheme|project)\b[^,(]*/gi, /\u201c[^\u201d]*(?:\u201d|$)/gi,
+            /\bagainst\b[^,]*/gi, /\bvide\b[^,]*/gi,
+            /\bunder\b[^,()]*?(?=\s*(?:,|\(|$|\s[-\u2013\u2014]\s|\bfor\b|\bto\b))/gi,
+            /\bon the establishment of\b[^,]*/gi,
+            /\b(?:head\s*quarters|hqrs\.?|hq)\b/gi, /\bcum\b/gi, /^\s*alerts?\b/gi,
+            /\brespectively\b/gi, /\bthe following\b/gi, /\bfollowing (?:positions?|posts?)\b/gi,
+            /\bscheduled (?:on|for|at)\b[^,]*/gi, /\bscheduled\b/gi,
+            /\b(?:for|under)\s+[\w-]+[- ]funded\s+projects?\b/gi,
+            /\b(?:college|faculty|school|centre|center|institute|directorate|office) of\b[^,;()]*/gi,
+            // Advertisement codes left in brackets once their digits are gone ("(BFU- )").
+            /\(\s*[A-Z]{2,6}\s*[-\/]\s*[\d\/ -]*\)/gi, /\(\s*[-\u2013\u2014\/ ]*\)/gi,
+            /\bapplications? (?:are|is) invited\b/gi, /\bfilling up of\b/gi, /\bpurely\b/gi, /\binitially\b/gi,
+            /\bfor a period of\b[^,]*/gi, /\b(?:selection|recruitment|hiring|examination|interview|application|registration|admission|counsel\w*)\s+process\b/gi, /\bprocess\s+(?:for|of)\b/gi, /\bguidelines?\b/gi, /\bdates?\b/gi,
+            /\b(?:advt\.?|advertisement)?\s*no\.\s*:?\s*[\w()&\/-]*/gi, /\bno\.?\s*:\s*[\w()&\/-]*/gi,
+            /\bchange (?:in|of)\b[^,]*/gi, /\bvacant\b/gi, /\bby (?:direct|way of)\b/gi, /\bin\s+[A-Z]{2,6}\s*\([A-Z&]{1,5}\)/gi,
+            /\bscores?\b(?:\s+of)?/gi, /\bwithdrawal of\b/gi,
+            /\bto be filled (?:up )?(?:by|on|through)\b[^,]*/gi,
+            /\bpay (?:level|scale|band|matrix)\b[^,]*/gi, /\(?\bRs\.?\s*[\d,.\- ]+\)?/gi, /\bas per\b[^,]*/gi,
+            /\b\d{6,}\b/gi,
+            // ", Health and Medical Education Department" names the indenting
+            // department after the post list - it is never a post itself.
+            /,\s*[^,]*\b(?:department|dept\.?|directorate|ministry)\s*(?=,|$)/gi
         ];
         // Notice-type cue words must never survive into the post-name list.
-        const HEADLINE_CUE_WORDS = /\b(?:Recruitment|Result|Public Notice|Notice|Postponement|Postponed|Corrigendum|Addendum|Cancellation|Shortlisted|Admission|Walk-?in-?Interview|Interview|Posting Orders|Re-?Open(?:ed|ing)?|Extension|Extended|Cancell?ation|Cancell?ed|Exam Date|Admit Card|Answer Key|Merit List|Waiting List|Date Extended)\b/gi;
+        const HEADLINE_CUE_WORDS = /\b(?:Recruitment|Results?|Public Notice|Notices?|Postponement|Postponed|Corrigendum|Addendum|Cancellation|Shortlisted|Admission|Walk-?in-?Interview|Interview|Posting Orders|Re-?Open(?:ed|ing)?|Extension|Extended|Cancell?ation|Cancell?ed|Exam Date|Admit Cards?|Answer Keys?|Merit List|Waiting List|Date Extended|Call Letters?|Hall Tickets?)\b/gi;
         // Collapsed double fillers left behind by removed phrases ("for for X").
-        const HEADLINE_FILLER_PAIR = /\b(?:for|of|and|the|in|to)\s+(?:for|of|and|the|in|to)\b/gi;
+        const HEADLINE_FILLER_PAIR = /\b(?:for|of|and|the|in|to|on|at|by|with|a|an)\s+(?:for|of|and|the|in|to|on|at|by|with|a|an)\b/gi;
         const HEADLINE_GENERIC_POSTS = new Set(['various post', 'various posts', 'other posts', 'more', 'post',
             'posts', 'various', 'various faculty posts', 'misc', 'vacancies', 'vacancy']);
         const BRACKET_DATE_BLURB = /\([^)]*\b(last date|submission of application|interview|apply|upto|up to|selection committee|\d{1,2}[-./]\d{1,2}[-./]\d{2,4})[^)]*\)?/gi;
         const OFFICE_TAIL = /\s+[-\u2013\u2014]\s+[^-\u2013\u2014]*\b(College|Department|Dept\.?|Institute|School|Centre|Center|Office|Division|Directorate|University|Faculty|Campus|Station|Wing)\b.*$/i;
         // "for the post of Clerk", "for the post(s) of DEO and MTS", "position of Network Administrator".
-        const POST_LEAD = /\bposts?(?:\s*\(s\))?\s+of\s+(.+)$/i;
+        const POST_LEAD = /\b(?:posts?|positions?)(?:\s*\(s\))?\s+of\s+(.+)$/i;
         const HEADLINE_STRIP_CHARS = /^[ ,;:|\-\u2013\u2014<>]+|[ ,;:|\-\u2013\u2014<>]+$/g;
         const HEADLINE_POST_STRIP_CHARS = /^[ ,;:|\-\u2013\u2014&<>]+|[ ,;:|\-\u2013\u2014&<>]+$/g;
+        const HEADLINE_EDGE_PUNCTUATION = /^[ ,;:|\-\u2013\u2014<>\/]+|[ ,;:|\-\u2013\u2014<>\/]+$/g;
+        // A leftover part that is only a place, an indenting office or a stopword is
+        // never a post name ("Media Consultant, Chennai" / "..., Health and Medical
+        // Education Department" / "for").
+        const NON_POST_PART_RE = new RegExp(
+            '^(?:(?:new\\s+)?(?:' + HEADLINE_CITIES.concat(HEADLINE_STATES).map(escapeRegExp).join('|') + ')|'
+            + '(?:for|of|to|the|and|in|on|at|by|with|from|or|all|a|an|ut|u\\.t\\.?|govt\\.?|government)|'
+            + '(?:health|medical education|health and medical education|education|home|finance|revenue|agriculture|forest|police|pwd|irrigation|power|transport)|'
+            + '.*\\b(?:department|dept\\.?|directorate|ministry|head\\s*quarters|hqrs\\.?)\\s*|'
+            + '\\([^)]*\\))\\.?$', 'i');
+        // A part that reads like a sentence ("the concern candidates are mandatory
+        // required to download ...") is instructions, never a post name.
+        const SENTENCE_PART_RE = /\b(?:are|is|was|were|will|shall|should|must|please|required|kindly|hereby|has|have)\b/i;
+        const HEADLINE_EDGE_FILLERS = /^\s*(?:for|of|to|the|and|in|on|at|by|with|from|or|a|an)\s+|\s+(?:for|of|to|the|and|in|on|at|by|with|from|or|a|an)\s*$/gi;
+        // "Assistant Professor in the Department of Botany" -> "Assistant Professor (Botany)".
+        const SUBJECT_DEPARTMENT_RE = /(?:\s+in|,)\s*(?:the\s+)?(?:department|dept\.?|discipline|subject|faculty)\s+of\s+([^,;()]+?)(?=\s*(?:,|;|\(|$))/gi;
+        // Reservation / category blurbs are never part of the post name.
+        const CATEGORY_BRACKET_RE = /\((?:selection of [^)]*|[^)]*\b(?:category|quota|disabled|challenged|pwd|pwbd|backlog|ex-?servicemen|reserved)\b[^)]*)\)+/gi;
 
         function headlineClean(value) {
             return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
@@ -2026,6 +2090,25 @@
 
         function stripDateBlurbs(text) {
             return headlineClean(headlineClean(text).replace(BRACKET_DATE_BLURB, ' '));
+        }
+
+        // Strip edge punctuation and leading/trailing filler words until stable
+        // (mirrors short_headlines._trim_edges).
+        function trimHeadlineEdges(text) {
+            let current = headlineClean(text);
+            let previous = null;
+            while (previous !== current) {
+                previous = current;
+                current = headlineClean(current.replace(HEADLINE_EDGE_FILLERS, ' ')).replace(HEADLINE_EDGE_PUNCTUATION, '');
+            }
+            return current;
+        }
+
+        // Remove every notice-wording noise pattern and the notice-type cue words.
+        function stripHeadlineNoise(text) {
+            let current = text;
+            for (const pattern of HEADLINE_NOISE) current = current.replace(pattern, ' ');
+            return current.replace(HEADLINE_CUE_WORDS, ' ');
         }
 
         // Title-case a name while keeping ALL-CAPS acronyms (DEO, MTS, PGIMER) intact.
@@ -2179,7 +2262,7 @@
                 protectedParts.push(match);
                 return `\u0001${protectedParts.length - 1}\u0001`;
             });
-            return masked.split(/\s*(?:,|&|\band\b)\s*/)
+            return masked.split(/\s*(?:,|&|\band\b)\s*/i)
                 .map(part => headlineClean(part.replace(/\u0001(\d+)\u0001/g, (m, i) => protectedParts[Number(i)])))
                 .filter(Boolean);
         }
@@ -2193,33 +2276,56 @@
                 subject = subject.replace(new RegExp(`\\b${escaped}\\b`, 'gi'), ' ');
             }
 
-            subject = subject.replace(/\((selection of [^)]*|[^)]*category)\)/gi, ' ');
+            // A stripped alias can leave a dangling separator glued to the next word
+            // ("CSIR-NAL" minus "CSIR" -> "-NAL").
+            subject = subject.replace(/(?:^|(?<=\s))[-\u2013\u2014\/]+(?=[A-Za-z])/g, '');
+            subject = subject.replace(CATEGORY_BRACKET_RE, ' ');
+            subject = subject.replace(SUBJECT_DEPARTMENT_RE, ' ($1)');
             subject = stripLeadingAuthorityWords(subject, department);
 
             const postMatch = subject.match(POST_LEAD);
-            if (postMatch) subject = postMatch[1];
+            if (postMatch) {
+                subject = postMatch[1];
+                // A second "post of X" later in the notice is another post, not prose.
+                subject = subject.replace(/\b(?:posts?|positions?)(?:\s*\(s\))?\s+of\s+/gi, ', ');
+            }
             subject = subject.replace(/^\s*post\s+of\s+/i, '');
 
             subject = subject.replace(OFFICE_TAIL, '');
-            const dashSplit = subject.split(/\s+[–—]\s+|\s+-\s+/).map(headlineClean).filter(Boolean);
+            // Split on dashes, but "Scientist – II" / "Grade - I" is one post name.
+            const dashSplit = subject.split(/\s+[\u2013\u2014]\s+(?![IVX\d]+\b)|\s+-\s+(?![IVX\d]+\b)/).filter(segment => headlineClean(segment));
             if (dashSplit.length > 1) {
-                const meaningful = dashSplit.filter(segment => (segment.match(/[A-Za-z]{3,}/g) || []).length >= 1);
+                // The first segment that still names something once the notice
+                // wording is gone ("Recruitment Project - 2/2020 - Specialist Officers"
+                // -> "Specialist Officers").
+                const meaningful = dashSplit.filter(segment => /[A-Za-z]{3,}/.test(stripHeadlineNoise(segment)));
                 subject = (meaningful.length ? meaningful : dashSplit)[0];
             }
-            for (const pattern of HEADLINE_NOISE) subject = subject.replace(pattern, ' ');
+            subject = stripHeadlineNoise(subject);
             // Possessive remnant left when the department name is stripped ("UCO Bank's ..." -> "'S ...").
             subject = subject.replace(/(?:^|\s)['\u2019]s\b\s*/gi, ' ');
-            subject = subject.replace(HEADLINE_FILLER_PAIR, ' ');
-            subject = subject.replace(/\b(19|20)\d{2}(\s*[-/]\s*\d{2,4})?\b/g, ' ');
-            subject = subject.replace(/\((\s*|Advt\.?[^)]*)\)/gi, ' ');
-            subject = subject.replace(/\b(Advt\.?|Advertisement)\s*No\.?\s*[\w/-]+/gi, ' ');
+            let previous = null;
+            while (previous !== subject) {
+                previous = subject;
+                subject = subject.replace(HEADLINE_FILLER_PAIR, ' ');
+            }
+            subject = subject.replace(/\b(?:19|20)\d{2}(?:\s*[-\/]\s*\d{2,4})?\b/g, ' ');
+            subject = subject.replace(/\((?:\s*|Advt\.?[^)]*)\)/gi, ' ');
+            subject = subject.replace(/\b(?:Advt\.?|Advertisement)\s*No\.?\s*[\w\/-]+/gi, ' ');
             subject = headlineClean(subject).replace(HEADLINE_STRIP_CHARS, '');
 
-            subject = subject.replace(/^\s*\d+\s*(posts?|vacancies)?\s*/i, '');
+            subject = subject.replace(/^\s*\d+\s*(?:posts?|vacancies)?\s*/i, '');
             subject = subject.replace(HEADLINE_CUE_WORDS, ' ');
-            subject = subject.replace(/^\s*(for|of)\s+/i, '');
+            subject = subject.replace(/^\s*(?:for|of)\s+/i, '');
             subject = subject.replace(/\s*\bforms?\b\s*$/i, '');
             subject = headlineClean(subject).replace(HEADLINE_STRIP_CHARS, '');
+            // A removed phrase can leave an unmatched bracket ("Peon (against a l");
+            // drop the brackets rather than publish half of one.
+            if ((subject.match(/\(/g) || []).length !== (subject.match(/\)/g) || []).length) {
+                subject = subject.replace(/[()]/g, ' ');
+            }
+            // Leading/trailing fillers left behind by removed phrases ("for", "of the").
+            subject = trimHeadlineEdges(subject);
 
             const deptWords = new Set((headlineClean(department).match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase()));
             // Portal artifact gate (mirrors short_headlines._is_portal_artifact):
@@ -2235,32 +2341,83 @@
             let parts = splitPosts(subject).filter(part => {
                 const words = (part.match(/[A-Za-z]{3,}/g) || []).map(w => w.toLowerCase());
                 return !(deptWords.size && words.length && words.every(word => deptWords.has(word)));
-            }).filter(part => /[A-Za-z]{2,}/.test(part)).filter(part => !isPortalArtifact(part));
+            });
+            if (deptWords.size) {
+                // "NGRI-MTS" under CSIR-NGRI -> "MTS": a part must not restate the department.
+                const deptLead = new RegExp('^(?:' + [...deptWords].sort().map(escapeRegExp).join('|') + ')-(?=\\S)', 'i');
+                parts = parts.map(part => part.replace(deptLead, ''));
+            }
+            parts = parts.map(trimHeadlineEdges)
+                .filter(part => /[A-Za-z]{2,}/.test(part))
+                .filter(part => !NON_POST_PART_RE.test(part))
+                .filter(part => !SENTENCE_PART_RE.test(part));
+            // The stored title is capped at 240 characters, so the final part of a
+            // long notice can be cut mid-word ("Medical Educati"); never publish it.
+            const cleanTitle = headlineClean(title);
+            const titleTail = cleanTitle.match(/[A-Za-z]+/g) || [];
+            if (cleanTitle.length >= 238 && parts.length && titleTail.length) {
+                if (parts.length > 1 && cleanTitle.toLowerCase().endsWith(parts[parts.length - 1].toLowerCase())) {
+                    parts = parts.slice(0, -1);
+                }
+                const lastWords = parts[parts.length - 1].match(/[A-Za-z]+/g) || [];
+                if (lastWords.length && lastWords[lastWords.length - 1].toLowerCase() === titleTail[titleTail.length - 1].toLowerCase()) {
+                    const lastWord = lastWords[lastWords.length - 1];
+                    parts[parts.length - 1] = trimHeadlineEdges(parts[parts.length - 1].replace(new RegExp('\\s*\\b' + escapeRegExp(lastWord) + '\\W*$'), ''));
+                }
+                parts = parts.filter(part => /[A-Za-z]{2,}/.test(part));
+            }
+            // Duplicates and truncated echoes of an earlier part ("Senio") add nothing.
+            let unique = [];
+            for (const part of parts) {
+                const low = part.toLowerCase();
+                if (unique.some(u => low === u.toLowerCase() || (low.length >= 4 && u.toLowerCase().startsWith(low)))) continue;
+                unique = unique.filter(u => !(u.length >= 4 && low.startsWith(u.toLowerCase())));
+                unique.push(part);
+            }
+            parts = unique.filter(part => !isPortalArtifact(part));
             const kept = parts.filter(part => !HEADLINE_GENERIC_POSTS.has(part.toLowerCase()));
 
             const variousCue = kept.length > 4
                 || (kept.length && kept.length !== parts.length)
-                || /\bvarious\b/i.test(headlineClean(title))
+                || /\bvarious\b/i.test(cleanTitle)
                 || /^various\b/i.test(headlineClean(vacancies || ''));
             if (variousCue) return ['Various Post'];
             return kept.slice(0, 4)
-                .map(part => smartTitleCase(headlineClean(part).replace(HEADLINE_POST_STRIP_CHARS, '')))
-                .filter(Boolean);
+                .map(part => headlineClean(part).replace(HEADLINE_POST_STRIP_CHARS, ''))
+                .filter(Boolean)
+                .map(postTitleCase);
+        }
+
+        // Title-case a post name; an ALL-CAPS notice ("GROUP 'B' CIVILIAN PERSONNEL")
+        // is brought down to title case while short tokens that read as acronyms
+        // (MTS, DEO, LAW, JMGS-I) keep their capitals.
+        function postTitleCase(post) {
+            let text = headlineClean(post);
+            const letters = text.replace(/[^A-Za-z]/g, '');
+            const tokens = text.split(' ');
+            const alphabetic = tokens.filter(token => /[A-Za-z]/.test(token));
+            if (letters && letters === letters.toUpperCase() && (alphabetic.length >= 2 || letters.length >= 8)) {
+                // Only alphabetic runs of 5+ letters come down ("CIVILIAN" ->
+                // "Civilian"); shorter runs stay as acronyms ("(LAW)-JMGS-I").
+                text = tokens.map(token => token.replace(/[A-Za-z]{5,}/g, run => run[0].toUpperCase() + run.slice(1).toLowerCase())).join(' ');
+            }
+            return smartTitleCase(text);
         }
 
         function shortJobHeadline(title, department, alertType, vacancies, applyMode) {
             // A website link must never appear in the headline or department.
-            const rawTitle = stripWebsiteDomains(headlineClean(title));
+            const rawTitle = stripWebsiteDomains(headlineClean(title).replace(/\u2011|\u2010/g, '-'));
             department = stripWebsiteDomains(department);
             const dept = shortDepartment(department, rawTitle);
             const kind = noticeType(rawTitle, alertType);
+            const posts = headlinePosts(rawTitle, department, vacancies).join(', ');
+            const body = headlineClean(`${dept} ${posts}`.trim());
             if (kind === 'Recruitment') {
-                const posts = headlinePosts(rawTitle, department, vacancies).join(', ');
-                const body = headlineClean(`${dept} ${posts}`.trim());
                 return headlineClean(`${body} ${headlineSuffix(kind, rawTitle, applyMode)}`.trim());
             }
-            // Non-recruitment notices: department + notice type (no posts, no apply mode).
-            return headlineClean(`${dept} ${headlineSuffix(kind, rawTitle)}`.trim());
+            // Non-recruitment notices: department + post name(s) + notice type (no apply
+            // mode) - "PHHC Peon Result", "SBI Admit Card" when no post is named.
+            return headlineClean(`${body} ${headlineSuffix(kind, rawTitle)}`.trim());
         }
 
         function jobDisplayHeadline(job) {

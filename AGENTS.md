@@ -472,9 +472,16 @@ notification — never the raw portal link text and never a full sentence.
 
 **Non-recruitment notices** (admit card, result, answer key, corrigendum, admission, exam date,
 postponement, cancellation, shortlist, merit/waiting list, posting orders, walk-in interview,
-public notice): `<Department name> <Notice type>` — e.g. `SBI Admit Card`,
-`PGIMER Chandigarh Result`. No post names, no apply-mode suffix. The notice type is detected from
-the board's own wording, using exactly this vocabulary:
+public notice): `<Department name> <Post name(s)> <Notice type>` — the same department and
+post-name rules as above (1 post → its name, 2–4 → comma list, 5+ → `Various Post`), then the
+notice type and **no apply-mode suffix** — e.g. `PHHC Peon Result`,
+`Maitreyi College Assistant Professor (Botany) Result`, `JKSSB Junior Laboratory Technician Exam
+Answer Key`. Only when the notice names no post at all does the heading fall back to
+`<Department name> <Notice type>` (`SBI Admit Card`). Exam-stage, venue and candidate-list wording
+("Tier-II", "held on 14.10.2026 at CCRS Headquarters, Chennai", "list of eligible candidates")
+and the indenting office after the post list (", Health and Medical Education Department") are
+never post names. The notice type is detected from the board's own wording, using exactly this
+vocabulary:
 
   | Notice says | Headline ends with |
   | --- | --- |
@@ -507,7 +514,17 @@ Card column — `alertType: "admit-card"` end to end, and the frontend `allowedA
   title, advertisement number, dates and links stay in the job-details modal, the description and
   the `JobPosting` structured data — nothing is deleted from the dataset.
 - 🏛️ **The department must always be visible** (the specific recruiting-department title rule
-  above still applies); never publish a bare `Result` heading with no department.
+  above still applies); never publish a bare `Result` heading with no department. A stored
+  `department` that is a slice of the notice title ("Recruitment of Group 'B' Civilian",
+  "➤ Haryana", "iitg", "Result for the post") is not a department: the monitor rejects such
+  fragments (`is_department_fragment`) and re-resolves the authority from the official host
+  behind the links, the source label or the authority named at the title's tail
+  (`resolve_stored_department`) before the record is published.
+- 🧹 **Portal furniture never reaches a heading** — Drupal file-link labels
+  ("visibility View : 266_71_288-1_no.pdf (PDF, 222.49 KB) — opens in a new window — Title draft
+  …"), menu glyphs ("➤") and website links are stripped from the stored title
+  (`strip_file_link_furniture` / `clean_title`), and the headline generator additionally treats
+  file names, PDF sizes, reference numbers, pay scales and deputation wording as noise.
 - 🔢 **No vacancy count in the headline** — counts live in the card details, not in the heading.
 - 🚫 Never guess the notice type. If the official wording gives no cue, use
   `Recruitment | Apply Online` for a vacancy notice and the alert type's default otherwise.
