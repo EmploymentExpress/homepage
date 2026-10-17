@@ -860,7 +860,68 @@ HOST_ORGANIZATION_NAMES = {
     "iitbhu.ac.in": "Indian Institute of Technology (BHU), Varanasi",
     "hau.ac.in": "Chaudhary Charan Singh Haryana Agricultural University (HAU), Hisar",
     "bceceboard.bihar.gov.in": "Bihar Combined Entrance Competitive Examination Board (BCECEB)",
+    # Registry links auto-discovered as bare domains (data/notification-source-links.json).
+    # Without a name here the department fell back to the title's leading words
+    # ("Result for the post of", "Invite applications for the various Posts on
+    # direct"), which is what produced department-less headlines in the central
+    # column and bare "Result" headings in the results list.
+    "canarabank.bank.in": "Canara Bank",
+    "davrecruit.davcmc.in": "DAV College Managing Committee (DAVCMC), New Delhi",
+    "davcmc.in": "DAV College Managing Committee (DAVCMC), New Delhi",
+    "gims.ac.in": "Government Institute of Medical Sciences (GIMS), Greater Noida",
+    "iiitdwd.ac.in": "Indian Institute of Information Technology (IIIT), Dharwad",
+    "iitg.ac.in": "Indian Institute of Technology (IIT), Guwahati",
+    "iitj.ac.in": "Indian Institute of Technology (IIT), Jodhpur",
+    "indiancoastguard.gov.in": "Indian Coast Guard",
+    "jkssb.nic.in": "Jammu and Kashmir Services Selection Board (JKSSB)",
+    "kvic.gov.in": "Khadi and Village Industries Commission (KVIC)",
+    "maitreyi.ac.in": "Maitreyi College, University of Delhi",
+    "nal.res.in": "CSIR–National Aerospace Laboratories (CSIR–NAL)",
+    "nests.tribal.gov.in": "National Education Society for Tribal Students (NESTS)",
+    "nidmp.ac.in": "National Institute of Design Madhya Pradesh (NID MP), Bhopal",
+    "rrcjaipur.in": "Railway Recruitment Cell (RRC), North Western Railway, Jaipur",
+    "sahitya-akademi.gov.in": "Sahitya Akademi, New Delhi",
+    "siddhacouncil.com": "Central Council for Research in Siddha (CCRS)",
+    # Recruitment portal of the Punjab & Haryana High Court for the subordinate
+    # courts of Punjab, Haryana and UT Chandigarh (Clerk / Stenographer drives).
+    "sssc.gov.in": "Punjab and Haryana High Court Subordinate Courts Recruitment (SSSC)",
+    "upsssc.gov.in": "Uttar Pradesh Subordinate Services Selection Commission (UPSSSC)",
+    "vvgnli.gov.in": "V.V. Giri National Labour Institute (VVGNLI), Noida",
 }
+
+
+def _registered_organization_hosts() -> dict[str, str]:
+    """Host -> authority name for every organisation in official-organizations.json.
+
+    The approved-organisation registry already names the authority behind each
+    official URL (e.g. ``bmhrc.ac.in`` -> "ICMR - Bhopal Memorial Hospital and
+    Research Centre"), so a bare-domain registry link to the same host resolves
+    to that name instead of a title fragment. Cached after the first read.
+    """
+    cached = getattr(_registered_organization_hosts, "_cache", None)
+    if cached is not None:
+        return cached
+    hosts: dict[str, str] = {}
+    try:
+        registry = json.loads(DEFAULT_OFFICIAL_ORGS.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        registry = {}
+    organizations = registry.get("organizations", []) if isinstance(registry, dict) else []
+    for org in organizations:
+        if not isinstance(org, dict):
+            continue
+        name = clean_text(org.get("department") or org.get("name") or "")
+        if not name or is_website_domain(name):
+            continue
+        urls = [org.get("url", "")] + list(org.get("urls", []) or [])
+        for url in urls:
+            host = host_name(str(url or ""))
+            if host.startswith("www."):
+                host = host[4:]
+            if host and host not in hosts:
+                hosts[host] = name
+    _registered_organization_hosts._cache = hosts  # type: ignore[attr-defined]
+    return hosts
 
 
 def organization_from_host(url_or_host: str) -> str:
@@ -874,6 +935,12 @@ def organization_from_host(url_or_host: str) -> str:
     for known, name in HOST_ORGANIZATION_NAMES.items():
         if host.endswith("." + known) or host == known:
             return name
+    registered = _registered_organization_hosts()
+    if host in registered:
+        return registered[host]
+    for known, name in registered.items():
+        if host.endswith("." + known):
+            return name
     return ""
 
 
@@ -883,8 +950,42 @@ def department_from_url(url: str) -> str:
     return resolved if is_specific_department(resolved) else ""
 
 
+# Drupal file-link furniture scraped from a listing: the "visibility" icon
+# glyph name, the "View :" label, the file-size tag, the new-window hint and a
+# duplicated "Title draft <name>" caption, e.g.
+# "visibility View : 266_71_288-1_no.pdf (PDF, 222.49 KB) — opens in a new
+#  window — Title draft RECRUITMENT NOTIFICATION NO. CGRHQ(WEST)/01/2026".
+FILE_LINK_LEAD_RE = re.compile(r"(?i)^\s*(?:visibility\s+)?view\s*:\s*")
+FILE_LINK_TAIL_RE = re.compile(
+    r"(?i)\s*\(\s*PDF,?\s*[\d.,]+\s*(?:KB|MB)\s*\)\s*(?:[—–-]\s*opens?\s+in\s+a\s+new\s+window\s*)?"
+    r"(?:[—–-]\s*Title\s+draft\b\s*(?P<caption>.*))?$"
+)
+
+
+def strip_file_link_furniture(value: str) -> str:
+    """Return the notice name from a Drupal-style file link label."""
+    text = clean_text(value)
+    if not re.search(r"(?i)\bvisibility\s+view\b|\(\s*PDF,?\s*[\d.,]+\s*(?:KB|MB)\s*\)|\bTitle\s+draft\b", text):
+        return text
+    text = FILE_LINK_LEAD_RE.sub("", text)
+    caption = ""
+    match = FILE_LINK_TAIL_RE.search(text)
+    if match:
+        caption = clean_text(match.group("caption") or "")
+        text = clean_text(text[: match.start()])
+    text = re.sub(r"(?i)\s*[—–-]\s*opens?\s+in\s+a\s+new\s+window\b.*$", "", text)
+    text = re.sub(r"(?i)\s*[—–-]\s*Title\s+draft\b.*$", "", text)
+    text = clean_text(text).strip(" -|:–—")
+    # The leading text is a file name ("266_71_288-1_no.pdf") when the caption
+    # carries the actual notice name; otherwise keep the longer, complete copy.
+    looks_like_file = bool(re.search(r"(?i)\.pdf$|^\S+$", text))
+    if caption and (looks_like_file or len(caption) > len(text)):
+        return caption
+    return text or caption
+
+
 def clean_title(value: str) -> str:
-    title = strip_website_domains(clean_text(value))
+    title = strip_website_domains(strip_file_link_furniture(clean_text(value)))
     # Strip "NEW" badges ("NEW Advertisement", "!! NEW !!") but never the word
     # inside a place name such as "New Delhi" or "New Town".
     title = re.sub(
@@ -893,13 +994,15 @@ def clean_title(value: str) -> str:
         title,
     )
     title = re.sub(r"(?i)!!\s*new\s*!!", " ", title)
+    # Menu/list glyphs scraped with a link label ("➤ Haryana Steno Results").
+    title = re.sub(r"^[\s\u27a4\u25ba\u25b6\u2022\u00b7\u00bb\u203a\u2192\u21d2\u25a0\u25c6\u25c7\u2605\u2606\u2713\u2714>*#]+", "", title)
     title = re.sub(
         r"(?i)^\s*(?:click here(?:\s+(?:to|for))?|download)\s*[-:–—]*\s*",
         "",
         title,
     )
     title = re.sub(r"\s+", " ", title).strip(" -|:–—")
-    return title[:240]
+    return title[:240].rstrip()
 
 
 # A recruiting authority is required for every published vacancy. These labels
@@ -987,6 +1090,73 @@ def is_link_label_noise(value: str) -> bool:
     return bool(LINK_LABEL_NOISE_RE.match(text))
 
 
+# A sentence fragment cut from a notice title is not an authority name. The
+# prefix rule in infer_recruiting_department() takes the words before
+# "recruitment" / the first role word, which on a source without its own
+# department produced "Result for the post of", "Invite applications for the
+# various Posts on direct", "visibility View", "Notice Regarding Tier-II
+# examination Result for the post of" as published departments (2026-10-17:
+# department-less central-column headlines and bare "Result" headings). An
+# authority name never starts with a notice verb/cue, never ends in a
+# preposition or article, never starts with a digit or date and never carries
+# portal furniture.
+DEPARTMENT_FRAGMENT_START_RE = re.compile(
+    r"(?i)^[\W_]*(?:"
+    r"results?|notices?|notification|advertisements?|advt\.?|invites?|inviting|"
+    r"applications?|visibility|view|schedule|postponement|provisional|final|"
+    r"information\s+(?:regarding|for|about|on|to)|document\s+verification|conduct|list|"
+    r"corrigendum|addendum|engagement|appointment|walk-?in|interview|answer\s+key|"
+    r"the\s+official|filling\s+up|extension|cancellation|short-?listed|selected|written|"
+    r"online|offline|apply|click|download|published|publication|press\s+release|tender|"
+    r"quotation|important|urgent|last\s+date|date|"
+    r"recruitment(?:\s+(?:norms|project|of|for|process|notice|drive|to|rules?|test|exam)\b|\s*$)|"
+    r"\d+"
+    r")\b"
+)
+# A bare state / UT / country name is a place, not a recruiting authority
+# ("➤ Haryana" scraped from a results menu).
+BARE_PLACE_NAMES = {
+    "india", "all india", "punjab", "haryana", "chandigarh", "delhi", "new delhi",
+    "himachal pradesh", "himachal", "rajasthan", "uttar pradesh", "uttarakhand",
+    "jammu and kashmir", "jammu & kashmir", "j&k", "ladakh", "gujarat", "bihar",
+    "maharashtra", "karnataka", "tamil nadu", "kerala", "odisha", "assam",
+    "madhya pradesh", "west bengal", "telangana", "andhra pradesh", "jharkhand",
+    "chhattisgarh", "goa", "tripura", "manipur", "meghalaya", "mizoram", "nagaland",
+    "sikkim", "arunachal pradesh", "puducherry", "central", "state",
+}
+DEPARTMENT_FRAGMENT_END_RE = re.compile(
+    r"(?i)(?:\b(?:of|for|the|on|in|to|under|and|at|by|with|from|regarding|direct|"
+    r"a|an|post|posts|vide|against|as|per|dated|upto|up|is|are|be|will|basis)|&)\s*$"
+)
+DEPARTMENT_FRAGMENT_FURNITURE_RE = re.compile(
+    r"(?i)opens?\s+in\s+a\s+new\s+window|\(\s*PDF\b|\bTitle\s+draft\b|\.pdf\b|\bKB\b|\bMB\b"
+)
+MAX_DEPARTMENT_WORDS = 14
+
+
+def is_department_fragment(value: str) -> bool:
+    """True when the text is a slice of a notice title rather than an authority."""
+    department = re.sub(r"^[\W_]+", "", clean_text(value)).strip(" .,:;|-–—")
+    if not department:
+        return True
+    if department.lower() in BARE_PLACE_NAMES:
+        return True
+    if DEPARTMENT_FRAGMENT_START_RE.match(department):
+        return True
+    if DEPARTMENT_FRAGMENT_END_RE.search(department):
+        return True
+    if DEPARTMENT_FRAGMENT_FURNITURE_RE.search(department):
+        return True
+    if LISTING_DATE_RE.search(department):
+        return True
+    if len(department.split()) > MAX_DEPARTMENT_WORDS:
+        return True
+    # A single all-lowercase token ("iitg") is a portal/page slug, not a name.
+    if re.fullmatch(r"[a-z]+", department):
+        return True
+    return False
+
+
 def is_specific_department(value: str) -> bool:
     department = clean_text(value)
     if is_website_domain(department):
@@ -994,6 +1164,9 @@ def is_specific_department(value: str) -> bool:
         return False
     if is_link_label_noise(department):
         # "View 22 Oct 2025" is a listing row label, not an authority name.
+        return False
+    if is_department_fragment(department):
+        # "Result for the post of" is a slice of the title, not an authority.
         return False
     return bool(
         len(department) >= 3
@@ -1067,7 +1240,48 @@ def infer_recruiting_department(title: str) -> str:
         "application", "application form", "job", "jobs", "recruitment"
     }:
         return ""
+    if is_department_fragment(candidate):
+        # "Result for the post of" / "Invite applications for the various Posts
+        # on direct" are notice wording, not the board; let the caller resolve
+        # the authority from the official host or the title's own tail instead.
+        return ""
     return candidate[:180]
+
+
+# Organisation words that identify a trailing authority segment of a title
+# ("Result for the post of Assistant Professor ..., Maitreyi College").
+# "Department" is deliberately absent: "..., Health and Medical Education
+# Department, conducted on ..." names the indenting department, not the board.
+TITLE_TAIL_ORGANIZATION_RE = re.compile(
+    r"(?i)\b(?:college|university|institute|institution|akademi|academy|commission|"
+    r"board|council|corporation|bank|court|society|hospital|ministry|directorate|"
+    r"authority|limited|ltd\.?|vidyalaya|school|laborator(?:y|ies)|foundation|trust|"
+    r"samiti|nigam|parishad|cantonment|panchayat|municipal(?:ity)?|university of)\b"
+)
+
+
+def organization_from_title_tail(title: str) -> str:
+    """Authority named at the end of a notice title, or '' when none is.
+
+    Last-resort resolver used only when the source carries no department and
+    the official host is unknown: a trailing ", Maitreyi College" / ", Sahitya
+    Akademi" segment is the board's own wording for who published the notice.
+    It is deliberately conservative — the segment must carry an organisation
+    word, be short, and not itself read like notice wording.
+    """
+    subject = strip_link_label_noise(clean_title(title))
+    segments = [clean_text(s).strip(" .;:-–—()") for s in re.split(r",|\s[-–—]\s|\s+at\s+", subject)]
+    for segment in reversed(segments[1:]):
+        if not (3 <= len(segment) <= 70) or len(segment.split()) > 8:
+            continue
+        if not TITLE_TAIL_ORGANIZATION_RE.search(segment):
+            continue
+        if re.match(r"(?i)^(?:in|at|on|of|for|by|with|from|to|as|through|under|the|this|its|their|held|issued|conducted)\b", segment):
+            continue
+        if is_department_fragment(segment) or is_website_domain(segment):
+            continue
+        return segment[:180]
+    return ""
 
 
 def _department_aliases(department: str) -> list[str]:
@@ -1113,18 +1327,20 @@ def official_job_title(title: str, department: str) -> str:
         subject = f"{post_name} Recruitment"
 
     if title_mentions_department(subject, authority):
-        return subject[:240]
+        return subject[:240].rstrip()
     # If the headline starts with only an acronym/short name, remove that short
     # form before prefixing the complete official authority (avoids
     # "... (PSSSB) — PSSSB Clerk ..." while retaining the full name).
     for alias in sorted(_department_aliases(authority)[1:], key=len, reverse=True):
+        # Whole-word match only: the "IIT" alias must not eat the "iit" of
+        # "iitg recruitment" and leave "g recruitment" behind.
         shortened = re.sub(
-            rf"(?i)^\s*{re.escape(alias)}\s*[,|:–—-]*\s*", "", subject, count=1
+            rf"(?i)^\s*{re.escape(alias)}(?![a-z0-9])\s*[,|:–—-]*\s*", "", subject, count=1
         )
         if shortened != subject and clean_text(shortened):
             subject = clean_text(shortened)
             break
-    return f"{authority} — {subject}"[:240]
+    return f"{authority} — {subject}"[:240].rstrip()
 
 
 def canonical_url(value: str) -> str:
@@ -2867,6 +3083,9 @@ def job_from_candidate(candidate: Candidate, source: dict[str, Any], now: dateti
             department_from_url(str(source.get("url", "")))
             or department_from_url(candidate.url)
         )
+    if not department:
+        # Last resort: the authority the title itself names at its tail.
+        department = organization_from_title_tail(candidate.title)
     title = official_job_title(candidate.title, department)
     if not title:
         raise ValueError("notice has no specific recruiting department and vacancy title")
@@ -4035,6 +4254,26 @@ def parse_timestamp(value: str) -> datetime | None:
         return None
 
 
+def resolve_stored_department(job: dict[str, Any], raw_title: str = "") -> str:
+    """Re-resolve the authority of a stored alert whose department is unusable.
+
+    Order: the title's own leading authority segment, the official host behind
+    the stored links, the source label, then an authority the title names at
+    its tail. Returns '' when nothing specific can be established.
+    """
+    raw_title = raw_title or strip_link_label_noise(clean_title(job.get("title", "")))
+    source_name = clean_text(job.get("sourceName", ""))
+    return (
+        infer_recruiting_department(raw_title)
+        or department_from_url(str(job.get("sourceUrl", "")))
+        or department_from_url(str(job.get("noticeUrl", "")))
+        or department_from_url(str(job.get("pdfLink", "")))
+        or department_from_url(str(job.get("applyLink", "")))
+        or (source_name if is_specific_department(source_name) else "")
+        or organization_from_title_tail(raw_title)
+    )
+
+
 def sanitize_published_jobs(
     jobs: list[dict[str, Any]], now: datetime, max_age_days: int | None = None
 ) -> bool:
@@ -4051,12 +4290,7 @@ def sanitize_published_jobs(
             # A listing row label ("View 22 Oct 2025") or a bare domain is not
             # an authority. Resolve the real one from the notice before giving
             # up, so a genuine alert is repaired instead of silently dropped.
-            department = (
-                infer_recruiting_department(raw_title)
-                or department_from_url(str(job.get("sourceUrl", "")))
-                or department_from_url(str(job.get("noticeUrl", "")))
-                or department_from_url(str(job.get("pdfLink", "")))
-            )
+            department = resolve_stored_department(job, raw_title)
         specific_title = official_job_title(raw_title, department)
         if not specific_title:
             changed = True

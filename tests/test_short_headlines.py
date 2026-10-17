@@ -32,6 +32,7 @@ from short_headlines import (  # noqa: E402
     headline_suffix,
     notice_type,
     short_department,
+    post_title_case,
     short_job_headline,
     smart_title_case,
 )
@@ -219,7 +220,7 @@ class NonRecruitmentHeadlineTests(unittest.TestCase):
             short_job_headline(
                 "Punjab Agricultural University (PAU), Ludhiana — Interview call letter for Lab Helper",
                 "Punjab Agricultural University (PAU), Ludhiana", "admit-card", "", ""),
-            "PAU Ludhiana Admit Card",
+            "PAU Ludhiana Lab Helper Admit Card",
         )
 
     def test_result_is_department_plus_type(self):
@@ -230,7 +231,7 @@ class NonRecruitmentHeadlineTests(unittest.TestCase):
                 "from the Ex-servicemen category) PDF 383 KB - opens in a new window View",
                 "Punjab State Legal Services Authority (PULSA)", "result", "22 Posts",
                 "Online / As Notified"),
-            "PULSA Result",
+            "PULSA Process Server Result",
         )
 
     def test_non_recruitment_headlines_have_no_apply_mode(self):
@@ -526,6 +527,127 @@ class AgentsRuleTests(unittest.TestCase):
         for suffix in NOTICE_SUFFIXES.values():
             with self.subTest(suffix=suffix):
                 self.assertIn(suffix, AGENTS)
+
+
+class DepartmentAndPostAlwaysVisibleTests(unittest.TestCase):
+    """Every notice kind reads <Department> <Post name(s)> <Notice type>.
+
+    Born from a real homepage defect (fixed 2026-10-17): Results cards read a
+    bare "Result" / "Result for the Post Result" and Central cards opened with
+    portal furniture ("Visibility View ...", "PDF, 222.49 KB NO. ...") instead
+    of the recruiting authority.
+    """
+
+    def test_result_names_department_and_post(self):
+        self.assertEqual(
+            short_job_headline(
+                "Maitreyi College, University of Delhi — Result for the post of Assistant "
+                "Professor in the Department of Botany",
+                "Maitreyi College, University of Delhi", "result", "", ""),
+            "Maitreyi College Assistant Professor (Botany) Result",
+        )
+        self.assertEqual(
+            short_job_headline(
+                "High Court of Punjab and Haryana — Final result for the 01 post of Peon "
+                "(against a leftover vacancy) on the establishment of this High Court",
+                "High Court of Punjab and Haryana at Chandigarh", "result", "", ""),
+            "PHHC Peon Result",
+        )
+
+    def test_result_lists_up_to_four_posts(self):
+        self.assertEqual(
+            short_job_headline(
+                "Central Council for Research in Siddha (CCRS) — Results of the Personal "
+                "Interview for the Positions of Media Consultant and Retired Government "
+                "Clerical Staff held on 14.10.2026 at CCRS Headquarters, Chennai",
+                "Central Council for Research in Siddha (CCRS)", "result", "", ""),
+            "CCRS Media Consultant, Retired Government Clerical Staff Result",
+        )
+
+    def test_indenting_department_after_the_post_list_is_not_a_post(self):
+        self.assertEqual(
+            short_job_headline(
+                "Jammu and Kashmir Services Selection Board (JKSSB) — Document verification "
+                "of candidates for the posts of Para Medical Assistant, BCG Technician and "
+                "Junior X-Ray Technician, Health and Medical Education Department",
+                "Jammu and Kashmir Services Selection Board (JKSSB)", "result", "", ""),
+            "JKSSB Para Medical Assistant, BCG Technician, Junior X-Ray Technician Result",
+        )
+
+    def test_file_link_furniture_never_reaches_the_headline(self):
+        self.assertEqual(
+            short_job_headline(
+                "Indian Coast Guard — visibility View : 266_71_288-1_no.pdf (PDF, 222.49 KB) "
+                "— opens in a new window — Title draft RECRUITMENT NOTIFICATION NO. CGRHQ(WEST)/01/2026",
+                "Indian Coast Guard", "recruitment", "", ""),
+            "Indian Coast Guard Recruitment | Apply Online",
+        )
+
+    def test_all_caps_notice_is_title_cased_but_acronyms_survive(self):
+        self.assertEqual(
+            short_job_headline(
+                "Indian Coast Guard — RECRUITMENT OF GROUP \u2018B\u2019 CIVILIAN PERSONNEL - 2026",
+                "Indian Coast Guard", "recruitment", "", "by post"),
+            "Indian Coast Guard Group \u2018B\u2019 Civilian Personnel Recruitment | Apply Offline",
+        )
+        self.assertEqual(post_title_case("GROUP 'B' CIVILIAN PERSONNEL"), "Group 'B' Civilian Personnel")
+        self.assertEqual(post_title_case("ASSTT.DIRECTOR-I"), "Asstt.Director-I")
+        self.assertEqual(post_title_case("Assistant Manager (LAW)-JMGS-I"), "Assistant Manager (LAW)-JMGS-I")
+        self.assertEqual(post_title_case("MTS"), "MTS")
+
+    def test_truncated_tail_of_a_capped_title_is_dropped(self):
+        title = (
+            "All India Institute of Medical Sciences (AIIMS), Bathinda — Result of Scientist "
+            "\u2013 II (Non-Medical) for ICMR-funded projects under the \u201cCollaborating Centre "
+            "for Assessment of the quality of medicines and devices in India which keeps going "
+            "on until the stored title is cut mid-word at the two hundred and forty cap Ass"
+        )
+        self.assertGreaterEqual(len(title), 238)
+        self.assertEqual(
+            short_job_headline(title, "All India Institute of Medical Sciences (AIIMS), Bathinda", "result", "", ""),
+            "AIIMS Bathinda Scientist \u2013 II (Non-Medical) Result",
+        )
+
+    def test_deputation_and_pay_scale_wording_is_noise(self):
+        self.assertEqual(
+            short_job_headline(
+                "Chandigarh Administration — Vacancy Circular for filling up 02 posts of "
+                "Executive Engineer (Electrical) to be filled up by deputation basis in the "
+                "Engineering Department, UT, Chandigarh",
+                "Chandigarh Administration", "recruitment", "2 Posts", ""),
+            "Chandigarh Administration Executive Engineer (Electrical) Recruitment | Apply Online",
+        )
+        self.assertEqual(
+            short_job_headline(
+                "Chandigarh Administration — Research Assistant (Group-B) Pay Level-6 "
+                "(Rs. 35400-112400) as per 7th CPC",
+                "Chandigarh Administration", "recruitment", "", ""),
+            "Chandigarh Administration Research Assistant (Group-B) Recruitment | Apply Online",
+        )
+
+    def test_scheme_title_after_the_post_is_noise(self):
+        self.assertEqual(
+            short_job_headline(
+                "Punjab Agricultural University (PAU), Ludhiana — Withdrawal of Advertisement for "
+                "filling up the post of Data Entry Operator in the scheme, \u201cChanging Trends in "
+                "Overseas Migration from Rural Punjab: Extent, Causes and Consequences, Misc-59, P",
+                "Punjab Agricultural University (PAU), Ludhiana", "recruitment", "", ""),
+            "PAU Ludhiana Data Entry Operator Vacancy Cancelled",
+        )
+
+    def test_city_stays_visible_for_more_institutes(self):
+        self.assertEqual(short_department("Indian Institute of Technology (IIT), Jodhpur"), "IIT Jodhpur")
+        self.assertEqual(short_department("Chaudhary Charan Singh Haryana Agricultural University (HAU), Hisar"), "HAU Hisar")
+
+    def test_no_published_headline_is_a_bare_notice_type(self):
+        bare = set(NOTICE_SUFFIXES.values()) | {"Recruitment | Apply Online", "Recruitment | Apply Offline"}
+        for job in AUTO_JOBS.get("jobs", []):
+            headline = short_job_headline(
+                job.get("title", ""), job.get("department", ""), job.get("alertType", ""),
+                job.get("vacancies", ""), job.get("applyMode", ""))
+            with self.subTest(title=job.get("title", "")[:60]):
+                self.assertNotIn(headline, bare)
+                self.assertTrue(short_department(job.get("department", ""), job.get("title", "")))
 
 
 if __name__ == "__main__":

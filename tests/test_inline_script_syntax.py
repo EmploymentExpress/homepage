@@ -84,7 +84,7 @@ class InlineScriptSyntaxTest(unittest.TestCase):
         self.assertIn("function isWebsiteDomain(value)", self.html)
         self.assertIn("function stripWebsiteDomains(value)", self.html)
         self.assertIn("department = stripWebsiteDomains(department);", self.html)
-        self.assertIn("const rawTitle = stripWebsiteDomains(headlineClean(title));", self.html)
+        self.assertIn("const rawTitle = stripWebsiteDomains(headlineClean(title).replace(/\\u2011|\\u2010/g, '-'));", self.html)
 
     @unittest.skipUnless(shutil.which("node"), "node executable not available")
     def test_strip_website_domains_in_frontend(self):

@@ -27,9 +27,13 @@ sync.
 | more than 4 posts | `Various Post` (`PGIMER Chandigarh Various Post Recruitment \| Apply Offline`) |
 | no post named | department only (`PGIMER Chandigarh Recruitment \| Apply Online`) |
 
-**Non-recruitment notices:** `<Department name> <Notice type>` — for example
-`SBI Admit Card`, `PGIMER Chandigarh Result`. Interview call letters are
-admit-card notices and render in the Admit Card column.
+**Non-recruitment notices:** `<Department name> <Post name(s)> <Notice type>`
+with the same post-name rules and no apply-mode suffix — for example
+`PHHC Peon Result`, `Maitreyi College Assistant Professor (Botany) Result`,
+`JKSSB Junior Laboratory Technician Exam Answer Key`; `SBI Admit Card` only when
+the notice names no post. The department is always visible — a bare `Result`
+heading is never published. Interview call letters are admit-card notices and
+render in the Admit Card column.
 
 The authoritative, complete rule — department short-name logic, apply-mode
 detection, notice-type vocabulary, hard rules — lives in **AGENTS.md →

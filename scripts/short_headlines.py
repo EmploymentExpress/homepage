@@ -6,9 +6,10 @@ apply mode:
 
     <Department> <Post name(s)> Recruitment | Apply Online
     <Department> Various Post Recruitment | Apply Offline
-    <Department> <Notice type>                        (non-recruitment notices)
+    <Department> <Post name(s)> <Notice type>         (non-recruitment notices)
+    <Department> <Notice type>                        (no post named)
 
-Post-name rules (taken from the notice's own wording):
+Post-name rules (taken from the notice's own wording, for every notice type):
 
     1 post        -> the post name is shown
     2 to 4 posts  -> every post name, comma separated
@@ -28,6 +29,9 @@ Examples
 
 "State Bank of India (SBI) - Preliminary Exam Call Letter"
     -> "SBI Admit Card"
+
+"High Court of Punjab and Haryana - Final result for the post of Peon"
+    -> "PHHC Peon Result"
 
 Data-only helper: it never fetches anything and never touches the page layout.
 Used by ``scripts/preview_short_headlines.py`` to render the before/after demo
@@ -55,6 +59,11 @@ CITIES = [
     "Delhi", "New Delhi", "Mumbai", "Pune", "Kolkata", "Chennai", "Hyderabad",
     "Bengaluru", "Jaipur", "Lucknow", "Kanpur", "Varanasi", "Prayagraj",
     "Ahmedabad", "Surat", "Bhopal", "Indore", "Dehradun", "Shimla", "Guwahati",
+    "Jodhpur", "Hisar", "Rohtak", "Greater Noida", "Noida", "Dharwad", "Roorkee",
+    "Kharagpur", "Jammu", "Srinagar", "Meerut", "Nagpur", "Patna", "Ranchi", "Raipur",
+    "Bhubaneswar", "Kochi", "Coimbatore", "Vadodara", "Gandhinagar", "Ambala", "Karnal",
+    "Hoshiarpur", "Gurdaspur", "Sangrur", "Moga", "Pathankot", "Fazilka", "Mansa",
+    "Barnala", "Rupnagar", "Ropar", "Muktsar", "Tarn Taran", "Fatehgarh Sahib", "Malerkotla",
 ]
 
 # Small words that stay lowercase inside a title-cased name ("Ministry of Defence").
@@ -79,6 +88,11 @@ DEPARTMENT_SHORT_FORMS = [
     (r"high court of punjab and haryana|punjab and haryana high court", "PHHC"),
     (r"local audit department", "Local Audit Dept."),
     (r"department of industries", "Industries Dept."),
+    # Council labs publish a hyphenated short form; the bare "CSIR"/"ICMR"
+    # head would name the parent council instead of the recruiting lab.
+    (r"national geophysical research institute", "CSIR-NGRI"),
+    (r"national aerospace laboratories", "CSIR-NAL"),
+    (r"bhopal memorial hospital", "ICMR-BMHRC"),
 ]
 
 WORD_ABBREVIATIONS = [
@@ -145,13 +159,13 @@ ALERT_TYPE_DEFAULTS = {
 # Link-text / PDF-metadata noise emitted by official portals.
 NOISE_PATTERNS = [
     r"\b(?:recruitment|engagement|appointment)\s+(?:of|for)\b",
-    r"\bPDF\s*\d+(?:\.\d+)?\s*(?:KB|MB)\b",
+    r"\(?\bPDF,?\s*\d+(?:[.,]\d+)?\s*(?:KB|MB)\b\)?",
     r"-?\s*opens? in a new window",
     r"\bclick here\b", r"\bdownload\b", r"\bview\b",
     r"\bapplication form\b", r"\bonline form\b", r"\bapply online\b",
     r"\bofficial notification\b", r"\bnotification\b", r"\badvertisement\b",
     r"\blast date\b", r"\bregarding\b", r"\bapply (?:for|online)\b", r"\bapply\b",
-    r"\bengagement\b", r"\blink download\b", r"\btentative\b",
+    r"\bengagement\b", r"\blink download\b", r"\blinks?\b", r"\btentative\b",
     r"\bby (?:post|hand)\b", r"\bthrough (?:online|offline) mode\b",
     r"\bwritten test\b", r"\bqualifying test\b",
     r"\bexams?\b", r"\bexaminations?\b", r"\bonline\b", r"\boffline\b",
@@ -160,26 +174,64 @@ NOISE_PATTERNS = [
     r"\brequest for proposal\b", r"\bpre-?bid\b",
     r"\bupdated vacancies\b", r"\bas on \d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?\b",
     r"\bcommon (?:recruitment )?process\b", r"\bfor audit year\b[^,]*",
-    r"\bNo\.?\s*[A-Z]{1,6}(?:[/\-]\w+)+\b",
+    r"\bNo(?:\.\s*|\s+)[A-Z]{1,6}(?:[/\-]\w+)+\b",
     r"\bto be conducted\b[^,]*", r"\bconducted (?:on|at)\b[^,]*",
     r"\b\d{1,2}:\d{2}\s*(?:AM|PM)\b", r"\b\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?\.?\b",
-    r"\bon (?:a )?(?:regular|contract|deputation|part-?time)\s+basis\b",
+    r"\bon (?:a )?(?:fixed[- ]term\s+)?(?:regular|contract(?:ual)?|deputation|part-?time|direct recruitment|direct|temporary|ad-?hoc|tenure|permanent|outsourc\w+)(?:\s*/\s*(?:regular|contract(?:ual)?|deputation|part-?time|temporary|ad-?hoc|tenure|permanent))*\s+basis\b",
     r"\b\d{1,2}[-./][A-Za-z]{3,}[-./]\d{2,4}\b",
     r"\b(?:schedule|phase)\s*-?\s*[ivx]+\b", r"\b(?:schedule|phase)\b",
     r"\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\b",
     r"\((?:Rajasthan|Punjab|Haryana|Himachal Pradesh|Chandigarh|Delhi|U\.T\.?)\)",
     r"\([^)]*\b(?:revised|tentative|amended|schedule|phase|extended)\b[^)]*\)",
+    # Result / admit-card / answer-key wording: the post name must survive,
+    # the exam-stage, candidate-list and venue wording must not
+    # ("Results of the Personal Interview for the Positions of Media Consultant
+    #  ... at CCRS Headquarters, Chennai, held on 14.10.2026" -> Media Consultant).
+    r"\bvisibility\b", r"\btitle draft\b", r"[\w-]*\.pdf\b",
+    r"\bresults?\s*/\s*scores?\s*sheets?\b", r"\bresults?\s+status\b", r"\bscores?\s*sheets?\b",
+    r"\b(?:preliminary|prelims?|mains?|tier\s*-?\s*[ivx\d]+|stage\s*-?\s*[ivx\d]+)\b",
+    r"\bpersonal interview\b", r"\bdocument verification\b[^,]*", r"\bomr based\b",
+    r"\b(?:recruitment|trade|skill|typing|practical|screening|physical|endurance|efficiency|competency|aptitude|computer|proficiency|qualifying)\s+tests?\b",
+    r"\btests?\b", r"\bwritten\b", r"\bmodel answer keys?\b", r"\broll\s*(?:nos?\.?|numbers?)\b",
+    r"\bissuance of\b", r"\bto the candidates\b",
+    r"\bcandidates?\s+(?:provisionally\s+)?(?:selected|shortlisted|eligible|qualified|not shortlisted)\b[^,]*",
+    r"\b(?:provisionally\s+)?(?:eligible|ineligible|selected|shortlisted|not shortlisted|qualified)\s+(?:and\s+(?:ineligible|not shortlisted)\s+)?candidates\b",
+    r"\baward list\b", r"\blists?\s+of\b", r"\blists?\b", r"\bcandidates\b", r"\bprovisionally\b", r"\bprovisional\b", r"\bfinal\b",
+    r"\bheld (?:on|at|in|from)\b[^,]*", r"\bissued (?:by|under|on)\b[^,]*", r"\bdated\b[^,]*",
+    r"\b(?:in|under) the (?:scheme|project)\b[^,(]*", r"\u201c[^\u201d]*(?:\u201d|$)",
+    r"\bagainst\b[^,]*", r"\bvide\b[^,]*",
+    r"\bunder\b[^,()]*?(?=\s*(?:,|\(|$|\s[-\u2013\u2014]\s|\bfor\b|\bto\b))",
+    r"\bon the establishment of\b[^,]*",
+    r"\b(?:head\s*quarters|hqrs\.?|hq)\b", r"\bcum\b", r"^\s*alerts?\b",
+    r"\brespectively\b", r"\bthe following\b", r"\bfollowing (?:positions?|posts?)\b",
+    r"\bscheduled (?:on|for|at)\b[^,]*", r"\bscheduled\b",
+    r"\b(?:for|under)\s+[\w-]+[- ]funded\s+projects?\b",
+    r"\b(?:college|faculty|school|centre|center|institute|directorate|office) of\b[^,;()]*",
+    # Advertisement codes left in brackets once their digits are gone ("(BFU- )").
+    r"\(\s*[A-Z]{2,6}\s*[-/]\s*[\d/ -]*\)", r"\(\s*[-\u2013\u2014/ ]*\)",
+    r"\bapplications? (?:are|is) invited\b", r"\bfilling up of\b", r"\bpurely\b", r"\binitially\b",
+    r"\bfor a period of\b[^,]*", r"\b(?:selection|recruitment|hiring|examination|interview|application|registration|admission|counsel\w*)\s+process\b", r"\bprocess\s+(?:for|of)\b", r"\bguidelines?\b", r"\bdates?\b",
+    r"\b(?:advt\.?|advertisement)?\s*no\.\s*:?\s*[\w()&/\-]*", r"\bno\.?\s*:\s*[\w()&/\-]*",
+    r"\bchange (?:in|of)\b[^,]*", r"\bvacant\b", r"\bby (?:direct|way of)\b", r"\bin\s+[A-Z]{2,6}\s*\([A-Z&]{1,5}\)",
+    r"\bscores?\b(?:\s+of)?", r"\bwithdrawal of\b",
+    r"\bto be filled (?:up )?(?:by|on|through)\b[^,]*",
+    r"\bpay (?:level|scale|band|matrix)\b[^,]*", r"\(?\bRs\.?\s*[\d,.\- ]+\)?", r"\bas per\b[^,]*",
+    r"\b\d{6,}\b",
+    # ", Health and Medical Education Department" names the indenting
+    # department after the post list - it is never a post itself.
+    r",\s*[^,]*\b(?:department|dept\.?|directorate|ministry)\s*(?=,|$)",
 ]
 # Collapsed double fillers left behind by removed phrases ("for for X").
 FILLER_PAIR_RE = re.compile(
-    r"\b(?:for|of|and|the|in|to)\s+(?:for|of|and|the|in|to)\b", re.IGNORECASE)
+    r"\b(?:for|of|and|the|in|to|on|at|by|with|a|an)\s+(?:for|of|and|the|in|to|on|at|by|with|a|an)\b", re.IGNORECASE)
 
 # Notice-type cue words must never survive into the post-name list.
 CUE_WORD_RE = re.compile(
-    r"\b(?:Recruitment|Result|Public Notice|Notice|Postponement|Postponed|Corrigendum|"
+    r"\b(?:Recruitment|Results?|Public Notice|Notices?|Postponement|Postponed|Corrigendum|"
     r"Addendum|Cancellation|Shortlisted|Admission|Walk-?in-?Interview|Interview|"
     r"Posting Orders|Re-?Open(?:ed|ing)?|Extension|Extended|Cancell?ation|Cancell?ed|"
-    r"Exam Date|Admit Card|Answer Key|Merit List|Waiting List|Date Extended)\b",
+    r"Exam Date|Admit Cards?|Answer Keys?|Merit List|Waiting List|Date Extended|"
+    r"Call Letters?|Hall Tickets?)\b",
     re.IGNORECASE,
 )
 
@@ -194,7 +246,39 @@ OFFICE_TAIL = re.compile(
     re.IGNORECASE,
 )
 # "for the post of Clerk", "for the post(s) of DEO and MTS", "recruitment of 90 posts of ..."
-POST_LEAD = re.compile(r"\bposts?(?:\s*\(s\))?\s+of\s+(?P<post>.+)$", re.IGNORECASE)
+POST_LEAD = re.compile(r"\b(?:posts?|positions?)(?:\s*\(s\))?\s+of\s+(?P<post>.+)$", re.IGNORECASE)
+
+# A leftover part that is only a place, an indenting office or a stopword is
+# never a post name ("Media Consultant, Chennai" / "..., Health and Medical
+# Education Department" / "for").
+NON_POST_PART_RE = re.compile(
+    r"(?i)^(?:(?:new\s+)?(?:" + "|".join(re.escape(c) for c in CITIES + STATES) + r")|"
+    r"(?:for|of|to|the|and|in|on|at|by|with|from|or|all|a|an|ut|u\.t\.?|govt\.?|government)|"
+    r"(?:health|medical education|health and medical education|education|home|finance|revenue|agriculture|forest|police|pwd|irrigation|power|transport)|"
+    r".*\b(?:department|dept\.?|directorate|ministry|head\s*quarters|hqrs\.?)\s*|"
+    r"\([^)]*\))\.?$"
+)
+# A part that reads like a sentence ("the concern candidates are mandatory
+# required to download ...") is instructions, never a post name.
+SENTENCE_PART_RE = re.compile(
+    r"\b(?:are|is|was|were|will|shall|should|must|please|required|kindly|hereby|has|have)\b",
+    re.IGNORECASE,
+)
+HEADLINE_EDGE_FILLERS = re.compile(
+    r"^\s*(?:for|of|to|the|and|in|on|at|by|with|from|or|a|an)\s+|"
+    r"\s+(?:for|of|to|the|and|in|on|at|by|with|from|or|a|an)\s*$",
+    re.IGNORECASE,
+)
+# "Assistant Professor in the Department of Botany" -> "Assistant Professor (Botany)".
+SUBJECT_DEPARTMENT_RE = re.compile(
+    r"(?:\s+in|,)\s*(?:the\s+)?(?:department|dept\.?|discipline|subject|faculty)\s+of\s+([^,;()]+?)(?=\s*(?:,|;|\(|$))",
+    re.IGNORECASE,
+)
+# Reservation / category blurbs are never part of the post name.
+CATEGORY_BRACKET_RE = re.compile(
+    r"\((?:selection of [^)]*|[^)]*\b(?:category|quota|disabled|challenged|pwd|pwbd|backlog|ex-?servicemen|reserved)\b[^)]*)\)+",
+    re.IGNORECASE,
+)
 
 GENERIC_POSTS = {
     "various post", "various posts", "other posts", "more", "post", "posts",
@@ -204,6 +288,19 @@ GENERIC_POSTS = {
 
 def _clean(text: str) -> str:
     return re.sub(r"\s+", " ", str(text or "")).strip()
+
+
+EDGE_PUNCTUATION = " ,;:|-\u2013\u2014<>/"
+
+
+def _trim_edges(text: str) -> str:
+    """Strip edge punctuation and leading/trailing filler words until stable."""
+    previous = None
+    text = _clean(text)
+    while previous != text:
+        previous = text
+        text = _clean(HEADLINE_EDGE_FILLERS.sub(" ", text)).strip(EDGE_PUNCTUATION)
+    return text
 
 
 # A bare website address must never appear in a headline or be used as the
@@ -386,7 +483,7 @@ def _split_posts(subject: str) -> list[str]:
         return f"\u0001{len(protected) - 1}\u0001"
 
     masked = re.sub(r"\([^)]*\)", hide, subject)
-    parts = [p.strip() for p in re.split(r"\s*(?:,|&|\band\b)\s*", masked) if p.strip()]
+    parts = [p.strip() for p in re.split(r"\s*(?:,|&|\band\b)\s*", masked, flags=re.IGNORECASE) if p.strip()]
     restored = []
     for part in parts:
         for i, original in enumerate(protected):
@@ -433,6 +530,13 @@ def _is_portal_artifact(part: str) -> bool:
     return all(c.islower() for c in letters)
 
 
+def _strip_noise(text: str) -> str:
+    """Remove every notice-wording noise pattern and the notice-type cue words."""
+    for pattern in NOISE_PATTERNS:
+        text = re.sub(pattern, " ", text, flags=re.IGNORECASE)
+    return CUE_WORD_RE.sub(" ", text)
+
+
 def headline_posts(title: str, department: str = "", vacancies: str = "") -> list[str]:
     """Post name(s) for the headline: at most 4 names, or ["Various Post"] when more."""
     subject = _strip_date_blurbs(title)
@@ -441,25 +545,37 @@ def headline_posts(title: str, department: str = "", vacancies: str = "") -> lis
                          flags=re.IGNORECASE).strip()
         subject = re.sub(rf"\b{re.escape(alias)}\b", " ", subject, flags=re.IGNORECASE)
 
-    subject = re.sub(r"\((?:selection of [^)]*|[^)]*category)\)", " ", subject, flags=re.IGNORECASE)
+    # A stripped alias can leave a dangling separator glued to the next word
+    # ("CSIR-NAL" minus "CSIR" -> "-NAL").
+    subject = re.sub(r"(?:^|(?<=\s))[-\u2013\u2014/]+(?=[A-Za-z])", "", subject)
+    subject = CATEGORY_BRACKET_RE.sub(" ", subject)
+    subject = SUBJECT_DEPARTMENT_RE.sub(r" (\1)", subject)
     subject = _strip_leading_authority_words(subject, department)
 
     post_match = POST_LEAD.search(subject)
     if post_match:
         subject = post_match.group("post")
+        # A second "post of X" later in the notice is another post, not prose.
+        subject = re.sub(r"\b(?:posts?|positions?)(?:\s*\(s\))?\s+of\s+", ", ", subject, flags=re.IGNORECASE)
     subject = re.sub(r"^\s*post\s+of\s+", "", subject, flags=re.IGNORECASE)
 
     subject = OFFICE_TAIL.sub("", subject)
-    dash_split = [seg for seg in re.split(r"\s+[\u2013\u2014]\s+|\s+-\s+", subject) if _clean(seg)]
+    # Split on dashes, but "Scientist – II" / "Grade - I" is one post name.
+    dash_split = [seg for seg in re.split(r"\s+[\u2013\u2014]\s+(?![IVX\d]+\b)|\s+-\s+(?![IVX\d]+\b)", subject) if _clean(seg)]
     if len(dash_split) > 1:
+        # The first segment that still names something once the notice
+        # wording is gone ("Recruitment Project - 2/2020 - Specialist Officers"
+        # -> "Specialist Officers").
         meaningful = [seg for seg in dash_split
-                      if len([w for w in re.findall(r"[A-Za-z]{3,}", seg)]) >= 1]
+                      if re.search(r"[A-Za-z]{3,}", _strip_noise(seg))]
         subject = (meaningful or dash_split)[0]
-    for pattern in NOISE_PATTERNS:
-        subject = re.sub(pattern, " ", subject, flags=re.IGNORECASE)
+    subject = _strip_noise(subject)
     # Possessive remnant left when the department name is stripped ("UCO Bank's ..." -> "'S ...").
     subject = re.sub(r"(?:^|\s)['\u2019]s\b\s*", " ", subject, flags=re.IGNORECASE)
-    subject = FILLER_PAIR_RE.sub(" ", subject)
+    previous = None
+    while previous != subject:
+        previous = subject
+        subject = FILLER_PAIR_RE.sub(" ", subject)
     subject = re.sub(r"\b(?:19|20)\d{2}(?:\s*[-/]\s*\d{2,4})?\b", " ", subject)
     subject = re.sub(r"\((?:\s*|Advt\.?[^)]*)\)", " ", subject, flags=re.IGNORECASE)
     subject = re.sub(r"\b(?:Advt\.?|Advertisement)\s*No\.?\s*[\w/\-]+", " ", subject, flags=re.IGNORECASE)
@@ -470,12 +586,44 @@ def headline_posts(title: str, department: str = "", vacancies: str = "") -> lis
     subject = re.sub(r"^\s*(?:for|of)\s+", "", subject, flags=re.IGNORECASE)
     subject = re.sub(r"\s*\bforms?\b\s*$", "", subject, flags=re.IGNORECASE)
     subject = _clean(subject).strip(" ,;:|-\u2013\u2014<>")
+    # A removed phrase can leave an unmatched bracket ("Peon (against a l");
+    # drop the brackets rather than publish half of one.
+    if subject.count("(") != subject.count(")"):
+        subject = subject.replace("(", " ").replace(")", " ")
+    # Leading/trailing fillers left behind by removed phrases ("for", "of the").
+    subject = _trim_edges(subject)
 
     dept_words = {w.lower() for w in re.findall(r"[A-Za-z]{3,}", _clean(department))}
     parts = [p for p in _split_posts(subject)
              if not (dept_words and {w.lower() for w in re.findall(r"[A-Za-z]{3,}", p)}
                      and {w.lower() for w in re.findall(r"[A-Za-z]{3,}", p)} <= dept_words)]
+    if dept_words:
+        # "NGRI-MTS" under CSIR-NGRI -> "MTS": a part must not restate the department.
+        dept_lead = re.compile(r"^(?:" + "|".join(re.escape(w) for w in sorted(dept_words)) + r")-(?=\S)", re.IGNORECASE)
+        parts = [dept_lead.sub("", p) for p in parts]
+    parts = [_trim_edges(p) for p in parts]
     parts = [p for p in parts if re.search(r"[A-Za-z]{2,}", p)]
+    parts = [p for p in parts if not NON_POST_PART_RE.fullmatch(p)]
+    parts = [p for p in parts if not SENTENCE_PART_RE.search(p)]
+    # The stored title is capped at 240 characters, so the final part of a
+    # long notice can be cut mid-word ("Medical Educati"); never publish it.
+    title_tail = re.findall(r"[A-Za-z]+", _clean(title))
+    if len(_clean(title)) >= 238 and parts and title_tail:
+        if len(parts) > 1 and _clean(title).lower().endswith(parts[-1].lower()):
+            parts = parts[:-1]
+        last_words = re.findall(r"[A-Za-z]+", parts[-1])
+        if last_words and last_words[-1].lower() == title_tail[-1].lower():
+            parts[-1] = _trim_edges(re.sub(r"\s*\b" + re.escape(last_words[-1]) + r"\W*$", "", parts[-1]))
+        parts = [p for p in parts if re.search(r"[A-Za-z]{2,}", p)]
+    # Duplicates and truncated echoes of an earlier part ("Senio") add nothing.
+    unique: list[str] = []
+    for part in parts:
+        low = part.lower()
+        if any(low == u.lower() or (len(low) >= 4 and u.lower().startswith(low)) for u in unique):
+            continue
+        unique = [u for u in unique if not (len(u) >= 4 and low.startswith(u.lower()))]
+        unique.append(part)
+    parts = unique
     # Portal artifact gate: a single all-lowercase token left behind after the
     # department name is stripped is a page/link name ("maintest" from
     # maintest.aspx), not a post — never title-case it into the headline. The
@@ -491,29 +639,47 @@ def headline_posts(title: str, department: str = "", vacancies: str = "") -> lis
     )
     if various_cue:
         return ["Various Post"]
-    return [smart_title_case(_clean(k).strip(" ,;:|-\u2013\u2014&<>"))
+    return [post_title_case(_clean(k).strip(" ,;:|-\u2013\u2014&<>"))
             for k in kept[:4] if _clean(k).strip(" ,;:|-\u2013\u2014&<>")]
+
+
+def post_title_case(post: str) -> str:
+    """Title-case a post name; an ALL-CAPS notice ("GROUP 'B' CIVILIAN
+    PERSONNEL") is brought down to title case while short tokens that read as
+    acronyms (MTS, DEO, LAW, JMGS-I) keep their capitals."""
+    text = _clean(post)
+    letters = re.sub(r"[^A-Za-z]", "", text)
+    tokens = text.split(" ")
+    alphabetic = [t for t in tokens if re.search(r"[A-Za-z]", t)]
+    if letters and letters == letters.upper() and (len(alphabetic) >= 2 or len(letters) >= 8):
+        def lower_long(token: str) -> str:
+            # Only alphabetic runs of 5+ letters come down ("CIVILIAN" ->
+            # "Civilian"); shorter runs stay as acronyms ("(LAW)-JMGS-I").
+            return re.sub(r"[A-Za-z]{5,}", lambda m: m.group(0).capitalize(), token)
+        text = " ".join(lower_long(t) for t in tokens)
+    return smart_title_case(text)
 
 
 def short_job_headline(title: str, department: str = "", alert_type: str = "",
                        vacancies: str = "", apply_mode: str = "") -> str:
     """Build the job-portal-style heading used as the job-details headline."""
     # A website link must never appear in the headline ("sbi.gov.in announced...").
-    raw_title = strip_website_domains(_clean(title))
+    raw_title = strip_website_domains(_clean(title).replace("\u2011", "-").replace("\u2010", "-"))
     department = strip_website_domains(department)
     dept = short_department(department, raw_title)
     kind = notice_type(raw_title, alert_type)
 
+    posts = ", ".join(headline_posts(raw_title, department, vacancies))
+    body = _clean(f"{dept} {posts}".strip())
     if kind == "Recruitment":
-        posts = ", ".join(headline_posts(raw_title, department, vacancies))
-        body = _clean(f"{dept} {posts}".strip())
         return _clean(f"{body} {headline_suffix(kind, raw_title, apply_mode)}".strip())
-    # Non-recruitment notices: department + notice type (no posts, no apply mode).
-    return _clean(f"{dept} {headline_suffix(kind, raw_title)}".strip())
+    # Non-recruitment notices: department + post name(s) + notice type (no apply
+    # mode) - "PHHC Peon Result", "SBI Admit Card" when no post is named.
+    return _clean(f"{body} {headline_suffix(kind, raw_title)}".strip())
 
 
 __all__ = [
     "short_job_headline", "short_department", "headline_posts", "notice_type",
-    "headline_suffix", "apply_mode_suffix", "smart_title_case",
+    "headline_suffix", "apply_mode_suffix", "smart_title_case", "post_title_case",
     "is_website_domain", "strip_website_domains",
 ]
