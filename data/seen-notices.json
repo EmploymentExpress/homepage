@@ -5272,7 +5272,8 @@
         "876168009c70905d977b6ed0aebe7b0df7d72ed5a37b8b143e87016c935859a7",
         "f55f21a482f61ae45c1ae20827d307ee6954bac16d3b13b62464ff0a629c7036",
         "61cbe579499ca3b6d00e919c7202de87cf3b82ccb2b1520213939519d9f00c3e",
-        "a9b0e46b819ffd513959215d7434e1972e351254975a933660478bf693189141"
+        "a9b0e46b819ffd513959215d7434e1972e351254975a933660478bf693189141",
+        "a3f9df84599f1c3407d62a678f20711d520ce1ed089eda716f8c37c53d4ed841"
       ]
     },
     "custom-b3da80bfdd9a": {
@@ -5345,6 +5346,364 @@
         "4047b0b43dab06ba2664a8def891695e47d9cd9d9cf889e981e4e21d42b32fcf",
         "7e65e9d9950bae43a47d0b333f520d1ecfcfea670d3fc38ac9667e2bbd977d20",
         "4f9ed0229980fc76620a3b37841a50ca6056fed27b4af2a6e03aeab42696841d"
+      ]
+    },
+    "custom-c8d56ed6d55b": {
+      "initializedAt": "2026-10-17T10:43:21Z",
+      "fingerprints": [
+        "0dcd876c87798841669952d5e16118dc1e680514744007e4d047406743d94d0e",
+        "1a86870550cdd47a90611814537e8b923096a77c18aad69a3a0cc4b9f9600410",
+        "cb6f3d33c9625dc513d611cd1bf8f04fadd3d756562e4023fedd0ba71d86562f",
+        "5c45eca07242e9f8353b3e9b9f46dda12f4a7b0ae093984393ad5c6747871190",
+        "786e721eeb59243d2dc3ea0c79a6d98602a91e4f83a1c89288a322fb58ce31b1",
+        "ffb95f97f3f53e52888b2c1d5afb391d90005244f11f74be28e6fc7ce8fd3485",
+        "8a9aa01c3a65e457bc41d858225ff1480a9ad9b4cc123c905506bb61e721304d",
+        "203935adaa307ddb108c82842df407052672c15dc9bc05bbe878f6da08c1b3ec",
+        "7f89c4fe8be5d96e9f01dc4bff3434ca2c9edf5eac598df7c2b26cb3fb697481",
+        "acba64f3dcb700a645c71d280a67ceac5bc29a79f45650009b0d8db98f90932d",
+        "d6bbcbad4e7e9d15177ce9eb63fd09e4a7c32726bcfb5628919b137da14840dc",
+        "c0b10491c77be384cbc72dbd1397d27940479022a4366d3fdb358d63c9a9382c",
+        "d9da2243696239d24e66c1942b3dcee6922b101ca2dd3665e9ac4e8a7bcc3b17",
+        "dc78019db3e17e7681fb183d3d6b79a80b2a70623bd840d16dc02c7bf621e3a1",
+        "848ca2b6c595c69c49398f80c8f0e9f0119aaae02edfe912f89b6e5c7b7a4b14",
+        "558eeeaa93aa1970bc4ba7274ff6cbfa9b9fd8320b781e817800f2b7784c1afb",
+        "2295f2273e0ce0f27a874c71d7bcbb9722a96918d6f6e6ca7a2bdd3051f86a4d",
+        "ed9d32f9b6f9d454984876b5a454297a9d10cb2cafb3260d5e60df04858bbaef",
+        "0b65ed50d6024d333ecab971d7b7dcfb1254feac432873892af8beb534739e50",
+        "df82c4306d7eba162f9e8cb718d3c7e9b4da104cf8b0ddc37e2b7eba449947f5",
+        "1a3705374985a3c929129697c0b075875937f4df763d3f4d6f58284a8d711a91",
+        "d25feda5203eb04ab140a490f4bf52872b1ce4c72f5358c21840970ef3e87403",
+        "1c784d2da5ea311e5bf649a9b4dcb4c47bf096020a14798b64a728d8c6c1e1eb",
+        "5b94174d0aa164ad496eed4557ed4780e4af8b32a7aa2995feedc658c1231278",
+        "526296a3b71b7e63a2f18490284330941c70fa5fa3ed36c34b7c4ec04831b4cc",
+        "a3124d13c4b7b48b173e1bc50cffa1aac4e54ab329194306d4dcadbf509ba734",
+        "ce7252a3c28d08fdb55d6285ecbe5feb8995feb18508af802c5f8f8d534ace96",
+        "7f9bf49360402862e45582d269220966e8a28f25992d07981d1eaf18ad737c7d",
+        "60a1eb0ca26bbecba070ffe24b48f08575d31fc4004d4aaef104e5679704335e",
+        "c54f92893805cdd4c09a59759aa00c5ffb15905f3a252ea575d3c5d6eae899cd",
+        "7408a42a597044bed1f59de62433b11afdf8246d10947d3882a6fe55aed4a716",
+        "649d275120fbbadcd606b9e59ec10207ad642adad61a0a52e34e03a5c73189fa",
+        "747a77c7b54f21440edc66a1ca00cf547023b25ce21f0738cc15e0dd7cbdc8a6",
+        "020b8d986ae0ff38126376132e1b428712c1dc68dacc4ac39ca8d88878cc2b12",
+        "189bdfc9587182126d71b47c601be529b9f446f2e95b5f5f91b96ec31c6cf844",
+        "ed81cb4757e3913864bbf94decbdeb2745ebda06cb04aa9afe345a07793d59d4",
+        "bbcb37fd5fb15a681b6c89d1a5eb8242b254f62168c46cdaad1eb3775be8ee49",
+        "349e382add0f0cedde111aa328474c50df73fbef9c58c578b3bb21b90f5ebc48",
+        "54a8c2b475900f408873302086819f21c81f144909f6410501b7138492f861bc",
+        "72a944f6de8c3a71c924a893f6cc26b5384c3f9b766a6dd721e371fb47f173e4",
+        "069684f5376125226b6ee9e208ebbc19f536f37e5b66f9f8745a1eff8c9abaaf",
+        "3ee621b4b21f42d4e01433b552af2d49ca9c10807fb6dacf39a37f40529acb20",
+        "f5bf7d2f6df835664ed4e94503f8b677430880c926c5d336dc73271cce730406",
+        "829d2291053fe29b924c51edab2b6aa1087c41ae8bc35e643913e9cdf358f354",
+        "43f9c15bcb7d35573497b041360d77bba68687888492d595e716f0581ef9b409",
+        "7771695e8e41baae3463a8707df8e15a52ae12a49ba59f93d4299ed1a7a13925",
+        "bc61f25033691f17c619774634097b8487a0adb53ac47a93024782672e21dbfa",
+        "152d39b21ac140e9092b8d61766820aa9bbfb5cd17e8584eb96ec17f7ff6ac95",
+        "1c5fa133b83487ce0b7740a730442158da6d7d184fb4a3d8703107c49b705ebb",
+        "aac87f57623ac68e79b5c231b835287316cf1cd2b74670c8f9b2285bd64a1bc6",
+        "0818b34b7778ae458e731d94ffac1c9b77f8543bf83fc6a3fbfb32763002bbfe",
+        "152bd2652a1b5748c21d9c6f6174a5fdb38a275ffee474031b414f5267d01fec",
+        "0fb3d0b715fd96cc7fb3aba3f749f8ae7bbb69a2de93d934f9be78cce2c4890f",
+        "c1bcc2bbaee55458a1a2579d0cfc8f69d18b80a5b258ad6d4aacb80b03645b3f",
+        "6341ca893399d46b2d0c1650fe5ea562f266853d717418b94ad86f45c2ac2a24",
+        "b2ff33a5f5de45e7c54868e4ed2c9545602e3386c82aaa4b85acc3aa61afd92e",
+        "34be6413bf651435c5a7d3304c878576ab9f48706846e8955815e29c2e9bf4d8",
+        "850a4a28f9b6f3740cab921b3e629d60da23fef4c6a6a4b69a4fb71db3ff59f9",
+        "cc302202e397e78922d3ecbe99b23c3ec426f03aec560fc5d78da1628ac065c3",
+        "5024d9351b90c730ce3dad8a28eed722f1d664a952b67ec5bdea3dc5a5d044b3",
+        "f2aa001d783c1d49b4d46a21dc972266fed1650569a98931448006cfa0e3d2e7",
+        "132a8f62fa3c364cc79bf1fdef6ad73901e7d02ab3e06cf6e574ae1bcc1b125f",
+        "b011dff6953fa25a04778b51f3ba56e49edb3bdad2a9f61c7e7e5c86985a1bca",
+        "0469ec0f5153351037364f4dab4f714147cb8e65ca6d7aaa6555f73c2c5bdf60",
+        "f1452b7132c13ae8851944ff92aa988c623be87906676a2b9180259b9c2d79d6",
+        "bdef47200c1c2c2baaf1c2c79fbc56b83ca45cdd64bd3790f63cd16d504091d0",
+        "bbc76f0c25db74126336866aad1fcc47ee05d4f3c58c0b745b131c352fc5e494",
+        "ce7f4b8ebe1a6e0365ca5db686fe856bb2b1fae38d077a9f8e54e2fc5c34be8f",
+        "11b5c8a3491783348ebcd4bf55573a3edb8b8d23e4d02fc57474179ce715ef67",
+        "477d6bf3ec562e8b06e8f3a3fe2c162522a0bd9a43bd9fe87fb6e2507c7eb0db",
+        "89f0a7529ade306c3a281fae5e864596b600f7e5637645ec7705ad727d54bbbb",
+        "7ee4727c9715eeb7684c3e399cebca5c9bca8d474435139aa5329ca4eaaf67e3",
+        "45bb9251600eea9362814194bc00d41c1c091123fc6b3efe75f8a744c64fe3a7",
+        "a9a790c3323476231701e3e61deb8e56df0f6392276401a9e1b3576e958117fc",
+        "179f89fe9735b673306e23c25e0cf5f2f2d6486083ed8cda77287f2dff9eeff6",
+        "54571f7dba144afccb391883efb0669bc4490b6a68dba084d12b7121425a6096",
+        "a9796e5f4da31f666b225fbebd0c80797e1e627f64c48e127d06ec7f3f3a4a38",
+        "729043a1ea07be179c0cb35f8e9229406c1299a9bd24fec97d01bebdd1553500",
+        "f1d004990d0fa821a013b7f7c6e3885570481f57dbbdb923968f899887e2640a",
+        "8207b8dd877e872dec84f29b3434fb4f128450c2810f3bee0c4d70d1af47a9f5",
+        "24e3910ba4ff2a98caca758daf7779926c977a9c27e8e8d0d46f3072c0f7ca44",
+        "cd9c877239a6fe0d95b47fec8b4f2e9aaa6290a12b040d169821d6301b28b515",
+        "0f18735281c7e719434ad31c99c606803d08409f83ccd93a59cfc1447e3a00f0",
+        "8c76efd56b6b03f350c63c2caaa07c01dd99e3c2887a15c92b4a07e96af6ab61",
+        "8f4a7d3c45a2d610761c6d1d93e2f037519ff21c610946eae95c23abf056e0ec",
+        "b6fdf50d5cd10d3b4fa3d227b9cbd10a42ba28a70953b24b45a989f8dc5734a5",
+        "0d821bb4482ee5d62a965dc2e0df915c96874f73f89517c066425892fe989fd4",
+        "3542d006752874e82eae77d5c702b704c397b2bee61532ab27fa6741e1b1b14e",
+        "4f8c57f382db72f2d73c1808c3af053149fb8d933efd0fdabd695d7881045aa5",
+        "a0a2b38c0611b27fef6508d01b953a7f8cc41946118dc84eea866737ddf86a64",
+        "91da05bd369cef85137acfa0777eac5743c12c97ed81e6f23055bbae2934edbc",
+        "fab255355d3133b19be5c3610df88fd7c664a79d24020942c512e3b73e804776",
+        "f3e8650ecb94e628395b390ca4522117a877123667f479cf808a945ee855a2fa",
+        "94c797d86a2cb95624f9808bff7ca1466eef24b40ad552af022efb40a55c8d1c",
+        "2d3256890e979d87af7b1e5942bb5caf302f493b9b7a7f6b1ead01de93626ee7",
+        "2de9a09ec579981717b80b290caf88d067f77642c47697be06b9d193ae855f65",
+        "2cec7761e624e0160907fd1dcd3eabc6e4df4debfe12a822169874eb79133d8d",
+        "3c2e43ffa6239f0f9a0c4dc96a0f4976fd8d7f791800f786937b0fc0eabdc0cc",
+        "b4141af8f6934c84f3b6ada8fb78a4ab944ba6db5bbd9a2a3d2e295755ef91cb",
+        "6f1d6e1ca04b45380bcbfdfa4e2b00b5f0c1870abd1a3956f6b123a587446ab2",
+        "5e009dee36d58bf43884d59db03402b08ef664c10b275545bd957f289d4afe3c",
+        "13a0314d2142830b38e0d6d1e497a52db472e67b54c62a2da6010c6dbbd18319",
+        "cccc768e633fc17b1ed46fbff879ef7725d77edd20c4de0bb8c9a6df88b4d44f",
+        "a5c9af6fc498d99bd6269a45eb32b736f8be9b06b93045f752a61c44d3bef0d1",
+        "a61c78bdd6669af39ae63d46b1c087cd189a60b797c468e0e1476d49eda29982",
+        "98e2d8bf3ea4459176141969d6be651c3660f380d2b2f642a3d460781beecf2f",
+        "062d4317f9c94b30a4bd29c77e1a33705a3f56e5a2398adb0d216fd2b34dfb85",
+        "8e9e27ad756d21ddcaf19d041fef86aed7cf918158ca975ff8edc0ccc43f940a",
+        "2d8116c2440826c2c62630e738b726e300de4a2375930b2f8fe59bef273d7e79",
+        "a347a341e7c30af11bf66b2a1510c115779309e5d14f81966e629e884812ca06",
+        "c4ba12195c46c299495499acca7685edaa69cb6ae8760f2b75ad12f67b5f6de8",
+        "cbf5fe6dd06fa7fb648eb2abb6540191242c4bffdcb0822aca6bbd767c6a25a0",
+        "30ce517f846280c48568bae72e74b4b569617d068af3e36c0e63d639385e5642",
+        "1e5e6a950459f8a02af2b5ebd962ce9db3edff688e943379013713f6aaede99f",
+        "f916ca724ab28e9c6f55ab7b8383e12d9b85763a8cf64f8fcf189915376c8794",
+        "8cf310ada0235e69afce39eeb82efde5561ca49e3572d8d4a509e99f1bfeb6a2",
+        "bec27172fe99314ed47fd231491b53e412eb2262a520708109648b4690a1db0a",
+        "2356385c80b304dfce0db9c682f660cc475bb12aed7f7aafb34b8328f85d3b57",
+        "eff219a902a7e01ae757b031c802860d4fbe757e68e07b634bd98e3c44b33977",
+        "5121cb00781577566fd216ca939953153dfbb064830364be348334b6b96e297b",
+        "7a61b7527deea97e85a4137eafaeba03f2c383be275cceb59ce3bdfbce83ed2d",
+        "65319a237a69a4ad3041a57b7e4ba8c52aaf87f1e0883baf48710d2df7e74df7",
+        "1a1c959c6a92398be666885926fbbb6c960a40d4a0982f141f9a2696d9cfce7b",
+        "eb6603aeea019e0a7931a876148ae9c0710bcd77647209c25c24770be8b93e3b",
+        "794721c0ee13082a04ceb52f154854f54a48d659d16221a9996a7be9b47c787a",
+        "d4013b49ebe500b91d60232f1a73cebf284c1e353b9148be6a175786e09e8ed9",
+        "a01d333460754dacdce4eedb34122dc03426244ae6f3aeca804f6fad7c41041a",
+        "6d1a705d2002642ee23b1a93f0970f4f53df90eafc19deb77e3e57472422f119",
+        "7c9c7cc05b73661da6ccfa5d6d97da1181a951ceb80049f689ee08296c05ccff",
+        "89c0f0837f8266c29f9e84c530fc315849fe68a03b7c78265c7e24288c84c0bc",
+        "eb7777487edfb0229ba66d79287d6b49d47df72339184d36378ac504b24092b2",
+        "e88decef908d6018d9853e4f571204c28409470c5f7224db73b0a6e94435afa3",
+        "be3077bef3cbd6d6fdb406a68d88fface5a39d8a2f8897f4d62750876ff619e0",
+        "07ffd41b6f5f884451ce56a6de45d344527d84304536dfacc2bca1b4078afa0f",
+        "832fccaeb2efdbb97af79cec11083b0600ac3a15f82db883064b6d8de1b8ded6",
+        "f60858dadc59f99966e3d78dd69e0baa58603bad961253c8e49aed14cdddebec",
+        "17b52377399e8e22223cf9b5abd9838ac1e2c7f900d5f66dbebb76e6de23b6ad",
+        "0d9fa6fda02eca657749e52dfc77a572ac74c356eadfb0c86a342a8f9acaf79f",
+        "9871d486bef0765e33314fac6400684f29f67c90dd49bd5a06c70f8b75324ca8",
+        "a65193bddbc939f27f6f4e413c6f470e9b18c8d5c2958641ec0ed0f6d0b6c728",
+        "49b35f6211c38ed4ff195295f6a9a24be3a6c4a40dbfe443a7bb08c8c83748d1",
+        "f77cad33d84a4f40a35caedcb73fd7d95c1586ac8f332975cdf37cec3c3cd6ed",
+        "7bc4e83b9e8d4723cc2bdcdc90a2dc70fccee5ff1662a526376eecfbeac525ac",
+        "5dacf3d496741316882d36a124c8d11940a25a1aa77855cc101eedb1078cfa27",
+        "ef9fac397e108da7649c61ebbd2f5a2b6dc33e85205af86f03a9d0420d81c621",
+        "93ede6a8c21c1f98b84f1d5c1c3b95505ced55c27962d42a4e1f5e7cba40036a",
+        "7d6f38982ee827e689661848e06054e25ebb6c98d3865bb3c1d879f8581ad7e9",
+        "0f81d4af90325e12341210a3185bc99b23496d3ebfeae3bcdb3321fa7715dbe3",
+        "cbeb778f8c2bcd085922f2bc3f7970dea1915187920fb0f35803a7f4d04a98ab",
+        "9cac76f46157ff320eb681e326f9436c23d66d85e958ae49599b6a967d221bed",
+        "b66fda96b44b2781710b7a874a5a10f1b3305e6611bf7b2393ca6313d5b39236",
+        "7277090868ed939c0a3e799c224061ebc26c93f85988d1b998b7fe4b6b577c3f",
+        "9862ad0553d762f60a53043ad5c6e201623ee15569ca604018ceea365fac3934",
+        "5d121ad35f4c70a33858860f1981e472e9d032ebe6f4ce2d2361e540cf992d79",
+        "1256e70d5a37c3a7c16de649b1964aa13d2dcfb730026969112875ea12b4a66f",
+        "b24897686406189a88f309b51476985db0a6c781653938c0ba253cc5b4987375",
+        "08ca56c2e523c0c7d6a06a0814bb844c4f0130b4f2bd4fcc05fe35a4935ea2a3",
+        "2b42902c13bafd4db3784bb4a6830590f62f921d9a0890e93c7724582450a0d0",
+        "fee03777ffaa848ebe9e98bb8f217f3a58fbb84c4c7171ea6cb202b7b9022412",
+        "c2c5780a4a652e992821bcfdb53cfecfbd2a8871b8f0de5eea14a4ebd614526a",
+        "3f50b9a7692146f8ccb356bd1568718fe573a824132a4f1adcdc898acaa3fa0f",
+        "02e666d700eb3e564b417880cc1e6649eb97ff9080a53642cebdef96ccbf58e9",
+        "19141f8e31f96fe11ac9d608d9aac3e7113db6e2ad662963067600ad3883137e",
+        "348e90157bba0c041b6d47b05aa3057a3e7323615e49a26674eb397a43dddce6",
+        "5813916b7798081cd2dc9168c3dcd1357c13165de9ec18f77ed2cddd97771b72",
+        "685a883298e37b6f34e3dd059a3c22de6af02fe18bafece232c8c76cacf4ab16",
+        "d48881e4d910141a50fe7613f046b21bf38dd765ed14f016460361df55dad4b4",
+        "477f274236b77ead86a9cc12b000215c3fa917fcfe406566957da6599004fb51",
+        "dbcd20598881937dc9a32fa425ca6788610dfd3c67d2cc35089b626917a51ca1",
+        "833dbd31ea7df6643ad4963dc2d8383d19c2a4a86896365bb2291f447a76b1d7",
+        "e5b524b4df40ee72298d927a296598545974e082ad6b12f24145551271f6d788",
+        "f4013336858ed0071418df90818ebe2a31a9c1b1361c10bed446810bd1af4c04",
+        "73ae6c50be050647dcba519196eb894e766f357ca258211b231da3e7de345b71",
+        "52181bd8c2a9c9af28727962136948528a955f3b7c501d4805148c95cc6cade5",
+        "e5fb6ec591d0068f63be160291b8e606d4fd58be1e4c9c97a0ec2ea9cf0793d2",
+        "cc7e4290b9332c5427ddebc95b3fdcb808d293e4dcc0ff4256a38622825a4269",
+        "17c6282e412af2ef16430d136e17b1d06fdb36a4b5044c8f05f78e041b9b2cd8",
+        "67e7578c1307c8af45861129d4a2ac42c0e9495a2a94e64407f0b00f9e0d7b42",
+        "4bf96c217fa17aeb641ae0a301e4f19ce041fd2cbe418ac896ad1c8173f5d77f",
+        "65e2b16439c08f8c21ebf989da02a8ffce1855cee3ef96256e2ea47cc7794a6e",
+        "20a5becdf8e5e37ae44c8ba40098fe4b522db9eca3b6081600ad3d6423a9771d",
+        "267c72f91188c8d1dd66989d39ab85213f28c179d2624bab4f9cb1598fc037b6",
+        "8b3e6206f0199ccea5227fe7a9cfbeb1b4823cf7daec0f4cec98613b20cdf1ef",
+        "aef9f2e32c6704be77683b9b85ff8cdc16c98525c474c58937caa1c04da68c73",
+        "a1b07c8aba2d60bc2a85b2e462a731c79b3a91adf0803e6f3223e2fa207d6d88",
+        "b6607e8224dce516d8b388319d9164010d346bc32c2152ef3d8c28201786ea93",
+        "6a98a20f245e6eb1d243cfde4537136be293cba22a33a006910c79b7eb5d447a",
+        "5711cc0cafbc600890a6f98f91305bb294ad3328ed5ad9858ab71a50a4039fff",
+        "13f156a2eb754bce2ed495d7e64f24c745027e4ac2341c8e64826bb670914800",
+        "e1e3012dc386807b2891f8b1bf975b47ddc5e1323aff978d9fdd0f55344658ec",
+        "3cd7fcf16864ad41f2cac758ef7050dd6e1de841052f514ffe388e3890123013",
+        "09281a6b4811db3ff1e93a64ca17e501b3ac0d2acce6115a09010d3170d0c24f",
+        "a760301f63233cc151729abd7ca70266e7b20daa5ae53f98186b37cbdffc4aba",
+        "e71fc0c3c4836cea411b52ca42bd8b3b6520d1e7cb7ad554c5063572ea97c25c",
+        "bf703e3f098b43065397dfb1f33769b43f5d036caf142767982c02b01f68e339",
+        "bbaa609094d20ca15951ce48da14fa20f01ec68932d70b91899839342ca83b61",
+        "13f312b082f196f55ef5a49b3440373d7b502d88ed6e3172608aa2bd43c5ef16",
+        "005ab7e63e972547a23d63286a71b70e29c0b3b051401472e200402332dd0a48",
+        "aafbf4125b02432f88427feeab0628ff8171799021fee2d51b7dc9e29f536c46",
+        "dd2703b2b9e5151d5730e34fe2105d4df52d0c4b8bf45e24a902a39db297ce3b",
+        "d90712a997a35450944b3d7b20d6eaafded81d98b2acd66ef25a21ea0cb0db72",
+        "3b4bfbc21ec89cdcd63a06f9c0ed06b407cfd82d23ac3a88f3c22b36c38dbbc4",
+        "04c71a7c61e1a7c6ce9397cb3fbe99589a86aba54d4e7d9043f572b9ca6e7a43",
+        "d75f281773239b4d4b44c6ce4022fc219b9a7d1fd8bb5d7677452fff8236bf12",
+        "9f96cfffac8366cc915a0429972bb1fc4517cd6d8f0dda7101623d2e58816244",
+        "b0fa64e5c435900762dc56734bdbac20b650089765f2c698ce1ab62e5a51e99b",
+        "a43d4488161e6cf576d56f4ff3257ed5a6069216496e13b0bb5e40b38d19dde1",
+        "1d0309e5427ee71fac28ea8284acb11e43bd9d3288864c5aa4f5b60cd8281cc1",
+        "86d6b0a36959e05b7d3ac134e9852c6613ee82c9a8384f536e32520faa149236",
+        "e80ffbf62fe0846ca45fcaa54cd9f5b21a2841d49de65c1bb0483e3171b44656",
+        "897a47a2898695b8412bc7e7d04dad8ca9cbb3b17419b1c74044d7b88f641907",
+        "4dcf87299da2ec09e650da2e31dd182ad1ede88e16373e75f66d5fb61325243f",
+        "d9fb8c50111349aa7757392fcdbb10009f11b982493189b4591e48b5cfdfd3cb",
+        "f73303581ba0d4eacc35a546423920545c6222223ec1de41b814f8100fe474ae",
+        "239d1bc2ad2359384406c21f9f5cbec43b2b6a62ab748ef94cd4b2270d4879e3",
+        "d1eb1b0c9e45ced64bc117f9ad81570ff69eab92f82f2aae530cad6af244771c",
+        "3d25c05cc667ac7979969fa47225320a8fd059828102f8531313c8800928b56b",
+        "2472c2ca415a1842326d8bc05a87c1085156751651f16ecef11ecbe26a40110b",
+        "c94b44e0ac70a467d99bee551c90e7fe29590d757f5f27f0b38f2df35272ed9f",
+        "3ece56b470d4f7d475c4178bf9983b5aae870b4b2c5b1b76681b6b84a5d40b1b",
+        "daf840a10eb2d9936fb0dfd81c28d3cc711b34d606c7528160764122f73407dd",
+        "4b4be310bcd6b345fe2ad5fdde2bc929966063253d4b6b8e95c5bc807cdec683",
+        "99b79a84cd52659b22f920e7d4751002c9854f00952eb7ef875e603d569f567a",
+        "d6fac5667580865b166f9eccec7cae179c650e816562f409f421318337b6492e",
+        "ca8a506411e99430a3c6ab32eaa08c26089acd4bf447e9077ef5525157fc7cf3",
+        "f138367a7be21ced4f41fbf384256ed0e799fdc66ff798617f571d6b7b779953",
+        "b66196d51d3214b69436b0634490c8b3143d425bb4312ab1cd8144f0a23b2383",
+        "e19362ec73c9718c03c9760bdd8c5bfb6aae68cc205021c6f36b918b787b171a",
+        "9443dadc9b0e8ad915926c3fcec576ce938d777d653bd1066442437cf1d888d6",
+        "ee531f8585877f1c59792790b405889939a9966054ca40fb16031b707b143c10",
+        "790a4bee23f79df93b4c3cce34ab32506db90260fd1e3d832dbdac7ed8e12561",
+        "2c573054d604ed534571d6e2e27b5f448206e2618c0b77adb08b10827b3ccd6b",
+        "b0bd0242ea45a72d52d397085bb3bf20e12dc50462c6ee59aba4d8fc1d54ed6b",
+        "2d2f45020a136037e5066cf2afd9287c6de4f6120544653c4e9b293d6832fbb7",
+        "d0a08e37aec5de949fd2f6f628ef2fed68c92b54f2316019b3dfced0fd1f81a5",
+        "ef309eb78dcbf9cb88e2854f47e359e5938908df134bfe1708b25be0b7e112c1",
+        "a914b357656fb6b6b27b307ae3de4c96092083818de8fdc0efa830ceb0b10b5a",
+        "1b72e16d239422be0cc77c7b22504cfca0e95abadda2f9c0e949c0367fc73d9a",
+        "f942c7f4eefd27f8164d40a906bd7edb114502fc46651ea51bf7b4886eb52a36",
+        "9cf1193d4c02370b517f5ffc941a1f70dd5c6310042441ddaaccfc50c565a4b2",
+        "bd238547d3bbdca2c2b8a949fd31561db1b062a89744c8de0f6187e7d1eb74df",
+        "9979c46552e75ba7f058dc752758ba745e1098ed2fa2b89ae7feb9af0c53bb29",
+        "764d1c20efbefd223e3cafe3bb8bd2321185a9d70b56eb1445a6fa5dfe572ccc",
+        "af1bc3dcd2ed1b6ddd111a993142dc493069a3189fa35d68758a94277a9deffa",
+        "2525e5869b098e68e4abfe60150f6ae704fae328bcfd488d6f9341b2262a1834",
+        "030e6c97dce5a0c92be43b3306a49203260b12d4bec92d0e02799d862e68a6dc",
+        "91cf6fe5ec963a4c973967810c8e5f073186d3e55dae9ee3a325affe35df2e2c",
+        "845af8ef05b76d537400b8c017d3fd4fde863a55d417dd531115d129f2fd0a61",
+        "d86f150801c21b77380462dd143ba5b9f5fba5ee5b3a9933f1aec4cfbabf4d56",
+        "7135479d52a5d5f8c2ba71067d62ec90286cfef04ea858613092119132254ed9",
+        "9e5b98847f576124a24208bfb3d64c8e9bd894d0f974e7a84c9f06161d60e877",
+        "fd8cbc30f93ecabaa68b2a037545d6fd8ac1e2bb9c8b4d924600d25f6065c302",
+        "d1d253c668974275b03411820c48d459a666d86cca1615546027560e62dcee8e",
+        "9fc469bb4706c5afdaf683bf8a512925cd779fa5c298bca9f68e124b839fd50a",
+        "1ef84646ff53dc2a6955aad6a04631c03e548c3cf96ab82c008bdca393d973da",
+        "20a2b030fa5f7609bc4d6eab440a7ec8644f360a918c04a216a6a78735069bee",
+        "b9d040fbb90aa13cfdee9f683bd164ce9c080564e718bdbd8e41ae43206c46e4",
+        "2c8cbfea161e2e1773d298cdb76ae7074eef5c8f91946b333f01958cdb170e28",
+        "3151083bb6aa46db680ffae6fe19d0cd9a5837029eaaef1482f9eb0c9f04f213",
+        "25bbb52d505890e371b7b24b2458618f945f27f6a1832e9c8c310f394061bb6a",
+        "1f54a9d89216df96f7c26f0fcdce0e99a4e5100474d23462b23aaf4be91736e4",
+        "8d3be2fc5ae944b9d17115f90ec40ac623f1897b0c87368cf77f82f2af3ee151",
+        "5ba1f01610207b983cf22dc6ef6bda977a0b8c850112f10b697b9a7fa2e8d0be",
+        "9513217460dc18fdf12ec207415b18031d46d9a30148e7253f3a468e80a0fb9e",
+        "cb6e5332c2b160ec99f904903646aaa1f722410f13fcfb4526dc52dc4f35c702",
+        "503fb5be29e4d58ba65e3acaa8e7a58680ae7e36d652cdf1671a71d4b7f206cf",
+        "7b30854038ea48f8e1f537dcabb4d262acd9c0a188601b42839836ecb9550854",
+        "9c28fd11c32bb7ca18039e5ec731a35a6762a4aaefc30c829005db1eacb0d13b",
+        "1b0dd1623add7c68448b50923cedb6b70a95754bd2a957ef2a32e2e1595f1caf",
+        "c8d763fb4380d4092c9aeb6ff329e2963c9b8a2806e4b875e9f0c436f3ff5fef",
+        "2549b0f6d113aec1f9338e2bf54c5173b1c50e8a7437d1b6b4bce7e651e79b62",
+        "1a597d438b8fd1994c006a7162512ce890c5384cdd08836dbcbcb103caf8fd1f",
+        "68b21d653e27598e45c6949852708b7da4073073288c8fbd560bf6a879107ddc",
+        "71b68ee22d4185169966284f41691e2ef5ab3f201040c3e1bf63f5ae5a2fa68b",
+        "73e21459945abaf8e78ff39f7fb912e13b640f048b6a0367f64dea808169598a",
+        "2267b83834f5b2fece074e994b9791f71f05a467b35c13314cdb368917e08412",
+        "65e6863b14375f8514534506019ebd1ddc6b2d59ceddddc1d438d60e428f8e87",
+        "c197ac3f2c4ad92273b37cd09820df6edf1bb9faf377a9d63a88467db1b24416",
+        "e6bb75b02e3921a71bee60f196f86fab4956604c4058d8dcdea0898bddbc0b2a",
+        "51ce7bbae1b5020ba78e6fd6527a8a4f80209a7a2ec9c608ada67076f8eef163",
+        "0a29b5aa87308cd95820f7cbf5df7ba2aca1e2e455d6e5daa8978f0dee55070c",
+        "b4e43980d7521085773c293f46983e851ad9c855fae73281f72f51fd3d08f19d",
+        "e2a613829022a14749b14a8006e218e34cf46f2802565e49de44e51f2516da2d",
+        "6c8b899fcf276b20b618aa2efa288cd1e9fd5cdf60521b168b90c8208d6101e7",
+        "b89258f84d68fb4ebc476e2f1de2b7e85aa988f07421bcb4c1d8b18909e9bffe",
+        "6fefaf3b163fb70dc1bceaa979cc311431da4364da72f88f32be20240b38404c",
+        "15dea9268c9696939acd7fe56c796ce382a4f7592d8636812764eba702931f4c",
+        "7fb0faa7ccbe3d023e566e0a4ad1f3ccd664be0668aab554412e82bafe783ed0",
+        "effb899ac800fc3d0dc3c2097af58f26631685385fa17f97198a8f6345a82bce",
+        "ac3bf18caedc78ecd54dee52549192a3c8fef984edb0660db45b2bc27dc3ecf1",
+        "343ba143c477f835f43ee22fc335ec8305fbf291e87557eacb637e00cae55423",
+        "3639aa5a57984125bddec680b8a92775feeba1a40495a2b1e738a98326d39a6a",
+        "75e4d94487a76a3ce63673361f370546ea0b8d5460bfcb031ec9d9d830cc3ce3",
+        "356acea80a5f33ed7ac44182788957713d3aeeeb91651dbaa3e9523dabb3370d",
+        "193401cabc94972e83ac64cd3c3aeb2d7a4069e091a8ab0c010802804bc07dea",
+        "df7eb05774601b9cde5e2997833da9e75599b0ded3124c864faeecf055399cae",
+        "b9c8ba2eceb64b929006cdbbaa9e6941470755fc2b2f59d86089f6bf50e30227",
+        "682322397051a69c7c05552ca06e62554a4245cb64c7962300cb31557d17ab20",
+        "02578c6868f9d59536edbad1a2898595557a7c3610d3fa3d96f17e650ccb9edd",
+        "857a1813a76b3ee7bac1478806f1cde92e988dd9117f217c17648b9bae6b9476",
+        "8b682d2a4c9bbbac49bf6e84f1b718a548dc2e5a9f76207cec3b065463f0170b",
+        "fdf0c0aca38bf75d6782dfbfaa6ba8745d1fc74040911ffac8092e9e04261fa1",
+        "d69fa1889ee6c5a61abb78ebb4516b64979f0cb0a95d8f7785dcc12dccc195a7",
+        "2e06d23a17ef83849ea956caf25b76e9d1c0747695b1fc29163588064f25cf65",
+        "6ac09ac07ac503b499c57c3c80b917df7c980c918f1c564491320ab13df222ff",
+        "820c44b196ff4366c6bbf054af9970e7525cfbc6aa40ef12476989c6904a568d",
+        "6e358112c77f3975599796f9c687237b0e22ff3831816128ec1a6e99ae3687a3",
+        "2890518cc5aaf4b503235f034b99a5298a1d04c7959429b482b6b75f4e6b4a94",
+        "6572a1d036d71f128761f0f88b869f25386773322a014062a351cd28733277e4",
+        "e92d814025850f8ce9e53da8dea702b9704921c31ddb87e7499a7d2a5df3f80d",
+        "d79ef0290f711cbf0a51157c99b4361ae504fbbf8386b07589692a613dc2fd16",
+        "31a4308f83f7fccc8c380a8c3e5821c6198820717bcb52c950227e171c7e6348",
+        "86f0c7e0f32f056d6d38504cb83dea82a9e1dc9b3f895e9bf20bf9116a929687",
+        "4a3d38a7a5978a9981022ed7b1a77d208f7710917b1940ebc127fb1509c6dc7f",
+        "e3fa960dc8928da7c5559eb1350a8ce042b22a7e8b8d118e6f91639830c3914e",
+        "89943009b3e64bd6d7dcc563e795d569759ab802522558ae03007330103832f4",
+        "e3deeb074a441e98068c3d93f89d8f4641bbf2d9ac852adb7b5e05e4f43792d0",
+        "29058fc369528172cd7243bfc312e2b205e5758aba759aa8417321bc3aa398ed",
+        "a111eee4bf785ef706ffeed27fe7f3669687c0da69e570dbe86c5fbc008cc20d",
+        "6e0bfe8bd5d44f5a5007b6dfb50977d9520c38ab24128d4cf969a07e13db3c4b",
+        "82a2b636a368a7d03a1a868e26d46f986830f8302dd152cb267e7ed5674c3efb",
+        "f046de8068bfdfbd809b150cc5597a922b89a863d268e5821957ee4d82ff70c4",
+        "acd5a400092ecbb53f798ba3215fde68613aa814828c838f37fc67fa00d3c8fa",
+        "d972720a309e2bc92fef4bd25b633f86ac93166e7b5a44e051fe74aec94e0a76",
+        "e580a96bcc21c6f1c52f4fc297c16bd01cabc50f7c58f59a4aff2d83bd4bd548",
+        "b5383db6ea636645cb482f0bfc79d7547dd0fb8b408946dd67ef776f47c4e374",
+        "06c7458028a00ecd5277c4e9da03326358bf0be89790578b54e17d46fa5815c8",
+        "b48a8cc123ec6fb9f97ab47f655ff873581c22bf25f595ab8db8bca7b785a4b9",
+        "fae20c98c14963fc53b35b147d5d712401db40299172cf5099decdb05ede9ded",
+        "78d6e312df732c4628aeba2ef6768fc50b0b19bd217dcbb5712a1f88d54499dd",
+        "42607901bcd6c787f4be6a1454da90a75cad922283d814048568980644c5829a",
+        "635e3309482adce32e468b55f125a92ea41cf06b916bcf5959e5f4f3aa0d3164",
+        "fb2038aa1f676f32e943412e95b5a8aeaeed2ba84674ddd7708e557c74308bb2",
+        "4d8a28ed7a239c4b0727feeaca981be9e8156802d86060769d9f15764bf94b2c",
+        "bef6e5094bb2073b79be556a7647b69804375b0d93d2109d20f3f304ecbda10e",
+        "7e4b3b8468e3bcc473b87dfa33990e4f55d3aa27d0cb0837d615e215d0671f70",
+        "ae41ed125367fff9841ca5d693c0e21f18964f12a70de10a3549628ac57e473a",
+        "f0cd68db4b1cd15a18d9e6d0b5989f14d0e9f2a678c57c4498a0b791c258a3f0",
+        "6a283a31eae96fa50b343656a49d097a2094cac532619d93137b08b33a3fb2ef",
+        "adcd88bfb1eb41e824a1b538c1c5550135de0a658187e97ea1a301ffbea4a7ad",
+        "990539867dd6edb66f58cbf0fab5be84b933c95600980243687cf17f091bc75e",
+        "95afa0d03eb8a18af7c5502274dddd68c46369609ca39d26d622edd67d3c565a",
+        "37b693a1f30cd33fb591c7237105b65b68fdb99169460ac0b978b2ba15464c1d",
+        "f73180387ec14cd7bb8a993a7ac77acd4bc7360cc5e07d2abebbaa7b4abc93cf",
+        "bb71b28685eebcbcda4807ba67905c4b55cbcd590bfea9e12890963611ad9fdf",
+        "7a466cbff547cd66e06be5d5ef676591ba6f8fd7ed12c4267f6244888de83b69",
+        "88115a05fd500d426a5be4a39bb7f941dce17f94e490e8a424594d10c22b6c2d",
+        "c4cafba0dca5b584719157d9bd4deda25371ab241395999e41981e69edd3a54b",
+        "3ff8094f555caf1fc1102e2b248b91eb659b71c1ccb87b43fa11f05104622866",
+        "07c611d525cd2d09b65c82082ec655cbfbf889dec87bf5fc778138ea86b7d29b",
+        "0a564cb99af4a194935425d9095536c5f0d4160e3965d8527f75d9f56f9ceb36",
+        "2ed4e8dadc475bca96bcf170c4ecc3703f94db4f5854372177ab8e95c853d4ce",
+        "7076653d74e440575aadd5f85c9f5d54e48adc8f652b6107874b20309d42507a"
       ]
     }
   },
@@ -12874,8 +13233,8 @@
   },
   "sourceHealth": {
     "psssb-home": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "punjab-legal-services-authority": {
@@ -12899,28 +13258,28 @@
       "consecutiveFailures": 0
     },
     "pmidc": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "punjab-health": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "chdsw": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "pilbs": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "punjab-sports": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "tmc": {
@@ -12934,8 +13293,8 @@
     },
     "grau": {
       "lastSuccessAt": "2026-09-17T04:51:56Z",
-      "consecutiveFailures": 25,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 26,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "desgpc": {
@@ -12943,8 +13302,8 @@
       "consecutiveFailures": 0
     },
     "prsc": {
-      "consecutiveFailures": 121,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 122,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "chandigarh-administration-public-notices": {
@@ -12953,8 +13312,8 @@
     },
     "cup": {
       "lastSuccessAt": "2026-08-28T08:15:00Z",
-      "consecutiveFailures": 3,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 4,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 301: The HTTP server returned a redirect error that would lead to an infinite loop. The last 30x error message was: Moved Permanently"
     },
     "indiapost-gds": {
@@ -12963,8 +13322,8 @@
     },
     "custom-4a87424b8eeb": {
       "lastSuccessAt": "2026-09-22T11:37:15Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error _ssl.c:1126: The handshake operation timed out>"
     },
     "custom-3df1532f0e08": {
@@ -13036,9 +13395,9 @@
       "consecutiveFailures": 0
     },
     "punjab-haryana-high-court-staff": {
-      "consecutiveFailures": 4,
+      "consecutiveFailures": 5,
       "lastSuccessAt": "2026-10-15T17:00:15Z",
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "custom-d660335da32c": {
@@ -13072,12 +13431,14 @@
     },
     "ibps": {
       "lastSuccessAt": "2026-10-09T13:15:55Z",
-      "consecutiveFailures": 0
+      "consecutiveFailures": 1,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
+      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "pgimer": {
       "lastSuccessAt": "2026-09-04T18:26:52Z",
-      "consecutiveFailures": 73,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 74,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)",
       "silentDead": true
     },
@@ -13127,20 +13488,20 @@
     },
     "cup-teaching": {
       "lastSuccessAt": "2026-09-11T06:32:05Z",
-      "consecutiveFailures": 3,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 4,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 301: The HTTP server returned a redirect error that would lead to an infinite loop. The last 30x error message was: Moved Permanently"
     },
     "cup-non-teaching": {
       "lastSuccessAt": "2026-09-11T06:32:05Z",
-      "consecutiveFailures": 3,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 4,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 301: The HTTP server returned a redirect error that would lead to an infinite loop. The last 30x error message was: Moved Permanently"
     },
     "cup-project": {
       "lastSuccessAt": "2026-09-11T06:32:05Z",
-      "consecutiveFailures": 3,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 4,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 301: The HTTP server returned a redirect error that would lead to an infinite loop. The last 30x error message was: Moved Permanently"
     },
     "gadvasu": {
@@ -13153,18 +13514,18 @@
       "silentDead": true
     },
     "custom-c69d86cd23b9": {
-      "consecutiveFailures": 57,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 58,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-2b69a49239e9": {
-      "consecutiveFailures": 57,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 58,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "prtc": {
-      "consecutiveFailures": 47,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 48,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "custom-ef07d2b951bc": {
@@ -13172,8 +13533,8 @@
       "lastSuccessAt": "2026-10-04T12:20:43Z"
     },
     "custom-437e791ef952": {
-      "consecutiveFailures": 45,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 46,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-41217f21e5cf": {
@@ -13181,32 +13542,34 @@
       "consecutiveFailures": 0
     },
     "custom-1c2125c4c30d": {
-      "consecutiveFailures": 33,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 34,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "nvs": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "nvs-admission-updates": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "ssc": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links (direct and mirror)"
     },
     "upsc": {
-      "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:24:54Z"
+      "consecutiveFailures": 1,
+      "lastSuccessAt": "2026-10-17T04:24:54Z",
+      "lastFailureAt": "2026-10-17T10:43:21Z",
+      "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "custom-5b14f4463a7e": {
-      "consecutiveFailures": 31,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 32,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "indgovtjobs": {
@@ -13226,8 +13589,8 @@
       "consecutiveFailures": 0
     },
     "custom-a0521067d033": {
-      "consecutiveFailures": 29,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 30,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error [Errno 101] Network is unreachable>"
     },
     "custom-1016f39e8b3d": {
@@ -13235,8 +13598,8 @@
       "lastSuccessAt": "2026-09-30T05:32:06Z"
     },
     "custom-b006be5d23ac": {
-      "consecutiveFailures": 29,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 30,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-756fab026729": {
@@ -13244,14 +13607,14 @@
       "consecutiveFailures": 0
     },
     "custom-554ea6d161f7": {
-      "consecutiveFailures": 29,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 30,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-6d928cdd9125": {
       "lastSuccessAt": "2026-09-22T21:18:22Z",
-      "consecutiveFailures": 2,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 3,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error _ssl.c:1126: The handshake operation timed out>"
     },
     "custom-0cdb278e57b3": {
@@ -13272,23 +13635,23 @@
       "consecutiveFailures": 0
     },
     "custom-8c27593ffa32": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-7be419f6d3ca": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-f10101879e33": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-7255c2509510": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-677ff9ce6d24": {
@@ -13308,14 +13671,14 @@
       "consecutiveFailures": 0
     },
     "custom-6717bfaa8e69": {
-      "consecutiveFailures": 28,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 29,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-d789e2fe0d62": {
-      "consecutiveFailures": 26,
+      "consecutiveFailures": 27,
       "lastSuccessAt": "2026-09-27T16:57:39Z",
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-9aff539db76b": {
@@ -13518,8 +13881,8 @@
       "consecutiveFailures": 0
     },
     "custom-4d43138c9c09": {
-      "consecutiveFailures": 18,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 19,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-a82e2518d47e": {
@@ -13527,8 +13890,8 @@
       "consecutiveFailures": 0
     },
     "bathinda-district-court": {
-      "consecutiveFailures": 17,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 18,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "mirror fetch failed: HTTP Error 522: <none>"
     },
     "custom-04d670225abc": {
@@ -13536,20 +13899,20 @@
       "consecutiveFailures": 0
     },
     "custom-ffdf451fcf55": {
-      "consecutiveFailures": 15,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 16,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-99a7d9d82bc2": {
-      "consecutiveFailures": 2,
+      "consecutiveFailures": 3,
       "lastSuccessAt": "2026-10-16T04:31:18Z",
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-e6005d7e44b9": {
       "lastSuccessAt": "2026-10-06T18:21:59Z",
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-980be4db7820": {
@@ -13565,8 +13928,8 @@
       "consecutiveFailures": 0
     },
     "custom-6aa581c0054b": {
-      "consecutiveFailures": 12,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 13,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 302: The HTTP server returned a redirect error that would lead to an infinite loop. The last 30x error message was: Found"
     },
     "custom-7ec53985ab66": {
@@ -13574,8 +13937,8 @@
       "consecutiveFailures": 0
     },
     "custom-78d11cab2647": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error [Errno 101] Network is unreachable>"
     },
     "custom-e7d50a2c2caf": {
@@ -13583,8 +13946,8 @@
       "consecutiveFailures": 0
     },
     "custom-9b9dd7237940": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-7a1583c5d69f": {
@@ -13592,18 +13955,18 @@
       "lastSuccessAt": "2026-10-16T21:07:27Z"
     },
     "custom-e676dd16cfa5": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-106092d473e9": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-de40f5f21bb7": {
-      "consecutiveFailures": 11,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 12,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-5758e613fcd0": {
@@ -13615,8 +13978,8 @@
       "consecutiveFailures": 0
     },
     "custom-ea47f2a4f8e2": {
-      "consecutiveFailures": 9,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 10,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error [Errno -2] Name or service not known>"
     },
     "custom-29d14b3dbda8": {
@@ -13628,13 +13991,13 @@
       "consecutiveFailures": 0
     },
     "custom-d5d787c6615f": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "HTTP Error 403: Forbidden"
     },
     "custom-83acac9acc98": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-56115d2080a8": {
@@ -13642,13 +14005,13 @@
       "consecutiveFailures": 0
     },
     "custom-fe0019fdb44c": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-6b0f4a555084": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-cd28e7cd141b": {
@@ -13656,13 +14019,13 @@
       "consecutiveFailures": 0
     },
     "custom-d75263552da6": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-39d408f05b93": {
-      "consecutiveFailures": 8,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 9,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-94fcada8ede3": {
@@ -13674,19 +14037,18 @@
       "consecutiveFailures": 0
     },
     "custom-c7a0d3859560": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-16T21:07:27Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error [Errno 101] Network is unreachable>"
     },
     "custom-865797a34a95": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 8,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-c8d56ed6d55b": {
-      "consecutiveFailures": 7,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
-      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1144)>"
+      "consecutiveFailures": 0,
+      "lastSuccessAt": "2026-10-17T10:43:21Z"
     },
     "custom-7f155bd45e72": {
       "lastSuccessAt": "2026-10-07T05:58:14Z",
@@ -13697,13 +14059,13 @@
       "consecutiveFailures": 0
     },
     "custom-ed0192db04d2": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-e0a5ec97d149": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-192bb01e0d0a": {
@@ -13712,13 +14074,13 @@
       "silentDead": true
     },
     "custom-4e8822c8e2c1": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-60b50b9bba87": {
-      "consecutiveFailures": 6,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 7,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error [Errno -2] Name or service not known>"
     },
     "custom-b3da80bfdd9a": {
@@ -13731,13 +14093,13 @@
       "silentDead": true
     },
     "custom-3867915029cd": {
-      "consecutiveFailures": 5,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 6,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "official listing answered HTTP 200 with no notice links"
     },
     "custom-b98ef834fd1a": {
-      "consecutiveFailures": 5,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 6,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-478513d56bc0": {
@@ -13745,8 +14107,8 @@
       "consecutiveFailures": 0
     },
     "custom-cd55bd79bf3d": {
-      "consecutiveFailures": 4,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 5,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-92274e8b1c80": {
@@ -13754,14 +14116,14 @@
       "consecutiveFailures": 0
     },
     "custom-5c3a14e9914e": {
-      "consecutiveFailures": 4,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
+      "consecutiveFailures": 5,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
       "lastError": "<urlopen error timed out>"
     },
     "custom-06589f153b87": {
-      "consecutiveFailures": 4,
-      "lastFailureAt": "2026-10-17T04:24:54Z",
-      "lastError": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1144)>"
+      "consecutiveFailures": 5,
+      "lastFailureAt": "2026-10-17T10:43:21Z",
+      "lastError": "<urlopen error timed out>"
     },
     "custom-bc0203e3bcb4": {
       "consecutiveFailures": 0,
@@ -13770,18 +14132,18 @@
   },
   "mirrorHealth": {
     "https://api.allorigins.win/raw?url={quoted}": {
-      "consecutiveFailures": 28,
+      "consecutiveFailures": 42,
       "lastSuccessAt": "2026-10-16T17:47:08.953841Z",
-      "lastFailureAt": "2026-10-17T05:07:06.546987Z"
+      "lastFailureAt": "2026-10-17T11:40:56.476691Z"
     },
     "https://r.jina.ai/{url}": {
-      "consecutiveFailures": 1,
-      "lastSuccessAt": "2026-10-17T05:05:23.360287Z",
-      "lastFailureAt": "2026-10-17T05:07:06.546987Z"
+      "consecutiveFailures": 10,
+      "lastSuccessAt": "2026-10-17T11:14:20.109748Z",
+      "lastFailureAt": "2026-10-17T11:40:56.476691Z"
     },
     "https://api.codetabs.com/v1/proxy/?quest={quoted}": {
-      "consecutiveFailures": 902,
-      "lastFailureAt": "2026-10-17T05:07:06.546987Z"
+      "consecutiveFailures": 916,
+      "lastFailureAt": "2026-10-17T11:40:56.476691Z"
     },
     "https://corsproxy.io/?url={quoted}": {
       "consecutiveFailures": 694,
@@ -13796,24 +14158,24 @@
       "lastFailureAt": "2026-10-04T07:03:31.470286Z"
     },
     "https://api.allorigins.win/get?url={quoted}": {
-      "consecutiveFailures": 106,
+      "consecutiveFailures": 120,
       "lastSuccessAt": "2026-10-07T23:09:47.305524Z",
-      "lastFailureAt": "2026-10-17T05:07:06.546987Z"
+      "lastFailureAt": "2026-10-17T11:40:56.476691Z"
     },
     "https://api.cors.lol/?url={quoted}": {
-      "consecutiveFailures": 124,
+      "consecutiveFailures": 138,
       "lastSuccessAt": "2026-10-06T19:38:35.074653Z",
-      "lastFailureAt": "2026-10-17T05:07:06.546987Z"
+      "lastFailureAt": "2026-10-17T11:40:56.476691Z"
     }
   },
   "detailFetchHealth": {
     "cdnbbsr.s3waas.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:40:13.891433Z"
+      "lastSuccessAt": "2026-10-17T11:14:30.071200Z"
     },
     "aiimsbathinda.edu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:43:16.957198Z"
+      "lastSuccessAt": "2026-10-17T11:17:36.786876Z"
     },
     "collegeadmissions.gndu.ac.in": {
       "consecutiveFailures": 0,
@@ -13825,7 +14187,7 @@
     },
     "pau.edu": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:43:38.478100Z"
+      "lastSuccessAt": "2026-10-17T11:18:01.817599Z"
     },
     "www.indiapost.gov.in": {
       "consecutiveFailures": 0,
@@ -13854,11 +14216,11 @@
     },
     "sbi.bank.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:10:27.889509Z"
+      "lastSuccessAt": "2026-10-17T11:44:34.481643Z"
     },
     "uco.bank.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:10:41.198544Z"
+      "lastSuccessAt": "2026-10-17T11:44:46.661695Z"
     },
     "apps.ucoonline.bank.in": {
       "consecutiveFailures": 0,
@@ -13874,11 +14236,11 @@
     },
     "chandigarh.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:59:08.806725Z"
+      "lastSuccessAt": "2026-10-17T11:33:49.433929Z"
     },
     "hau.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:10:09.428539Z"
+      "lastSuccessAt": "2026-10-17T11:44:15.810919Z"
     },
     "rampur.nic.in": {
       "consecutiveFailures": 0,
@@ -13886,7 +14248,7 @@
     },
     "bfuhs.ggsmch.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:56:53.509097Z"
+      "lastSuccessAt": "2026-10-17T11:31:04.282726Z"
     },
     "desgpc.org": {
       "consecutiveFailures": 0,
@@ -13894,7 +14256,7 @@
     },
     "www.gadvasu.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:05:34.445637Z"
+      "lastSuccessAt": "2026-10-17T11:39:24.348427Z"
     },
     "gadvasu.in": {
       "consecutiveFailures": 0,
@@ -13914,7 +14276,7 @@
     },
     "davrecruit.davcmc.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:11:03.950561Z"
+      "lastSuccessAt": "2026-10-17T11:45:11.271384Z"
     },
     "bmhrc.ac.in": {
       "consecutiveFailures": 0,
@@ -13955,11 +14317,11 @@
     },
     "ssghorakhal.org": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:09:19.272747Z"
+      "lastSuccessAt": "2026-10-17T11:43:45.354086Z"
     },
     "rrcjaipur.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:02:51.934515Z"
+      "lastSuccessAt": "2026-10-17T10:43:28.996929Z"
     },
     "www.canarabank.bank.in": {
       "consecutiveFailures": 1,
@@ -13987,27 +14349,27 @@
     },
     "uppbpb.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:06:00.843736Z"
+      "lastSuccessAt": "2026-10-17T10:46:44.518584Z"
     },
     "www.sssc.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-05T06:38:59.495512Z"
+      "lastSuccessAt": "2026-10-17T10:46:22.984240Z"
     },
     "echs.sourceinfosys.com": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:08:58.968095Z"
+      "lastSuccessAt": "2026-10-17T11:43:26.634420Z"
     },
     "iiitdwd.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:16:46.413710Z"
+      "lastSuccessAt": "2026-10-17T10:57:14.793519Z"
     },
     "www.gims.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:25:03.265051Z"
+      "lastSuccessAt": "2026-10-17T10:58:19.647439Z"
     },
     "jkssb.nic.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:10:39.094541Z"
+      "lastSuccessAt": "2026-10-17T10:51:02.887932Z"
     },
     "www.aiimsmangalagiri.edu.in": {
       "consecutiveFailures": 0,
@@ -14019,7 +14381,7 @@
     },
     "iitj.ac.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:16:40.795001Z"
+      "lastSuccessAt": "2026-10-17T10:57:09.727374Z"
     },
     "www.highcourtchd.gov.in": {
       "consecutiveFailures": 2,
@@ -14028,7 +14390,7 @@
     },
     "beep.bfsissc.com": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T05:10:34.648110Z"
+      "lastSuccessAt": "2026-10-17T11:44:40.576902Z"
     },
     "nidmp.ac.in": {
       "consecutiveFailures": 0,
@@ -14036,11 +14398,11 @@
     },
     "ccrs.ayush.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-16T22:07:09.817035Z"
+      "lastSuccessAt": "2026-10-17T10:47:53.934972Z"
     },
     "vvgnli.gov.in": {
       "consecutiveFailures": 0,
-      "lastSuccessAt": "2026-10-17T04:27:53.312690Z"
+      "lastSuccessAt": "2026-10-17T11:01:10.811955Z"
     },
     "indiancoastguard.gov.in": {
       "consecutiveFailures": 0,
@@ -14051,11 +14413,11 @@
       "lastFailureAt": "2026-10-17T04:40:09.028614Z"
     }
   },
-  "nextSourceIndex": 144,
+  "nextSourceIndex": 105,
   "runBudget": {
     "exhausted": true,
     "budgetSeconds": 4200,
-    "checkedSources": 163,
-    "skippedSources": 38
+    "checkedSources": 162,
+    "skippedSources": 39
   }
 }
