@@ -6095,7 +6095,12 @@ def run(config_path: Path, output_path: Path, state_path: Path, dry_run: bool = 
     # re-probed on every six-hourly cycle.
     load_mirror_memory(state)
     load_detail_fetch_health(state)
-    jobs_changed = sanitize_published_jobs(jobs, now, max_notice_age_days(config))
+    # Keep stored rows available while the current official listings are read:
+    # a placeholder deadline may make an old row look archived even though the
+    # source can now refresh it with a current, verified deadline. The final
+    # sanitizer below still removes rows that remain expired or archived after
+    # refresh/catch-up has had its chance to repair them.
+    jobs_changed = False
     if refresh_badges(jobs, now, int(config.get("newBadgeHours", 72))):
         jobs_changed = True
     state_changed = False
