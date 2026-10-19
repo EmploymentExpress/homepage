@@ -12,13 +12,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-16T07:32:37Z",
-        "disabledUntil": "2026-10-18T07:32:37Z",
         "failuresAtDisable": 81,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-10-18T07:32:37Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-19T08:05:56Z",
+        "failuresAtRecheck": 193
+      }
     },
     {
       "id": "allorigins-get",
@@ -26,13 +26,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-16T07:32:37Z",
-        "disabledUntil": "2026-10-18T07:32:37Z",
         "failuresAtDisable": 63,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-10-18T07:32:37Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-19T08:05:56Z",
+        "failuresAtRecheck": 175
+      }
     },
     {
       "id": "allorigins-raw",
@@ -54,13 +54,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-10-16T07:32:37Z",
-        "disabledUntil": "2026-10-18T07:32:37Z",
         "failuresAtDisable": 859,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-10-18T07:32:37Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-10-19T08:05:56Z",
+        "failuresAtRecheck": 971
+      }
     }
   ]
 }
