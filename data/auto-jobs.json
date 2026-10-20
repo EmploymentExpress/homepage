@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-20T11:35:30Z",
+  "updatedAt": "2026-10-20T17:02:44Z",
   "jobs": [
     {
       "id": 39801371118383,
@@ -1573,8 +1573,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -1611,7 +1611,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "result",
-      "badge": "NEW RESULT",
+      "badge": "RESULT",
       "badgeColor": "bg-rose-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
@@ -1649,7 +1649,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "result",
-      "badge": "NEW RESULT",
+      "badge": "RESULT",
       "badgeColor": "bg-rose-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
