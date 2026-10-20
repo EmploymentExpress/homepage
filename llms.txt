@@ -40,8 +40,8 @@ Each link below opens one static page for a single government vacancy or notice.
 - [GADVASU Ludhiana: Vacancy notice for the post of Project Associate-1,Department of Veterinary Surgery and Radiology, Guru Angad Dev Veterinary & Animal Sciences University, Ludhia](https://employmentexpress.github.io/homepage/share/job-11702514808252.html) — eligibility Diploma/ITI
 - [PAU Ludhiana: Re-schedule of Interview for post of Project Assistant - (Now will be held on 23-10-2026 at 02.30 p.m.) - Department of Soil Science](https://employmentexpress.github.io/homepage/share/job-2571953296872.html) — eligibility Graduate
 - [PAU Ludhiana: Qualifying exam of Punjabi language for the post of Beldar advertised vide Advt. No. 02/2026](https://employmentexpress.github.io/homepage/share/job-265235531652574.html) — eligibility Graduate
-- [PAU Ludhiana: Post of Sr. Research Fellow (Last date for submission of application 19-10-2026 and appear for interview on 23-10-2026 at 11.00 AM) - Dept. of Plant Breeding & Genetics](https://employmentexpress.github.io/homepage/share/job-264244490805022.html) — last date 19-10-2026; eligibility Graduate
 - [PAU Ludhiana: Rescheduling the date of the Interview for the post of Project Assistant - (Now re-scheduled on 16-10-2026 at 11.30 A.M.)](https://employmentexpress.github.io/homepage/share/job-230087706224693.html) — eligibility Graduate
+- [PAU Ludhiana: Post of Data Entry operator (Last date for submission of application 22-10-2026 and appear for selection committee on 06-11-2026 at 11.30 AM)](https://employmentexpress.github.io/homepage/share/job-223805408901216.html) — last date 22-10-2026; eligibility Graduate
 
 ## Latest Central and All-India government jobs
 
@@ -101,6 +101,8 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Results and answer keys
 
+- [SSSC All India: Haryana Steno Results](https://employmentexpress.github.io/homepage/share/job-118737064015732.html) — eligibility 8th/10th
+- [SSSC All India: Punjab Steno Results](https://employmentexpress.github.io/homepage/share/job-39801371118383.html) — eligibility 8th/10th
 - [CCRS All India: Results of Project Associate Botany and Senior Research Fellow Biotechnology - Personal Interview held at CCRS-SCRI, Chennai on 07.09.2026](https://employmentexpress.github.io/homepage/share/job-252219764185797.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interview for the Positions of Media Consultant and Retired Government Clerical Staff on a Contractual Basis at CCRS Headquarters, Chennai, held on 14.10.2026 - Adverti](https://employmentexpress.github.io/homepage/share/job-8893916917287.html) — eligibility 8th/10th
 - [UCO Bank: List of Provisionally Shortlisted Candidates for First Round Interview for the position of Cyber Security Officer in JMGS-I List of Provisionally Shortlisted Candidates for First Round Interview for the position of Data Engineer](https://employmentexpress.github.io/homepage/share/job-193946088093048.html) — eligibility Graduate
@@ -129,8 +131,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [SBI All India: LIST OF CANDIDATES PROVISIONALLY SELECTED FOR INTERVIEW](https://employmentexpress.github.io/homepage/share/job-266833141500566.html) — eligibility 8th/10th
 - [National Institute of Design Madhya Pradesh: Result of Written exam for post of Senior Library Assistant on Direct Recruitment Basis (against a lien vacancy)](https://employmentexpress.github.io/homepage/share/job-257283698049543.html) — eligibility 8th/10th
 - [SBI All India: MAIN EXAMINATION RESULT](https://employmentexpress.github.io/homepage/share/job-253962342050676.html) — eligibility Graduate
-- [SBI All India: LIST OF CANDIDATES PROVISIONALLY SELECTED](https://employmentexpress.github.io/homepage/share/job-251536693939478.html) — eligibility 8th/10th
-- [AIIMS Bathinda: 7) Provisional Result Notification](https://employmentexpress.github.io/homepage/share/job-221866007927228.html) — 35 Posts; eligibility Graduate
 
 ## Admissions and courses
 
@@ -179,4 +179,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-10-19
+Last updated: 2026-10-20
