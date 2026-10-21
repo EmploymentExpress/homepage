@@ -1,5 +1,6 @@
 """Network-free tests for the recurring, read-only source-access workflow."""
 import json
+import re
 import socket
 import tempfile
 import time
@@ -276,3 +277,120 @@ class SourceAccessTests(unittest.TestCase):
             report=access.run_checks([self.source],self.options,Path(tmp))
         self.assertTrue(report['complete'])
         self.assertIn('not verified vacancies',access.markdown_report(report))
+
+
+class DiagnosticBudgetTests(unittest.TestCase):
+    """The read-only diagnostic always finishes inside its workflow step.
+
+    Real incident: scheduled run 39462597353 (2026-10-20) was killed by the
+    18-minute "Check direct access, browser rendering, mirrors and official
+    alternatives" step cap. The 15-minute soft budget had already expired, but
+    probes in flight — and the executor shutdown that waits for them — kept the
+    step alive until GitHub cancelled it, so a slow registry (200+ official
+    sources) turned into a red "Update job alerts" workflow with no diagnostic
+    step result at all.
+
+    The bounds below are the fix: a soft run budget, a hard overrun grace, a
+    per-source probe cap and a per-attempt cap enforced by abandoning the
+    worker thread (a socket/Playwright timeout does not bound a wedged call).
+    """
+
+    source = SourceAccessTests.source
+    options = dict(SourceAccessTests.options)
+
+    def test_budget_bounds_fit_inside_the_workflow_step_timeout(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / '.github/workflows/source-access.yml').read_text(encoding='utf-8')
+        marker = 'name: Check direct access, browser rendering, mirrors and official alternatives'
+        self.assertIn(marker, workflow)
+        # Read the step block only (up to the next step) so comments and the
+        # other steps' timeouts cannot satisfy the assertion by accident.
+        step_block = workflow.split(marker, 1)[1].split('- name:', 1)[0]
+        step = re.search(r'timeout-minutes:\s*(\d+)', step_block)
+        self.assertIsNotNone(step, 'the diagnostic step must declare timeout-minutes')
+        step_seconds = int(step.group(1)) * 60
+        config = json.loads((root / 'automation/source-access.json').read_text(encoding='utf-8'))
+
+        # Worst case = soft budget + overrun grace + one abandoned attempt.
+        worst_case = config['budgetSeconds'] + config['overrunGraceSeconds'] + config['attemptSeconds']
+        self.assertLessEqual(worst_case, step_seconds,
+                             'the diagnostic must finish before the step is cancelled')
+        self.assertGreaterEqual(step_seconds - worst_case, 120,
+                                'keep a reserve for checkout, install and the test gate')
+        self.assertGreater(config['budgetSeconds'], 0)
+        self.assertLess(config['probeSeconds'], config['budgetSeconds'])
+        self.assertLess(config['attemptSeconds'], config['probeSeconds'])
+        self.assertLessEqual(config['attemptSeconds'], config['browserTimeoutSeconds'] * 2 + 10)
+
+        # Code defaults and the checked-in config must agree, so deleting a key
+        # from the JSON cannot silently widen the bound.
+        self.assertEqual(config['budgetSeconds'], access.DEFAULT_BUDGET_SECONDS)
+        self.assertEqual(config['overrunGraceSeconds'], access.DEFAULT_OVERRUN_GRACE_SECONDS)
+        self.assertEqual(config['probeSeconds'], access.DEFAULT_PROBE_SECONDS)
+        self.assertEqual(config['attemptSeconds'], access.DEFAULT_ATTEMPT_SECONDS)
+
+        agents = ' '.join((root / 'AGENTS.md').read_text(encoding='utf-8').split())
+        self.assertIn('access diagnostic', agents.lower())
+        self.assertIn('overrunGraceSeconds', agents)
+
+    def test_run_bounded_returns_results_and_abandons_slow_calls(self):
+        self.assertEqual(access.run_bounded(lambda: 'ok', 5), 'ok')
+        with self.assertRaises(ValueError):
+            access.run_bounded(lambda: (_ for _ in ()).throw(ValueError('boom')), 5)
+        started = time.monotonic()
+        with self.assertRaises(TimeoutError):
+            access.run_bounded(lambda: time.sleep(20), 0.05)
+        self.assertLess(time.monotonic() - started, 5)
+
+    def test_hung_attempt_is_abandoned_instead_of_holding_the_probe(self):
+        options = dict(self.options, timeoutSeconds=30, attemptSeconds=1, probeSeconds=2)
+
+        def hang(*args, **kwargs):
+            time.sleep(20)
+
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch.object(access, 'http_fetch', side_effect=hang), \
+             patch.object(access, 'browser_fetch', side_effect=hang), \
+             patch.object(access, 'mirror_payload', side_effect=hang):
+            started = time.monotonic()
+            result = access.probe(self.source, options, Path(tmp), time.monotonic() + 60)
+            elapsed = time.monotonic() - started
+        self.assertLess(elapsed, 8, 'a wedged transport must not hold the probe open')
+        # Abandoned transports are unavailable; the untried ones are deferred
+        # because the per-source probe cap ran out, so the source is not healthy.
+        self.assertIn(result['status'], {'deferred', 'unavailable'})
+        self.assertTrue(any('abandoned' in attempt.get('reason', '').lower()
+                            for attempt in result['attempts']))
+        self.assertFalse(any(attempt['status'].startswith('reachable') for attempt in result['attempts']))
+
+    def test_run_returns_at_the_hard_deadline_with_partial_evidence(self):
+        options = dict(self.options, workers=2, budgetSeconds=0.2, overrunGraceSeconds=0.4)
+        sources = [dict(self.source, id=f'board-{index}') for index in range(8)]
+
+        def hang(*args, **kwargs):
+            time.sleep(2)
+            return {'id': 'late', 'status': 'unavailable'}
+
+        with tempfile.TemporaryDirectory() as tmp, patch.object(access, 'probe', side_effect=hang):
+            started = time.monotonic()
+            report = access.run_checks(sources, options, Path(tmp))
+            elapsed = time.monotonic() - started
+            saved = json.loads((Path(tmp) / 'report.json').read_text(encoding='utf-8'))
+            markdown = (Path(tmp) / 'report.md').read_text(encoding='utf-8')
+        self.assertLess(elapsed, 3, 'the run must not wait for wedged probes')
+        self.assertFalse(report['complete'])
+        self.assertFalse(saved['complete'])
+        self.assertIn('deadline', saved['reason'])
+        self.assertEqual(len(saved['sources']), len(sources))
+        self.assertTrue(all(item['status'] == 'deferred' for item in saved['sources']),
+                        'unfinished targets must never be reported as healthy')
+        self.assertIn('Partial run', markdown)
+
+    def test_completed_run_stays_marked_complete(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch.object(access, 'probe', side_effect=lambda source, *args: {'id': source['id'], 'status': 'unavailable'}):
+            report = access.run_checks([dict(self.source, id='board')], dict(self.options, workers=1), Path(tmp))
+            markdown = (Path(tmp) / 'report.md').read_text(encoding='utf-8')
+        self.assertTrue(report['complete'])
+        self.assertEqual(report['reason'], '')
+        self.assertIn('targets · complete', markdown)

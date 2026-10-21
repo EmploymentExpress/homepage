@@ -73,6 +73,14 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_source_access.py' -v
 
       - name: Check direct access, browser rendering, mirrors and official alternatives
+        # The script bounds itself (automation/source-access.json:
+        # budgetSeconds + overrunGraceSeconds + attemptSeconds = 780 + 90 + 40
+        # = 910s) and publishes a partial report when the registry does not fit,
+        # so this cap is a backstop only, never the expected end of the step.
+        # Keep >= 2 minutes of reserve above that worst case and keep both in
+        # sync — guard-tested in tests/test_source_access.py
+        # (DiagnosticBudgetTests). Never raise this cap alone: on 2026-10-20 the
+        # step was cancelled here mid-scan and the run went red.
         timeout-minutes: 18
         shell: bash
         run: |
