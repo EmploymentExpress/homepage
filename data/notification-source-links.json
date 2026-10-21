@@ -1727,7 +1727,16 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-29T05:43:23Z",
-      "sslFallback": true
+      "sslFallback": true,
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "quarantined": true,
+        "disabledAt": "2026-10-21T08:00:31Z",
+        "disabledUntil": "2026-10-28T08:00:31Z",
+        "failuresAtDisable": 35,
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
+      }
     },
     {
       "url": "https://www.canarabank.bank.in/engagement-of-graduate-apprentices-in-canara-bank-under%c2%a0apprentices-act-1961-for-fy-2026-27.",
