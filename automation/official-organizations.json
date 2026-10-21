@@ -932,6 +932,35 @@
         "bathinda sessions division"
       ],
       "proxyFallback": true
+    },
+    {
+      "id": "faridkot-district-court",
+      "name": "Faridkot District Court",
+      "department": "District Court Faridkot (Office of the District & Sessions Judge)",
+      "url": "https://faridkot.dcourts.gov.in/notice-category/recruitments/",
+      "type": "punjab",
+      "categorySlug": "punjab-jobs",
+      "location": "Faridkot, Punjab",
+      "noticeTypes": [
+        "recruitment",
+        "admission",
+        "result",
+        "answer-key",
+        "corrigendum",
+        "admit-card"
+      ],
+      "aliases": [
+        "faridkot district court",
+        "district court faridkot",
+        "district & sessions judge, faridkot",
+        "district and sessions judge faridkot",
+        "office of the district & sessions judge faridkot",
+        "district legal services authority faridkot",
+        "dlsa faridkot",
+        "faridkot.dcourts.gov.in",
+        "faridkot sessions division"
+      ],
+      "proxyFallback": true
     }
   ]
 }

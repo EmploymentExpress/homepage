@@ -14,6 +14,7 @@ import json
 import os
 import re
 import socket
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -31,6 +32,40 @@ except ModuleNotFoundError:  # python scripts/check_source_access.py
 ROOT = Path(__file__).resolve().parents[1]
 MAX_BYTES = 2 * 1024 * 1024
 HTML_ARTIFACT_BYTES = 512 * 1024
+
+# ---------------------------------------------------------------------------
+# Run wall-clock budget: the read-only diagnostic always finishes.
+#
+# The registry now holds 200+ official sources and every probe may spend two
+# direct attempts, one Chromium render, two mirrors and two observed
+# alternative links. A single network call can also block far past its own
+# socket timeout (slow-drip response body, resolver retry storm, wedged
+# Chromium IPC channel), so a per-call timeout alone does not bound the step.
+# On 2026-10-20 the scheduled run was killed by the 18-minute
+# "Check direct access, browser rendering, mirrors and official alternatives"
+# step cap: the 15-minute soft budget had expired, yet probes in flight (and
+# the ThreadPoolExecutor shutdown that waits for them) kept the step alive
+# until GitHub cancelled it, so the run counted as a workflow failure.
+#
+# Three bounds keep that from happening again:
+#   * ``budgetSeconds``          - soft stop: no new source probe is started.
+#   * ``probeSeconds``           - hard stop for one source's attempt sequence.
+#   * ``attemptSeconds``         - hard stop for one fetch + assessment; the
+#                                  call runs in a daemon thread that is
+#                                  abandoned and reported as an unavailable
+#                                  attempt when it overruns.
+# The run then stops at ``budgetSeconds + overrunGraceSeconds`` and publishes
+# the evidence it has (``complete: false`` = partial report, unfinished
+# targets are ``deferred``, never healthy). Source order rotates every run, so
+# a partial pass does not starve the tail of the registry.
+# ``budgetSeconds + overrunGraceSeconds + attemptSeconds`` must stay below the
+# workflow step's ``timeout-minutes`` — guard-tested in
+# tests/test_source_access.py (DiagnosticBudgetTests).
+DEFAULT_BUDGET_SECONDS = 13 * 60
+DEFAULT_OVERRUN_GRACE_SECONDS = 90
+DEFAULT_PROBE_SECONDS = 90
+DEFAULT_ATTEMPT_SECONDS = 40
+DEFAULT_WORKERS = 4
 BLOCK_MARKERS = (
     "verify you are human", "captcha challenge", "access denied", "403 forbidden",
     "there is no row at position 0", "server error in '/' application",
@@ -83,6 +118,33 @@ def public_dns(hostname: str) -> bool:
 def require_public(url: str) -> None:
     if not public_url(url) or not public_dns(urllib.parse.urlsplit(url).hostname or ""):
         raise ValueError("URL is not a resolvable public endpoint")
+
+
+def run_bounded(callback, seconds: float):
+    """Run ``callback`` in a daemon worker and give up once ``seconds`` pass.
+
+    ``socket`` and Playwright calls can block well past their own timeouts, so a
+    timeout passed *into* them is not a bound on the caller. Running the work in
+    a daemon thread makes the abandonment real: the probe records the attempt as
+    unavailable and returns to the run budget, and a still-wedged worker cannot
+    keep the process (and therefore the workflow step) alive.
+    """
+    outcome: dict[str, object] = {}
+
+    def target():
+        try:
+            outcome["value"] = callback()
+        except BaseException as exc:  # reported to the caller as an attempt error
+            outcome["error"] = exc
+
+    worker = threading.Thread(target=target, name="source-access-attempt", daemon=True)
+    worker.start()
+    worker.join(max(0.0, float(seconds)))
+    if worker.is_alive():
+        raise TimeoutError(f"Attempt abandoned after {float(seconds):.0f}s")
+    if "error" in outcome:
+        raise outcome["error"]  # type: ignore[misc]
+    return outcome.get("value")
 
 
 def redact_url(url: str) -> str:
@@ -308,14 +370,24 @@ def probe(source: dict, options: dict, output: Path, deadline: float, rotation: 
               "status": "unavailable", "attempts": [], "artifacts": key}
     alternatives: list[str] = []
     documents: dict[str, Payload] = {}
+    # A single source may never hold a worker (or the workflow step) open past
+    # its own probe budget, even when every transport misbehaves. ``deadline``
+    # is the run budget; ``stop_at`` adds the per-source cap.
+    stop_at = min(deadline, time.monotonic() + float(options.get("probeSeconds", DEFAULT_PROBE_SECONDS)))
+    attempt_seconds = float(options.get("attemptSeconds", DEFAULT_ATTEMPT_SECONDS))
 
     def attempt(method, target, fetch):
-        if time.monotonic() >= deadline:
-            result["attempts"].append({"method": method, "status": "deferred", "reason": "Run budget exhausted"})
+        remaining = stop_at - time.monotonic()
+        if remaining <= 0:
+            reason = ("Run budget exhausted" if time.monotonic() >= deadline
+                      else "Source probe budget exhausted")
+            result["attempts"].append({"method": method, "status": "deferred", "reason": reason})
             return False
         try:
-            payload = fetch()
-            verdict = assess(payload, source)
+            def fetch_and_assess():
+                payload = fetch()
+                return payload, assess(payload, source)
+            payload, verdict = run_bounded(fetch_and_assess, min(remaining, attempt_seconds))
             documents[method] = payload
             if not payload.data.startswith(b"%PDF-"):
                 (directory / (method + ".html.txt")).write_text(sanitized_html(payload.data))
@@ -371,10 +443,13 @@ def markdown_report(report: dict) -> str:
     lines = ["## Official-source access diagnostic", "",
              f"Checked at {report['checkedAt']} · runner: {report['runner']}",
              f"Progress: {len(report['sources'])}/{report.get('targetCount', len(report['sources']))} targets · "
-             f"{'complete' if report.get('complete') else 'partial / still running or interrupted'}", "",
-             "Read-only: no alerts, source registries or publication fingerprints were changed.",
-             "Candidate links/API observations are not verified vacancies. Mirrors may be stale.", "",
-             "| Source | Outcome | Transport |", "| --- | --- | --- |"]
+             f"{'complete' if report.get('complete') else 'partial / still running or interrupted'}", ""]
+    if not report.get("complete"):
+        lines += [f"Partial run: {report.get('reason') or 'run budget exhausted'}. "
+                  "Unfinished targets are `deferred`, not healthy; source order rotates on the next run.", ""]
+    lines += ["Read-only: no alerts, source registries or publication fingerprints were changed.",
+              "Candidate links/API observations are not verified vacancies. Mirrors may be stale.", "",
+              "| Source | Outcome | Transport |", "| --- | --- | --- |"]
     for item in report["sources"]:
         sid = str(item["id"]).replace("|", "/").replace("\n", " ")
         lines.append(f"| `{sid}` | {item['status']} | {item.get('method', 'See artifact logs')} |")
@@ -387,13 +462,21 @@ def markdown_report(report: dict) -> str:
 
 def run_checks(sources: list[dict], options: dict, output: Path, rotation: int = 0) -> dict:
     output.mkdir(parents=True, exist_ok=True)
-    deadline = time.monotonic() + options["budgetSeconds"]
+    started = time.monotonic()
+    budget_seconds = float(options.get("budgetSeconds", DEFAULT_BUDGET_SECONDS))
+    grace_seconds = float(options.get("overrunGraceSeconds", DEFAULT_OVERRUN_GRACE_SECONDS))
+    workers = max(1, int(options.get("workers", DEFAULT_WORKERS)))
+    deadline = started + budget_seconds
+    hard_deadline = deadline + grace_seconds
     report = {"checkedAt": datetime.now(timezone.utc).isoformat(),
               "runner": os.environ.get("RUNNER_ENVIRONMENT", "local"),
-              "targetCount": len(sources), "complete": False, "sources": []}
+              "targetCount": len(sources),
+              "budgetSeconds": budget_seconds,
+              "overrunGraceSeconds": grace_seconds,
+              "complete": False, "reason": "", "sources": []}
     sources = list(sources)
     if sources:
-        shift = (rotation * options["workers"]) % len(sources)
+        shift = (rotation * workers) % len(sources)
         sources = sources[shift:] + sources[:shift]
     pending_sources = iter(sources)
 
@@ -401,19 +484,35 @@ def run_checks(sources: list[dict], options: dict, output: Path, rotation: int =
         (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
         (output / "report.md").write_text(markdown_report(report))
 
+    def deferred(source: dict, reason: str) -> dict:
+        return {"id": source["id"], "url": redact_url(source["url"]),
+                "kind": "discovery" if source.get("discovery") else "official",
+                "status": "deferred", "attempts": [], "reason": reason}
+
     save()  # partial evidence survives a later timeout/cancellation
-    with concurrent.futures.ThreadPoolExecutor(max_workers=options["workers"]) as pool:
-        running = {}
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=workers, thread_name_prefix="source-probe")
+    running: dict = {}
+    try:
         def submit():
             if time.monotonic() >= deadline:
                 return
             source = next(pending_sources, None)
             if source is not None:
                 running[pool.submit(probe, source, options, output, deadline, rotation)] = source
-        for _ in range(options["workers"]):
+
+        for _ in range(workers):
             submit()
         while running:
-            done, _ = concurrent.futures.wait(running, return_when=concurrent.futures.FIRST_COMPLETED)
+            now = time.monotonic()
+            if now >= hard_deadline:
+                # Backstop: never hold the workflow step open until GitHub
+                # cancels it (the 2026-10-20 failure). Publish what we have;
+                # every unfinished target is deferred, and the next run resumes
+                # at a rotated order.
+                report["reason"] = "Hard run deadline reached before every source was probed"
+                break
+            done, _ = concurrent.futures.wait(running, timeout=max(0.02, min(1.0, hard_deadline - now)),
+                                              return_when=concurrent.futures.FIRST_COMPLETED)
             for future in done:
                 source = running.pop(future)
                 try:
@@ -424,9 +523,15 @@ def run_checks(sources: list[dict], options: dict, output: Path, rotation: int =
                 print(f"{source['id']}: {item['status']}", flush=True)
                 save()
                 submit()
+    finally:
+        # Never wait on an in-flight probe here: each attempt is already bounded
+        # by attemptSeconds, and the report must say the pass was partial.
+        pool.shutdown(wait=False, cancel_futures=True)
+    for source in list(running.values()):
+        report["sources"].append(deferred(source, "Run deadline reached while this source was being probed"))
     for source in pending_sources:
-        report["sources"].append({"id": source["id"], "status": "deferred", "reason": "Run budget exhausted"})
-    report["complete"] = True
+        report["sources"].append(deferred(source, "Run budget exhausted"))
+    report["complete"] = not report["reason"]
     save()
     return report
 
@@ -456,10 +561,16 @@ def main() -> int:
         options["browser"] = False
     report = run_checks(sources, options, output, int(os.environ.get("GITHUB_RUN_NUMBER", "0")))
     unresolved = sum(item["status"] in {"blocked", "unavailable", "reachable-no-notices", "deferred"} for item in report["sources"])
-    print(f"Read-only diagnostic complete: {len(report['sources'])} sources, {unresolved} unresolved. Artifacts: {output}")
+    state = "complete" if report["complete"] else "partial (run deadline reached)"
+    print(f"Read-only diagnostic {state}: {len(report['sources'])} sources, {unresolved} unresolved. Artifacts: {output}")
     # External failures belong in the report, not a fake all-clear or a failed publish.
     if unresolved and os.environ.get("GITHUB_ACTIONS"):
         print(f"::warning::{unresolved} sources remain unresolved; see source-access diagnostic artifact")
+    if not report["complete"] and os.environ.get("GITHUB_ACTIONS"):
+        # A partial report is evidence, not a workflow failure: finish the step
+        # inside its timeout instead of being cancelled at the cap.
+        print("::warning::Diagnostic stopped at its run budget; the report is partial "
+              "and the next run continues with a rotated source order")
     return 0
 
 

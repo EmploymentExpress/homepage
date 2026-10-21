@@ -16,6 +16,33 @@ The **"Update job alerts" workflow is failing intermittently** due to **3 distin
 
 ---
 
+## Issue 4: Source-access diagnostic step timeout — RESOLVED 2026-10-21
+
+> **Status: RESOLVED.** On 2026-10-20 the scheduled run
+> [39462597353](https://github.com/EmploymentExpress/homepage/actions/runs/39462597353)
+> failed because the read-only *Read-only official source diagnostics* job's
+> "Check direct access, browser rendering, mirrors and official alternatives"
+> step was cancelled at its `timeout-minutes: 18` cap (18m12s) — the whole
+> "Update job alerts" run went red even though the alert job itself succeeded.
+>
+> Cause: the registry had grown past 200 official sources. The 15-minute soft
+> budget in `automation/source-access.json` stopped *starting* new probes, but
+> probes already in flight — and the `ThreadPoolExecutor` shutdown that waits
+> for them — were unbounded, because a socket/Playwright timeout does not bound
+> a wedged call (slow-drip body, resolver retry storm, Chromium IPC stall).
+>
+> Fix: `scripts/check_source_access.py` now enforces a per-attempt cap (each
+> fetch + assessment runs in a daemon thread that is abandoned on overrun), a
+> per-source probe cap, and a hard run deadline after `budgetSeconds +
+> overrunGraceSeconds`; the executor is shut down without waiting and the report
+> is published as `complete: false` with unfinished targets `deferred`. Config:
+> 780 s budget + 90 s grace + 40 s attempt = 910 s worst case, well inside the
+> 18-minute step cap. Guard-tested in `tests/test_source_access.py`
+> (`DiagnosticBudgetTests`); documented in AGENTS.md and
+> `docs/SOURCE_ACCESS_WORKFLOW.md`.
+
+---
+
 ## Issue 1: Headline Length Truncation (CRITICAL) — RESOLVED 2026-09-10
 
 > **Status: RESOLVED.** The headline rule was replaced (see AGENTS.md →

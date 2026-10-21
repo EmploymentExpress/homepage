@@ -39,6 +39,8 @@ HTML snapshots omit scripts and form values, redact token metadata and URL query
 
 Partial reports are written as sources complete. An interrupted run is marked partial; targets skipped by the time budget are `deferred`, not healthy. Source order rotates across runs to avoid permanently starving later targets.
 
+Time is bounded at four levels so the step always finishes before GitHub cancels it: a 13-minute soft run budget stops new probes, a 90-second overrun grace lets in-flight probes finish, each source has a 90-second probe cap, and each single fetch+assessment is capped at 40 seconds by running it in a daemon thread that is abandoned (recorded as `unavailable`, "Attempt abandoned") if it overruns. Those caps exist because a socket or Playwright timeout does not bound a wedged call. On 2026-10-20 the scheduled run was killed at the 18-minute step cap while the earlier 15-minute budget had expired and probes were still running; a partial report published inside the cap is evidence, a cancelled step is a workflow failure.
+
 External failures are summarized as warnings and unresolved report entries rather than causing publication of unverified jobs. Browser installation is best effort: direct/mirror checks still run if Chromium is unavailable, and the browser-stage error is recorded. Setup/test failures remain real workflow failures; no report is not an all-clear.
 
 ## Manual run
@@ -83,8 +85,8 @@ The code rejects private/local URLs, embedded credentials, private DNS answers a
 
 ## Limits and validation
 
-Defaults live in `automation/source-access.json`: four workers, 15-minute scan budget, two direct attempts, two mirrors and two observed alternative links per source. The workflow has a 35-minute outer limit to allow setup and artifact upload; individual installation/scan steps are also bounded. Large PDFs or slowly rendering sites can remain unresolved and require manual verification.
+Defaults live in `automation/source-access.json`: four workers, a 13-minute scan budget plus a 90-second overrun grace, 90-second per-source and 40-second per-attempt caps, two direct attempts, two mirrors and two observed alternative links per source. The workflow has a 35-minute job limit to allow setup and artifact upload, and the diagnostic step itself is capped at 18 minutes; `budgetSeconds + overrunGraceSeconds + attemptSeconds` must stay below that step cap with a reserve (guard-tested in `tests/test_source_access.py`). Large PDFs or slowly rendering sites can remain unresolved and require manual verification.
 
-Regression tests cover direct/browser/mirror order, retry limits, 404 behaviour, errors/CAPTCHA stubs, raw-page fallback, RSS leads, API redaction, observed-only alternatives, private URL/DNS/method blocking, no data writes, budget deferrals/rotation, partial reports and workflow permissions/artifacts.
+Regression tests cover direct/browser/mirror order, retry limits, 404 behaviour, errors/CAPTCHA stubs, raw-page fallback, RSS leads, API redaction, observed-only alternatives, private URL/DNS/method blocking, no data writes, budget deferrals/rotation, abandoned attempts/hung-call caps, partial reports and workflow permissions/artifacts.
 
 During local validation the sandbox still closed outbound TLS connections, including Chromium's download endpoint. The four-source smoke run correctly reported all targets unresolved and left the homepage, data and registries byte-for-byte unchanged. Browser behaviour is covered by mocked tests; a real Chromium/network run on GitHub remains necessary after deployment. No successful live verification is claimed for blocked sources.

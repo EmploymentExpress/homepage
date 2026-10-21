@@ -7,5 +7,8 @@
   "maxMirrors": 2,
   "maxAlternatives": 2,
   "workers": 4,
-  "budgetSeconds": 900
+  "budgetSeconds": 780,
+  "overrunGraceSeconds": 90,
+  "probeSeconds": 90,
+  "attemptSeconds": 40
 }

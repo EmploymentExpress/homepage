@@ -174,6 +174,44 @@ Never "fix" a slow run by raising the job timeout alone — if the budget is
 raised, raise it only alongside the reserve check, and prefer cutting per-source
 work (mirrors, retries, `maxLinks`) first.
 
+## ⏱️ Official-source access diagnostic: it always finishes inside its step (Mandatory)
+
+The read-only **Check official source access** workflow
+(`.github/workflows/source-access.yml` → `scripts/check_source_access.py`) has
+its own wall-clock bound, because a **socket timeout does not bound a call**:
+slow-drip response bodies, resolver retry storms and a wedged Chromium IPC
+channel all outlive the timeout passed into them. On 2026-10-20 the scheduled
+run was killed by the 18-minute "Check direct access, browser rendering,
+mirrors and official alternatives" step cap while the 15-minute soft budget was
+already spent and probes were still in flight, so the whole "Update job alerts"
+run went red with no step result.
+
+Tuning lives in `automation/source-access.json` (defaults mirrored in the
+script, guard-tested in `tests/test_source_access.py`, `DiagnosticBudgetTests`):
+
+- **`budgetSeconds`** (default 13 minutes) — soft cutoff: no new source probe is
+  started. `overrunGraceSeconds` (90 s) is allowed for probes already running,
+  and `attemptSeconds` (40 s) for the last call in flight.
+- **`probeSeconds`** (90 s) — hard cap for one source's whole attempt sequence
+  (direct retries → browser → mirrors → observed alternatives). When it runs
+  out, the untried transports are recorded as `deferred`.
+- **`attemptSeconds`** (40 s) — hard cap for a single fetch + assessment. The
+  call runs in a daemon thread that is **abandoned** when it overruns and is
+  reported as `unavailable` ("Attempt abandoned after Ns"). Never call a
+  network or Playwright API directly from the probe loop again.
+- The executor is shut down **without waiting** at the hard deadline. The
+  report is written either way and marked `complete: false` with a `reason`;
+  unfinished targets are `deferred` (never healthy), and the source order
+  rotates each run, so a partial pass never starves the registry tail.
+- `budgetSeconds + overrunGraceSeconds + attemptSeconds` **must stay below the
+  diagnostic step's `timeout-minutes`** with a reserve for checkout, browser
+  install and the test gate. A partial report is published evidence, not a
+  workflow failure: the script exits 0 and emits a `::warning::` annotation.
+
+Never fix a step timeout by raising `timeout-minutes` alone — raise the step
+cap only together with the budget formula above, and prefer cutting per-source
+work (`maxMirrors`, `maxAlternatives`, `browser`) first.
+
 ## 🩺 AI health monitor: a quarantine must never set `enabled: false` (Mandatory)
 
 `scripts/ai_health_monitor.py --apply` (`.github/workflows/ai-health-monitor.yml`)
