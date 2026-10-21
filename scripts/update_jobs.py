@@ -329,6 +329,30 @@ ANSWER_KEY_TERMS = (
     "tentative answer key",
     "objection tracker",
     "question paper and key",
+    # Objection-filing notices are answer-key stage documents (candidates
+    # object to the provisional key of an already-conducted test). Without
+    # these phrases a title such as "Notice regarding filing objections in
+    # relation to written Punjabi test conducted on 18-10-2026 for
+    # recruitment to various posts" matches RECRUITMENT_TERMS instead and a
+    # NEW JOB ALERT appears in the vacancy columns for a non-vacancy notice.
+    # Phrases stay specific ("filing objections", not bare "objection") so a
+    # No Objection Certificate (NOC) notice can never match.
+    "filing objections",
+    "filing of objections",
+    "file objections",
+    "filing the objections",
+    "inviting objections",
+    "invite objections",
+    "invites objections",
+    "objections are invited",
+    "objections invited",
+    "submission of objections",
+    "submit objections",
+    "raise objections",
+    "raising objections",
+    "objections regarding",
+    "objections in relation",
+    "objections, if any",
 )
 RESULT_TERMS = (
     "final result",
