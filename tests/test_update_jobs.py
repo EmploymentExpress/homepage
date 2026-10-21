@@ -129,6 +129,34 @@ class JobMonitorTests(unittest.TestCase):
                 candidate = monitor.Candidate(title, "https://example.gov.in/notice.pdf")
                 self.assertEqual(monitor.classify_notice(candidate, {}), expected)
 
+    def test_objection_filing_notices_classify_as_answer_key(self):
+        # Regression: this real GADVASU title was published as "recruitment"
+        # and showed a NEW JOB ALERT in the Punjab jobs column even though it
+        # is an answer-key stage notice (its PDF is the MCQ answer key).
+        examples = [
+            "Notice regarding filing objections in relation to written Punjabi "
+            "test conducted on 18-10-2026 for recruitment to various posts in "
+            "the University",
+            "Inviting objections to the provisional answer key of the Clerk "
+            "written examination",
+            "Objections are invited on the provisional key of Patwari exam",
+            "Submission of objections regarding the written test for Steno posts",
+        ]
+        for title in examples:
+            with self.subTest(title=title):
+                candidate = monitor.Candidate(title, "https://example.gov.in/key.pdf")
+                self.assertEqual(monitor.classify_notice(candidate, {}), "answer-key")
+
+        # A No Objection Certificate notice must never be mistaken for an
+        # answer key (and is not a vacancy either).
+        noc = monitor.Candidate(
+            "Advertisement No. 02/2026 — recruitment of 45 Clerk posts; in-service "
+            "candidates must upload a No Objection Certificate from their employer",
+            "https://example.gov.in/advt.pdf",
+        )
+        self.assertEqual(monitor.classify_notice(noc, {}), "recruitment")
+
+    def test_answer_key_respects_source_notice_types(self):
         answer_key = monitor.Candidate(
             "Final answer key for Clerk recruitment", "https://example.gov.in/key.pdf"
         )
