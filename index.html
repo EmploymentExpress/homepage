@@ -2274,7 +2274,9 @@
         }
 
         function stripLeadingAuthorityWords(subject, department) {
-            const deptWords = new Set(headlineClean(department).toLowerCase().split(/\W+/).filter(Boolean));
+            // Unicode property class mirrors Python's Unicode-aware \W+ split
+            // (JS \W is ASCII-only and would split inside non-Latin words).
+            const deptWords = new Set(headlineClean(department).toLowerCase().split(/[^\p{L}\p{N}\p{Pc}]+/u).filter(Boolean));
             const words = headlineClean(subject).split(' ').filter(Boolean);
             let removed = 0;
             while (words.length && removed < 5) {
@@ -2395,7 +2397,10 @@
                 const lastWords = parts[parts.length - 1].match(/[A-Za-z]+/g) || [];
                 if (lastWords.length && lastWords[lastWords.length - 1].toLowerCase() === titleTail[titleTail.length - 1].toLowerCase()) {
                     const lastWord = lastWords[lastWords.length - 1];
-                    parts[parts.length - 1] = trimHeadlineEdges(parts[parts.length - 1].replace(new RegExp('\\s*\\b' + escapeRegExp(lastWord) + '\\W*$'), ''));
+                    // Mirror Python's Unicode-aware \W in short_headlines.py: in JS
+                    // \W is ASCII-only, so Punjabi/Hindi letters after the word were
+                    // swallowed as "non-word" and deleted to the end of the part.
+                    parts[parts.length - 1] = trimHeadlineEdges(parts[parts.length - 1].replace(new RegExp('\\s*\\b' + escapeRegExp(lastWord) + '[^\\p{L}\\p{N}\\p{Pc}]*$', 'u'), ''));
                 }
                 parts = parts.filter(part => /[A-Za-z]{2,}/.test(part));
             }
