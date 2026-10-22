@@ -429,6 +429,17 @@ class IndexHeadlineWiringTests(unittest.TestCase):
                  {"title": "Baba Farid University of Health Sciences (BFUHS), Faridkot — maintest",
                   "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
                   "alertType": "recruitment", "vacancies": "See Notification",
+                  "applyMode": "Online / As Notified"},
+                 # Regression (Oct 2026): a capped 240-char title whose last Latin
+                 # word is an e-mail fragment followed by Punjabi text. Python's
+                 # Unicode-aware \W* kept the tail while the JS mirror's ASCII-only
+                 # \W* deleted it, failing this parity check in CI.
+                 {"title": "Baba Farid University of Health Sciences (BFUHS), Faridkot — "
+                           "M.Sc. Nuclear Medicine, PG Degree ਅਤੇ PG Diploma ਕੋਰਸਾਂ ਦੀ Entrance Exam "
+                           "ਸਬੰਧੀ ਕਿਸੇ ਵੀ ਔਬਜੈਕਸ਼ਨ/ਇਤਰਾਜ਼ ਲਈ ਉਮੀਦਵਾਰ ਆਪਣੇ ਸਬੂਤਾਂ ਸਮੇਤ ਈਮੇਲ uiahsfdk@ "
+                           "'ਤੇ ਭੇਜ ਸਕਦੇ ਹਨ। ਆਖਰੀ ਮਿਤੀ: 22.10",
+                  "department": "Baba Farid University of Health Sciences (BFUHS), Faridkot",
+                  "alertType": "admission", "vacancies": "See Notification",
                   "applyMode": "Online / As Notified"}]
         cases += [
             {

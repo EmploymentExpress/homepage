@@ -613,6 +613,10 @@ def headline_posts(title: str, department: str = "", vacancies: str = "") -> lis
             parts = parts[:-1]
         last_words = re.findall(r"[A-Za-z]+", parts[-1])
         if last_words and last_words[-1].lower() == title_tail[-1].lower():
+            # \W is Unicode-aware here: letters of any script after the word
+            # (e.g. a Punjabi sentence following an e-mail fragment) keep the
+            # word from counting as the truncated tail. The JS mirror must use
+            # a Unicode property class, not ASCII-only \W, for this pattern.
             parts[-1] = _trim_edges(re.sub(r"\s*\b" + re.escape(last_words[-1]) + r"\W*$", "", parts[-1]))
         parts = [p for p in parts if re.search(r"[A-Za-z]{2,}", p)]
     # Duplicates and truncated echoes of an earlier part ("Senio") add nothing.
