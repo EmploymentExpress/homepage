@@ -1404,7 +1404,16 @@
       ],
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-27T12:01:23Z",
-      "sslFallback": true
+      "sslFallback": true,
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "quarantined": true,
+        "disabledAt": "2026-10-24T07:36:59Z",
+        "disabledUntil": "2026-10-31T07:36:59Z",
+        "failuresAtDisable": 6,
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
+      }
     },
     {
       "url": "https://upsc.gov.in/whats-new",
