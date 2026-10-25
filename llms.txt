@@ -101,7 +101,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [AIIMS Bathinda: 5) Provisional Result Notification for the post of Project Technical Support-III (Project Manager/Assistant Coordinator)](https://employmentexpress.github.io/homepage/share/job-7463860108733.html) — 1 Posts; eligibility 8th/10th
 - [BFUHS Faridkot: Result of M.Sc. Nuclear Medicine, PG Degree and PG Diploma Entrance Exam held on 21/10/2026](https://employmentexpress.github.io/homepage/share/job-246595699038086.html) — eligibility Diploma/ITI
 - [JKSSB All India: Result of qualified candidates of Physical Standard Test (PST)/Physical Endurance Test (PET) (Walk Test) for the posts of Wildlife Guard, Social Forestry Worker, Inspector (FPF), FPF Guar](https://employmentexpress.github.io/homepage/share/job-230898713557926.html) — eligibility Graduate
-- [Chandigarh Administration: List of eligible and non-eligible candidates for the post of Accountant for State Nutrition Resource Centre- State Project Management Unit (SNRC-SPMU) and under POSHAN Abhiyaan — Social Welfare, Women & Child Dev](https://employmentexpress.github.io/homepage/share/job-149069547205973.html) — last date 24-10-2026; eligibility Graduate
 - [CSIR–National Aerospace Laboratories: NOTIFICATION TRADE TEST RESULTS-GR.II dt.22.10.2026 pdf.pdf — Result of Trade Test for recruitment to the posts of Technician-1 under various post codes against Adv. No. 05/2025 at CSIR-NAL](https://employmentexpress.github.io/homepage/share/job-149022150484695.html) — eligibility Graduate
 - [JKSSB All India: Supplementary Document Verification of candidates falling under consideration zone for the posts of Para Medical Assistant, BCG Technician, Barber/Dhobi/Jr. Dhobi and Junior X-Ray Technic](https://employmentexpress.github.io/homepage/share/job-108704186792333.html) — eligibility Graduate
 - [JKSSB All India: Provisional Answer Key for the OMR Based Written Examination for the post of Attendant General Cadre (AGC) G-II/Barber G-III, Health and Medical Education Department, held on 21.10.2026](https://employmentexpress.github.io/homepage/share/job-10637044117962.html) — eligibility Graduate
@@ -121,6 +120,7 @@ Each link below opens one static page for a single government vacancy or notice.
 - [CCRS All India: Results of Project Associate Botany and Senior Research Fellow Biotechnology - Personal Interview held at CCRS-SCRI, Chennai on 07.09.2026](https://employmentexpress.github.io/homepage/share/job-24750846266383.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interview for the Positions of Media Consultant and Retired Government Clerical Staff on a Contractual Basis at CCRS Headquarters, Chennai, held on 14.10.2026 - Adverti](https://employmentexpress.github.io/homepage/share/job-280143807028650.html) — eligibility 8th/10th
 - [UCO Bank: RECRUITMENT OF GENERALIST AND SPECIALIST OFFICERS ON REGULAR BASIS 2026-27 Advertisement No. HO/HRM/RECR/2025-26/COM-04 Link for Downloading the Call Letter of Shortlisted Candidates for First Round Interview for the position](https://employmentexpress.github.io/homepage/share/job-256779096782505.html) — 29 Posts; eligibility 8th/10th
+- [UCO Bank: List of Provisionally Selected Candidate for Apprenticeship](https://employmentexpress.github.io/homepage/share/job-237002481820329.html) — eligibility Graduate
 
 ## Admissions and courses
 
@@ -174,4 +174,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-10-24
+Last updated: 2026-10-25
