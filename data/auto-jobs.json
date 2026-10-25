@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-25T16:17:40Z",
+  "updatedAt": "2026-10-25T20:50:29Z",
   "jobs": [
     {
       "id": 193686072175109,
@@ -2029,8 +2029,8 @@
       "location": "All India",
       "applyMode": "Offline",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "IIITDWD/REC/NT/2026/1129",
