@@ -40,13 +40,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-08T09:29:15Z",
-        "failuresAtDisable": 68,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-10-11T09:19:33Z",
-        "failuresAtRecheck": 85
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-10-28T09:00:09Z",
+        "disabledUntil": "2026-10-30T09:00:09Z",
+        "failuresAtDisable": 125,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-10-30T09:00:09Z"
     },
     {
       "id": "codetabs",
