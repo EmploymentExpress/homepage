@@ -1748,12 +1748,12 @@
       "sslFallback": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-21T08:00:31Z",
-        "failuresAtDisable": 35,
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it",
-        "recheckSince": "2026-10-28T09:00:09Z",
-        "failuresAtRecheck": 35
+        "phase": "disabled",
+        "quarantined": true,
+        "disabledAt": "2026-10-30T09:01:37Z",
+        "disabledUntil": "2026-11-06T09:01:37Z",
+        "failuresAtDisable": 40,
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
       },
       "enabled": true
     },
@@ -2979,7 +2979,8 @@
         "result"
       ],
       "addedBy": "discovery-official-website",
-      "addedAt": "2026-10-07T05:58:14Z"
+      "addedAt": "2026-10-07T05:58:14Z",
+      "sslFallback": true
     },
     {
       "url": "https://hal-india.co.in/career",
