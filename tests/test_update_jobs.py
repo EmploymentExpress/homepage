@@ -4193,7 +4193,10 @@ class ArchivedNoticeFreshnessTests(unittest.TestCase):
         # republished in October 2026 wearing a "Just In" badge, because its URL
         # carries only a /2026/01/ folder. The months are relative to the run
         # date so this guard cannot age out.
-        old_month = _date_in_days(-90)
+        # A month-only URL is aged from the *last* day of its month. Use
+        # 120 days rather than 90 so that even that last day is always more
+        # than 60 days old, including runs near the end of a month.
+        old_month = _date_in_days(-120)
         old_folder = f"{old_month.year}/{old_month.month:02d}"
         page = (
             f"<a href='/wp-content/uploads/{old_folder}/Provisional-Result-Notification.pdf'>"
