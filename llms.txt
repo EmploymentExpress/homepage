@@ -40,11 +40,12 @@ Each link below opens one static page for a single government vacancy or notice.
 - [CUPB Bathinda: Advertisement No. PRO-342 (2026) dated 30.04.2026 for hiring Project Technical Support-III under ICMR Detailed Document](https://employmentexpress.github.io/homepage/share/job-112419023391370.html) — eligibility 8th/10th
 - [CUPB Bathinda: Advertisement No. PRO-355 (2026) dated 24.09.2026: Applications in the prescribed format are invited for ONE post of PROJECT RESEARCH SCIENTIST-I (NON-MEDICAL) under ICMR-funded Research Proje](https://employmentexpress.github.io/homepage/share/job-81260998336865.html) — eligibility 8th/10th
 - [PAU Ludhiana: Posts of Jr. Lab/ Field Helper (Last date for submission of application 05-11-2026 and appear for selection committee on 20-11-2026 at 11.00 AM) - School of Agricultural Biotechnology](https://employmentexpress.github.io/homepage/share/job-38458776186034.html) — last date 05-11-2026; eligibility Graduate
-- [PAU Ludhiana: Post of Field Assistant (Last date for submission of application 30-10-2026) - Reviving the Green Revolution Cell](https://employmentexpress.github.io/homepage/share/job-35854363710066.html) — 1 Posts; last date 30-10-2026; eligibility Graduate
-- [BFUHS Faridkot: Regarding applications invited for left over seats in Post Basic B.Sc. Nursing Course session 2026 in the office of Principal, University Institute of Nursing, Jalalabad up to 30](https://employmentexpress.github.io/homepage/share/job-6854802126906.html) — last date 30-10-2026; eligibility Graduate
+- [GADVASU Ludhiana: Corrigendum Notice Regarding Advertisement No. 03/2026: Extension of the Last Date for Submission of Offline Application Form](https://employmentexpress.github.io/homepage/share/job-260192759730396.html) — eligibility Diploma/ITI
+- [Chandigarh Administration: Hiring of Manpower in the Chandigarh Institute for Transformation, Finance Department, Chandigarh](https://employmentexpress.github.io/homepage/share/job-275184688939712.html) — 1 Posts; eligibility Diploma/ITI
 
 ## Latest Central and All-India government jobs
 
+- [SBI All India: APPLY ONLINE (Online Registration Extended till 04.11.2026)](https://employmentexpress.github.io/homepage/share/job-90753453398274.html) — last date 04-11-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-231201600378243.html) — eligibility 8th/10th
 - [IBPS All India: Apply Online for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-205634320266461.html) — last date 27-11-2026; eligibility Graduate
 - [IBPS All India: Advertisement for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-123151854563732.html) — eligibility 8th/10th
@@ -74,7 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [Department of Posts: Guideline Gazette Notification for refund of Postage - Notification No. S.O. 3891(E) dated 15.07.2026](https://employmentexpress.github.io/homepage/share/job-268002635006174.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-64029603756282.html) — eligibility 8th/10th
 - [Department of Posts: Recruitment Rules Recruitment Rules](https://employmentexpress.github.io/homepage/share/job-61832496367042.html) — 24 Posts; eligibility 8th/10th
-- [Department of Posts: Vacancies Vacancies](https://employmentexpress.github.io/homepage/share/job-29556303491008.html) — 24 Posts; eligibility 8th/10th
 
 ## Admit cards and call letters
 
@@ -178,4 +178,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-10-30
+Last updated: 2026-10-31
