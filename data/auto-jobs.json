@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-31T05:39:31Z",
+  "updatedAt": "2026-10-31T12:26:52Z",
   "jobs": [
     {
       "id": 90753453398274,
@@ -1763,8 +1763,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -1801,7 +1801,7 @@
       "location": "Ludhiana, Punjab",
       "applyMode": "Online / As Notified",
       "alertType": "answer-key",
-      "badge": "NEW ANSWER KEY",
+      "badge": "ANSWER KEY",
       "badgeColor": "bg-emerald-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
