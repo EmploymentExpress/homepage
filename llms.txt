@@ -45,6 +45,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-226963360341500.html) — eligibility 8th/10th
 - [SBI All India: APPLY ONLINE (02.11.2026 TO 23.11.2026)](https://employmentexpress.github.io/homepage/share/job-264607798535610.html) — last date 23-11-2026; eligibility Graduate
 - [IIT All India: Addendum to Advertisement No. IITJ/OR(NF)/2026-27/65 regarding the extension of the last date for submission of online applications and hard copy](https://employmentexpress.github.io/homepage/share/job-148207551001698.html) — last date 03-11-2026; eligibility Graduate
 - [IIT All India: Addendum to Advertisement No. IITJ/OR(NF)/2026-27/65 regarding the extension of the last date for submission of online applications and hard copy](https://employmentexpress.github.io/homepage/share/job-36156919851108.html) — last date 03-11-2026; eligibility Graduate
@@ -74,7 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [IIIT All India: Adv Non-Teaching Recruitment 2026 Final](https://employmentexpress.github.io/homepage/share/job-60702037820530.html) — eligibility Diploma/ITI
 - [IDS All India: Advertisement for Research Assistant (RA) Position *](https://employmentexpress.github.io/homepage/share/job-17917171426206.html) — eligibility Graduate
 - [RRC All India: Revised Detailed notification for Engagement of Apprentices against notification no. 04/2026 (NWR/AA) under Act Apprentices Act 1961](https://employmentexpress.github.io/homepage/share/job-247081942821709.html) — eligibility Diploma/ITI
-- [JKSSB All India: Advertisement for the posts of Junior Engineer (Mechanical) in Public Works (R&B) Department, Jammu & Kashmir](https://employmentexpress.github.io/homepage/share/job-229174669182546.html) — last date 15-12-2026; eligibility Graduate
 
 ## Admit cards and call letters
 
@@ -178,4 +178,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-02
+Last updated: 2026-11-03
