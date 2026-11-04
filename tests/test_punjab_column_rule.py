@@ -7,10 +7,12 @@ national body's Chandigarh-specific notice — from the Central University of
 Punjab (CUPB), Bathinda, and every notice whose job details name **the Punjab
 state, Chandigarh, or a district of Punjab as the job location** (all 23
 districts, with their common spelling variants, matched on word boundaries) to
-publish in Column 1, Latest Punjab Jobs (`type: "punjab"`,
-`categorySlug: "punjab-jobs"`), never in the All India & NVS / Central column,
-and never carrying the ``alsoInPunjab`` cross-listing flag (their home column is
-Punjab). Two exclusions keep the rule honest: a Punjab district / the state /
+publish in Column 1, Latest Punjab Jobs (`type: "punjab"` with a Punjab
+`categorySlug` — `"punjab-jobs"` unless the source is registered under a custom
+Punjab category such as `"psssb"`/`"ppsc"`/`"punjab-police"`), never in the
+All India & NVS / Central column, and never carrying the ``alsoInPunjab``
+cross-listing flag (their home column is Punjab). Two exclusions keep the rule
+honest: a Punjab district / the state /
 Chandigarh that appears only as an **examination centre, exam city or test
 venue** never moves a notice (the candidate sits the exam there, the job is not
 there), banks merely *named* Punjab (PNB, Punjab & Sind, Punjab & Maharashtra)
@@ -476,6 +478,24 @@ class EnforcePunjabColumnRuleTests(unittest.TestCase):
         }
         self.assertFalse(monitor.enforce_punjab_column_rule([job]))
 
+    def test_custom_punjab_category_slug_is_never_flattened(self):
+        # A Punjab source registered under a custom Punjab category (PSSSB is
+        # `categorySlug: "psssb"` in automation/sources.json) publishes its
+        # notices with that slug so the homepage's "PSSSB" chip still filters
+        # them. The record is already in the Punjab column, so enforcement must
+        # leave both fields alone instead of rewriting the slug.
+        job = {
+            "id": 2,
+            "title": "PSSSB — Ninth List (Provisional) against Non Joining Seats/Posts of Clerk",
+            "department": "Punjab Subordinate Services Selection Board (PSSSB)",
+            "location": "Punjab",
+            "type": "punjab",
+            "categorySlug": "psssb",
+        }
+        self.assertFalse(monitor.enforce_punjab_column_rule([job]))
+        self.assertEqual(job["type"], "punjab")
+        self.assertEqual(job["categorySlug"], "psssb")
+
 
 class StoreClassificationTests(unittest.TestCase):
     """The published store and the monitoring sources comply with R14."""
@@ -514,7 +534,17 @@ class StoreClassificationTests(unittest.TestCase):
         for job in self.matched_store_jobs():
             with self.subTest(job=job["id"]):
                 self.assertEqual(job["type"], "punjab")
-                self.assertEqual(job["categorySlug"], "punjab-jobs")
+                # The column is `type` (homepage `jobInColumn()`), exactly as for
+                # the sources below: `categorySlug` is the master-table filter and
+                # may deliberately be a custom Punjab category ("psssb", "ppsc",
+                # "punjab-police", …) so the homepage's category chips still match
+                # an automatically published notice. What must never happen is a
+                # Punjab-column record carrying the central value.
+                self.assertNotIn(
+                    job.get("categorySlug"),
+                    ("", None, "central"),
+                    "a Punjab-column notice must not carry the central category slug",
+                )
                 self.assertNotEqual(
                     job.get("alsoInPunjab"),
                     True,

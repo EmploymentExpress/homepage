@@ -654,9 +654,10 @@ Chandigarh**, every notice of the **Central University of Punjab (CUPB),
 Bathinda**, and every notice whose **job details name the Punjab state,
 Chandigarh, or a district of Punjab as the JOB LOCATION** must ALWAYS be
 published in Column 1 — **Latest Punjab Jobs** —
-with `type: "punjab"` and `categorySlug: "punjab-jobs"`. They must never appear
-in the All India & NVS / Central column, no matter how their source is
-registered:
+with `type: "punjab"` and a Punjab `categorySlug` (`"punjab-jobs"` by default;
+a source registered under a custom Punjab category keeps its own slug, see
+*Data side* below). They must never appear in the All India & NVS / Central
+column, no matter how their source is registered:
 
 - **AIIMS Bathinda** (Bathinda is in Punjab): Faculty, Non-Faculty, SR/JR
   Resident, Project posts — every category.
@@ -726,6 +727,14 @@ registered:
   Keep the `location` metadata truthful (e.g. `Bathinda, Punjab`,
   `Ferozepur, Punjab`, `Chandigarh`) — the column rule is about placement,
   not the address.
+  **`type` decides the column, `categorySlug` decides the master-table filter.**
+  A Punjab body that has its own homepage chip (`psssb`, `ppsc`,
+  `punjab-police`, …) keeps that slug on its source *and* on the published
+  store record, so the chip still matches the automatic notice;
+  `enforce_punjab_column_rule()` therefore rewrites only `""`/`"central"` and
+  never flattens a custom Punjab slug to `"punjab-jobs"`. Column membership is
+  resolved by `type` (`jobInColumn()` in `index.html`), so such a record still
+  renders in Column 1.
 - **Never** put the `alsoInPunjab` cross-listing flag on these records: their
   home column is Punjab. The flag stays reserved for genuine all-India notices
   that Punjab candidates can also apply to.
