@@ -16,6 +16,38 @@ The **"Update job alerts" workflow is failing intermittently** due to **3 distin
 
 ---
 
+## Issue 5: Punjab-column guard rejected custom Punjab category slugs — RESOLVED 2026-11-04
+
+> **Status: RESOLVED.** Runs
+> [41738590898](https://github.com/EmploymentExpress/homepage/actions/runs/41738590898)
+> and
+> [41784750748](https://github.com/EmploymentExpress/homepage/actions/runs/41784750748)
+> failed in the *update* job's **Test alert parser** step (`python -m unittest
+> discover -s tests`), which skips every later step — so no alerts were fetched
+> or published for 20+ hours.
+>
+> Cause: the 2026-11-03 run published the first PSSSB notice
+> (`data/auto-jobs.json`, id `161401014481959`) from the PSSSB sources, which
+> are deliberately registered under their own homepage chip
+> (`"categorySlug": "psssb"` in `automation/sources.json`). The store record
+> therefore carries `type: "punjab"` / `categorySlug: "psssb"` — correct, and
+> rendered in Column 1 because `jobInColumn()` in `index.html` resolves column
+> membership from `type`. But
+> `test_every_matching_store_record_publishes_in_the_punjab_column()` asserted
+> `categorySlug == "punjab-jobs"` literally, so the guard failed as soon as a
+> custom-Punjab-category source published anything. Its sibling
+> `test_registered_sources_use_punjab_column_values()` already allowed custom
+> Punjab slugs, and `enforce_punjab_column_rule()` only rewrites
+> `""`/`"central"` — the store assertion was the outlier.
+>
+> Fix: the store guard now asserts the R14 outcome (a Punjab `categorySlug`
+> that is never `""`/`null`/`"central"`), plus a new
+> `test_custom_punjab_category_slug_is_never_flattened()` pinning the
+> enforcement behaviour, and AGENTS.md → "Punjab column rule" records the
+> `type` vs `categorySlug` split. No data or pipeline change was needed.
+
+---
+
 ## Issue 4: Source-access diagnostic step timeout — RESOLVED 2026-10-21
 
 > **Status: RESOLVED.** On 2026-10-20 the scheduled run
