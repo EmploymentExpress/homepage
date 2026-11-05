@@ -1605,15 +1605,6 @@
       "addedBy": "discovery-official-website",
       "addedAt": "2026-09-27T16:57:39Z",
       "sslFallback": true,
-      "_aiHealth": {
-        "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-10-28T09:00:09Z",
-        "failuresAtDisable": 56,
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it",
-        "recheckSince": "2026-11-04T09:52:44Z",
-        "failuresAtRecheck": 56
-      },
       "enabled": true
     },
     {
