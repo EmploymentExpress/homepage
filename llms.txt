@@ -45,6 +45,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [Dr. B. R. Ambedkar University Delhi: Advertisement for Recruitment to Various Teaching](https://employmentexpress.github.io/homepage/share/job-275411854000955.html) — eligibility 8th/10th
 - [IBPS All India: SBI Recruitment of Specialist Cadre Officers (Manager (Security) / Deputy Manager (Security)) Registration From 04-Nov-2026](https://employmentexpress.github.io/homepage/share/job-247578387183294.html) — last date 10-12-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-203200313030131.html) — eligibility 8th/10th
 - [Open PDF: Welcome to the New Website of Railway: Open PDF: Welcome to the New Website of Railway Recruitment Boards. Welcome to the New Website of Railway Recruitment Boards](https://employmentexpress.github.io/homepage/share/job-156755333447575.html) — eligibility 8th/10th
@@ -59,7 +60,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [SBI All India: APPLY ONLINE (02.11.2026 TO 23.11.2026)](https://employmentexpress.github.io/homepage/share/job-264607798535610.html) — last date 23-11-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-102220528026284.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-132584201655137.html) — eligibility 8th/10th
-- [SBI All India: APPLY ONLINE (Online Registration Extended till 04.11.2026)](https://employmentexpress.github.io/homepage/share/job-90753453398274.html) — last date 04-11-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-231201600378243.html) — eligibility 8th/10th
 - [IBPS All India: Apply Online for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-205634320266461.html) — last date 27-11-2026; eligibility Graduate
 - [IBPS All India: Advertisement for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-123151854563732.html) — eligibility 8th/10th
@@ -184,4 +184,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-04
+Last updated: 2026-11-05
