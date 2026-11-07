@@ -12,6 +12,10 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Punjab government jobs
 
+- [District Court Bathinda: Public Notice regarding the interviews for the post of Lift Operator, Generator Operator and Technician (Electrical) on contract basis. 06/11/2026 30/11/2026 — Public Notic](https://employmentexpress.github.io/homepage/share/job-261668150058036.html) — eligibility 8th/10th
+- [District Court Bathinda: List of candidates who have been found eligible for the post of Lift Operator, Generator Operator and Technician (Electrical) on contract basis (Annexure-A)). 06/11/2026 30](https://employmentexpress.github.io/homepage/share/job-68205820970381.html) — eligibility 8th/10th
+- [District Court Bathinda: List of candidates who have not been found eligible for the post of Lift Operator, Generator Operator and Technician (Electrical) on contract basis (Annexure-B). 06/11/2026](https://employmentexpress.github.io/homepage/share/job-37145299765973.html) — eligibility 8th/10th
+- [PAU Ludhiana: Posts of Junior Field/Lab Helper (Last date for submission of application 30-11-2026 and appear for selection committee on 09-12-2026 at 11.30 AM) - Department of Soil Science](https://employmentexpress.github.io/homepage/share/job-10827505534692.html) — last date 30-11-2026; eligibility Graduate
 - [GADVASU Ludhiana: Vacancy Notice for the post of Driver-cum-Helper, Dept. of Animal Nutrition, Guru Angad Dev Veterinary & Animal Sciences University, Ludhiana](https://employmentexpress.github.io/homepage/share/job-269607059564065.html) — eligibility Diploma/ITI
 - [GADVASU Ludhiana: Vacancy Notice for the post of Field Worker, Dept. of Animal Nutrition, Guru Angad Dev Veterinary & Animal Sciences University, Ludhiana](https://employmentexpress.github.io/homepage/share/job-256837466234536.html) — eligibility Diploma/ITI
 - [SSSC All India: Notice inviting cross objection to the objections submitted against the proposed changes to answers of objective type questions asked in Computer Based Test (CBT) held fr](https://employmentexpress.github.io/homepage/share/job-252156950017908.html) — eligibility Graduate
@@ -38,13 +42,10 @@ Each link below opens one static page for a single government vacancy or notice.
 - [CUPB Bathinda: Advt No PRO 349 2026](https://employmentexpress.github.io/homepage/share/job-217009995519610.html) — eligibility 8th/10th
 - [CUPB Bathinda: Date of Interview : 11th May, 2026, 03:00 PM onwards Advertisement No. PRO-335 (2026) dated 09.04.2026 for hiring Project Technical Support-III Detailed Document](https://employmentexpress.github.io/homepage/share/job-171807075832662.html) — eligibility 8th/10th
 - [CUPB Bathinda: Detail 20Advertisement 2](https://employmentexpress.github.io/homepage/share/job-166848634506724.html) — 1 Posts; eligibility Graduate
-- [CUPB Bathinda: Date of Interview : 29th April, 2026, 11:00 AM onwards Advertisement No. PRO-336 (2026) dated 16.04.2026 for hiring RESEARCH ASSISTANT under ICSSR, New Delhi Detailed Document](https://employmentexpress.github.io/homepage/share/job-160565110678138.html) — eligibility 8th/10th
-- [District Court Faridkot: Public Notice regarding filling up of 01(one) post of Lift Operator, 01(One) post of Worker(Creche) and 01(One) post of Guard(Creche) at Judicial Court Complex, Faridkot 16](https://employmentexpress.github.io/homepage/share/job-133741073908100.html) — eligibility Diploma/ITI
-- [CUPB Bathinda: Contractual 20Faculty 20(Extended 20Time) 20(2)](https://employmentexpress.github.io/homepage/share/job-128219845756588.html) — eligibility Graduate
-- [CUPB Bathinda: Date of Interview : 15th April, 2026, 11:00 AM onwards Advertisement No. PRO-334 (2026) dated 07.04.2026 for hiring Project Research Scientist-I Detailed Document](https://employmentexpress.github.io/homepage/share/job-105892227491621.html) — eligibility 8th/10th
 
 ## Latest Central and All-India government jobs
 
+- [DSSSB All India: vacancy-notice-advertisement-no-062026-combined-examinations-2026-post-junior-engineer-0](https://employmentexpress.github.io/homepage/share/job-214262410342082.html) — eligibility 8th/10th
 - [HAU All India: SRF Recruitment (GPB) 05-11-2026](https://employmentexpress.github.io/homepage/share/job-279035129549071.html) — eligibility 8th/10th
 - [HAU All India: Young & Professional-II Recruitment (GPB) 05-11-2026](https://employmentexpress.github.io/homepage/share/job-254264054014770.html) — eligibility 8th/10th
 - [HAU All India: Research Assistant Recruitment 06-11-2026](https://employmentexpress.github.io/homepage/share/job-232753592089528.html) — 4 Posts; eligibility Graduate
@@ -74,7 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-132584201655137.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-231201600378243.html) — eligibility 8th/10th
 - [IBPS All India: Apply Online for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-205634320266461.html) — last date 27-11-2026; eligibility Graduate
-- [IBPS All India: Advertisement for Direct Recruitment of Server Administrator, Assistant & Programming Assistant on Regular Basis](https://employmentexpress.github.io/homepage/share/job-123151854563732.html) — eligibility 8th/10th
 
 ## Admit cards and call letters
 
@@ -180,4 +180,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-06
+Last updated: 2026-11-07
