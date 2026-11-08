@@ -12,13 +12,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-11-04T09:52:44Z",
-        "failuresAtDisable": 716,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-11-06T09:55:10Z",
-        "failuresAtRecheck": 761
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-11-08T09:30:10Z",
+        "disabledUntil": "2026-11-10T09:30:10Z",
+        "failuresAtDisable": 814,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-11-10T09:30:10Z"
     },
     {
       "id": "allorigins-get",
@@ -40,13 +40,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-11-05T09:51:21Z",
-        "disabledUntil": "2026-11-07T09:51:21Z",
         "failuresAtDisable": 159,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-11-07T09:51:21Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-11-08T09:30:10Z",
+        "failuresAtRecheck": 233
+      }
     },
     {
       "id": "codetabs",
@@ -54,13 +54,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-11-04T09:52:44Z",
-        "failuresAtDisable": 1494,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-11-06T09:55:10Z",
-        "failuresAtRecheck": 1539
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-11-08T09:30:10Z",
+        "disabledUntil": "2026-11-10T09:30:10Z",
+        "failuresAtDisable": 1592,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-11-10T09:30:10Z"
     }
   ]
 }
