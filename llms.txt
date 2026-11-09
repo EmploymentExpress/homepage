@@ -78,6 +78,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Admit cards and call letters
 
+- [DSSSB All India: Skill-Test: Download e-admit cards for Post Codes 59/24 & 33/25](https://employmentexpress.github.io/homepage/share/job-54435912863185.html) — eligibility 8th/10th
 - [JKSSB All India: Notification regarding Issuance of Admit Card to the candidates for Written Examination for the post of Accounts Assistant (Finance Department), scheduled to be held on 15.11.2026](https://employmentexpress.github.io/homepage/share/job-68240254467920.html) — eligibility Graduate
 - [SBI All India: INTERVIEW CALL LETTER](https://employmentexpress.github.io/homepage/share/job-223684628023834.html) — eligibility 8th/10th
 - [CSIR–National Aerospace Laboratories: Notification for collecting admit card (1).pdf — Collection of Admit Cards(for the post of MTS, Advt No.11/2026) for the candidates who are facing problem in downloading the same](https://employmentexpress.github.io/homepage/share/job-200499062392106.html) — eligibility 8th/10th
@@ -135,7 +136,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [BFUHS Faridkot: Regarding College Level Counselling for B.Sc Allied & Health Sciences Courses (Session 2026)](https://employmentexpress.github.io/homepage/share/job-72053217468168.html) — eligibility 8th/10th
 - [BFUHS Faridkot: Regarding Semi Online Counselling for left over seats in M.Sc Nursing, DMLT and G.N.M Courses for the session 2026-27 at State Institute of Nursing and Paramedical Sciences, Badal](https://employmentexpress.github.io/homepage/share/job-51639132226689.html) — eligibility Graduate
 - [BFUHS Faridkot: Regarding application invited for College level counselling for left over seats for M.Sc Nursing for the session 2026-27 in Govt. College of Nursing, Patiala will be held on 28-10](https://employmentexpress.github.io/homepage/share/job-32732519793404.html) — eligibility Graduate
-- [BFUHS Faridkot: Regarding Semi Online Counseling (Stray Round) for leftover seats in GNM & ANM course (Session 2026-2027) for Mata Gujri State College of Nursing, Dhuri](https://employmentexpress.github.io/homepage/share/job-145488096521360.html) — eligibility Graduate
 
 ## In-depth recruitment guides
 
@@ -180,4 +180,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-08
+Last updated: 2026-11-09
