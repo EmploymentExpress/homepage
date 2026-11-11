@@ -12,6 +12,8 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Punjab government jobs
 
+- [PAU Ludhiana: Tractor Driving Proficiency Test & Verification of documents for the post of Tractor Operator](https://employmentexpress.github.io/homepage/share/job-225377130581206.html) — eligibility Graduate
+- [PAU Ludhiana: Screening of original documents for the post of Sr. Field/Lab Helper (Now be held on 12-11-2026 at 11.00 AM) - Dept. of Plant Breeding and Genetics](https://employmentexpress.github.io/homepage/share/job-112547578069182.html) — eligibility Graduate
 - [GADVASU Ludhiana: Vacancy Notice for the post of Nutritionist-cum-Technical Officer under MISC-174, Department of Animal Nutrition, Guru Angad Dev Veterinary & Animal Sciences Uni](https://employmentexpress.github.io/homepage/share/job-266988074177655.html) — eligibility Diploma/ITI
 - [GADVASU Ludhiana: Vacancy Notice for the post of Driver-cum-Helper under MISC-174, Department of Animal Nutrition, Guru Angad Dev Veterinary & Animal Sciences University, Ludhiana](https://employmentexpress.github.io/homepage/share/job-223972318838027.html) — eligibility Diploma/ITI
 - [AIIMS Bathinda: 2) Annexure - A (Essential Eligibility Criteria) — Advertisement for the Recruitment of Faculty (Group-A) Posts on Direct Recruitment Basis in various Departments of AIIMS, Bathind](https://employmentexpress.github.io/homepage/share/job-246400288782246.html) — 14 Posts; last date 30-11-2026; eligibility Graduate
@@ -40,11 +42,11 @@ Each link below opens one static page for a single government vacancy or notice.
 - [GADVASU Ludhiana: Corrigendum for Extension of dates of Vacancy Notice for one post of Project Associate-I, The Director, Centre for One Health, Guru Angad Dev Veterinary & Animal](https://employmentexpress.github.io/homepage/share/job-148487436827441.html) — eligibility Diploma/ITI
 - [PAU Ludhiana: Post of Office Helper (Last date for submission of application 12-11-2026 and appear for selection committee on 30-11-2026 at 11.00 AM) - School of Agricultural Biotechnology](https://employmentexpress.github.io/homepage/share/job-118798711215769.html) — last date 12-11-2026; eligibility Graduate
 - [BFUHS Faridkot: Advt-BFU-26-28](https://employmentexpress.github.io/homepage/share/job-76122159761594.html) — eligibility Graduate
-- [PAU Ludhiana: Post of Jr. Field/Lab Helper (Last date for submission of application 12-11-2026 and appear for selection committee on 25-11-2026 at 11.00 AM) - Dept. of Plant Breeding and Genetics](https://employmentexpress.github.io/homepage/share/job-105263953710275.html) — last date 12-11-2026; eligibility Graduate
-- [CUPB Bathinda: Detail 20Advertisement 3](https://employmentexpress.github.io/homepage/share/job-220544657163924.html) — 1 Posts; eligibility Graduate
 
 ## Latest Central and All-India government jobs
 
+- [IBPS All India: BPCL Special Recruitment Drive for Persons with Benchmark Disabilities (PwBDs)/ Divyangjans Registration From 09-Nov-2026](https://employmentexpress.github.io/homepage/share/job-267223921897930.html) — last date 14-12-2026; eligibility Graduate
+- [IBPS All India: JKB Recruitment of Various Posts Registration From 07-Nov-2026](https://employmentexpress.github.io/homepage/share/job-183177519303498.html) — last date 11-12-2026; eligibility Graduate
 - [HAU All India: Advt. No. 3/2026 Recruitment](https://employmentexpress.github.io/homepage/share/job-269396192130287.html) — 1 Posts; last date 14-12-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-240476174162199.html) — eligibility 8th/10th
 - [HAU All India: Young & Professional-II Recruitment (Dept. Metrology) 10-11-2026](https://employmentexpress.github.io/homepage/share/job-160868986989997.html) — eligibility 8th/10th
@@ -73,8 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [IBPS All India: CRP-PO/MTs & SPL-XVI](https://employmentexpress.github.io/homepage/share/job-13269699991670.html) — eligibility 8th/10th
 - [Dr. B. R. Ambedkar University Delhi: Advertisement for Recruitment to Various Teaching](https://employmentexpress.github.io/homepage/share/job-275411854000955.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-86113873848901.html) — eligibility 8th/10th
-- [IBPS All India: SBI Recruitment of Specialist Cadre Officers (Manager (Security) / Deputy Manager (Security)) Registration From 04-Nov-2026](https://employmentexpress.github.io/homepage/share/job-247578387183294.html) — last date 10-12-2026; eligibility Graduate
-- [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-203200313030131.html) — eligibility 8th/10th
 
 ## Admit cards and call letters
 
@@ -177,4 +177,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-10
+Last updated: 2026-11-11
