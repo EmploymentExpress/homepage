@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T14:29:49Z",
+  "updatedAt": "2026-11-12T00:43:36Z",
   "jobs": [
     {
       "id": 230195148897631,
@@ -91,8 +91,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -129,7 +129,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "admit-card",
-      "badge": "NEW ADMIT CARD",
+      "badge": "ADMIT CARD",
       "badgeColor": "bg-emerald-600",
       "type": "central",
       "categorySlug": "central",
@@ -1421,8 +1421,8 @@
       "location": "Bathinda, Punjab",
       "applyMode": "Offline",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
       "advtNo": "5/7/2003",
