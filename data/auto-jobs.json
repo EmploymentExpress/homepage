@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-14T18:00:16Z",
+  "updatedAt": "2026-11-14T22:26:57Z",
   "jobs": [
     {
       "id": 243088579439798,
@@ -167,7 +167,7 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "result",
-      "badge": "NEW RESULT",
+      "badge": "RESULT",
       "badgeColor": "bg-rose-600",
       "type": "central",
       "categorySlug": "central",
@@ -205,8 +205,8 @@
       "location": "All India",
       "applyMode": "Online / As Notified",
       "alertType": "recruitment",
-      "badge": "NEW JOB ALERT",
-      "badgeColor": "bg-red-600",
+      "badge": "JOB NOTICE",
+      "badgeColor": "bg-blue-600",
       "type": "central",
       "categorySlug": "central",
       "advtNo": "See Official Notice",
@@ -5175,7 +5175,7 @@
       "title": "Institute of Banking Personnel Selection (IBPS) — CRP-PO/MTs & SPL-XVI",
       "department": "Institute of Banking Personnel Selection (IBPS)",
       "vacancies": "See Notification",
-      "qualification": "See Official Notification",
+      "qualification": "Graduate",
       "qualCategory": "8th/10th",
       "lastDate": "See Notification",
       "startDate": "Newly Published",
@@ -5190,7 +5190,7 @@
       "advtNo": "See Official Notice",
       "feeGen": "See Official Notification",
       "feeSC": "See Official Notification",
-      "feeMode": "As Notified",
+      "feeMode": "Online",
       "age": "See Official Notification",
       "details": "IBPS published a new recruitment notice: Institute of Banking Personnel Selection (IBPS) — CRP-PO/MTs & SPL-XVI. Open the official link to verify all dates, conditions and instructions.",
       "howToApply": [
@@ -5213,7 +5213,7 @@
       "title": "Institute of Banking Personnel Selection (IBPS) — Window Notification for CRP-PO/MTs -XVI and SPL-XVI",
       "department": "Institute of Banking Personnel Selection (IBPS)",
       "vacancies": "See Notification",
-      "qualification": "See Official Notification",
+      "qualification": "Graduate",
       "qualCategory": "8th/10th",
       "lastDate": "See Notification",
       "startDate": "Newly Published",
@@ -5228,7 +5228,7 @@
       "advtNo": "See Official Notice",
       "feeGen": "See Official Notification",
       "feeSC": "See Official Notification",
-      "feeMode": "As Notified",
+      "feeMode": "Online",
       "age": "See Official Notification",
       "details": "IBPS published a new recruitment notice: Institute of Banking Personnel Selection (IBPS) — Window Notification for CRP-PO/MTs -XVI and SPL-XVI. Open the official link to verify all dates, conditions and instructions.",
       "howToApply": [
