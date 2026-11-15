@@ -1741,12 +1741,12 @@
       "sslFallback": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
-        "quarantined": true,
+        "phase": "recheck",
         "disabledAt": "2026-11-08T09:30:10Z",
-        "disabledUntil": "2026-11-15T09:30:10Z",
         "failuresAtDisable": 45,
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it",
+        "recheckSince": "2026-11-15T09:56:28Z",
+        "failuresAtRecheck": 45
       },
       "enabled": true
     },

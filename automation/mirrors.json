@@ -12,13 +12,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-11-12T10:20:48Z",
-        "disabledUntil": "2026-11-14T10:20:48Z",
         "failuresAtDisable": 913,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-11-14T10:20:48Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-11-15T09:56:28Z",
+        "failuresAtRecheck": 997
+      }
     },
     {
       "id": "allorigins-get",
@@ -26,13 +26,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "recheck",
-        "disabledAt": "2026-11-11T09:51:45Z",
-        "failuresAtDisable": 548,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
-        "recheckSince": "2026-11-13T10:00:54Z",
-        "failuresAtRecheck": 607
-      }
+        "phase": "disabled",
+        "disabledAt": "2026-11-15T09:56:28Z",
+        "disabledUntil": "2026-11-17T09:56:28Z",
+        "failuresAtDisable": 656,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      },
+      "disabledUntil": "2026-11-17T09:56:28Z"
     },
     {
       "id": "allorigins-raw",
@@ -54,13 +54,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-11-12T10:20:48Z",
-        "disabledUntil": "2026-11-14T10:20:48Z",
         "failuresAtDisable": 1691,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-11-14T10:20:48Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-11-15T09:56:28Z",
+        "failuresAtRecheck": 1775
+      }
     }
   ]
 }
