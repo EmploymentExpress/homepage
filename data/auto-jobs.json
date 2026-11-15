@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-14T22:26:57Z",
+  "updatedAt": "2026-11-15T06:30:00Z",
   "jobs": [
     {
       "id": 243088579439798,
@@ -1953,7 +1953,7 @@
       "location": "Punjab",
       "applyMode": "Online / As Notified",
       "alertType": "admission",
-      "badge": "NEW ADMISSION",
+      "badge": "ADMISSION",
       "badgeColor": "bg-purple-600",
       "type": "punjab",
       "categorySlug": "psssb",
@@ -2447,7 +2447,7 @@
       "location": "Faridkot, Punjab",
       "applyMode": "Online / As Notified",
       "alertType": "admission",
-      "badge": "NEW ADMISSION",
+      "badge": "ADMISSION",
       "badgeColor": "bg-purple-600",
       "type": "punjab",
       "categorySlug": "punjab-jobs",
