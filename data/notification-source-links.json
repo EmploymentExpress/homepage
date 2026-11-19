@@ -1407,12 +1407,12 @@
       "sslFallback": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
-        "quarantined": true,
+        "phase": "recheck",
         "disabledAt": "2026-11-12T10:20:48Z",
-        "disabledUntil": "2026-11-19T10:20:48Z",
         "failuresAtDisable": 17,
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it",
+        "recheckSince": "2026-11-19T10:45:48Z",
+        "failuresAtRecheck": 17
       },
       "enabled": true
     },
