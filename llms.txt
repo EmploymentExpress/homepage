@@ -45,6 +45,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [Uttarakhand All India: new (Corrigendum)Application for the Regular Post of TGT(Mathematics)](https://employmentexpress.github.io/homepage/share/job-166575484037679.html) — eligibility B.Ed/ETT
 - [CSIR–National Aerospace Laboratories: Conduct of Competitive Written Examination for recruitment to the posts of Technician-1 (1).pdf — Conduct of Competitive Written Examination for recruitment to the posts of Technician-1 unde](https://employmentexpress.github.io/homepage/share/job-253439081120623.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-250325732689301.html) — eligibility 8th/10th
 - [SBI All India: APPLY ONLINE (20.11.2026 TO 10.12.2026)](https://employmentexpress.github.io/homepage/share/job-245714309140838.html) — last date 25-12-2026; eligibility Graduate
@@ -74,7 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [Maitreyi College, University of Delhi: Recruitment Process](https://employmentexpress.github.io/homepage/share/job-132841811732695.html) — eligibility 8th/10th
 - [IBPS All India: MANIT Recruitment of various Group ‘B’ & ‘C’ Non-Teaching Positions Registration From 13-Nov-2026](https://employmentexpress.github.io/homepage/share/job-120119144639425.html) — last date 25-12-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-47426842916251.html) — eligibility 8th/10th
-- [HAU All India: Advt. No. 3/2026 Recruitment](https://employmentexpress.github.io/homepage/share/job-272965684302989.html) — 1 Posts; last date 14-12-2026; eligibility Graduate
 
 ## Admit cards and call letters
 
@@ -176,4 +176,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-20
+Last updated: 2026-11-21
