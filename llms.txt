@@ -35,13 +35,13 @@ Each link below opens one static page for a single government vacancy or notice.
 - [PAU Ludhiana: Post of Research Fellows (Last date for submission of application 03-12-2026 and appear for interview on 11-12-2025 at 11.30 AM) - Deptt. of Economics & Sociology](https://employmentexpress.github.io/homepage/share/job-231393592123543.html) — last date 03-12-2026; eligibility Graduate
 - [SSSC All India: Notice inviting cross objection to the objections submitted against the proposed changes to answers of objective type questions asked in Computer Based Test (CBT) held fr](https://employmentexpress.github.io/homepage/share/job-113277885605811.html) — eligibility Graduate
 - [SSSC All India: Notice of Special Opportunity to remove the discrepancies relating to uploaded photographs, uploaded signatures and uploaded documents in the Online Application Forms for](https://employmentexpress.github.io/homepage/share/job-18006680648593.html) — eligibility Graduate
-- [AIIMS Bathinda: Advertisement for Walk-In Interview for the Project Posts of Palliative Care Doctor in the Department of Anaesthesiology at AIIMS Bathinda](https://employmentexpress.github.io/homepage/share/job-188580405161261.html) — 1 Posts; last date 22-11-2026; eligibility Graduate
 - [Chandigarh Administration: Fill-up the post of Executive Engineer (Horticulture) in the Engineering Department, UT, on deputation basis — Engineering](https://employmentexpress.github.io/homepage/share/job-126457185588387.html) — 29 Posts; last date 29-12-2026; eligibility Diploma/ITI
 - [Chandigarh Administration: Hiring of Manpower in the Chandigarh Institute for Transformation, Finance Department, Chandigarh](https://employmentexpress.github.io/homepage/share/job-8086416844683.html) — 1 Posts; eligibility Diploma/ITI
 - [SSSC All India: NOTICE: Notice inviting cross objection to the objections submitted against the proposed changes to answers of objective type questions asked in Computer Based Test (CBT)](https://employmentexpress.github.io/homepage/share/job-243088579439798.html) — eligibility Graduate
 - [GADVASU Ludhiana: Vacancy Notice for the two posts of Project Associate-I on contract basis, Dean, College of Dairy and Food Science Technology, Guru Angad Dev Veterinary and Anim](https://employmentexpress.github.io/homepage/share/job-224079184240498.html) — eligibility Diploma/ITI
 - [SSSC All India: Notice inviting cross objection to the objections submitted against the proposed changes to answers of objective type questions asked in Computer Based Test (CBT) held fr](https://employmentexpress.github.io/homepage/share/job-142693670112613.html) — eligibility Graduate
 - [GADVASU Ludhiana: Corrigendum-2 for Vacancy notice for one post of Project Associate-I on Contract Basis, Department of Veterinary Surgery and Radiology, Guru Angad Dev Veterinary](https://employmentexpress.github.io/homepage/share/job-110652031028759.html) — eligibility Diploma/ITI
+- [PSSSB Punjab: Correction Portal for different Posts Published vide Advertisement No. 12 of 2026](https://employmentexpress.github.io/homepage/share/job-270634699171456.html) — eligibility 8th/10th
 
 ## Latest Central and All-India government jobs
 
@@ -93,6 +93,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Results and answer keys
 
+- [SBI All India: LIST OF CANDIDATES PROVISIONALLY SELECTED - VICE PRESIDENT (ENTERPRISE AND TECHNOLOGY ARCHITECT)](https://employmentexpress.github.io/homepage/share/job-133865597179798.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interviews held on 03-11-2026 at CCRS, HQ., Chennai](https://employmentexpress.github.io/homepage/share/job-271199662013197.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interviews held on 03-11-2026 at CCRS, HQ., Chennai](https://employmentexpress.github.io/homepage/share/job-29192879862353.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interviews held on 03-11-2026 at CCRS, HQ., Chennai](https://employmentexpress.github.io/homepage/share/job-222342148200116.html) — eligibility 8th/10th
@@ -122,7 +123,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [JKSSB All India: Final Selection List for the post of Career Counseling Officer under Item No. 074 advertised vide Advertisement No. 04 of 2020 dated 16.12.2020 of Labour & Employment Department](https://employmentexpress.github.io/homepage/share/job-40940958808642.html) — eligibility B.Ed/ETT
 - [SSSC All India: Punjab Steno Results](https://employmentexpress.github.io/homepage/share/job-272702805133721.html) — eligibility 8th/10th
 - [CCRS All India: Results of the Personal Interviews held on 03-11-2026 at CCRS, HQ., Chennai](https://employmentexpress.github.io/homepage/share/job-248435751904856.html) — eligibility 8th/10th
-- [SSSC All India: Haryana Steno Results](https://employmentexpress.github.io/homepage/share/job-118252574786182.html) — eligibility 8th/10th
 
 ## Admissions and courses
 
@@ -177,4 +177,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-22
+Last updated: 2026-11-23
