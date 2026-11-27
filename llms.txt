@@ -45,6 +45,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Latest Central and All-India government jobs
 
+- [Sahitya Akademi, New Delhi: Invite applications for the various Posts on direct recruitment basis. (Last Date: 18 December 2026)](https://employmentexpress.github.io/homepage/share/job-21796120844319.html) — last date 18-12-2026; eligibility Graduate
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-217280938263703.html) — eligibility 8th/10th
 - [IBPS All India: CRP-PO/MT-XVI](https://employmentexpress.github.io/homepage/share/job-200179027433522.html) — eligibility Graduate
 - [IBPS All India: Notice for Online Personality Test in Remote Proctored Mode (RPA Mode) for CRP-PO/MT-XVI](https://employmentexpress.github.io/homepage/share/job-90667848332955.html) — eligibility Graduate
@@ -74,7 +75,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-21774452511376.html) — eligibility 8th/10th
 - [Maitreyi College, University of Delhi: Schedule of Interview for the appointment of Assistant Professor in Department of Physics](https://employmentexpress.github.io/homepage/share/job-1081533094899.html) — eligibility 8th/10th
 - [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-258861323412356.html) — eligibility 8th/10th
-- [CCRS All India: Recruitment of Medical Commissioner AYUSH on Deputation Including Short Term Contract basis in ESI Corporation Hqrs, New Delhi](https://employmentexpress.github.io/homepage/share/job-222490463461020.html) — eligibility 8th/10th
 
 ## Admit cards and call letters
 
@@ -91,6 +91,7 @@ Each link below opens one static page for a single government vacancy or notice.
 
 ## Results and answer keys
 
+- [AIIMS Bathinda: 2) Document Verification Schedule](https://employmentexpress.github.io/homepage/share/job-47175694716366.html) — 1 Posts; eligibility Diploma/ITI
 - [IIT All India: Student Document Verification](https://employmentexpress.github.io/homepage/share/job-9839075070061.html) — eligibility Graduate
 - [CSIR–National Aerospace Laboratories: Notification-AERO-MECH-CHEM-Advt.No_.15-2026.PDF — Result notification of Aero/Mech and Chemistry specialisation of Advt.No. 15/2026/PS - reg](https://employmentexpress.github.io/homepage/share/job-235875359780169.html) — eligibility 8th/10th
 - [SBI All India: CANDIDATES PROVISIONALLY SELECTED IN SECOND WAIT LIST](https://employmentexpress.github.io/homepage/share/job-222943538327043.html) — eligibility 8th/10th
@@ -120,7 +121,6 @@ Each link below opens one static page for a single government vacancy or notice.
 - [DSSSB All India: Notice no. 392 :- Declaration of Marks/Result for Tier-Il Exam and calling of E-dossiers for Post code 58/24 for the Post of Motor Vehicle Inspector in Transport Department, Govt. of NCT](https://employmentexpress.github.io/homepage/share/job-200092489829191.html) — 20 Posts; eligibility Graduate
 - [IBPS All India: Result Status of Online Main Examination for CRP-PO/MTs-XVI](https://employmentexpress.github.io/homepage/share/job-121667155783429.html) — eligibility Graduate
 - [DSSSB All India: Notice:- Declaration of marks of candidates for the post of Special Education Teacher in Directorate of Educationunder post code - 42/25 &calling of e-dossiers from the shortlisted candid](https://employmentexpress.github.io/homepage/share/job-258731325509877.html) — eligibility 8th/10th
-- [CCRS All India: Results of the Personal Interviews held on 03-11-2026 at CCRS, HQ., Chennai](https://employmentexpress.github.io/homepage/share/job-100789903689704.html) — eligibility 8th/10th
 
 ## Admissions and courses
 
@@ -174,4 +174,4 @@ EMPLOYMENT EXPRESS publishes free job alerts on:
 - [EMPLOYMENT EXPRESS homepage](https://employmentexpress.github.io/homepage/): the live alert board.
 - Notices are verified on each authority's own website (for example sssb.punjab.gov.in, psssb.punjab.gov.in, highcourtchd.gov.in, aiimsbathinda.edu.in, pgimer.edu.in, cup.edu.in, ssc.gov.in) before publication.
 
-Last updated: 2026-11-26
+Last updated: 2026-11-27
