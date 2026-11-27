@@ -270,12 +270,12 @@
       "sslFallback": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
-        "quarantined": true,
+        "phase": "recheck",
         "disabledAt": "2026-11-20T10:32:05Z",
-        "disabledUntil": "2026-11-27T10:32:05Z",
         "failuresAtDisable": 77,
-        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it"
+        "reason": "Five consecutive source failures ending in a direct HTTP 404/410; the updater skips this source until the quarantine expires, then rechecks it",
+        "recheckSince": "2026-11-27T11:26:22Z",
+        "failuresAtRecheck": 77
       }
     },
     {
