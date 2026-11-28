@@ -4,7 +4,16 @@
     {
       "id": "jina-reader",
       "template": "https://r.jina.ai/{url}",
-      "enabled": true
+      "enabled": true,
+      "disabledUntil": "2026-11-30T10:55:13Z",
+      "_aiHealth": {
+        "managedBy": "ai-health-monitor",
+        "phase": "disabled",
+        "disabledAt": "2026-11-28T10:55:13Z",
+        "disabledUntil": "2026-11-30T10:55:13Z",
+        "failuresAtDisable": 36,
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
+      }
     },
     {
       "id": "cors-lol",
@@ -26,13 +35,13 @@
       "enabled": true,
       "_aiHealth": {
         "managedBy": "ai-health-monitor",
-        "phase": "disabled",
+        "phase": "recheck",
         "disabledAt": "2026-11-25T11:44:54Z",
-        "disabledUntil": "2026-11-27T11:44:54Z",
         "failuresAtDisable": 873,
-        "reason": "Repeated mirror transport failures; auto-recheck after cooldown"
-      },
-      "disabledUntil": "2026-11-27T11:44:54Z"
+        "reason": "Repeated mirror transport failures; auto-recheck after cooldown",
+        "recheckSince": "2026-11-28T10:55:13Z",
+        "failuresAtRecheck": 951
+      }
     },
     {
       "id": "allorigins-raw",
